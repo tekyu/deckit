@@ -1,0 +1,13 @@
+.dashboard {
+    height:100vh;
+    display: flex;
+}
+.main-dashboard {
+    width:100%;
+}
+.dashboard-right {
+    width:30vw;
+    min-width:300px;
+    max-width:400px;
+    background: red;
+}

@@ -1,0 +1,98 @@
+.welcome-header {
+    background:#fff;
+    width:400px;
+    padding:40px 20px;
+    border-radius:8px;
+    box-shadow:0px 2px 8px -2px #000;
+    display:flex;
+    flex-direction: column;
+}
+
+.welcome-header .img-container {
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    background:url(../../assets/images/trianglify.png);
+    /* background-size:100%; */
+    background-repeat: no-repeat;
+    background-size:500%;
+    background-position:50% 70%;
+    margin:0 auto 40px auto;
+    position: relative;
+    overflow:hidden;
+}
+
+.welcome-header .img-container span {
+    font-family: 'Lobster', cursive;
+    font-size:32px;
+    position: absolute;
+    top:28%;
+    left:46%;
+    color:#fff;
+    transform: translate(-50%) rotate(-24deg) skewX(-12deg);
+}
+
+.welcome-header h2 {
+    font-family: 'Lobster', cursive;
+    color:rgb(8, 9, 69);
+    margin-bottom:20px;
+    font-size:32px;
+}
+
+.welcome-header input {
+    background:#f3f3f3;
+    /* border-bottom:2px solid rgb(255, 70, 118); */
+    font-size:18px;
+    font-style:italic;
+    font-weight:500;
+    letter-spacing:.05em;
+}
+
+.welcome-header input::placeholder {
+    font-size:18px;
+    font-style: italic;
+    font-weight:500;
+    letter-spacing: .05em;
+    /* text-transform: uppercase; */
+}
+
+.welcome-header button {
+    font-family: 'Lobster', cursive;
+    background: transparent;
+    box-sizing:border-box;
+    border:2px solid rgb(255, 70, 118);
+    color:rgb(8, 9, 69);
+    border-radius:0;
+    padding:7px 12px;
+    width:160px;
+    position: relative;
+    cursor:pointer;
+    display: block;
+    margin:0 auto;
+    margin-top:20px;
+    font-size:24px;
+    transition:all .3s ease-in-out;
+}
+
+/* .welcome-header button:before {
+    content:'';
+    background: blue;
+    width:100px;
+    height:100px;
+    z-index:-1;
+    top:-10px;
+    left:0;
+    bottom:0;
+    right:0;
+    display:block;
+    position: absolute;
+} */
+
+.welcome-header button:hover {
+    background: rgb(255, 70, 118);
+    color:#fff;
+}
+
+.welcome-header .error {
+    border:1px solid rgb(255, 70, 118); 
+}

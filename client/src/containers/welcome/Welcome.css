@@ -1,0 +1,22 @@
+.container {
+    margin:0 auto;
+    display: block;
+}
+.welcome-container {
+    text-align: center;
+    height:100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+h2 {
+    /* color:#fff; */
+}
+.choose-name {
+    background:rgba(255,255,255,.1);
+    border:0;
+    padding:14px 24px;
+    /* color:#fff; */
+    outline:none;
+}
