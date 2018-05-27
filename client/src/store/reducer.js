@@ -32,8 +32,8 @@ const reducer = (state = initialState, action) => {
         //     ...state,
         //     uuid:action.payload.uuid
         // }
-        case actionTypes.INITIAL_PLAYERS:
-        return simpleState(state, {players:action.payload.players})
+        case actionTypes.UPDATE_SERVERS:
+        return simpleState(state, {servers:action.payload.servers})
         default: 
         return state;
     }

@@ -45,7 +45,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        saveInitialPlayers: (socket,players) => {dispatch(actionCreators.initialPlayers(socket,players))}
+        // saveInitialPlayers: (socket,players) => {dispatch(actionCreators.initialPlayers(socket,players))}
     };
 }
 
