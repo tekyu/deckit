@@ -1,4 +1,9 @@
-.players {
+.players-container {
     height:60vh;
     overflow-y:auto;
+    padding:20px;
+}
+
+.players {
+
 }

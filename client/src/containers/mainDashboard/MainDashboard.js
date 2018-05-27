@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './MainDashboard.css';
 import * as actionCreators from '../../store/actions'
-
+import Logo from '../../components/ui/logo/logo';
 class MainDashboard extends Component {
     
     componentDidMount() {
@@ -18,7 +18,8 @@ class MainDashboard extends Component {
     render() {
         return (
             <div className="main-dashboard">
-            <p>Main</p>
+            <Logo />
+            
             </div>
         )
     }
@@ -26,13 +27,11 @@ class MainDashboard extends Component {
 }
 
 const mapStateToProps = state => {
-    waitingPlayers: state.waitingPlayers
+    rooms: state.rooms
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        initialPlayers: (socket) => dispatch(actionCreators.initialPlayers(socket)),
-        changeInWaitingPlayers: (player,change) => dispatch({type:'CHANGE_IN_WAITING_PLAYERS',payload:{player:player,type:change}})
     }
 }
 

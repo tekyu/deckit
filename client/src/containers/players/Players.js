@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './Players.css';
 import Player from '../../components/players/player/Player';
-
+import PlayersHeader from '../../components/players/header/header';
 class Players extends Component {
 
     state = {
@@ -40,9 +40,11 @@ class Players extends Component {
             });    
         }
         return (
-            <div className="players">
-                {mappedPlayers}
-                {/* <p>Players</p> */}
+            <div className="players-container">
+                <PlayersHeader roomSize={this.state.players.length} />
+                <div className="players">
+                    {mappedPlayers}
+                </div>
             </div>
         )
     }

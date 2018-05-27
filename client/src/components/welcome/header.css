@@ -8,30 +8,6 @@
     flex-direction: column;
 }
 
-.welcome-header .img-container {
-    width:80px;
-    height:80px;
-    border-radius:50%;
-    background:url(../../assets/images/trianglify.png);
-    /* background-size:100%; */
-    background-repeat: no-repeat;
-    background-size:500%;
-    background-position:50% 70%;
-    margin:0 auto 40px auto;
-    position: relative;
-    overflow:hidden;
-}
-
-.welcome-header .img-container span {
-    font-family: 'Lobster', cursive;
-    font-size:32px;
-    position: absolute;
-    top:28%;
-    left:46%;
-    color:#fff;
-    transform: translate(-50%) rotate(-24deg) skewX(-12deg);
-}
-
 .welcome-header h2 {
     font-family: 'Lobster', cursive;
     color:rgb(8, 9, 69);

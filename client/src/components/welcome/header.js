@@ -1,5 +1,7 @@
 import React from 'react'
 import './header.css';
+
+import Logo from '../ui/logo/logo';
 const header = (props) => {
 
 let inputClasses = 'choose-name';
@@ -7,7 +9,8 @@ inputClasses = props.lengthError?inputClasses +' error':inputClasses;
     console.log('inputclasses',inputClasses);
     return (
         <div className="welcome-header">
-            <div className="img-container"><span>Deckit</span></div>
+            <Logo />
+            {/* <div className="logo"><span>Deckit</span></div> */}
             <h2>Choose your name</h2>
             <input 
                 className={inputClasses}

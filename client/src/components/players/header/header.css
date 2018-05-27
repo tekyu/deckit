@@ -1,0 +1,15 @@
+.players-info {
+    text-align: right;
+    font-family: 'Lobster', cursive;
+    font-size:16px;
+    color:rgb(8, 9, 69);
+    border-bottom:1px solid rgba(128,128,128,.2);
+    margin:0 -20px;
+    padding:0 20px;
+    padding-bottom:20px;
+}
+
+.players-info span {
+    font-size:24px;
+    margin-right:4px;
+}
