@@ -1,8 +1,9 @@
-.main-dashboard {
+.gameboard {
+    width:100%;
     position: relative;
     margin-top:4rem;
 }
-.main-dashboard-wrapper {
+.gameboard-wrapper {
     width:500px;
     margin:0 auto;
 }

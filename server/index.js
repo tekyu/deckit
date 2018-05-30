@@ -59,17 +59,20 @@ io.on("connection", socket => {
 
     socket.join(data.id);
     io.deckitRooms.push(data);
+
     if (!data.private) {
-      // socket.to(waitingRoom)
-      // emit and save to state 
+      io.in(waitingRoom).emit("updatedServers", io.deckitRooms);
     }
-    socket.emit("updateServers", io.deckitRooms);
-    console.log("[emiting] updateServers", io.deckitRooms);
+    console.log("[emiting] updatedServers", io.deckitRooms);
+    // joinedToServer
+    socket.emit('joinedToServer',data);
+    console.log('[emiting] joinedToServer',data);
+
     socket
       .to(data.id)
       .emit(
-        "waitingForPlayers",
-        io.sockets.adapter.rooms[waitingRoom].playersConnected
+        "updateRoomInfo",
+        io.sockets.adapter.rooms[data.id].playersConnected
       );
     console.log("[emiting] waitingForPlayers", io.sockets.adapter.rooms[waitingRoom].playersConnected);
   });
@@ -97,6 +100,7 @@ io.on("connection", socket => {
   //   });
   // });
 
+
   socket.on("readyToWait", () => {
     console.log("[receiving] readyToWait");
     socket.emit(
@@ -107,6 +111,9 @@ io.on("connection", socket => {
       "[emitting] playersInWaitingRoom",
       io.sockets.adapter.rooms[waitingRoom].playersConnected
     );
+    socket.emit("updatedServers", io.deckitRooms);
+    console.log("[emiting] updatedServers", io.deckitRooms);
+
   });
 
   socket.on("getUUID", nickname => {
@@ -146,4 +153,15 @@ io.on("connection", socket => {
 
     // socket.to(waitingRoom).emit('newPlayer',{id:socket.id,uuid:socket.uuid,nickname:nickname});
   });
+
+  /**
+   * CHAT
+   */
+
+   socket.on('messageReceived',(msg,room)=>{
+    if (room==='waiting') {
+      room = waitingRoom;      
+    }
+    socket.to(room).emit('messageSent',msg);
+   });
 });

@@ -34,6 +34,22 @@ const reducer = (state = initialState, action) => {
         // }
         case actionTypes.UPDATE_SERVERS:
         return simpleState(state, {servers:action.payload.servers})
+        case actionTypes.CREATE_ROOM:
+        return {
+            ...state,
+            ...action.payload,
+            shouldRenderRoom: true
+        }
+        case actionTypes.UPDATE_ROOM:
+        return {
+            ...state,
+            roomInfo: {
+                ...state.roomInfo,
+                playersConnected: {
+                    ...action.payload.playersConnected
+                }
+            },
+        }
         default: 
         return state;
     }

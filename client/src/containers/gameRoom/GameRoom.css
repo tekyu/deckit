@@ -1,11 +1,8 @@
-.dashboard {
+.gameroom {
     height:100vh;
     display: flex;
 }
-.main-dashboard {
-    width:100%;
-}
-.dashboard-right {
+.gameroom-controls {
     width:30vw;
     min-width:300px;
     max-width:400px;

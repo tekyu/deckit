@@ -42,6 +42,9 @@ class MainDashboardControls extends Component {
       };
     
       componentDidMount() {
+        // this.props.socket.on('joinedToServer',()=>{
+          this.props.getInitialRoomInfo(this.props.socket);
+        // });
       }
 
   render() {
@@ -78,7 +81,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onCreateServer: (socket,props) => dispatch(actionCreators.createServer(socket,props))
+    onCreateServer: (socket,props) => dispatch(actionCreators.createServer(socket,props)),
+    getInitialRoomInfo: (socket,props) => dispatch(actionCreators.getInitialRoomInfo(socket,props))
   }
 }
 

@@ -1,0 +1,61 @@
+.server {
+    height:60px;
+    display: flex;
+    border-bottom:1px solid rgba(128, 128, 128, .15);
+    padding:10px 0;
+}
+
+.server:first-of-type {
+    padding-top:0;
+}
+
+.server:last-of-type {
+    padding-bottom:0;
+    border:0;
+}
+
+.server .server-info {
+    width:100%;
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    flex-direction: column;
+}
+
+.server .server-info label {
+    color:rgba(128,128,128,.7);
+    font-size:12px;
+    margin-bottom:auto;
+    font-style: italic;
+    
+}
+
+.server .server-info p {
+    margin-bottom:auto;
+    font-family: 'Lobster', cursive;
+    font-size:16px;
+    color:rgb(8, 9, 69);
+}
+.server .server-players {
+    min-width:70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Lobster', cursive;
+    font-size:16px;
+    color:rgb(8, 9, 69);
+}
+
+.server .server-join {
+    border:0;
+    background: transparent;
+    font-family: 'Lobster', cursive;
+    font-size:16px;
+    color:rgb(8, 9, 69);
+    cursor: pointer;
+    transition:color .3s ease-in-out;
+}
+
+.server .server-join:hover {
+    color:rgb(255, 70, 118);
+}

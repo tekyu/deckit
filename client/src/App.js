@@ -8,6 +8,7 @@ import * as actionTypes from './store/actions';
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
 import Dashboard from './containers/dashboard/Dashboard';
+import GameRoom from './containers/gameRoom/GameRoom';
 // import asyncComponent from './hoc/async-component';
 const socket = io('http://localhost:5000');
 // const asyncDashboard = asyncComponent( () => {
@@ -46,6 +47,9 @@ class App extends Component {
     if (this.props.auth) {
       componentToRender = (<Dashboard socket={socket} />);
     }
+    if (this.props.shouldRenderRoom) {
+      componentToRender = (<GameRoom socket={socket} />);
+    } 
     console.log('COMPONENTTORENDER',componentToRender);
     return (
       <React.Fragment>{componentToRender}</React.Fragment>
@@ -56,7 +60,8 @@ const mapStateToProps = state => {
   return {
     teststate:state,
     auth:state.auth,
-    uuid:state.uuid
+    uuid:state.uuid,
+    shouldRenderRoom:state.shouldRenderRoom
   }
 };
 

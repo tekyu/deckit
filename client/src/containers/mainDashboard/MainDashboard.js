@@ -20,18 +20,20 @@ class MainDashboard extends Component {
   render() {
     return (
       <div className="main-dashboard">
-        <div className="main-dashboard-header">
-          <Logo />
+        <div className="main-dashboard-wrapper">
+          <div className="main-dashboard-header">
+            <Logo />
+          </div>
+          <MainDashboardControls socket={this.props.socket}/>
+          <MainDashboardServers socket={this.props.socket}/>
         </div>
-        <MainDashboardControls socket={this.props.socket}/>
-        <MainDashboardServers />
       </div>
     );
   }
 }
 
 const mapStateToProps = state => {
-  rooms: state.rooms;
+  // rooms: state.rooms;
 };
 
 const mapDispatchToProps = dispatch => {
