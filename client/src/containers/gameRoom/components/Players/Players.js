@@ -10,33 +10,29 @@ class Players extends Component {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        console.log('PLAYERS',nextProps, prevState);
-        // this.setState({players:nextProps.players});
-        return {
-            ...prevState,
-            players:nextProps.players
+        console.log('[Players.js] getDerivedStateFromProps',nextProps, prevState);
+        if (nextProps.roomInfo && nextProps.roomInfo.playersConnected) {
+            return {
+                ...prevState,
+                players:nextProps.roomInfo.playersConnected>prevState.players?nextProps.roomInfo.playersConnected:prevState.players
+            }
+        } else {
+            return {...prevState}
         }
     }
 
     componentDidMount() {
-        console.log('[Players.js] componentDidMount',this.state.players);
-        const _playersFromState = [...this.props.players];
+        console.log('[Players.js] componentDidMount',this.state.roomInfo);
+        const _playersFromState = (this.props.roomInfo && this.props.roomInfo.playersConnected)?[...this.props.roomInfo]:[];
         this.setState({players:_playersFromState});
-        console.log('[Players.js] socket',this.props.socket);
-        this.props.socket.on('playersInWaitingRoom', (players) => {
-            console.log('[Receiving] playersInWaitingRoom [in] Players.js',players);
-            this.setState({players:players});
-        });
     }
 
     render() {
-        console.log('Player render');
+        console.log('[Players.js] render',this.state);
         let mappedPlayers = null;
         if (this.state.players.length>0) {
-            console.log('PLAYERS NOW',this.state.players);
             mappedPlayers = this.state.players.map(player => {
-                console.log('player',player);
-                return <Player data={player} key={player.id} />
+                return <Player key={player.id} data={player}  />
             });    
         }
         return (
@@ -52,7 +48,7 @@ class Players extends Component {
 
 const mapStateToProps = state => {
     return {
-        players:state.roomInfo.playersConnected
+        roomInfo:state.roomInfo
     }
 }
 

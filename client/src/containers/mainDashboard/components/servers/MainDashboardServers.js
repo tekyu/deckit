@@ -9,10 +9,10 @@ class MainDashboardServers extends Component {
         servers:[]
     }
 
-    static getDerivedStateFromProps(newProps, oldState) {
-        console.log('[MainDashboardServer.js] {getDerivedStateFromProps}',newProps,oldState);
-        return newProps.servers.length>oldState.servers.length?newProps:oldState;
-    }
+    // static getDerivedStateFromProps(newProps, oldState) {
+    //     console.log('[MainDashboardServer.js] {getDerivedStateFromProps}',newProps,oldState);
+    //     return newProps.servers.length>oldState.servers.length?newProps:oldState;
+    // }
 
     componentDidMount() {
         this.props.socket.on('updatedServers', (servers) => {
@@ -23,16 +23,21 @@ class MainDashboardServers extends Component {
 
 
     joinPublicServerHandler = (id) => {
+        this.props.onJoinServer(this.props.socket,{id:id?id:this.state.serverId});
         console.log('[MainDashboardServer.js] joinPublicServerHandler',id);
     }
 
     render() {
-        let serverList = <label>No servers running</label>;
-        if (this.props.servers.length>0){
-            serverList = this.props.servers.map(server => {
-                return <Server key={server.id} joinPublicServer={this.joinPublicServerHandler} id={server.id} name={server.name} size={server.size} connected={server.playersConnected.length}/>
+        let serverList = null;
+        console.log('SERVEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERS',this.props.servers);
+        if (this.props.servers){
+            serverList = Object.keys(this.props.servers).map((key) => {
+                return <Server key={this.props.servers[key].id} roomInfo = {this.props.servers[key]} joinPublicServer={this.joinPublicServerHandler} id={this.props.servers[key].id} name={this.props.servers[key].name} size={this.props.servers[key].size} connected={this.props.servers[key].playersConnected.length}/>
             });
-    
+            console.log('[MainDashboardServer.js] render()',serverList);
+        }
+        if (serverList && serverList.length === 0) {
+            serverList = <label>No servers running</label>;
         }
 
         return (
@@ -52,7 +57,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onUpdateServers: (servers) => {dispatch(actionCreators.updateServers(servers))}
+        onUpdateServers: (servers) => {dispatch(actionCreators.updateServers(servers))},
+        onJoinServer: (socket,props) => dispatch(actionCreators.joinServer(socket,props)),
     }
 }
 

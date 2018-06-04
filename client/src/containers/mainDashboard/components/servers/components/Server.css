@@ -46,6 +46,11 @@
     color:rgb(8, 9, 69);
 }
 
+.server .server-button-container {
+    display: flex;
+    align-items: center;
+}
+
 .server .server-join {
     border:0;
     background: transparent;
@@ -53,9 +58,31 @@
     font-size:16px;
     color:rgb(8, 9, 69);
     cursor: pointer;
-    transition:color .3s ease-in-out;
+    padding:4px 6px;
+    transition:all .15s ease-in-out;
 }
 
 .server .server-join:hover {
-    color:rgb(255, 70, 118);
+    background:rgb(255, 70, 118);
+    color:#fff;
+}
+
+.room-full {
+    pointer-events: none;
+    position: relative;
+}
+
+.nonvisible {
+    opacity:0;
+}
+
+.room-full:after {
+    content:'';
+    display: block;
+    position: absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    background: rgba(255,255,255,.3);
 }

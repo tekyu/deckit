@@ -9,7 +9,7 @@ class MainDashboardControls extends Component {
     state = {
         showCreateModal: false,
         showJoinModal: false,
-
+        roomFull: false,
         serverName:'',
         serverSize:6,
         serverPrivate:false,
@@ -29,11 +29,16 @@ class MainDashboardControls extends Component {
         this.setState({serverName:event.target.value});
       }
       changeServerSize = (event) => {
-        this.setState({serverSize:event.target.value});
+        this.setState({serverSize:+(event.target.value)});
       }
       changePrivateMode = (event) => {
         this.setState({serverPrivate:event.target.value});
       }
+
+      changeServerIdHandler = (event) => {
+        this.setState({serverId:event.target.value});
+      }
+
 
       createServerHandler = () => {
         // this.props.socket.emit('createServer',{name:this.state.serverName,size:this.state.serverSize,private:this.state.serverPrivate});
@@ -41,10 +46,15 @@ class MainDashboardControls extends Component {
         this.props.onCreateServer(this.props.socket,{name:this.state.serverName,size:this.state.serverSize,private:this.state.serverPrivate});
       };
     
+      joinServerHandler = (id) => {
+        console.log('1',id);
+          this.props.onJoinServer(this.props.socket,{id:(id?id:this.state.serverId)});
+      }
+
       componentDidMount() {
-        // this.props.socket.on('joinedToServer',()=>{
-          this.props.getInitialRoomInfo(this.props.socket);
-        // });
+        this.props.socket.on('roomFull',() => {
+          this.setState({roomFull:true});
+        });
       }
 
   render() {
@@ -52,7 +62,7 @@ class MainDashboardControls extends Component {
     if (this.state.showCreateModal) {
         modal = <CreateModal createServer={this.createServerHandler} initialSize={this.state.serverSize} initialMode={this.state.serverPrivate} changeName={this.changeServerNameHandler} changeSize={this.changeServerSize} changeMode={this.changePrivateMode}/>;
     } else if (this.state.showJoinModal) {
-        modal = <JoinModal />;
+        modal = <JoinModal roomFull={this.state.roomFull} changeId={this.changeServerIdHandler} joinServer={this.joinServerHandler} />;
     }
 
     return (
@@ -82,7 +92,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onCreateServer: (socket,props) => dispatch(actionCreators.createServer(socket,props)),
-    getInitialRoomInfo: (socket,props) => dispatch(actionCreators.getInitialRoomInfo(socket,props))
+    onJoinServer: (socket,props) => dispatch(actionCreators.joinServer(socket,props)),
   }
 }
 

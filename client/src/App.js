@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 import Welcome from './containers/welcome/Welcome';
-import * as actionTypes from './store/actions';
+import * as actionCreators from './store/actions';
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
 import Dashboard from './containers/dashboard/Dashboard';
@@ -40,6 +40,9 @@ class App extends Component {
       // this.props.onLocalStorageProps(ls);
       console.log('GOT DATA FROM LOCAL STORAGE');
     }
+
+    this.props.onUpdateRoom(socket);
+
   }
 
   render() {
@@ -67,7 +70,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onLocalStorageProps: (ls) => dispatch({type:actionTypes.LOCAL_STORAGE,payload: {nickname:ls.nickname,uuid:ls.uuid}})
+    onLocalStorageProps: (ls) => dispatch({type:actionCreators.LOCAL_STORAGE,payload: {nickname:ls.nickname,uuid:ls.uuid}}),
+    onUpdateRoom: (socket) => dispatch(actionCreators.updateRoom(socket))
   }
 }
 

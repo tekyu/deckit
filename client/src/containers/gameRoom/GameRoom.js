@@ -7,19 +7,34 @@ import GameBoard from './components/GameBoard/GameBoard';
 import Players from './components/Players/Players';
 import Chat from './components/Chat/Chat';
 class GameRoom extends Component {
-    static getDerivedStateFromProps(newProps, oldState) {
-        console.log('[GameRoom.js] getDerivedStateFromProps()',newProps, oldState);        
-    }
-      componentDidMount() {
-          console.log('[GameRoom.js] componentDidMount()',this.props.roomInfo);
-      }
+    // static getDerivedStateFromProps(newProps, oldState) {
+    //     console.log('[GameRoom.js] getDerivedStateFromProps()',newProps.roomInfo, oldState);
+    //     return {
+    //         ...oldState,
+    //         ...newProps.roomInfo
+    //     }  
+    // }
+    //   componentDidMount() {
+    //       console.log('[GameRoom.js] componentDidMount()',this.props.store,this.props.roomInfo);
+    //   }
+
+    //   componentWillUnmount() {
+    //     console.log('[GameRoom.js] componentWillUnmount()');
+    //     this.props.socket.emit('leaveRoom',this.props.roomInfo.id);
+    //   }
 
   render() {
+    let players = null;
+    // console.log('[GameRoom.js] render()',this.props.roomInfo);
+    // if (this.props.roomInfo && this.props.roomInfo.playersConnected) {
+        players = <Players socket={this.props.socket}/>
+    // }
     return (
         <div className="gameroom">
         <GameBoard socket={this.props.socket}/>
         <div className="gameroom-controls">
-            <Players players={this.props.roomInfo.playersConnected} socket={this.props.socket}/>
+            {players}
+            <div className="gameroom-controls-wrapper"></div>
             <Chat socket={this.props.socket}/>
         </div>
     </div>
@@ -30,7 +45,8 @@ class GameRoom extends Component {
 
 const mapStateToProps = state => {
     return {
-        roomInfo:state.roomInfo
+        // store:state,
+        // roomInfo:state.roomInfo
     }
 }
 

@@ -56,10 +56,10 @@ class Welcome extends Component {
             
         });
 
-        this.props.socket.on('playersInWaitingRoom',players => {
-            console.log('Welcome playersInWaitingRoom');
-            // this.props.saveInitialPlayers(this.props.socket,players);
-        });
+        // this.props.socket.on('playersInWaitingRoom',players => {
+        //     console.log('Welcome playersInWaitingRoom');
+        //     // this.props.saveInitialPlayers(this.props.socket,players);
+        // });
 
     }
     

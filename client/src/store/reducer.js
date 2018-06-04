@@ -37,17 +37,23 @@ const reducer = (state = initialState, action) => {
         case actionTypes.CREATE_ROOM:
         return {
             ...state,
-            ...action.payload,
             shouldRenderRoom: true
         }
+        case actionTypes.JOIN_ROOM:
+        return {
+            ...state,
+            shouldRenderRoom: true
+        }
+        
         case actionTypes.UPDATE_ROOM:
+        console.log('[reducer.js] UPDATE_ROOM',action)
         return {
             ...state,
             roomInfo: {
-                ...state.roomInfo,
-                playersConnected: {
-                    ...action.payload.playersConnected
-                }
+                ...action.payload.roomInfo,
+                playersConnected: [
+                    ...action.payload.roomInfo.playersConnected
+                ]
             },
         }
         default: 

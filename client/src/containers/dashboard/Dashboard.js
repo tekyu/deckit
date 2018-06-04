@@ -15,6 +15,13 @@ class Dashboard extends Component {
         //     this.props.saveInitialPlayers(this.props.socket,players);
         // });
         console.log('state dashboard',this.props.teststate);
+        this.props.getInitialRoomInfo(this.props.socket);
+
+    }
+
+    componentWillUnmount() {
+        console.log('[Dashboard.js] componentWillUnmount()');
+        this.props.socket.emit('leaveServer');
     }
     
     static getDerivedStateFromProps(n,v) {
@@ -45,7 +52,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        // saveInitialPlayers: (socket,players) => {dispatch(actionCreators.initialPlayers(socket,players))}
+        getInitialRoomInfo: (socket,props) => dispatch(actionCreators.getInitialRoomInfo(socket,props))
     };
 }
 

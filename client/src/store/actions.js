@@ -3,6 +3,7 @@ export const LOCAL_STORAGE = 'LOCAL_STORAGE';
 export const UUID = 'UUID';
 export const UPDATE_SERVERS = 'UPDATE_SERVERS';
 export const CREATE_ROOM = 'CREATE_ROOM';
+export const JOIN_ROOM = 'JOIN_ROOM';
 export const UPDATE_ROOM = 'UPDATE_ROOM';
 // export const INITIAL_PLAYERS = 'INITIAL_PLAYERS';
 
@@ -66,6 +67,13 @@ export const createServer = (socket,serverData) => {
     }
 }
 
+export const joinServer = (socket,serverData) => {
+    return dispatch => {
+        console.log('[emiting] joinServer [in] joinServer');
+        socket.emit('joinServer',serverData.id);
+    }
+}
+
 export const updateServers = (servers) => {
     return dispatch => {
         dispatch({
@@ -77,18 +85,37 @@ export const updateServers = (servers) => {
     }
 }
 
+export const updateRoom = (socket) => {
+    return dispatch => {
+        socket.on('updateRoom',data => {
+            console.log('[actions.js] updateRoom',data);
+            dispatch({
+                type:UPDATE_ROOM,
+                payload: {
+                    roomInfo:data
+                }
+            })
+        });
+    }
+}
+
 export const getInitialRoomInfo = (socket) => {
     return dispatch => {
-        socket.on('joinedToServer',(props)=> {
-            console.log('[Actions.js] joinedToServer',props);
+        socket.on('roomCreated',(data)=> {
+            console.log('[Actions.js] roomCreated');
             dispatch({
                 type:CREATE_ROOM,
                 payload: {
-                    roomInfo: props
                 }
-            })
+            });
         })
-        
-        // socket.emit('')
+        socket.on('roomJoined',(data)=> {
+            console.log('[Actions.js] roomJoined');
+            dispatch({
+                type:JOIN_ROOM,
+                payload: {
+                }
+            });
+        })
     }
 }

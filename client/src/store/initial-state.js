@@ -3,7 +3,7 @@ const initialState = {
     nickname: '',
     uuid: null,
     players: [],
-    servers: []
+    servers: {}
 };
 
 export default initialState;
