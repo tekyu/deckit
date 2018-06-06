@@ -101,12 +101,6 @@ class GameBoard extends Component {
       hint:this.state.hint,
       amIHinter:this.state.amIHinter
     };
-    // if (this.props.roomInfo && this.props.roomInfo.started) {
-    //   headerState.started = this.props.roomInfo.started;
-    //   if (this.props.roomInfo.hinter===this.props.socket.id) {
-    //     headerState.enableHint = this.state.enableHint;        
-    //   }
-    // }
     
     let content = null;
     
