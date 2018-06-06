@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import "./Chat.css";
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 
 class Chat extends Component {
   state = {
@@ -125,7 +126,7 @@ class Chat extends Component {
             value={this.state.msg}
           />
           <button onClick={this.sendMessage}>
-            <i class="fas fa-paper-plane" />
+            <FontAwesomeIcon icon="paper-plane" />
           </button>
         </div>
       </div>

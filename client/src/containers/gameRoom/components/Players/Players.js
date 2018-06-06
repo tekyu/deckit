@@ -6,7 +6,8 @@ import Player from './components/player/Player';
 class Players extends Component {
 
     state = {
-        players:[]
+        players:[],
+        hinter:null
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -14,7 +15,8 @@ class Players extends Component {
         if (nextProps.roomInfo && nextProps.roomInfo.playersConnected) {
             return {
                 ...prevState,
-                players:nextProps.roomInfo.playersConnected>prevState.players?nextProps.roomInfo.playersConnected:prevState.players
+                players:nextProps.roomInfo.playersConnected>prevState.players?nextProps.roomInfo.playersConnected:prevState.players,
+                hinter:nextProps.roomInfo.hinter
             }
         } else {
             return {...prevState}
@@ -23,7 +25,7 @@ class Players extends Component {
 
     componentDidMount() {
         console.log('[Players.js] componentDidMount',this.state.roomInfo);
-        const _playersFromState = (this.props.roomInfo && this.props.roomInfo.playersConnected)?[...this.props.roomInfo]:[];
+        const _playersFromState = (this.props.roomInfo && this.props.roomInfo.playersConnected)?[...this.props.roomInfo.playersConnected]:[];
         this.setState({players:_playersFromState});
     }
 
@@ -32,7 +34,8 @@ class Players extends Component {
         let mappedPlayers = null;
         if (this.state.players.length>0) {
             mappedPlayers = this.state.players.map(player => {
-                return <Player key={player.id} data={player}  />
+                let isHinter = player.id===this.state.hinter?true:false;
+                return <Player key={player.id} data={player} hinter={isHinter}  />
             });    
         }
         return (

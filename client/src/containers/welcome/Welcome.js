@@ -4,11 +4,11 @@ import * as actionCreators from '../../store/actions';
 import { connect } from 'react-redux';
 import Header from '../../components/welcome/header';
 import Dashboard from '../dashboard/Dashboard';
-
+import sillyName from 'sillyname';
 class Welcome extends Component {
     
     state =  {
-        nicknameInput: this.props.nickname?this.props.nickname:'',
+        nicknameInput: sillyName(),
         lengthError:false
     }
     

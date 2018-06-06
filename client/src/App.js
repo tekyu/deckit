@@ -9,6 +9,15 @@ import { connect } from 'react-redux';
 import io from 'socket.io-client';
 import Dashboard from './containers/dashboard/Dashboard';
 import GameRoom from './containers/gameRoom/GameRoom';
+import fontawesome from '@fortawesome/fontawesome';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import faUserCircle from '@fortawesome/fontawesome-free-solid/faUserCircle';
+import faAlignRight from '@fortawesome/fontawesome-free-solid/faAlignRight';
+import faChessQueen from '@fortawesome/fontawesome-free-solid/faChessQueen';
+import faPaperPlane from '@fortawesome/fontawesome-free-solid/faPaperPlane';
+import faUser from '@fortawesome/fontawesome-free-regular/faUser';
+fontawesome.library.add(faUser, faPaperPlane, faUserCircle, faAlignRight, faChessQueen);
+
 // import asyncComponent from './hoc/async-component';
 const socket = io('http://localhost:5000');
 // const asyncDashboard = asyncComponent( () => {

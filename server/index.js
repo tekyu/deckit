@@ -6,6 +6,8 @@ const io = require("socket.io")(server);
 const port = 5000;
 server.listen(port, () => console.log(`Server listening on port ${port}`));
 
+const chalk = require('chalk');
+
 const UUID = require("node-uuid");
 const shortID = require("shortid");
 const randomColor = require("random-color");
@@ -26,16 +28,20 @@ io.deckitRooms = {
 /**
  * PROMISES?
  */
+
+ /**
+  * Adding room to pool with initial data of available servers 
+  * @param {Object} data Settings for room
+  * @returns {Promise} Promise object with data to render in Waiting room on resolve and error on rejection
+  */
 const addRoomToPool = data => {
   return new Promise((resolve, reject) => {
     try {
       if (data.private) {
         io.deckitRooms.private[data.id] = data;
-        // io.deckitRooms.private.push(data);
         resolve({ changed: false, room: io.deckitRooms.private[data.id] });
       } else {
         io.deckitRooms.public[data.id] = data;
-        // io.deckitRooms.public.push(data);
         resolve({
           rooms: io.deckitRooms.public,
           changed: true,
@@ -48,6 +54,11 @@ const addRoomToPool = data => {
   });
 };
 
+/**
+ * Remove room from available rooms
+ * @param {String} id 
+ * @returns {Promise} Promise object with available rooms on resolve and error on reject
+ */
 const removeRoomFromPool = id => {
   console.log("[removeRoomFromPool]", id, io.sockets.adapter.rooms);
   return new Promise((resolve, reject) => {
@@ -75,8 +86,9 @@ const removeRoomFromPool = id => {
 };
 
 /**
+ * Finds room by given id
  * @param {String} id id of the room
- * @returns {Object} room object
+ * @returns {Promise} Promise object with room object on resolve and id of room on reject 
  */
 const findServer = id => {
   console.log("[findServer]", id, io.deckitRooms.public);
@@ -95,10 +107,10 @@ const findServer = id => {
 };
 
 /**
- *
- * @param {String} room
- * @param {String} id
- * @returns {Object} room object
+ * Remove player from room
+ * @param {String} room Id of room
+ * @param {String} id Id of player to remove
+ * @returns {Promise} Promise with room object on both resolve and reject
  */
 const removeFromRoom = (room, id) => {
   return new Promise((resolve, reject) => {
@@ -154,6 +166,13 @@ io.on("connection", socket => {
   /**
    * WAITING ROOM
    */
+  /**
+   * 
+   * @param {Object} player
+   * @param player.id Socket Id
+   * @param player.uuid Generated UUID
+   * @param player.nickname Chosen or default nickname
+   */
   const pushToWaitingRoom = player => {
     if (
       io.sockets.adapter.rooms[waitingRoom] &&
@@ -162,15 +181,16 @@ io.on("connection", socket => {
       io.sockets.adapter.rooms[waitingRoom].playersConnected = [];
     }
     io.sockets.adapter.rooms[waitingRoom].playersConnected.push({
-      id: socket.id,
-      uuid: socket.uuid,
-      nickname: socket.nickname
+      id: player.id,
+      uuid: player.uuid,
+      nickname: player.nickname
     });
   };
 
   socket.on("createServer", data => {
     let _color = randomColor(0.3, 0.99).hexString();
     socket.color = _color;
+    socket.progress = 0;
     data.id = shortID.generate();
     data.playersConnected = [];
     data.playersConnected.push({
@@ -179,7 +199,10 @@ io.on("connection", socket => {
       nickname: socket.nickname,
       gameProperties: socket.gameProperties,
       status: false,
-      color: _color
+      color: _color,
+      progress:0,
+      picking:false,
+      pickedCard: null,
     });
     data.waiting = true;
     data.allReady = false;
@@ -190,6 +213,8 @@ io.on("connection", socket => {
     data.state = null;
     data.stage = null;
     data.initialDeck = null;
+    data.hint = null;
+    data.hintCard = null;
 
     socket.join(data.id);
     socket.deckitRooms.push(data.id);
@@ -197,12 +222,12 @@ io.on("connection", socket => {
     addRoomToPool(data).then(res => {
       if (res.changed) {
         io.in(waitingRoom).emit("updatedServers", res.rooms);
-        console.log("[emiting] updatedServers 1", res.rooms);
+        console.log(chalk.bgBlue("[emitting] updatedServers 1"), res.rooms);
       }
       socket.emit("roomCreated");
-      console.log("[emiting] roomCreated");
+      console.log(chalk.bgBlue("[emitting] roomCreated"));
       io.in(data.id).emit("updateRoom", res.room);
-      console.log("[emiting] updateRoom", res.room);
+      console.log(chalk.bgBlue("[emitting] updateRoom"), res.room);
     });
 
     // joinedToServer
@@ -219,24 +244,24 @@ io.on("connection", socket => {
     // console.log("[emiting] waitingForPlayers", io.sockets.adapter.rooms[waitingRoom].playersConnected);
   });
 
-  console.log(`Client connected with socket id ${socket.id}`);
+  console.log(chalk.green(`Client connected with socket id ${socket.id}`));
 
   socket.on("readyToWait", () => {
-    console.log("[receiving] readyToWait");
+    console.log(chalk.bgGreen("[receiving] readyToWait"));
     socket.emit(
       "playersInWaitingRoom",
       io.sockets.adapter.rooms[waitingRoom].playersConnected
     );
-    console.log(
-      "[emitting] playersInWaitingRoom",
+    console.log(chalk.bgBlue(
+      "[emitting] playersInWaitingRoom"),
       io.sockets.adapter.rooms[waitingRoom].playersConnected
     );
     socket.emit("updatedServers", io.deckitRooms.public);
-    console.log("[emiting] updatedServers 2", io.deckitRooms.public);
+    console.log(chalk.bgBlue("[emitting] updatedServers 2"), io.deckitRooms.public);
   });
 
   socket.on("getUUID", nickname => {
-    console.log("[receiving] getUUID", nickname);
+    console.log(chalk.bgGreen("[receiving] getUUID"), nickname);
     socket.uuid = UUID();
     socket.nickname = nickname;
     socket.emit("playerConnected", {
@@ -244,14 +269,13 @@ io.on("connection", socket => {
       nickname: socket.nickname,
       gameProperties: socket.gameProperties
     });
-    console.log("[emitting] playerConnected", {
+    console.log(chalk.bgBlue("[emitting] playerConnected"), {
       uuid: socket.uuid,
       nickname: socket.nickname,
       gameProperties: socket.gameProperties
     });
     socket.join(waitingRoom);
     socket.deckitRooms.push(waitingRoom);
-    // socket.to(waitingRoom).emit('newPlayer',{id:socket.id,nickname:nickname});
     pushToWaitingRoom({
       id: socket.id,
       uuid: socket.uuid,
@@ -264,7 +288,7 @@ io.on("connection", socket => {
         "playersInWaitingRoom",
         io.sockets.adapter.rooms[waitingRoom].playersConnected
       );
-    console.log("[emitting] playersInWaitingRoom [on] getUUID", {
+    console.log(chalk.bgBlue("[emitting] playersInWaitingRoom [on] getUUID"), {
       uuid: socket.uuid,
       nickname: socket.nickname,
       gameProperties: socket.gameProperties
@@ -277,9 +301,10 @@ io.on("connection", socket => {
    * @param {String} id id of the server
    */
   socket.on("joinServer", id => {
-    console.log("[receiving] joinServer", id);
+    console.log(chalk.bgGreen("[receiving] joinServer"), id);
     let _color = randomColor(0.3, 0.99).hexString();
     socket.color = _color;
+    socket.progress = 0;
     findServer(id).then(room => {
       if (room.size !== room.playersConnected) {
         socket.join(id);
@@ -290,19 +315,22 @@ io.on("connection", socket => {
           nickname: socket.nickname,
           gameProperties: socket.gameProperties,
           status: false,
-          color: _color
+          color: _color,
+          progress:0,
+          picking:false,
+          pickedCard: null,
         });
         socket.emit("roomJoined", room);
-        console.log("[emiting] roomJoined");
+        console.log(chalk.bgBlue("[emitting] roomJoined"));
         io.in(id).emit("updateRoom", room);
-        console.log("[emitting] updateRoom", room);
+        console.log(chalk.bgBlue("[emitting] updateRoom"), room);
       } else {
         socket.emit("roomFull");
-        console.log("[emiting] roomFull");
+        console.log(chalk.bgBlue("[emitting] roomFull"));
       }
 
       io.in(waitingRoom).emit("updatedServers", io.deckitRooms.public);
-      console.log("[emiting] updatedServers 1", io.deckitRooms.public);
+      console.log(chalk.bgBlue("[emitting] updatedServers 1"), io.deckitRooms.public);
     });
   });
 
@@ -311,30 +339,26 @@ io.on("connection", socket => {
    */
 
   socket.on("leaveServer", id => {
-    console.log("[receiving] leaveServer", id);
+    console.log(chalk.bgGreen("[receiving] leaveServer"), id);
     if (id) {
       socket.leave(id);
-      // socket.deckitRooms.push(data.id);
       socket.deckitRooms = socket.deckitRooms.filter(room => {
         room !== id;
       });
-      // removeRoomFromPool(id).then(res => {
-      //   socket.emit("updatedServers", res.public);
-      //   console.log(
-      //     "[emitting] updatedServers [from] removeRoomFromPool",
-      //     res.public
-      //   );
-      // });
       leaveServer(id, socket.id);
     } else {
       removeFromRoom(null, socket.id).then(res => {
         io.in(waitingRoom).emit("playersInWaitingRoom", res.playersConnected);
-        console.log("[emitting] playersInWaitingRoom", res.playersConnected);
-        // io.sockets.adapter.rooms[waitingRoom].playersConnected
+        console.log(chalk.bgBlue("[emitting] playersInWaitingRoom"), res.playersConnected);
       });
     }
   });
 
+  /**
+   * Leave room by given id
+   * @param {String} id Room id
+   * @param {String} socketId Socket id
+   */
   const leaveServer = (id, socketId) => {
     console.log("[leaveServer]", id);
     removeFromRoom(id, socketId)
@@ -344,7 +368,7 @@ io.on("connection", socket => {
         if (res.playersConnected.length === 0) {
           removeRoomFromPool(id).then(res2 => {
             console.log(
-              "[emitting] updatedServers [from] then.removeRoomFromPool",
+              chalk.bgBlue("[emitting] updatedServers [from] then.removeRoomFromPool"),
               res2.public,
               "deckitRooms",
               io.deckitRooms.public
@@ -361,7 +385,7 @@ io.on("connection", socket => {
             .then(res => {
               socket.emit("updatedServers", res.public);
               console.log(
-                "[emitting] updatedServers [from] removeRoomFromPool",
+                chalk.bgBlue("[emitting] updatedServers [from] removeRoomFromPool"),
                 res.public
               );
             })
@@ -374,7 +398,7 @@ io.on("connection", socket => {
 
   socket.on("changePlayerStatusInRoom", params => {
     console.log(
-      "[receiving] changePlayerStatusInRoom",
+      chalk.bgGreen("[receiving] changePlayerStatusInRoom"),
       params.room,
       params.status
     );
@@ -397,13 +421,7 @@ io.on("connection", socket => {
             room.started = true;
             room.waiting = false;
             room.initialCards = [...deck];
-            distributeCards(room);
-            io.in(room.id).emit("updateRoom", room);
-            console.log(
-              "[emitting] updateRoom on setTimeout",
-              room,
-              io.deckitRooms.public[room.id]
-            );
+            startGame(room);
           },
           3000,
           res
@@ -417,70 +435,87 @@ io.on("connection", socket => {
       console.log("_____________________", _player);
       io.to(params.room).emit("updateRoom", res);
       console.log(
-        "[emitting] updateRoom",
+        chalk.bgBlue("[emitting] updateRoom"),
         res,
         io.deckitRooms.public[params.room]
       );
     });
   });
 
-  distributeCards = room => {
-    console.log("distributeCards()",room);
-    // console.log('sendInitialCards',room);
-        // for (client in clients_in_the_room.sockets) {
-          room.playersConnected.forEach(player=>{
-            console.log('for client in clients',player);
-            let _deck = [];
-            while (_deck.length < 5) {
-              if (room.initialCards.length > 0) {
-                var rand = Math.floor(Math.random() * room.initialCards.length);
-                var t = room.initialCards[rand];
-                var el = _deck.filter(function(el) {
-                  return el.id === t.id;
-                });
-      
-                if (!el.length) {
-                  _deck.push(t);
-                  room.initialCards.splice(rand, 1);
-                }
-              } else {
-                console.log("no more cards");
-                break;
-              }
-            }
-            player.deck = _deck;
-            console.log('client deck_______________',player);
-      
-            // try {
-            //   // io.to(client).emit('deck', deck);
-            // } catch (err) {
-            //   console.log("error", err);
-            // }
-          });
-          io.in(room.id).emit("updateRoom", room);
-          console.log(
-            "[emitting] updateRoom",
-            room
-          );
-
-          console.log('DISTRIBUTE AFTER FOREACH',room.playersConnected);
-    // var status = true;
-    // var data = getPlayersInfo(socket.gameProperties.roomId);
-    // var d = getPlayersInfo2(socket.gameProperties.roomId);
-
-    // console.log('data new',data,'data old',d);
-    // console.log('DATA KURWA',data,status);
-    // io.in(socket.gameProperties.roomId).emit('startGame', status, data);
-
-    // roundQueue(room, socket.gameProperties.round);
+  /**
+   * Start game after every player is ready
+   * @param {Object} room Room object
+   */
+  startGame = room => {
+    console.log('startGame');
+    distributeCards(room).then(res=>{
+      console.log('then.distributeCards',res.playersConnected);
+      res.round = 0;
+      res.hinter = res.playersConnected[room.round].id;
+      res.stage = 'hintable';
+      io.in(res.id).emit("updateRoom", res);
+      console.log(
+        chalk.bgBlue("[emitting] updateRoom on setTimeout"),
+        res,
+      );  
+      });
   };
+
+/**
+ * Distributing initial cards to every connected player
+ * @param {Object} room Room object
+ * @returns {Object} Room object 
+ */
+  const distributeCards = room => {
+    return new Promise((resolve,reject) => {
+      room.playersConnected.forEach(player=>{
+        let _deck = [];
+        while (_deck.length < 5) {
+          if (room.initialCards.length > 0) {
+            let rand = Math.floor(Math.random() * room.initialCards.length);
+            let t = room.initialCards[rand];
+            let el = _deck.filter(function(el) {
+              return el.id === t.id;
+            });
+  
+            if (!el.length) {
+              _deck.push(t);
+              room.initialCards.splice(rand, 1);
+            }
+          } else {
+            break;
+          }
+        }
+        player.deck = _deck;
+      });
+      resolve(room);
+    });
+  };
+
+  socket.on('sendHint',data=>{
+    console.log(chalk.bgGreen('[receiving] sendHint'),data);
+    findServer(data.room).then(room=>{
+      room.hint = data.hint;
+      room.hintCard = data.hintCard;
+      room.stage = 'pickable';
+      io.in(data.id).emit("updateRoom", room);
+      console.log(chalk.bgBlue("[emitting] updateRoom"), room);
+    });
+  });
+
+  socket.on('sendPickedCard',data=>{
+    findServer(data.room).then(room=>{
+      // room.stage = 
+    });
+  });
+
 
   /**
    * CHAT
    */
 
   socket.on("messageSentFromClient", (room, msg) => {
-    console.log("[receiving] messageSentFromClient", room, msg);
+    console.log(chalk.bgGreen("[receiving] messageSentFromClient"), room, msg);
     if (!room) {
       room = waitingRoom;
     }
@@ -492,7 +527,7 @@ io.on("connection", socket => {
         nickname: socket.nickname,
         color: socket.color
       });
-    console.log("[emitting] messageSentToRoom", {
+    console.log(chalk.bgBlue("[emitting] messageSentToRoom"), {
       msg: msg,
       id: socket.id,
       nickname: socket.nickname,
@@ -502,7 +537,7 @@ io.on("connection", socket => {
 
   socket.on("disconnect", () => {
     console.log(
-      "Socket disconnected with id",
+      chalk.red("Socket disconnected with id"),
       socket.id,
       socket.deckitRooms,
       io.deckitRooms

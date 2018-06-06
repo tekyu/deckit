@@ -1,4 +1,5 @@
 import React from 'react';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import './Player.css';
 
 const Player = (props) => {
@@ -9,7 +10,7 @@ const Player = (props) => {
             <div className="player-info">
                 <label>{props.data.nickname}</label>
             </div>
-            <div className="player-controls"><i className="fas fa-align-right"></i></div>
+            <div className="player-controls"><FontAwesomeIcon icon="align-right"/></div>
         </div>
     )
 }

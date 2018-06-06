@@ -1,19 +1,20 @@
 import React from "react";
 import "./WaitingModal.css";
-
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 const WaitingModal = props => {
   let mapPlayers = props.players.map(player => {
     console.log("[WaitingModal.js] mapPlayer", player);
-    let iconClasses = ["far", "fa-user-circle"];
+    let iconClass = '';
     if (player.status) {
-      iconClasses.push("text-danger");
+      iconClass = "text-danger";
     } else {
-      iconClasses.push("text-dark");
+      iconClass = "text-dark";
     }
     return (
       <div className="waiting-player">
-        <i className={iconClasses.join(" ")} />
-        <label>{player.nickname}</label>
+      <FontAwesomeIcon icon="user-circle" className={iconClass}/>
+        {/* <i className={iconClasses.join(" ")} /> */}
+        {/* <label>{player.nickname}</label> */}
       </div>
     );
   });
@@ -50,7 +51,7 @@ const WaitingModal = props => {
       <div className="waitingmodal-players">{mapPlayers}</div>
       {!props.allReady?<div className="waitingmodal-status">
         <button onClick={props.changeStatus}>
-          {props.status ? "Not ready" : "Ready"}
+          {props.status ? "I'm ready!" : "Get ready"}
         </button>
       </div>:null}
       {spinner}
