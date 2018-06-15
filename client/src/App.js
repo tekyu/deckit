@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 // import logo from './logo.svg';
 import './App.css';
-
 import Welcome from './containers/welcome/Welcome';
 import * as actionCreators from './store/actions';
 import { connect } from 'react-redux';
@@ -64,7 +63,9 @@ class App extends Component {
     } 
     console.log('COMPONENTTORENDER',componentToRender);
     return (
-      <React.Fragment>{componentToRender}</React.Fragment>
+      <React.Fragment>
+      {componentToRender}
+      </React.Fragment>
     );
   }
 }

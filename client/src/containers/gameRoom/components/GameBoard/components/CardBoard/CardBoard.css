@@ -1,0 +1,10 @@
+.cardboard-wrapper {
+    height: 40vh;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.cardboard-container {
+    background: #fff;
+    height: 100%;
+}

@@ -3,7 +3,8 @@ const initialState = {
     nickname: '',
     uuid: null,
     players: [],
-    servers: {}
+    servers: {},
+    selectedCard:null
 };
 
 export default initialState;

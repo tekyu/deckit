@@ -1,4 +1,10 @@
+.cards-wrapper {
+    height: 40vh;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
 .cards-container {
-    display:flex;
-    height:300px;
+    display: flex;
+    background: #fff;
 }

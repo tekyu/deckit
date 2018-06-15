@@ -14,7 +14,7 @@ class Players extends Component {
         // this.setState({players:nextProps.players});
         return {
             ...prevState,
-            players:nextProps.players
+            players:nextProps.players.length>prevState.players?nextProps.player:prevState.players
         }
     }
 
@@ -30,7 +30,7 @@ class Players extends Component {
     }
 
     render() {
-        console.log('Player render');
+        console.log('Player render',this.state.players.length,this.state);
         let mappedPlayers = null;
         if (this.state.players.length>0) {
             console.log('PLAYERS NOW',this.state.players);

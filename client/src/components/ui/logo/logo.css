@@ -1,26 +1,26 @@
-
 .logo {
-    width:80px;
-    height:80px;
-    border-radius:50%;
-    background: url(../../../assets/images/trianglify.png);
+    user-select: none;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: url(../../../assets/images/trianglify.svg);
     background-repeat: no-repeat;
-    background-size:500%;
-    background-position:50% 70%;
-    margin:0 auto 40px auto;
+    background-size: 500%;
+    background-position: 50% 70%;
+    margin: 0 auto 40px auto;
     position: relative;
-    overflow:hidden;
-    border:4px solid #fff;
+    overflow: hidden;
+    border: 4px solid #fff;
     cursor: default;
     pointer-events: none;
 }
 
 .logo span {
-    font-family: 'Lobster', cursive;
-    font-size:32px;
+    font-family: "Lobster", cursive;
+    font-size: 32px;
     position: absolute;
-    top:28%;
-    left:46%;
-    color:#fff;
+    top: 28%;
+    left: 46%;
+    color: #fff;
     transform: translate(-50%) rotate(-24deg) skewX(-12deg);
 }

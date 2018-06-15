@@ -12,8 +12,15 @@ const Card = (props) => {
             );
         }
     
+        let cardProps = {};
+        if (props.onClickedHandler) {
+            cardProps = {
+                onClick:()=>props.onClickedHandler(props.data.id)
+            }
+        }
+
     return (
-        <div className="card" id={props.data.id} onClick={() => props.onClickedHandler(props.data.id)}>
+        <div className="card" id={props.data.id} {...cardProps}>
             {reassureElement}
             <div className={cardClasses}>
                 <img className="card-img" src={props.data.img} alt={props.data.title}/>
