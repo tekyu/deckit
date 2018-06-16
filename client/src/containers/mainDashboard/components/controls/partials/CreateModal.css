@@ -1,32 +1,29 @@
-/* #create-server-modal:before {
-    content:'';
-    position: absolute;
-    background: rgba(255,255,255,.2);
-    top:0;
-    left:0;
-    bottom:0;
-    right:0;
-} */
-
 #create-server-modal {
     background: #fff;
     position: absolute;
-    width:40vw;
-    /* height:40vh; */
-    top:50%;
-    left:50%;
-    transform: translate(-50%,-50%);
+    width: 40vw;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     /* border-radius:6px; */
-    box-shadow:0px 2px 8px -2px #000;
-    padding:20px;
+    z-index: 2;
+    box-shadow: 0px 2px 8px -2px #000;
+    padding: 20px;
     box-sizing: border-box;
 }
 
+.modal-close {
+    position: absolute;
+    top: 34px;
+    right: 34px;
+    cursor: pointer;
+}
+
 #create-server-modal .create-server-wrapper {
-    border:10px solid rgb(255, 238, 149);
+    border: 10px solid rgb(255, 238, 149);
     box-sizing: border-box;
-    padding:20px;
-    width:100%;
+    padding: 20px;
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -34,39 +31,39 @@
 }
 
 #create-server-modal label {
-    margin-bottom:12px;
-    margin-top:24px;
-    font-size:18px;
+    margin-bottom: 12px;
+    margin-top: 24px;
+    font-size: 18px;
 }
 
 #create-server-modal label span {
-    margin-left:12px;   
+    margin-left: 12px;
 }
 
 #create-server-modal label:first-of-type {
-    margin-top:0;
+    margin-top: 0;
 }
 #create-server-modal label:last-of-type {
-    margin-bottom:0;
+    margin-bottom: 0;
 }
 
 #create-server-modal input[type="text"] {
-    display:block;
-    border:0;
-    padding:14px 24px;
-    outline:none;
-    background:#f3f3f3;
-    font-size:16px;
-    font-style:italic;
-    font-weight:500;
-    letter-spacing:.05em;
+    display: block;
+    border: 0;
+    padding: 14px 24px;
+    outline: none;
+    background: #f3f3f3;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: 0.05em;
 }
 
 #create-server-modal input[type="text"]::placeholder {
-    font-size:16px;
+    font-size: 16px;
     font-style: italic;
-    font-weight:500;
-    letter-spacing: .05em;
+    font-weight: 500;
+    letter-spacing: 0.05em;
     /* text-transform: uppercase; */
 }
 
@@ -76,12 +73,12 @@
     background: transparent; /* Otherwise white in Chrome */
     position: relative;
     overflow: hidden;
-    height: 40px;
+    height: 20px;
     cursor: pointer;
     border-radius: 0; /* iOS */
 }
 
-input[type="range"] { 
+input[type="range"] {
     margin: auto;
     -webkit-appearance: none;
     position: relative;
@@ -99,7 +96,7 @@ input[type="range"]::-webkit-slider-runnable-track {
 /*
  * 1. Set to 0 width and remove border for a slider without a thumb
  */
- input[type="range"]::-webkit-slider-thumb {
+input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 0px; /* 1 */
     height: 40px;
@@ -122,7 +119,7 @@ input[type="range"]::-moz-range-thumb {
     box-sizing: border-box;
 }
 
-input[type="range"]::-ms-fill-lower { 
+input[type="range"]::-ms-fill-lower {
     background: rgb(255, 70, 118);
 }
 
@@ -154,23 +151,22 @@ input[type="range"]::-ms-fill-lower {
 } */
 
 #create-server-modal input[type="checkbox"] {
-    
 }
 
 #create-server-modal button {
-    font-family: 'Lobster', cursive;
+    font-family: "Lobster", cursive;
     background: transparent;
-    box-sizing:border-box;
-    border:2px solid rgb(255, 70, 118);
-    color:rgb(8, 9, 69);
-    border-radius:0;
-    padding:7px 12px;
-    width:160px;
+    box-sizing: border-box;
+    border: 2px solid rgb(255, 70, 118);
+    color: rgb(8, 9, 69);
+    border-radius: 0;
+    padding: 7px 12px;
+    width: 160px;
     position: relative;
-    cursor:pointer;
+    cursor: pointer;
     display: block;
-    margin:0 auto;
-    margin-top:20px;
-    font-size:24px;
-    transition:all .3s ease-in-out;
+    margin: 0 auto;
+    margin-top: 20px;
+    font-size: 24px;
+    transition: all 0.3s ease-in-out;
 }
