@@ -15,7 +15,8 @@ fontawesome.library.add(FontAwesomeIcons);
 const socket = io("http://localhost:5000");
 class App extends Component {
 	state = {
-		ls: null
+		ls: null,
+		uuid: null
 		// auth:this.props.auth
 	};
 
@@ -29,7 +30,6 @@ class App extends Component {
 	};
 
 	componentDidMount() {
-		const _uuid = null;
 		// const ls = localStorage.getItem("dekso");
 		// if (ls && this.isJsonValid(ls)) {
 		// 	this.setState({ ls: ls });

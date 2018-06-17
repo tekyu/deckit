@@ -4,7 +4,6 @@ import ProgressBar from "./components/ProgressBar";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 
 const Player = props => {
-	console.log("[Player.js] props", props);
 	let style = {
 		background: props.data.color
 	};
@@ -28,7 +27,6 @@ const Player = props => {
 					maxPoints={props.maxPoints}
 				/>
 			</div>
-			{/* <div className="player-controls"><i className="fas fa-align-right"></i></div> */}
 		</div>
 	);
 };

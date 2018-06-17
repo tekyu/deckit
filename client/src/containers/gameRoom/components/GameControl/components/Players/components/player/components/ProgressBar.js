@@ -3,22 +3,16 @@ import "./ProgressBar.css";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 
 const ProgressBar = props => {
-	console.log(
-		"ptopd",
-		props,
-		props.score / props.maxPoints,
-		parseInt((props.score / props.maxPoints) * 100) + "%"
-	);
 	const barStyle = {
-		width: parseInt((props.score / props.maxPoints) * 100) + "%"
+		width: parseInt((props.score / props.maxPoints) * 100, 10) + "%"
 	};
 	return (
-		<label class="progressbar-wrapper">
+		<label className="progressbar-wrapper">
 			<FontAwesomeIcon icon="trophy" />
 			<div className="progressbar-container">
 				<div className="progressbar-bar" style={barStyle} />
 			</div>
-			{props.score}
+			<span>{props.score}</span>
 		</label>
 	);
 };

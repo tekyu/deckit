@@ -118,7 +118,7 @@ class Chat extends Component {
 					<input
 						onChange={this.messageHandler}
 						onKeyPress={e =>
-							e.charCode == 13 ? this.sendMessage(e) : null
+							e.charCode === 13 ? this.sendMessage(e) : null
 						}
 						type="text"
 						placeholder="Send your message"

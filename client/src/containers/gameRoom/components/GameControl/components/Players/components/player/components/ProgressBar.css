@@ -5,10 +5,13 @@
 .player-info .progressbar-wrapper {
 	display: flex;
 	align-items: center;
+	font-size: 12px;
+	opacity: 0.4;
 }
 
-.progressbar-wrapper i {
-	font-size: 12px;
+.player-info .progressbar-wrapper span {
+	font-size: 16px;
+	opacity: 0.8;
 }
 
 .progressbar-wrapper .progressbar-container {
