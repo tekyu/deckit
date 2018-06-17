@@ -26,15 +26,15 @@ const CreateModal = props => {
                 />
 
                 <label>
-                    Points: <span>{props.initialSize}</span>
+                    Maximum points: <span>{props.initialPoints}</span>
                 </label>
                 <input
                     type="range"
-                    onChange={props.changeSize}
+                    onChange={props.changePoints}
                     min="24"
-                    max=""
+                    max="128"
                     placeholder="Enter name for server"
-                    value={props.initialSize}
+                    value={props.initialPoints}
                 />
 
                 <label>Private?</label>

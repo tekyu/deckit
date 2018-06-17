@@ -1,0 +1,8 @@
+.gameroom-waiting-state {
+    height: 100px;
+    background: url("../../../../../../../assets/states/undraw_chilling_8tii.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: 50% 50%;
+    margin: 20px 0;
+}

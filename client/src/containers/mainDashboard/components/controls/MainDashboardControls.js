@@ -12,6 +12,7 @@ class MainDashboardControls extends Component {
         roomFull: false,
         serverName: "",
         serverSize: 6,
+        serverPoints: 48,
         serverPrivate: false,
 
         serverId: ""
@@ -30,6 +31,9 @@ class MainDashboardControls extends Component {
     };
     changeServerSize = event => {
         this.setState({ serverSize: +event.target.value });
+    };
+    changeServerPoints = event => {
+        this.setState({ serverPoints: +event.target.value });
     };
     changePrivateMode = event => {
         this.setState({ serverPrivate: event.target.value });
@@ -53,6 +57,7 @@ class MainDashboardControls extends Component {
         this.props.onCreateServer(this.props.socket, {
             name: this.state.serverName,
             size: this.state.serverSize,
+            maxPoints: this.state.serverPoints,
             private: this.state.serverPrivate
         });
     };
@@ -77,9 +82,11 @@ class MainDashboardControls extends Component {
                 <CreateModal
                     createServer={this.createServerHandler}
                     initialSize={this.state.serverSize}
+                    initialPoints={this.state.serverPoints}
                     initialMode={this.state.serverPrivate}
                     changeName={this.changeServerNameHandler}
                     changeSize={this.changeServerSize}
+                    changePoints={this.changeServerPoints}
                     changeMode={this.changePrivateMode}
                     closeHandler={this.showCreateModalHandler}
                 />
