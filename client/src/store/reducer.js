@@ -44,7 +44,6 @@ const reducer = (state = initialState, action) => {
             ...state,
             shouldRenderRoom: true
         }
-        
         case actionTypes.UPDATE_ROOM:
         console.log('[reducer.js] UPDATE_ROOM',action)
         return {
@@ -56,6 +55,9 @@ const reducer = (state = initialState, action) => {
                 ]
             },
         }
+        case actionTypes.SELECTED_CARD:
+        console.log('REDUCER SELECTED CARD');
+        return simpleState(state, {selectedCard:action.payload.data})
         default: 
         return state;
     }

@@ -1,4 +1,14 @@
+.cards-wrapper {
+    height: 40vh;
+    padding: 10px;
+    box-sizing: border-box;
+}
+.cards-wrapper.cards-wrapper-hide {
+}
+
 .cards-container {
-    display:flex;
-    height:300px;
+    display: inline-flex;
+    justify-content: center;
+    /* background: #fff; */
+    width: 100%;
 }

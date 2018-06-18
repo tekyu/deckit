@@ -5,6 +5,7 @@ export const UPDATE_SERVERS = 'UPDATE_SERVERS';
 export const CREATE_ROOM = 'CREATE_ROOM';
 export const JOIN_ROOM = 'JOIN_ROOM';
 export const UPDATE_ROOM = 'UPDATE_ROOM';
+export const SELECTED_CARD = 'SELECTED_CARD';
 // export const INITIAL_PLAYERS = 'INITIAL_PLAYERS';
 
 // export const saveInitialPlayers = players => {

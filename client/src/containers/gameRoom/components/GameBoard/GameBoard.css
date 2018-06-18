@@ -1,9 +1,12 @@
 .gameboard {
-    width:100%;
+    width: 100%;
     position: relative;
-    margin-top:4rem;
+    /* margin-top: 4rem; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 .gameboard-wrapper {
-    width:500px;
-    margin:0 auto;
+    width: 500px;
+    margin: 0 auto;
 }

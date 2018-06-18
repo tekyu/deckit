@@ -1,0 +1,125 @@
+.gameroom-controls .chat-container .chat-header {
+	font-family: "Lobster", cursive;
+	font-size: 16px;
+	color: rgb(8, 9, 69);
+	/* border-bottom:1px solid rgba(128,128,128,.2); */
+	padding: 0 10px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0px 2px 12px -8px #000;
+}
+
+.gameroom-controls .chat-hide {
+	cursor: pointer;
+	user-select: none;
+}
+
+.chat-hidden {
+	height: 40px !important;
+	max-height: 40px !important;
+	min-height: unset !important;
+}
+.chat-hidden .chat-body {
+	display: none !important;
+}
+.chat-hidden .chat-footer {
+	display: none !important;
+}
+
+.gameroom-controls .chat-container {
+	display: flex;
+	flex-direction: column;
+	min-height: 30vh;
+	height: 30vh;
+	background: #fff;
+	margin-top: 10px;
+	box-shadow: 0px 2px 8px -2px #000;
+}
+
+.gameroom-controls .chat-container .chat-header span {
+	font-size: 16px;
+	display: block;
+	margin-left: auto;
+}
+
+.gameroom-controls .chat-container .chat-body {
+	height: 100%;
+	background: rgba(128, 128, 128, 0.1);
+	overflow-y: auto;
+	overflow-x: hidden;
+	box-sizing: border-box;
+}
+
+.gameroom-controls .chat-container .chat-footer {
+	height: 50px;
+	display: flex;
+	background: rgba(128, 128, 128, 0.1);
+}
+
+.gameroom-controls .chat-container .chat-footer input {
+	width: 100%;
+	background: transparent;
+	border: 0;
+	margin: 4px;
+	border-radius: 20px;
+	background: #fff;
+	border: 1px solid rgba(128, 128, 128, 0.2);
+	box-sizing: border-box;
+	padding: 10px;
+	outline: none;
+}
+
+.gameroom-controls .chat-container .chat-footer input::placeholder {
+	font-size: 14px;
+	font-style: italic;
+	font-weight: 500;
+	letter-spacing: 0.05em;
+}
+
+.gameroom-controls .chat-container .chat-footer button {
+	padding: 0 10px;
+	/* background:rgb(255, 70, 118); */
+	background: transparent;
+	cursor: pointer;
+	border: 0;
+	font-size: 18px;
+	color: rgb(255, 70, 118);
+}
+
+.gameroom-controls .chat-message-wrapper {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 0 10px;
+	margin: 10px 0;
+	display: flex;
+}
+.gameroom-controls .chat-content {
+	width: 70%;
+}
+
+.gameroom-controls .chat-content label {
+	display: block;
+	color: rgba(128, 128, 128);
+	padding: 0 10px;
+	font-size: 12px;
+	margin-bottom: 2px;
+}
+
+.gameroom-controls .chat-reversed label {
+	text-align: right;
+}
+
+.gameroom-controls .chat-content p {
+	padding: 7px 12px;
+	border-radius: 20px;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	box-shadow: 0px 2px 8px -4px #000;
+	color: #fff;
+}
+
+.gameroom-controls .chat-reversed {
+	margin-left: auto;
+}
