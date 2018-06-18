@@ -1,0 +1,36 @@
+.gameboard-header .hint-container {
+    margin-top: 4px;
+    display: flex;
+    width: 100%;
+    align-content: space-between;
+    justify-content: center;
+}
+
+.gameboard-header .hint-container input[type="text"] {
+    display: block;
+    border: 0;
+    width: 50%;
+    padding: 7px 24px;
+    outline: none;
+    background: #f3f3f3;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+}
+
+.gameboard-header .hint-container button {
+    font-family: "Lobster", cursive;
+    background: transparent;
+    box-sizing: border-box;
+    border: 2px solid rgb(255, 70, 118);
+    color: rgb(8, 9, 69);
+    border-radius: 0;
+    padding: 7px 12px;
+    width: 160px;
+    position: relative;
+    cursor: pointer;
+    display: block;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+}

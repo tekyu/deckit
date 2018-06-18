@@ -20,7 +20,7 @@ const CreateModal = props => {
                     type="range"
                     onChange={props.changeSize}
                     min="2"
-                    max="10"
+                    max="7"
                     placeholder="Enter name for server"
                     value={props.initialSize}
                 />

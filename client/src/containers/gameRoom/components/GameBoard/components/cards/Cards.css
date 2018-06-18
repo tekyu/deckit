@@ -3,8 +3,12 @@
     padding: 10px;
     box-sizing: border-box;
 }
+.cards-wrapper.cards-wrapper-hide {
+}
 
 .cards-container {
-    display: flex;
-    background: #fff;
+    display: inline-flex;
+    justify-content: center;
+    /* background: #fff; */
+    width: 100%;
 }

@@ -5,134 +5,128 @@ import GameBoardHintInput from "./components/GameBoardHintInput";
 import GameBoardLabel from "./components/GameBoardLabel";
 
 class Header extends Component {
-	state = {
-		hintInput: null,
-		state: null,
-		amIHinter: false,
-		shouldShowHintInput: false,
-		hintFromRoom: null
-	};
+    state = {
+        hintInput: null,
+        state: null,
+        amIHinter: false,
+        shouldShowHintInput: false,
+        hintFromRoom: null,
+        hinter: null,
+        stage: null
+    };
 
-	onHintInputHandler = event => {
-		this.setState({ hintInput: event.target.value });
-	};
+    onHintInputHandler = event => {
+        this.setState({ hintInput: event.target.value });
+    };
 
-	onSendHint = () => {
-		let _data = {
-			hint: this.state.hintInput,
-			selectedCard: this.props.selectedCard,
-			room: this.props.roomInfo.id
-		};
-		this.props.socket.emit("sendHint", _data);
-		this.setState({ shouldShowHintInput: false });
-	};
+    onSendHint = () => {
+        let _data = {
+            hint: this.state.hintInput,
+            selectedCard: this.props.selectedCard,
+            room: this.props.roomInfo.id
+        };
+        this.props.socket.emit("sendHint", _data);
+        this.setState({ shouldShowHintInput: false });
+    };
 
-	static getDerivedStateFromProps(newProps, oldState) {
-		if (!newProps.roomInfo || !newProps.socket) {
-			return {
-				...oldState
-			};
-		}
+    static getDerivedStateFromProps(newProps, oldState) {
+        if (!newProps.roomInfo || !newProps.socket) {
+            return {
+                ...oldState
+            };
+        }
 
-		return {
-			...oldState,
-			stage: newProps.roomInfo.stage,
-			amIHinter:
-				newProps.roomInfo.hinter === newProps.socket.id ? true : false,
-			shouldShowHintInput: newProps.selectedCard
-				? true
-				: oldState.shouldShowHintInput,
-			hintFromRoom: newProps.roomInfo.hint
-		};
-	}
-	render() {
-		let label = "Wait for a hint";
+        let hinter = newProps.roomInfo.playersConnected.filter(player => {
+            return player.id === newProps.roomInfo.hinter;
+        })[0];
 
-		if (this.state.amIHinter) {
-			if (this.state.stage === "hintable") {
-				if (this.props.selectedCard) {
-					label = "Think about your hint";
-				} else {
-					label = "Pick a card first";
-				}
-			} else if (this.state.stage === "pickable") {
-				label = `Your hint: ${
-					this.state.hintFromRoom
-				}. Wait for others`;
-			}
-		} else {
-			let _labelContent = this.props.me.picked
-				? "Wait for others"
-				: "Pick a card";
-			label = `Hint: ${this.state.hintFromRoom}. ${_labelContent}`;
-		}
+        return {
+            ...oldState,
+            stage: newProps.roomInfo.stage,
+            amIHinter:
+                newProps.roomInfo.hinter === newProps.socket.id ? true : false,
+            shouldShowHintInput: newProps.selectedCard
+                ? true
+                : oldState.shouldShowHintInput,
+            hintFromRoom: newProps.roomInfo.hint,
+            hinter: hinter
+        };
+    }
+    render() {
+        let label = "Wait for a hint";
+        if (this.state.amIHinter) {
+            if (this.state.stage === "hintable") {
+                if (!this.props.selectedCard) {
+                    label = <label>Pick a card first</label>;
+                } else {
+                    label = <label>Think about your hint</label>;
+                }
+            } else {
+                label = <label>Wait for others</label>;
+            }
+        } else {
+            if (this.state.stage === "hintable") {
+                label = (
+                    <label>
+                        Wait for{" "}
+                        {this.state.hinter
+                            ? this.state.hinter.nickname
+                            : "player"}{" "}
+                        to pick a hint
+                    </label>
+                );
+            } else if (this.state.stage === "pickable") {
+                if (!this.props.me.picked) {
+                    label = <label>Pick your card</label>;
+                } else {
+                    label = <label>Wait for others</label>;
+                }
+            } else if (this.state.stage === "roundable") {
+                if (!this.props.me.picked) {
+                    label = <label>Pick best fitting card to hint</label>;
+                } else {
+                    label = <label>Wait for others</label>;
+                }
+            }
+        }
 
-		return (
-			<div className="gameboard-header">
-				<GameBoardLabel>{label}</GameBoardLabel>
+        return (
+            <div className="gameboard-header-container">
+                <div className="gameboard-header">
+                    {this.state.hintFromRoom ? (
+                        <label>
+                            {this.state.amIHinter ? "Your" : ""} Hint:{" "}
+                            {this.state.hintFromRoom}
+                        </label>
+                    ) : null}
+                    <GameBoardLabel>{label}</GameBoardLabel>
 
-				{this.state.stage === "hintable" &&
-				this.state.amIHinter &&
-				this.state.shouldShowHintInput ? (
-					<GameBoardHintInput
-						hintInput={this.onHintInputHandler}
-						sendHint={this.onSendHint}
-					/>
-				) : null}
-			</div>
-		);
-	}
+                    {this.state.stage === "hintable" &&
+                    this.state.amIHinter &&
+                    this.state.shouldShowHintInput ? (
+                        <GameBoardHintInput
+                            hintInput={this.onHintInputHandler}
+                            sendHint={this.onSendHint}
+                        />
+                    ) : null}
+                </div>
+            </div>
+        );
+    }
 }
 
 const mapStateToProps = state => {
-	return {
-		selectedCard: state.selectedCard,
-		roomInfo: state.roomInfo
-	};
+    return {
+        selectedCard: state.selectedCard,
+        roomInfo: state.roomInfo
+    };
 };
 
 const mapDispatchToProps = dispatch => {
-	return {
-		// onSelectedCard: (data)=> dispatch({type:actionCreators.SELECTED_CARD,payload: {data}}),
-	};
+    return {};
 };
 
 export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(Header);
-
-// const Header = (props) => {
-// console.log('[Header.js]',props);
-// let header = <div>Wait for a hint</div>;
-// let _hintInput = (<div>
-//     Now set a hint
-//     <div className="hint-container">
-//     <input type="text" placeholder="Enter your hint here" onChange={props.onHintInputHandler}/>
-//     <button onClick={props.onSendHint}>Set hint</button>
-//     </div>
-//     </div>);
-
-//     if (props.headerState.amIHinter) {
-//         if (props.headerState.stage === 'hintable') {
-//             if (props.headerState.enableHint) {
-//                 //show input
-//                 header = _hintInput;
-//             } else {
-//                 //pick card
-//                 header = <div>Pick a card first</div>;
-//             }
-//         } else if (props.headerState.stage === 'pickable') {
-//             //wait for others
-//             header = <div><label>Your hint: {props.headerState.hint}</label><p>Wait for others</p></div>
-//         }
-//     } else if (props.headerState.stage === 'pickable') {
-//         //pick card
-//         console.log('TYKURWO',props);
-//         header = <div><label>Hint: {props.headerState.hint}</label><p>{props.headerState.picked?'Wait for others':'Pick a card'}</p></div>;
-//     }
-
-//     return header;
-// };
-
-// export default Header;

@@ -4,82 +4,87 @@ import Card from "../cards/components/Card";
 import "./CardBoard.css";
 
 class CardBoard extends Component {
-	state = {
-		cards: [],
-		reassure: false,
-		selectedCard: null
-	};
+    state = {
+        cards: [],
+        reassure: false,
+        selectedCard: null,
+        stage: null
+    };
 
-	onClickedHandler = id => {
-		this.setState({
-			reassure: !this.state.reassure,
-			selectedCard: id === this.state.selectedCard ? null : id
-		});
-	};
+    onClickedHandler = id => {
+        this.setState({
+            reassure: !this.state.reassure,
+            selectedCard: id === this.state.selectedCard ? null : id
+        });
+    };
 
-	onReassureHandler = data => {
-		this.props.socket.emit("sendRoundCard", {
-			pickedCard: this.state.selectedCard,
-			room: this.props.roomInfo.id
-		});
-	};
+    onReassureHandler = data => {
+        this.props.socket.emit("sendRoundCard", {
+            pickedCard: this.state.selectedCard,
+            room: this.props.roomInfo.id
+        });
+    };
 
-	static getDerivedStateFromProps(newProps, oldState) {
-		if (!newProps.roomInfo || !newProps.socket) {
-			return {
-				...oldState
-			};
-		}
+    static getDerivedStateFromProps(newProps, oldState) {
+        if (!newProps.roomInfo || !newProps.socket) {
+            return {
+                ...oldState
+            };
+        }
 
-		return {
-			...oldState,
-			cards: newProps.roomInfo.pickedCards
-				? newProps.roomInfo.pickedCards
-				: [],
-			stage: newProps.roomInfo.stage,
-			amIHinter:
-				newProps.roomInfo.hinter === newProps.socket.id ? true : false
-		};
-	}
+        return {
+            ...oldState,
+            cards: newProps.roomInfo.pickedCards
+                ? newProps.roomInfo.pickedCards
+                : [],
+            stage: newProps.roomInfo.stage,
+            amIHinter:
+                newProps.roomInfo.hinter === newProps.socket.id ? true : false
+        };
+    }
 
-	render() {
-		let cards = null;
-		if (this.state.cards.length > 0) {
-			let cardProps = {
-				onReassureHandler: this.onReassureHandler,
-				reassure: this.state.selectedCard
-			};
+    render() {
+        let cards = null;
+        if (this.state.cards.length > 0) {
+            let cardProps = {
+                onReassureHandler: this.onReassureHandler,
+                reassure: this.state.selectedCard
+            };
 
-			cards = this.state.cards.map(card => {
-				cardProps.data = card.card;
-				cardProps.key = card.id;
+            cards = this.state.cards.map(card => {
+                cardProps.data = card.card;
+                cardProps.key = card.id;
 
-				if (this.state.stage === "roundable" && !this.state.amIHinter) {
-					cardProps.onClickedHandler = this.onClickedHandler;
-				}
-				return <Card {...cardProps} />;
-			});
-		}
+                if (this.state.stage === "roundable" && !this.state.amIHinter) {
+                    cardProps.onClickedHandler = this.onClickedHandler;
+                }
+                return <Card {...cardProps} />;
+            });
+        }
 
-		return (
-			<div className="cardboard-wrapper">
-				<div className="cardboard-container">{cards}</div>
-			</div>
-		);
-	}
+        let cardboardWrapperClasses = ["cardboard-wrapper"];
+        if (this.state.stage === "roundable") {
+            cardboardWrapperClasses.push("cardboard-wrapper-grow");
+        }
+        return (
+            <div className={cardboardWrapperClasses.join(" ")}>
+                <div className="cardboard-container">{cards}</div>
+            </div>
+        );
+    }
 }
 
 const mapStateToProps = state => {
-	return {
-		roomInfo: state.roomInfo
-	};
+    return {
+        roomInfo: state.roomInfo
+    };
 };
 
 const mapDispatchToProps = dispatch => {
-	return {};
+    return {};
 };
 
 export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(CardBoard);
