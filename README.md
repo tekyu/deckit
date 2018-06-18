@@ -1,3 +1,3 @@
 # Web implementation of "dixit" boardgame
-Written in React & Socket.io
-Game available at http://deckit-online.com
+_Written using React & Socket.io_
+### Game available at http://deckit-online.com
