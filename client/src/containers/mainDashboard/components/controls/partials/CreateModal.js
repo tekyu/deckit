@@ -3,6 +3,12 @@ import "./CreateModal.css";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 
 const CreateModal = props => {
+    let privateLabelStyle = null;
+    if (props.serverPrivate) {
+        privateLabelStyle = {
+            background: "rgb(255, 70, 118)"
+        };
+    }
     return (
         <div id="create-server-modal">
             <FontAwesomeIcon
@@ -20,7 +26,7 @@ const CreateModal = props => {
                     type="range"
                     onChange={props.changeSize}
                     min="2"
-                    max="7"
+                    max="8"
                     placeholder="Enter name for server"
                     value={props.initialSize}
                 />
@@ -31,14 +37,25 @@ const CreateModal = props => {
                 <input
                     type="range"
                     onChange={props.changePoints}
-                    min="24"
-                    max="128"
+                    min="12"
+                    max="64"
                     placeholder="Enter name for server"
                     value={props.initialPoints}
                 />
-
-                <label>Private?</label>
-                <input type="checkbox" onChange={props.changeMode} />
+                <div className="private-room-container">
+                    <label>Private?</label>
+                    <div className="private-room-checkbox">
+                        <label
+                            htmlFor="private-room"
+                            style={privateLabelStyle}
+                        />
+                        <input
+                            type="checkbox"
+                            onChange={props.changeMode}
+                            id="private-room"
+                        />
+                    </div>
+                </div>
                 <button onClick={props.createServer}>Create server</button>
             </div>
         </div>

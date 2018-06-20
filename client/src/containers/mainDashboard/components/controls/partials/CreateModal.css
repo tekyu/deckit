@@ -150,9 +150,6 @@ input[type="range"]::-ms-fill-lower {
     display: none;
 } */
 
-#create-server-modal input[type="checkbox"] {
-}
-
 #create-server-modal button {
     font-family: "Lobster", cursive;
     background: transparent;
@@ -169,4 +166,26 @@ input[type="range"]::-ms-fill-lower {
     margin-top: 20px;
     font-size: 24px;
     transition: all 0.3s ease-in-out;
+}
+
+.private-room-container {
+    margin-top: 20px;
+    display: flex;
+}
+.private-room-checkbox {
+    display: flex;
+    margin-left: 20px;
+}
+.private-room-checkbox label {
+    cursor: pointer;
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    box-sizing: border-box;
+    border: 2px solid rgb(255, 70, 118);
+    position: relative;
+}
+
+.private-room-checkbox input[type="checkbox"] {
+    display: none;
 }

@@ -24,7 +24,7 @@ const Card = props => {
         };
     }
     let cardImgStyle = {
-        "background-image": `url(${props.data.img})`
+        backgroundImage: `url(${props.data.img})`
     };
     return (
         <div
