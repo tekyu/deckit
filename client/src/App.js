@@ -12,7 +12,7 @@ import fontawesome from "@fortawesome/fontawesome";
 import FontAwesomeIcons from "./misc/icons/icons";
 fontawesome.library.add(FontAwesomeIcons);
 
-const socket = io("http://node.deckit-online.com:3011");
+const socket = io("http://localhost:3011");
 class App extends Component {
     state = {
         ls: null,

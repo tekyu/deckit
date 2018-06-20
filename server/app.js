@@ -8,25 +8,42 @@ server.listen(port, () => console.log(`Server listening on port ${port}`));
 // app.get('/', function(req, res){
 // 	res.sendFile(__dirname + '/index.html');
 // });
-const Player = require("./src/models/Player");
+// const Player = require("./src/models/Player");
 
 const chalk = require("chalk");
 
 const UUID = require("node-uuid");
 const shortID = require("shortid");
 const randomColor = require("random-color");
-
+const request = require("request");
 // const memu = require('./src/utils/memory-usage');
 
 //check cards url
-const cards = require("./src/cards/cards");
-const deck = cards.cards;
+const cardsFromRemote = require("./src/cards/cards").cards;
+
 const roomLimit = 7;
 const waitingRoom = "wtngrm";
 
 io.deckitRooms = {
     public: {},
     private: {}
+};
+/**
+ * @description Get cards from cdn
+ * @returns {Promise} Promise with array of cards on resolve and error on reject
+ */
+const getCardsFromServer = () => {
+    return new Promise((resolve, reject) => {
+        request("http://deckit.patrykrosiak.pl/cards.json", function(
+            error,
+            response,
+            body
+        ) {
+            // console.log("error:", error); // Print the error if one occurred and handle it
+            // console.log("statusCode:", response && response.statusCode); // Print the response status code if a response was received
+            error ? reject(error) : resolve(JSON.parse(body));
+        });
+    });
 };
 
 /**
@@ -121,7 +138,7 @@ const findServer = id => {
 const removeFromRoom = (room, id) => {
     return new Promise((resolve, reject) => {
         try {
-            if (!room) {
+            if (!room || room === waitingRoom) {
                 const connectedPlayers = io.sockets.adapter.rooms[
                     waitingRoom
                 ].playersConnected.filter(player => {
@@ -131,6 +148,7 @@ const removeFromRoom = (room, id) => {
                 io.sockets.adapter.rooms[
                     waitingRoom
                 ].playersConnected = connectedPlayers;
+
                 resolve(io.sockets.adapter.rooms[waitingRoom]);
             } else {
                 findServer(room)
@@ -140,6 +158,7 @@ const removeFromRoom = (room, id) => {
                                 return player.id !== id;
                             }
                         );
+
                         resolve(room);
                     })
                     .catch(rej => {
@@ -183,6 +202,31 @@ const pushToWaitingRoom = player => {
     });
 };
 
+/**
+ * @description Shuffling function using Fisher-Yates Shuffle algorithm
+ * @param {Array} array Unshuffled array
+ * @returns {Array} Shuffled array
+ */
+function shuffle(array) {
+    var currentIndex = array.length,
+        temporaryValue,
+        randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+}
+
 io.on("connection", socket => {
     socket.uuid = UUID();
     socket.gameProperties = {};
@@ -216,7 +260,8 @@ io.on("connection", socket => {
             picked: false,
             pickedCard: null,
             score: 0,
-            deck: []
+            deck: [],
+            myCard: null
         });
         data.waiting = true;
         data.allReady = false;
@@ -343,7 +388,8 @@ io.on("connection", socket => {
                     picked: false,
                     pickedCard: null,
                     score: 0,
-                    deck: []
+                    deck: [],
+                    myCard: null
                 });
                 socket.emit("roomJoined", room);
                 console.log(chalk.bgBlue("[emitting] roomJoined"));
@@ -399,32 +445,43 @@ io.on("connection", socket => {
         removeFromRoom(id, socketId)
             .then(res => {
                 io.in(id).emit("updateRoom", res);
-                console.log(chalk.bgBlue("[emitting] updateRoom"));
-
-                if (res.playersConnected.length === 0) {
-                    removeRoomFromPool(id)
-                        .then(res2 => {
-                            io.in(waitingRoom).emit(
-                                "updatedServers",
-                                io.deckitRooms.public
-                            );
-                            console.log(
-                                chalk.bgBlue("[emitting] updatedServers")
-                            );
-                        })
-                        .catch(rej => {
-                            throw "Cannot remove room from pool of existing rooms";
-                        });
-                } else {
+                console.log(chalk.bgBlue("[emitting] updateRoom"), res);
+                if (!id || id === waitingRoom) {
                     io.in(waitingRoom).emit(
-                        "updatedServers",
-                        io.deckitRooms.public
+                        "playersInWaitingRoom",
+                        res.playersConnected
                     );
-                    console.log(chalk.bgBlue("[emitting] updatedServers"));
+                    console.log(
+                        chalk.bgBlue("[emitting] playersInWaitingRoom")
+                    );
+                } else {
+                    if (res.playersConnected.length === 0) {
+                        removeRoomFromPool(id)
+                            .then(res2 => {
+                                io.in(waitingRoom).emit(
+                                    "updatedServers",
+                                    io.deckitRooms.public
+                                );
+                                console.log(
+                                    chalk.bgBlue("[emitting] updatedServers")
+                                );
+                            })
+                            .catch(rej => {
+                                throw "Cannot remove room from pool of existing rooms";
+                            });
+                    } else {
+                        io.in(waitingRoom).emit(
+                            "updatedServers",
+                            io.deckitRooms.public
+                        );
+                        console.log(chalk.bgBlue("[emitting] updatedServers"));
+                    }
                 }
             })
             .catch(rej => {
+                console.log("catch", id, waitingRoom);
                 if (id !== waitingRoom) {
+                    console.log("catch2", id, waitingRoom);
                     removeRoomFromPool(rej)
                         .then(res => {
                             socket.emit("updatedServers", res.public);
@@ -461,7 +518,6 @@ io.on("connection", socket => {
                     room => {
                         room.started = true;
                         room.waiting = false;
-                        room.initialCards = [...deck];
                         startGame(room);
                     },
                     1000,
@@ -483,28 +539,55 @@ io.on("connection", socket => {
      * @param {Object} room Room object
      */
     startGame = room => {
-        room.deckSize = (() => {
-            if (room.playersConnected.length > 3) {
-                return 5;
-            } else {
-                // return 7;
-                return 5;
-            }
-        })();
-        distributeCards(room)
+        room.deckSize = 5;
+        getCardsFromServer()
             .then(res => {
-                res.round = 0;
-                res.hinter = res.playersConnected[room.round].id;
-                res.hint = null;
-                res.stage = "hintable";
-                io.in(res.id).emit("updateRoom", res);
-                console.log(
-                    chalk.bgBlue("[emitting] updateRoom on setTimeout")
-                );
+                room.initialCards = [...res];
+                distributeCards(room)
+                    .then(res => {
+                        res.round = 0;
+                        res.hinter = res.playersConnected[room.round].id;
+                        res.hint = null;
+                        res.stage = "hintable";
+                        io.in(res.id).emit("updateRoom", res);
+                        console.log(
+                            chalk.bgBlue("[emitting] updateRoom on setTimeout")
+                        );
+                    })
+                    .catch(rej => {
+                        throw "Cannot distribute cards";
+                    });
             })
             .catch(rej => {
-                throw "Cannot distribute cards";
+                room.initialCards = [...cardsFromRemote];
+                console.log(chalk.bgRed("Using cards from remote"), rej);
+                distributeCards(room)
+                    .then(res => {
+                        res.round = 0;
+                        res.hinter = res.playersConnected[room.round].id;
+                        res.hint = null;
+                        res.stage = "hintable";
+                        io.in(res.id).emit("updateRoom", res);
+                        console.log(
+                            chalk.bgBlue("[emitting] updateRoom on setTimeout")
+                        );
+                    })
+                    .catch(rej => {
+                        throw "Cannot distribute cards";
+                    });
+
+                // startGame(room);
+                console.log(chalk.bgRed("Getting cards from remote server"));
             });
+
+        // room.deckSize = (() => {
+        //     if (room.playersConnected.length > 3) {
+        //         return 5;
+        //     } else {
+        //         // return 7;
+        //         return 5;
+        //     }
+        // })();
     };
 
     /**
@@ -588,8 +671,10 @@ io.on("connection", socket => {
                 hasAllPlayersPicked(room.playersConnected, room.hinter)
             ) {
                 room.pickedCards = getPickedCards(room);
+                room.pickedCards = shuffle(room.pickedCards);
                 room.playersConnected = resetPlayersPicked(
-                    room.playersConnected
+                    room.playersConnected,
+                    "all"
                 );
                 room.stage = "roundable";
             }
@@ -637,8 +722,12 @@ io.on("connection", socket => {
                         room.round = room.round + 1;
                         room.hinter = getNextHinter(room);
                         room.hint = null;
-                        room.playersConnected = resetPlayersPicked(
+                        room.playersConnected = movePickedToMine(
                             room.playersConnected
+                        );
+                        room.playersConnected = resetPlayersPicked(
+                            room.playersConnected,
+                            "picked"
                         );
                         room = distributeCards2(room);
                         room.roundCards = null;
@@ -729,16 +818,31 @@ io.on("connection", socket => {
     };
 
     /**
+     * @description Move picked card in stage 'pickable' to myCard
+     * @param {Object} players Array of connected players
+     * @returns {Object} Object of connected players
+     */
+    const movePickedToMine = players => {
+        return players.map(player => {
+            return {
+                ...player,
+                myCard: player.pickedCard
+            };
+        });
+    };
+
+    /**
      * @description Change each player's property picked to false
      * @param {Object} players Array of connected players
      * @returns {Object} Object of connected players
      */
-    const resetPlayersPicked = players => {
+    const resetPlayersPicked = (players, mod) => {
         return players.map(player => {
             return {
                 ...player,
                 picked: false,
-                pickedCard: null
+                pickedCard: null,
+                myCard: mod === "all" ? null : player.myCard
             };
         });
     };
@@ -764,9 +868,9 @@ io.on("connection", socket => {
      * @returns {Object} Room.playersConnected
      */
     const calculateRoundPoints = room => {
-        let hintedCard = room.hintCard;
-        let hinter = room.hinter;
-
+        const hintedCard = room.hintCard;
+        const hinter = room.hinter;
+        const hinterPlayer = findPlayer(room.playersConnected, hinter);
         /**
          * RULES
          * If all players find the hinter card
@@ -778,7 +882,7 @@ io.on("connection", socket => {
          */
 
         // if all players find the hinter card
-        let cardsEqualToHinterCard = room.roundCards.filter(card => {
+        const cardsEqualToHinterCard = room.roundCards.filter(card => {
             return card.card === hintedCard.id;
         });
 
@@ -816,23 +920,12 @@ io.on("connection", socket => {
                     _tempRoom.playersConnected,
                     card.card
                 );
-                console.log(
-                    "ownerofhtecard",
-                    _tempRoom.roundCards,
-                    ownerOfTheCard,
-                    card
-                );
-                if (ownerOfTheCard.id !== hinter) {
-                    ownerOfTheCard.score = ownerOfTheCard.score + 1;
-                }
+                // if (ownerOfTheCard.id !== hinter) {
+                //     ownerOfTheCard.score = ownerOfTheCard.score + 1;
+                // }
                 if (ownerOfTheCard.id !== hinter) {
                     ownerOfTheCard.score = +(ownerOfTheCard.score + 1);
                 }
-                console.log(
-                    chalk.bgYellow("temproom?"),
-                    _tempRoom.playersConnected,
-                    ownerOfTheCard
-                );
                 _tempRoom.playersConnected = updatePlayer(
                     _tempRoom.playersConnected,
                     ownerOfTheCard
@@ -847,36 +940,33 @@ io.on("connection", socket => {
             );
         } else {
             const _tempRoom = { ...room };
-            console.log(
-                "ROOMKdsf___________________________________",
-                _tempRoom.playersConnected
-            );
             _tempRoom.roundCards.forEach(card => {
                 const ownerOfTheCard = findPlayerByCardId(
                     _tempRoom.playersConnected,
                     card.card
                 );
-                console.log(
-                    "ownerofhtecard2",
-                    _tempRoom.playersConnected,
-                    ownerOfTheCard,
-                    card
-                );
                 if (ownerOfTheCard.id !== hinter) {
                     ownerOfTheCard.score = ownerOfTheCard.score + 1;
                 }
-                console.log(
-                    chalk.bgYellow("temproom?"),
+                _tempRoom.playersConnected = updatePlayer(
                     _tempRoom.playersConnected,
                     ownerOfTheCard
                 );
+            });
+            cardsEqualToHinterCard.forEach(card => {
+                hinterPlayer.score = hinterPlayer.score + 3;
+                let ownerOfTheCard = findPlayerByCardId(
+                    _tempRoom.playersConnected,
+                    card.card
+                );
+                ownerOfTheCard.score = ownerOfTheCard.score + 3;
 
                 _tempRoom.playersConnected = updatePlayer(
                     _tempRoom.playersConnected,
                     ownerOfTheCard
                 );
-                room = { ...room, ..._tempRoom };
             });
+            room = { ...room, ..._tempRoom };
             console.log(
                 chalk.bgMagenta(
                     "normal round score, hinter: 3pts, players who found: 3pts + bonus 1pts ea., others: bonus 1pts ea."
@@ -894,23 +984,9 @@ io.on("connection", socket => {
      * @returns {Array} Updated room.playersConnected
      */
     const updatePlayer = (players, player) => {
-        console.log("updateplayer", players, player);
         const newPlayers = players.map(_player => {
-            console.log(
-                chalk.bgBlue("loop"),
-                player.id,
-                _player.id,
-                player.id === _player.id,
-                player.id === _player.id ? player : _player
-            );
-            if (player.id === _player.id) {
-                console.log("JEST KURWA TKAIE SAMO", player);
-            } else {
-                console.log("NIE JEST KURWA TKAIE SAMO", _player);
-            }
             return player.id === _player.id ? player : _player;
         });
-        console.log(chalk.bgCyan("updateplayer"), players, newPlayers);
         return newPlayers;
     };
 
@@ -920,7 +996,6 @@ io.on("connection", socket => {
      * @param {String} cardId Id of a selected card in stage 'roundable'
      */
     const findPlayerByCardId = (players, cardId) => {
-        console.log(chalk.bgMagenta("ddddddd"), players, cardId);
         const foundPlayer = players.filter(player => {
             return player.pickedCard === cardId;
         });
@@ -982,6 +1057,8 @@ io.on("connection", socket => {
         socket.deckitRooms.forEach(room => {
             leaveServer(room, socket.id);
         });
+        // leaveServer(null, socket.id);
+
         // io
         // .in(waitingRoom)
         // .emit(

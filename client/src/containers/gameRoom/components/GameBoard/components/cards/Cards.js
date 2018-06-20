@@ -27,6 +27,11 @@ class Cards extends Component {
                 newProps.roomInfo.hinter === newProps.socket.id ? true : false
         };
     }
+    componentDidUpdate(prevProps) {
+        if (prevProps.roomInfo.stage === "roundable") {
+            this.props.onSelectedCard(null);
+        }
+    }
 
     onClickedHandler = id => {
         this.setState({

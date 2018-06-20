@@ -5,6 +5,7 @@ import "./GameRoom.css";
 import GameBoard from "./components/GameBoard/GameBoard";
 import WaitingModal from "./components/GameBoard/components/WaitingModal/WaitingModal";
 import GameControl from "./components/GameControl/GameControl";
+import WinnersModal from "./components/WinnersState/WinnersModal";
 class GameRoom extends Component {
     state = {
         playerReady: false,
@@ -18,6 +19,9 @@ class GameRoom extends Component {
             status: !this.state.playerReady
         });
         this.setState({ playerReady: !this.state.playerReady });
+    };
+    returnToWaitingRoomHandler = () => {
+        this.props.socket.emit("returnToWaitingRoom");
     };
 
     static getDerivedStateFromProps(newProps, oldState) {
@@ -46,7 +50,28 @@ class GameRoom extends Component {
 
     render() {
         let content = null;
-        if (this.props.roomInfo && this.props.roomInfo.waiting) {
+        let doesExistPlayerWithoutCards = null;
+        if (this.props.roomInfo) {
+            doesExistPlayerWithoutCards =
+                this.props.roomInfo.playersConnected.filter(player => {
+                    return player.deck.length === 0;
+                }).length > 0
+                    ? true
+                    : false;
+        }
+
+        if (
+            this.props.roomInfo &&
+            (this.props.roomInfo.stage === "winner" ||
+                (this.props.roomInfo.started && doesExistPlayerWithoutCards))
+        ) {
+            content = (
+                <WinnersModal
+                    winners={this.props.roomInfo.winners}
+                    returnToWaiting={() => this.returnToWaitingRoomHandler()}
+                />
+            );
+        } else if (this.props.roomInfo && this.props.roomInfo.waiting) {
             content = (
                 <WaitingModal
                     allReady={this.state.allReady}

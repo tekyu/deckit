@@ -39,15 +39,12 @@ class Header extends Component {
         let hinter = newProps.roomInfo.playersConnected.filter(player => {
             return player.id === newProps.roomInfo.hinter;
         })[0];
-
         return {
             ...oldState,
             stage: newProps.roomInfo.stage,
             amIHinter:
                 newProps.roomInfo.hinter === newProps.socket.id ? true : false,
-            shouldShowHintInput: newProps.selectedCard
-                ? true
-                : oldState.shouldShowHintInput,
+            shouldShowHintInput: newProps.selectedCard ? true : false,
             hintFromRoom: newProps.roomInfo.hint,
             hinter: hinter
         };

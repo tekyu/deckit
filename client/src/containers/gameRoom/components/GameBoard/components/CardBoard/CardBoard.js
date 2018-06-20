@@ -50,13 +50,17 @@ class CardBoard extends Component {
                 onReassureHandler: this.onReassureHandler,
                 reassure: this.state.selectedCard
             };
-
             cards = this.state.cards.map(card => {
                 cardProps.data = card.card;
                 cardProps.key = card.id;
-
-                if (this.state.stage === "roundable" && !this.state.amIHinter) {
+                if (
+                    this.state.stage === "roundable" &&
+                    !this.state.amIHinter &&
+                    this.props.me.id !== card.id
+                ) {
                     cardProps.onClickedHandler = this.onClickedHandler;
+                } else {
+                    cardProps.onClickedHandler = null;
                 }
                 return <Card {...cardProps} />;
             });
