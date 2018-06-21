@@ -26,7 +26,6 @@ class MainDashboardServers extends Component {
         if (Object.keys(this.props.servers).length > 0) {
             serverList = Object.keys(this.props.servers).reduce(
                 (servers, key) => {
-                    console.log("SERVERS", servers, this.props.servers[key]);
                     if (this.props.servers[key].started) {
                         return servers;
                     }

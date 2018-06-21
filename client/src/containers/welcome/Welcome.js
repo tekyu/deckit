@@ -31,6 +31,12 @@ class Welcome extends Component {
         });
     }
 
+    componentWillUnmount() {
+        this.props.socket.off("playerConnected", props => {
+            this.props.onStartGame(this.props.socket, props);
+        });
+    }
+
     render() {
         let initialComponent = (
             <div className="container welcome-container">
