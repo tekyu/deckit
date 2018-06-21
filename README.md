@@ -1,3 +1,5 @@
+
+![alt text](https://github.com/tekyu/deckit/blob/master/client/deckit.png "Deckit logo")
 # Web implementation of "dixit" game
 _Written using React & Socket.io, generated via create-react-app_
 
@@ -32,6 +34,7 @@ Go to server directory and start the server using `npm start`.
 - [ ] Write tests for frontend/backend (__VERY important__)
 - [ ] Refactor server side (__important__)
 - [ ] Refactor redux store (__important__)
+- [ ] Refactor create/join room modals as portals
 - [ ] Responsive version for mobile users
 - [ ] Implement pausing game (via vote system or owner of the room)
 - [ ] Read socket id from localStorage and reconnect to all paused rooms
