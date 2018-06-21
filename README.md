@@ -6,10 +6,8 @@ Available at http://deckit-online.com
 
 ## Local version
 It is possible to play locally, although internet connection is still required due to serving card images over cdn. 
-If you want to play offline, you need to change image url in 
-```
- /server/src/cards/cards.js
-```
+If you want to play offline, you need to change image url in `/server/src/cards/cards.js`
+
 
 ### Basic setup
 
