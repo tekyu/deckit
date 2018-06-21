@@ -4,149 +4,167 @@ import "./Chat.css";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 
 class Chat extends Component {
-	state = {
-		msg: "",
-		roomId: null,
-		messages: [],
-		showChat: true
-	};
+    state = {
+        msg: "",
+        roomId: null,
+        messages: [],
+        showChat: true,
+        myColor: null
+    };
 
-	hideChatHandler = () => {
-		this.setState({ showChat: !this.state.showChat });
-	};
+    hideChatHandler = () => {
+        this.setState({ showChat: !this.state.showChat });
+    };
 
-	messageHandler = e => {
-		this.setState({ msg: e.target.value });
-	};
+    messageHandler = e => {
+        this.setState({ msg: e.target.value });
+    };
 
-	sendMessage = e => {
-		if (this.state.msg) {
-			this.props.socket.emit(
-				"messageSentFromClient",
-				this.state.roomId,
-				this.state.msg
-			);
-			this.setState({
-				messages: [
-					...this.state.messages,
-					{
-						msg: this.state.msg,
-						id: this.props.socket.id,
-						color: this.props.socket.color,
-						nickname: this.props.socket.nickname,
-						mine: true
-					}
-				]
-			});
-			this.setState({ msg: "" });
-		}
-	};
+    sendMessage = e => {
+        if (this.state.msg) {
+            this.props.socket.emit(
+                "messageSentFromClient",
+                this.state.roomId,
+                this.state.msg
+            );
+            this.setState({
+                messages: [
+                    ...this.state.messages,
+                    {
+                        msg: this.state.msg,
+                        id: this.props.socket.id,
+                        color: this.state.myColor,
+                        nickname: this.props.socket.nickname,
+                        mine: true
+                    }
+                ]
+            });
+            this.setState({ msg: "" });
+        }
+    };
 
-	static getDerivedStateFromProps(newProps, oldState) {
-		return {
-			...oldState,
-			roomId:
-				newProps.roomInfo && newProps.roomInfo.id
-					? newProps.roomInfo.id
-					: oldState.roomId
-		};
-	}
+    static getDerivedStateFromProps(newProps, oldState) {
+        if (!newProps.roomInfo || !newProps.socket) {
+            return {
+                ...oldState
+            };
+        }
+        const me = newProps.roomInfo.playersConnected.filter(player => {
+            return player.id === newProps.socket.id;
+        })[0];
 
-	componentDidMount() {
-		this.props.socket.on("messageSentToRoom", data => {
-			this.setState({
-				messages: [
-					...this.state.messages,
-					{
-						msg: data.msg,
-						id: data.id,
-						color: data.color,
-						nickname: data.nickname,
-						mine: false
-					}
-				]
-			});
-		});
-	}
+        return {
+            ...oldState,
+            roomId:
+                newProps.roomInfo && newProps.roomInfo.id
+                    ? newProps.roomInfo.id
+                    : oldState.roomId,
+            myColor: me.color !== oldState.myColor ? me.color : oldState.myColor
+        };
+    }
 
-	componentDidUpdate() {
-		this.scrollToBottom();
-	}
+    componentDidMount() {
+        this.props.socket.on("messageSentToRoom", data => {
+            this.setState({
+                messages: [
+                    ...this.state.messages,
+                    {
+                        msg: data.msg,
+                        id: data.id,
+                        color: data.color,
+                        nickname: data.nickname,
+                        mine: false
+                    }
+                ]
+            });
+        });
+    }
 
-	scrollToBottom() {
-		const { chatList } = this.refs;
-		const scrollHeight = chatList.scrollHeight;
-		const height = chatList.clientHeight;
-		const maxScrollTop = scrollHeight - height;
-		chatList.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
-	}
+    componentDidUpdate() {
+        this.scrollToBottom();
+    }
 
-	render() {
-		let messagesToRender = null;
-		messagesToRender = this.state.messages.map((msg, i) => {
-			let style = {
-				background: msg.color
-			};
-			let classes = "chat-content";
-			if (msg.mine) {
-				classes += " chat-reversed";
-			}
-			return (
-				<div className="chat-message-wrapper" key={i}>
-					<div className={classes}>
-						<label>{msg.mine ? "You" : msg.nickname}</label>
-						<p style={style}>{msg.msg}</p>
-					</div>
-				</div>
-			);
-		});
+    scrollToBottom() {
+        const { chatList } = this.refs;
+        const scrollHeight = chatList.scrollHeight;
+        const height = chatList.clientHeight;
+        const maxScrollTop = scrollHeight - height;
+        chatList.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
+    }
 
-		let chatClasses = ["chat-container"];
-		if (!this.state.showChat) {
-			chatClasses.push("chat-hidden");
-		}
+    render() {
+        let messagesToRender = null;
+        messagesToRender = this.state.messages.map((msg, i) => {
+            const bubbleClasses = ["chat-message-bubble"];
+            const classes = ["chat-content"];
+            const bubbleStyle = {};
+            if (msg.mine) {
+                classes.push("chat-reversed");
+                bubbleClasses.push("bubble-reversed");
+            }
+            bubbleStyle.background = msg.color;
+            return (
+                <div className="chat-message-wrapper" key={i}>
+                    <div className={classes.join(" ")}>
+                        <label>{msg.mine ? "You" : msg.nickname}</label>
+                        <div className="chat-message-container">
+                            <div
+                                className={bubbleClasses.join(" ")}
+                                style={bubbleStyle}
+                            />
+                            <p>{msg.msg}</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        });
 
-		return (
-			<div className={chatClasses.join(" ")}>
-				<div className="chat-header">
-					<label>Chat</label>
-					<span className="chat-hide" onClick={this.hideChatHandler}>
-						Hide
-					</span>
-				</div>
-				<div className="chat-body" ref="chatList">
-					{messagesToRender}
-				</div>
-				<div className="chat-footer">
-					<input
-						onChange={this.messageHandler}
-						onKeyPress={e =>
-							e.charCode === 13 ? this.sendMessage(e) : null
-						}
-						type="text"
-						placeholder="Send your message"
-						value={this.state.msg}
-					/>
-					<button onClick={this.sendMessage}>
-						<FontAwesomeIcon icon="paper-plane" />
-					</button>
-				</div>
-			</div>
-		);
-	}
+        let chatClasses = ["chat-container"];
+        if (!this.state.showChat) {
+            chatClasses.push("chat-hidden");
+        }
+
+        return (
+            <div className={chatClasses.join(" ")}>
+                <div className="chat-header">
+                    <label>Chat</label>
+                    <span className="chat-hide" onClick={this.hideChatHandler}>
+                        Hide
+                    </span>
+                </div>
+                <div className="chat-body" ref="chatList">
+                    {messagesToRender}
+                </div>
+                <div className="chat-footer">
+                    <input
+                        onChange={this.messageHandler}
+                        onKeyPress={e =>
+                            e.charCode === 13 ? this.sendMessage(e) : null
+                        }
+                        type="text"
+                        placeholder="Send your message"
+                        value={this.state.msg}
+                    />
+                    <button onClick={this.sendMessage}>
+                        <FontAwesomeIcon icon="paper-plane" />
+                    </button>
+                </div>
+            </div>
+        );
+    }
 }
 
 const mapStateToProps = state => {
-	return {
-		roomInfo: state.roomInfo
-	};
+    return {
+        roomInfo: state.roomInfo
+    };
 };
 
 const mapDispatchToProps = dispatch => {
-	return {};
+    return {};
 };
 
 export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(Chat);

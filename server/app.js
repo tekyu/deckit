@@ -153,6 +153,7 @@ const removeFromRoom = (room, id) => {
             } else {
                 findServer(room)
                     .then(room => {
+                        room.hinter = getNextHinter(room);
                         room.playersConnected = room.playersConnected.filter(
                             player => {
                                 return player.id !== id;
