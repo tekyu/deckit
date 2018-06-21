@@ -1,4 +1,4 @@
-# Web implementation of "dixit" boardgame
+# Web implementation of "dixit" game
 _Written using React & Socket.io, generated via create-react-app_
 
 ## Online version 
@@ -12,9 +12,11 @@ If you want to play offline, you need to change image url in `/server/src/cards/
 ### Basic setup
 
 #### View
-After you enter main directory you need to open client folder you may need to install `serve` globally
+After you enter main directory you need to open client folder and build the production version
+You may also need to install `serve` globally
 ```
 cd client
+npm run build
 npm i serve -g
 ```
 Then you can serve current build using `serve -s build`. Local address should be copied to your clipboard.
