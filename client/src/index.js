@@ -20,5 +20,5 @@ const app = (
 
 window.setTimeout(() => {
     ReactDOM.render(app, document.getElementById("root"));
-}, 50000);
+}, 500);
 // registerServiceWorker();
