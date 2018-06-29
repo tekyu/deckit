@@ -8,6 +8,13 @@ const Player = props => {
         background: props.data.color
     };
     let hinter = null;
+    const indicatorClasses = ["player-indicator"];
+    if (props.data.picked) {
+        indicatorClasses.push("player-indicator-true");
+    } else {
+        indicatorClasses.push("player-indicator-false");
+    }
+
     if (props.hinter) {
         hinter = (
             <div className="hinter">
@@ -19,6 +26,7 @@ const Player = props => {
         <div className="player" player-id={props.data.id}>
             <div className="player-img" style={style}>
                 {hinter}
+                <div className={indicatorClasses.join(" ")} />
             </div>
             <div className="player-info">
                 <label>{props.data.nickname}</label>
