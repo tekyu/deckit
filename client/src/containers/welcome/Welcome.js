@@ -7,7 +7,8 @@ import sillyName from "sillyname";
 class Welcome extends Component {
     state = {
         nicknameInput: sillyName(),
-        lengthError: false
+        lengthError: false,
+        shouldShowRules: false
     };
 
     getNameHandler = event => {
@@ -17,6 +18,12 @@ class Welcome extends Component {
         } else {
             this.setState({ lengthError: true });
         }
+    };
+
+    rulesHandler = () => {
+        this.setState({ shouldShowRules: !this.state.shouldShowRules }, () => {
+            console.log("rulesh", this.state.shouldShowRules);
+        });
     };
 
     startGame = () => {
@@ -44,6 +51,8 @@ class Welcome extends Component {
                     lengthError={this.state.lengthError}
                     name={this.state.nicknameInput}
                     getNameHandler={this.getNameHandler}
+                    rulesHandler={this.rulesHandler}
+                    showRules={this.state.shouldShowRules}
                     startGame={this.startGame}
                 />
             </div>
