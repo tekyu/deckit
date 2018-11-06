@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-// import Header from "@layout/Header/Header";
+import Header from "@layout/Header/Header";
 // import axios from "@app/axios";
 
 class Layout extends Component {
@@ -47,7 +47,11 @@ class Layout extends Component {
 	// };
 
 	render() {
-		return <React.Fragment>Test</React.Fragment>;
+		return (
+			<React.Fragment>
+				<Header />
+			</React.Fragment>
+		);
 	}
 }
 
