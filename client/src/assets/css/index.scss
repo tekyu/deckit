@@ -1,0 +1,33 @@
+@import "./palette";
+
+@import url("https://fonts.googleapis.com/css?family=Lobster|Sacramento|Poiret+One");
+@import url("https://fonts.googleapis.com/css?family=Fira+Sans:300,400,500");
+@import url("https://fonts.googleapis.com/css?family=Playfair+Display:600");
+@import url("https://fonts.googleapis.com/css?family=Hammersmith+One");
+
+body {
+	background: map-get($map: $color-map, $key: "hygge");
+	font-size: 16px;
+	font-family: "Hammersmith One";
+	min-height: 100vh; //TEMP
+}
+#root {
+	min-height: 100vh; //TEMP
+}
+
+a {
+	text-decoration: none;
+	font-size: 14px;
+	font-family: "Hammersmith One";
+	// text-transform: uppercase;
+	color: map-get($map: $color-map, $key: "herb");
+	&:active,
+	&:focus,
+	&:hover {
+		color: map-get($map: $color-map, $key: "chilli");
+	}
+}
+
+* {
+	box-sizing: border-box;
+}
