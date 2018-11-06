@@ -1,0 +1,17 @@
+@import "@assets/css/_palette.scss";
+
+.logo {
+	cursor: pointer;
+	span {
+		display: block;
+		font-family: "Nothing You Could Do", cursive;
+		// font-family: "Shadows Into Light", cursive;
+		font-size: 32px;
+		color: map-get($map: $color-map, $key: "charcoal");
+		transform: rotate(-8deg) skewX(-18deg);
+		user-select: none;
+		&:hover {
+			color: map-get($map: $color-map, $key: "chilli");
+		}
+	}
+}
