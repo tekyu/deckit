@@ -1,5 +1,5 @@
 {
-	"name": "Deckit Client - Hygge",
+	"name": "deckit-client-hygge",
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
