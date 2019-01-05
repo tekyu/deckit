@@ -12,6 +12,9 @@ const Navigation = ({ auth }) => {
 				<li>
 					<NavLink to="/create">Create</NavLink>
 				</li>
+				<li>
+					<NavLink to="/create">Your games</NavLink>
+				</li>
 			</ul>
 		</nav>
 	);
