@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Header from "@layout/Header/Header";
 // import axios from "@app/axios";
+import Routes from "../routes/Routes";
 
 class Layout extends Component {
 	state = {
@@ -50,6 +51,7 @@ class Layout extends Component {
 		return (
 			<React.Fragment>
 				<Header />
+				<Routes auth={this.state.auth} />
 			</React.Fragment>
 		);
 	}
