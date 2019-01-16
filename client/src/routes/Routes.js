@@ -6,6 +6,11 @@ const Routes = props => {
 	console.log("PROPS", props);
 	return (
 		<Switch>
+			<Route
+				path="/register"
+				exact
+				render={() => <Loadable.Register />}
+			/>
 			<Route path="/login" exact render={() => <Loadable.Login />} />
 			<Route
 				path="/browse"

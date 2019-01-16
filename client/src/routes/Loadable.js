@@ -7,7 +7,12 @@ import Loadable from "react-loadable";
 // });
 
 const Login = Loadable({
-	loader: () => import("@containers/Auth/Login/Login"),
+	loader: () => import("@containers/Auth/Login/LoginForm"),
+	loading: "Loading..."
+});
+
+const Register = Loadable({
+	loader: () => import("@containers/Auth/Register/RegisterForm"),
 	loading: "Loading..."
 });
 
@@ -16,4 +21,4 @@ const Browse = Loadable({
 	loading: "Loading..."
 });
 
-export { Login, Browse };
+export { Login, Register, Browse };

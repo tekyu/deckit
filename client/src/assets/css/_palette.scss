@@ -10,5 +10,16 @@ $color-map: (
 	"white": #fff,
 	"black": #000,
 	"grey": #ececec,
-	"light-grey": #f4f4f4
+	"light-grey": #f4f4f4,
+	//main colors
+
+		"sandstone": #f4cc70,
+	"burnt-orange": #de7a22,
+	"sea": #20948b,
+	"lagoon": #6ab187
 );
+
+$sandstone-hsl: hsl(42, 86%, 70%);
+$sandstone-hsl: hsl(28, 74%, 50%);
+$sandstone-hsl: hsl(175, 64%, 35%);
+$sandstone-hsl: hsl(145, 31%, 55%);
