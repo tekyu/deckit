@@ -17,6 +17,7 @@ const mongoose = require("mongoose");
 /* UTILITY IMPORTS */
 const chalk = require("chalk");
 const memu = require("./src/utils/memory-usage");
+const morgan = require("morgan");
 /* PASSPORT IMPORTS */
 
 // SHOULD BE IMPORTED AS A AUTH MODULE
@@ -67,9 +68,23 @@ app.post(
 		optionsSuccessStatus: 200
 	})
 );
-// app.use(cors());
+app.get(
+	"*",
+	cors({
+		credentials: true,
+		origin: process.env.DEV_ADDRESS,
+		optionsSuccessStatus: 200
+	})
+);
+app.use(morgan("tiny"));
 app.use(bodyParser.json());
-app.use(express_session({ secret: "hanabala dzis nie srala" }));
+app.use(
+	express_session({
+		secret: "hanabala dzis nie srala",
+		resave: false, //required
+		saveUninitialized: false //required
+	})
+);
 app.use(passport.initialize());
 app.use(passport.session());
 app.listen(port, () => console.log(`Server listening on port ${port}`));
@@ -101,11 +116,28 @@ const loggedOutOnly = (req, res, next) => {
 	else res.redirect("/");
 };
 
-app.get("/test", (req, res, next) => {
-	console.log("test", req, res, next);
+app.post("/api/check", (req, res, next) => {
+	console.log("check", req.isAuthenticated());
+	if (req.isAuthenticated()) {
+		console.log("true", req.user);
+		res.status(200).send(res.session);
+	} else {
+		res.status(401).send();
+	}
 });
 
-app.post("/login", function(req, res, next) {
+app.get("/api/logout", (req, res) => {
+	req.session.destroy(err => {
+		if (err) return next(err);
+
+		req.logout();
+
+		res.sendStatus(200);
+		console.log("req", req.session, req.user);
+	});
+});
+
+app.post("/api/login", (req, res, next) => {
 	passport.authenticate("local", function(err, user, info) {
 		if (err) {
 			return;
@@ -137,7 +169,7 @@ app.post("/login", function(req, res, next) {
 	})(req, res, next);
 });
 
-app.post("/register", (req, res, next) => {
+app.post("/api/register", (req, res, next) => {
 	const { username, password } = req.body;
 	User.create({ username, password })
 		.then(user => {
@@ -149,9 +181,4 @@ app.post("/register", (req, res, next) => {
 				res.status(400).send("Username is already taken");
 			}
 		});
-});
-
-app.all("/logout", function(req, res) {
-	req.logout();
-	res.redirect("/login");
 });

@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import axios from "@app/axios";
-import * as styles from "./LoginForm.module.scss";
+import * as styles from "./RegisterModal.module.scss";
 import InputGroup from "@components/form/InputGroup/InputGroup";
-class LoginForm extends Component {
+class RegisterModal extends Component {
 	state = {
 		username: "",
 		password: "",
+		confirmPassword: "",
 		formError: null,
 		errors: {
 			empty: "It seems like you forgot to fill your",
@@ -92,11 +93,11 @@ class LoginForm extends Component {
 					<div className={styles.modal_close} />
 					<div className={styles.modal_header}>
 						<i className={styles.ikontest} />
-						<h2>Login</h2>
+						<h2>Register</h2>
 						<p>Lets have fun!</p>
 					</div>
 					<div className={styles.modal_body}>
-						<form onSubmit={this.submitLoginHandler}>
+						<form onSubmit={this.submitRegisterHandler}>
 							<div className={styles.input_group}>
 								<label
 									className={styles.input_label}
@@ -125,13 +126,28 @@ class LoginForm extends Component {
 									onChange={this.inputOnChangeHandler}
 								/>
 							</div>
+							<div className={styles.input_group}>
+								<label
+									className={styles.input_label}
+									htmlFor="confirmPassword">
+									Confirm your password
+								</label>
+								<input
+									className={styles.input_input}
+									type="password"
+									name="confirmPassword"
+									placeholder="Type your password here"
+									onChange={this.inputOnChangeHandler}
+								/>
+							</div>
+
 							{this.state.formError ? (
 								<div className={styles.form_error}>
 									{this.state.formError}
 								</div>
 							) : null}
 
-							<button type="submit">Login</button>
+							<button type="submit">Register</button>
 							<label className={styles.password_recovery}>
 								Can't remember your password?{" "}
 								<a href="#">Click here!</a>
@@ -140,7 +156,7 @@ class LoginForm extends Component {
 					</div>
 					<div className={styles.modal_footer}>
 						<label className={styles.create_account}>
-							You don't have an account yet?{" "}
+							Already have an account?{" "}
 							<a href="#">Create one here!</a>
 						</label>
 					</div>
@@ -150,4 +166,4 @@ class LoginForm extends Component {
 	}
 }
 
-export default LoginForm;
+export default RegisterModal;

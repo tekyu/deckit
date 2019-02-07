@@ -1,19 +1,18 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import * as styles from "./Passes.module.scss";
-const fakeData = {
-	_id: "ewrewr34w4532324e3wed23321432erw",
-	avatar: "https://via.placeholder.com/200x150",
-	name: "Annabel Maverick"
+import axios from "@app/axios";
+const logoutHandler = () => {
+	axios.get("/api/logout");
 };
-const Passes = props => {
+const Passes = ({ userData }) => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.display}>
 				<div className={styles.avatar}>
-					<img src={fakeData.avatar} alt="Users avatar" />
+					<img src={userData.avatar} alt="Users avatar" />
 				</div>
-				<span className={styles.name}>{fakeData.name}</span>
+				<span className={styles.name}>{userData.name}</span>
 			</div>
 			<div className={styles.dropdown}>
 				<ul>
@@ -24,7 +23,8 @@ const Passes = props => {
 						<NavLink to="/settings">Profile</NavLink>
 					</li>
 					<li>
-						<NavLink to="/logout">Profile</NavLink>
+						<button onClick={logoutHandler}>Logout</button>
+						{/* <NavLink to="/logout">Logout</NavLink> */}
 					</li>
 				</ul>
 			</div>

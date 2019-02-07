@@ -6,6 +6,7 @@ const Routes = props => {
 	console.log("PROPS", props);
 	return (
 		<Switch>
+			<Route path="/logout" exact render={() => <Loadable.Logout />} />
 			<Route
 				path="/register"
 				exact

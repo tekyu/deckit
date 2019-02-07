@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import axios from "@app/axios";
-import * as styles from "./LoginForm.module.scss";
+import * as styles from "./LoginModal.module.scss";
 import InputGroup from "@components/form/InputGroup/InputGroup";
-class LoginForm extends Component {
+class LoginModal extends Component {
 	state = {
 		username: "",
 		password: "",
@@ -150,4 +150,4 @@ class LoginForm extends Component {
 	}
 }
 
-export default LoginForm;
+export default LoginModal;

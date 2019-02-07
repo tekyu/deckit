@@ -231,7 +231,8 @@ module.exports = {
 			"@layout": path.resolve("src/layout"),
 			"@components": path.resolve("src/components"),
 			"@containers": path.resolve("src/containers"),
-			"@assets": path.resolve("src/assets")
+			"@assets": path.resolve("src/assets"),
+			"@modals": path.resolve("src/modals")
 		},
 		plugins: [
 			// Adds support for installing with Plug'n'Play, leading to faster installs and adding

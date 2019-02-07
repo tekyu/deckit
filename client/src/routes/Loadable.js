@@ -16,9 +16,14 @@ const Register = Loadable({
 	loading: "Loading..."
 });
 
+const Logout = Loadable({
+	loader: () => import("@containers/Auth/Logout/Logout"),
+	loading: "Loading..."
+});
+
 const Browse = Loadable({
 	loader: () => import("@containers/Browse/Browse"),
 	loading: "Loading..."
 });
 
-export { Login, Register, Browse };
+export { Login, Register, Logout, Browse };
