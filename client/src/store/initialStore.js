@@ -1,9 +1,8 @@
 const initialStore = {
 	auth: false,
-	account: {
-		nickname: "Thomas Edison",
-		avatar: null
-	}
+	user: null,
+	error: null,
+	modal: null
 };
 
 export default initialStore;

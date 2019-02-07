@@ -39,7 +39,7 @@ class Register extends Component {
 			return false;
 		}
 		axios
-			.post("/login", {
+			.post("/api/login", {
 				username: username,
 				password: password
 			})
