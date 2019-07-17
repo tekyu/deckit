@@ -1,11 +1,11 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import * as styles from "./Passes.module.scss";
-import axios from "@app/axios";
-const logoutHandler = () => {
-	axios.get("/api/logout");
-};
-const Passes = ({ userData }) => {
+// import axios from "@app/axios";
+// const logoutHandler = () => {
+// 	axios.get("/api/logout");
+// };
+const Passes = ({ userData, logoutHandler }) => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.display}>

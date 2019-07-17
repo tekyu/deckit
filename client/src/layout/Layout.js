@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Header from "@layout/Header/Header";
+import Content from "@layout/Content/Content";
 // import axios from "@app/axios";
 import Routes from "../routes/Routes";
 import { connect } from "react-redux";
@@ -10,10 +11,11 @@ class Layout extends Component {
 	};
 
 	render() {
+		console.log("render [Layout.js]", this.props);
 		return (
 			<React.Fragment>
 				<Header />
-				<Routes auth={this.state.auth} />
+				<Content auth={this.state.auth} />
 				{this.props.showModal ? (
 					<ModalContainer type={this.props.modalType} />
 				) : null}
@@ -32,12 +34,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
 	return {};
 };
-// export default withRouter(
-//     connect(
-//         mapStateToProps,
-//         mapDispatchToProps
-//     )(Layout)
-// );
+
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps

@@ -1,6 +1,7 @@
-export const simpleState = (state, action) => {
+export const simpleState = (state, data) => {
+	console.log("simpleState", state, data);
 	return {
 		...state,
-		...action
+		...data
 	};
 };

@@ -3,7 +3,7 @@ import * as styles from "./CardList.module.scss";
 import RoomCard from "@components/RoomCard/RoomCard";
 const CardList = ({ rooms, handler }) => {
 	const roomList = rooms.map(room => {
-		return <RoomCard key={room.id} settings={room} handler={handler} />;
+		return <RoomCard key={room.id} options={room} handler={handler} />;
 	});
 	return <div className={styles.container}>{roomList}</div>;
 };

@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import * as styles from "./AccountBox.module.scss";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { updateModal } from "@store/actions/modals";
-import LoginModal from "@modals/LoginModal/LoginModal";
-import RegisterModal from "@modals/RegisterModal/RegisterModal";
+import { openModal } from "@store/actions/modals";
+// import { logoutUser } from "@store/actions/user";
 class AccountBox extends Component {
 	state = {
 		userData: {
@@ -18,32 +17,57 @@ class AccountBox extends Component {
 		console.log("[componentDidMount] [AccountBox.js]", p, v);
 	}
 
-	onCloseHandler() {}
-
-	onClickHandler(ev) {
-		let formName = ev.currentTarget.name;
-
-		// if (formName === 'register') {
-		// }
+	componentDidUpdate(prevProps) {
+		console.log(
+			"%c [AccountBox.js] componentDidUpdate",
+			"background:#CCA014",
+			this.props,
+			prevProps
+		);
 	}
 
-	render() {
-		const authFalse = (
+	static getDerivedStateFromProps(s, p) {
+		console.log(
+			"%c [AccountBox.js] getDerivedStateFromProps",
+			"background:#00FFC7",
+			s,
+			p
+		);
+	}
+
+	openModalHandler = ev => {
+		let formName = ev.currentTarget.name;
+		this.props.openModal(formName);
+	};
+
+	getAuthFalse() {
+		return (
 			<div className={styles.accountBox_buttonGroup}>
 				<button
-					onClick={this.onClickHandler}
+					onClick={this.openModalHandler}
 					name="register"
 					type="button"
 					className="button--secondary">
 					Join
 				</button>
-				<button type="button" name="login" className="button--primary">
+				<button
+					onClick={this.openModalHandler}
+					type="button"
+					name="login"
+					className="button--primary">
 					Login
 				</button>
 			</div>
 		);
+	}
 
-		const authTrue = (
+	getAuthTrue() {
+		const { user } = this.props;
+		console.log("this", this.props);
+		if (!user) {
+			return null;
+		}
+		return (
 			<div className={styles.container}>
 				<div className={styles.display}>
 					<div className={styles.avatar}>
@@ -53,7 +77,7 @@ class AccountBox extends Component {
 						/>
 					</div>
 					<span className={styles.name}>
-						{this.state.userData.name}
+						{this.props.user.username}
 					</span>
 				</div>
 				<div className={styles.dropdown}>
@@ -65,15 +89,24 @@ class AccountBox extends Component {
 							<NavLink to="/settings">Profile</NavLink>
 						</li>
 						<li>
-							<NavLink to="/logout">Logout</NavLink>
+							<Link to="/logout">Logout</Link>
 						</li>
 					</ul>
 				</div>
 			</div>
 		);
+	}
+
+	render() {
+		console.log(
+			"%c [AccountBox.js] render",
+			"background:#80D6C3",
+			this.props
+		);
+		console.log("authtrue", this.props.user);
 		return (
 			<div className={styles.accountBox_container}>
-				{this.props.auth ? authTrue : authFalse}
+				{this.props.auth ? this.getAuthTrue() : this.getAuthFalse()}
 			</div>
 		);
 	}
@@ -86,10 +119,9 @@ const mapStateToProps = ({ auth, user }) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
-	return {};
+const mapDispatchToProps = {
+	openModal
 };
-
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
