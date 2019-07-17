@@ -1,16 +1,32 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-import axios from "@app/axios";
+import { connect } from "react-redux";
+import { logoutUser } from "@store/actions/user";
+
 class Logout extends Component {
-	state = {};
 	componentDidMount() {
-		axios.get("/api/logout").then(response => {
-			console.log("response", response);
-		});
+		console.log("logout");
+		// axios.get("/api/logout").then(response => {
+		// 	console.log("response", response);
+		// });
+		logoutUser();
 	}
 	render() {
 		return <Redirect to="/" />;
 	}
 }
 
-export default Logout;
+// const mapStateToProps = ({ auth, user }) => {
+// 	return {
+// 		auth,
+// 		user
+// 	};
+// };
+
+const mapDispatchToProps = {
+	logoutUser
+};
+export default connect(
+	null,
+	mapDispatchToProps
+)(Logout);

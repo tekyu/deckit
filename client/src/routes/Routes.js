@@ -19,6 +19,11 @@ const Routes = props => {
 				render={() => <Loadable.Browse auth={false} />}
 			/>
 			<Route
+				path="/create"
+				exact
+				render={() => <Loadable.CreateGame auth={false} />}
+			/>
+			<Route
 				path="/"
 				exact
 				render={() => <Loadable.Browse auth={false} />}

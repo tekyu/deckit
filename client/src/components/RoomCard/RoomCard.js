@@ -1,6 +1,7 @@
 import React from "react";
 import * as styles from "./RoomCard.module.scss";
-const RoomCard = ({ settings, handler }) => {
+import getGameMapping from "@app/utils/gameMapping";
+const RoomCard = ({ options, handler }) => {
 	const {
 		id,
 		name,
@@ -9,32 +10,37 @@ const RoomCard = ({ settings, handler }) => {
 		createdAt,
 		playersCurrent,
 		playersMax,
-		decks
-	} = settings;
-	const deckList = decks.map(deck => {
+		isPublic,
+		gameCode,
+		gameOptions
+	} = options;
+	const deckList = gameOptions.decks.map(deck => {
 		return <span className={styles.deckName}>{deck}</span>;
 	});
+
 	return (
 		<div className={styles.container}>
-			<span className={styles.owner}>
-				<a>{createdBy}</a>
-			</span>
-			<div className={styles.cover} />
-			<div className={styles.controls}>
+			<div className={styles.header}>
+				<span className={styles.copy}>copy</span>
+				<div className={styles.logo}>
+					<span>{gameCode.toUpperCase()}</span>
+				</div>
+			</div>
+			<div className={styles.content}>
 				<label className={styles.name}>{name}</label>
-				<div className={styles.deckList}>{deckList}</div>
-				<span className={styles.players}>
-					{playersCurrent}
-					<span class={styles.playersDivider}>/</span>
-					{playersMax}
-				</span>
-				<button
-					type="button"
-					className={styles.button}
-					roomId={id}
-					onClick={handler}>
-					>
-				</button>
+				<p className={styles.owner}>{createdBy}</p>
+				<div className={styles.details}>
+					<div className={styles.players}>
+						<span>{playersCurrent}</span>
+						<span>{playersMax}</span>
+					</div>
+					<div className={styles.mode}>
+						{isPublic ? "Public" : "Private"}
+					</div>
+				</div>
+			</div>
+			<div className={styles.footer}>
+				<button className={styles.cta}>Join</button>
 			</div>
 		</div>
 	);

@@ -26,4 +26,9 @@ const Browse = Loadable({
 	loading: "Loading..."
 });
 
-export { Login, Register, Logout, Browse };
+const CreateGame = Loadable({
+	loader: () => import("@containers/CreateGame/CreateGame"),
+	loading: "Loading..."
+});
+
+export { Login, Register, Logout, Browse, CreateGame };

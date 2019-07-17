@@ -93,10 +93,7 @@ app.get("/", function(req, res) {
 });
 
 // Create the database connection
-mongoose.connect(
-	process.env.DEVDB_CONN,
-	{ useNewUrlParser: true }
-);
+mongoose.connect(process.env.DEVDB_CONN, { useNewUrlParser: true });
 
 // CONNECTION EVENTS
 // When successfully connected
@@ -120,7 +117,21 @@ app.post("/api/check", (req, res, next) => {
 	console.log("check", req.isAuthenticated());
 	if (req.isAuthenticated()) {
 		console.log("true", req.user);
-		res.status(200).send(res.session);
+		const {
+			friends,
+			activeGames,
+			username,
+			ranking,
+			notifications
+		} = req.user;
+		const data = {
+			friends,
+			activeGames,
+			username,
+			ranking,
+			notifications
+		};
+		res.status(200).send(data);
 	} else {
 		res.status(401).send();
 	}
