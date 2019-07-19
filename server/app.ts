@@ -1,31 +1,34 @@
 require("dotenv").config();
 /* SERVER IMPORTS */
-const express = require("express");
-const app = express();
-// const util = require("util");
-const server = require("http").createServer();
-const io = require("socket.io")(server);
-const port = process.env.PORT || 3011;
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const express_session = require("express-session");
+import express from "express";
+import http from "http";
+import socketIo from "socket.io";
+import cors from "cors";
+import bodyParser from "body-parser";
+import expressSession from "express-session";
 /* MONGO RELATED IMPORTS */
 
 // SHOULD BE IMPORTED AS A MODULE
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 /* UTILITY IMPORTS */
-const chalk = require("chalk");
-const memu = require("./src/utils/memory-usage");
-const morgan = require("morgan");
+import chalk from "chalk";
+import memu from "./src/utils/memory-usage";
+import morgan from "morgan";
 /* PASSPORT IMPORTS */
 
 // SHOULD BE IMPORTED AS A AUTH MODULE
+import shortId from "shortid";
+import passport from "passport";
+import User from "./src/models/User";
 
-const passport = require("passport");
-const User = require("./src/models/User");
 // var silence = new User({ username: "Silence" });
 // console.log("silence", silence);
+const app = express();
+
+const server = http.createServer();
+const io = socketIo(server);
+const port = process.env.PORT || 3011;
 
 const LocalStrategy = require("passport-local").Strategy;
 const local = new LocalStrategy((username, password, done) => {
@@ -79,7 +82,7 @@ app.get(
 app.use(morgan("tiny"));
 app.use(bodyParser.json());
 app.use(
-	express_session({
+	expressSession({
 		secret: "hanabala dzis nie srala",
 		resave: false, //required
 		saveUninitialized: false //required
@@ -192,4 +195,118 @@ app.post("/api/register", (req, res, next) => {
 				res.status(400).send("Username is already taken");
 			}
 		});
+});
+
+/**
+ * Adding room to pool with initial data of available servers
+ * @param {Object} data Settings for room
+ * @returns {Promise} Promise object with data to render in Waiting room on resolve and error on rejection
+ */
+const addRoomToPool = data => {
+	return new Promise((resolve, reject) => {
+		try {
+			if (data.private) {
+				io.deckitRooms.private[data.id] = data;
+				resolve({
+					changed: false,
+					room: io.deckitRooms.private[data.id]
+				});
+			} else {
+				io.deckitRooms.public[data.id] = data;
+				resolve({
+					rooms: io.deckitRooms.public,
+					changed: true,
+					room: io.deckitRooms.public[data.id]
+				});
+			}
+		} catch (err) {
+			reject(err);
+		}
+	});
+};
+
+io.gameRooms = {};
+
+io.on("connection", socket => {
+	const game = {
+		id: "shortid",
+		game: "deckit",
+		public: false,
+		password: "password",
+		name: "Test name",
+		owner: "mongoid",
+		players: 4,
+		maxPlayers: 10,
+		playersList: [], // only id's
+		stage: "waiting", // waiting | ready | ingame | paused | completed
+		gameOptions: {
+			decks: [],
+			deckSize: 5,
+			state: "waiting", // waiting | paused | hinter | picking | scorecheck | pointscheck | dispensecards,
+			hintInRound: "Hint",
+			hintCardInRound: "kjhgfd",
+			pickedCardsInRound: [],
+			maxPoints: 64,
+			winners: [],
+			round: 0,
+			players: [
+				{
+					id: "mongoid",
+					nickname: "Nickname",
+					color: "color",
+					progress: 0,
+					pickedCard: "id",
+					score: 0,
+					deck: [],
+					status: "ready" // ready | waiting | inactive | problem
+				}
+			]
+		}
+	};
+
+	// const getInitialGameRoom = data => {
+	// 	return prepareInitialGameRoom(data);
+	// };
+
+	// const prepareInitialGameRoom = data => {
+	// 	const { game, gameOptions } = data;
+	// 	const gameroom = new Gameroom(data);
+	// 	const initialGameOptions = prepareInitialGameOptions(game, gameOptions);
+	// 	gameroom.gameOptions = initialGameOptions;
+	// 	return gameroom;
+	// };
+
+	// const prepareInitialGameOptions = (game, options) => {
+	// 	return (
+	// 		gameMap.find(_game => {
+	// 			return _game === game;
+	// 		}).gameOptions || {}
+	// 	);
+	// };
+
+	socket.on("createGame", data => {
+		// const _color = randomColor(0.3, 0.99).hexString();
+
+		// const game = getInitialGameRoom(data);
+		socket.join(data.id);
+		// socket.gameRooms.push(data.id);
+
+		// addRoomToPool(data) // change to game
+		// 	.then(res => {
+		// 		if (res.changed) {
+		// 			io.in(waitingRoom).emit("updatedServers", res.rooms);
+		// 			console.log(
+		// 				chalk.bgBlue("[emitting] updatedServers 1"),
+		// 				res.rooms
+		// 			);
+		// 		}
+		// 		socket.emit("roomCreated");
+		// 		console.log(chalk.bgBlue("[emitting] roomCreated"));
+		// 		io.in(data.id).emit("updateRoom", res.room);
+		// 		console.log(chalk.bgBlue("[emitting] updateRoom"));
+		// 	})
+		// 	.catch(rej => {
+		// 		throw "Cannot add room to pool of existing rooms" + rej;
+		// 	});
+	});
 });
