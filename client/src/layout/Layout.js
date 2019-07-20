@@ -1,41 +1,40 @@
-import React, { Component } from "react";
-import Header from "@layout/Header/Header";
-import Content from "@layout/Content/Content";
+import React, { Component } from 'react';
+import Header from 'layout/Header/Header';
+import Content from 'layout/Content/Content';
 // import axios from "@app/axios";
-import Routes from "../routes/Routes";
-import { connect } from "react-redux";
-import ModalContainer from "@modals/ModalContainer";
-class Layout extends Component {
-	state = {
-		auth: false
-	};
+import { connect } from 'react-redux';
+import ModalContainer from 'modals/ModalContainer';
 
-	render() {
-		console.log("render [Layout.js]", this.props);
-		return (
-			<React.Fragment>
-				<Header />
-				<Content auth={this.state.auth} />
-				{this.props.showModal ? (
-					<ModalContainer type={this.props.modalType} />
-				) : null}
-			</React.Fragment>
-		);
-	}
+class Layout extends Component {
+  state = {
+    auth: false
+  };
+
+  render() {
+    return (
+      <React.Fragment>
+        <Header />
+        <Content auth={this.state.auth} />
+        {this.props.showModal ? (
+          <ModalContainer type={this.props.modalType} />
+        ) : null}
+      </React.Fragment>
+    );
+  }
 }
 
 const mapStateToProps = state => {
-	return {
-		auth: state.auth,
-		showModal: state.showModal,
-		modalType: state.modalType
-	};
+  return {
+    auth: state.auth,
+    showModal: state.showModal,
+    modalType: state.modalType
+  };
 };
 const mapDispatchToProps = dispatch => {
-	return {};
+  return {};
 };
 
 export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(Layout);
