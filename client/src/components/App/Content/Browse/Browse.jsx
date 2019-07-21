@@ -1,58 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { checkAuth } from 'store/actions/user';
+import dynamicSort from 'utils/dynamicSort';
 import CardList from './CardList';
 import Sort from './Sort/Sort';
+import mockRooms from './mockRooms';
 
 class Browse extends Component {
   state = {
-    rooms: [
-      {
-        id: '123',
-        name: 'WRoom 1',
-        createdBy: 'tekoy',
-        createdById: '345',
-        createdAt: '1541888514131',
-        playersCurrent: '6',
-        playersMax: '10',
-        isPublic: true,
-        gameCode: 'd',
-        gameOptions: {
-          decks: ['standard']
-        }
-      },
-      {
-        id: '1234',
-        name: 'Room 2',
-        createdBy: 'rimyi',
-        createdById: '345',
-        createdAt: '1541888514131',
-        playersCurrent: '3',
-        playersMax: '10',
-        isPublic: false,
-        gameCode: 'd',
-        gameOptions: {
-          decks: ['wholesome', 'countries']
-        }
-      },
-      {
-        id: '12345',
-        name: 'Room 3',
-        createdBy: 'rimyi',
-        createdById: '345',
-        createdAt: '1541888514131',
-        playersCurrent: '3',
-        playersMax: '10',
-        isPublic: true,
-        gameCode: 'k',
-        gameOptions: {
-          decks: ['wholesome', 'countries']
-        }
-      }
-    ]
+    rooms: mockRooms
   };
 
-  sortHandler() {}
+  sortHandler = options => {
+    const { sortBy } = options;
+    console.log(sortBy);
+    this.setState(() => {
+      return { rooms: mockRooms.sort(dynamicSort(sortBy)) };
+    });
+  };
 
   componentDidMount() {
     this.props.checkAuth();
@@ -61,7 +26,7 @@ class Browse extends Component {
   render() {
     return (
       <React.Fragment>
-        <Sort />
+        <Sort handler={this.sortHandler} />
         <CardList rooms={this.state.rooms} />
       </React.Fragment>
     );
