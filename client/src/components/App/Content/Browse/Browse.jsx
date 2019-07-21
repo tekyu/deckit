@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-// import RoomCard from "@components/RoomCard/RoomCard";
-import CardList from 'components/CardList/CardList';
 import { connect } from 'react-redux';
-import axios from 'utils/axios';
 import { checkAuth } from 'store/actions/user';
+import CardList from './CardList';
 import Sort from './Sort/Sort';
 
 class Browse extends Component {
@@ -54,15 +52,10 @@ class Browse extends Component {
     ]
   };
 
-  joinHandler() {}
-
   sortHandler() {}
 
   componentDidMount() {
     this.props.checkAuth();
-    // axios.post("/api/check").then(response => {
-    // 	console.log("response", response);
-    // });
   }
 
   render() {

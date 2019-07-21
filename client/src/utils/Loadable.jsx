@@ -1,5 +1,6 @@
 import Loadable from 'react-loadable';
 import React from 'react';
+import App from 'components/App/Content';
 
 const Login = Loadable({
   loader: () => import('containers/Auth/Login/LoginForm'),
@@ -23,7 +24,7 @@ const Logout = Loadable({
 });
 
 const Browse = Loadable({
-  loader: () => import('containers/Browse/Browse'),
+  loader: () => import('components/App/Content/Browse'),
   loading() {
     return <p>Loading...</p>;
   }

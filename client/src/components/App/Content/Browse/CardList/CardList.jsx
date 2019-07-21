@@ -1,5 +1,5 @@
 import React from 'react';
-import RoomCard from 'components/RoomCard/RoomCard';
+import RoomCard from './RoomCard';
 import * as styles from './CardList.module.scss';
 
 const CardList = ({ rooms, handler }) => {
