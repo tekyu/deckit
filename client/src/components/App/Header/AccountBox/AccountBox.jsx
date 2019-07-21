@@ -26,15 +26,6 @@ class AccountBox extends Component {
     );
   }
 
-  static getDerivedStateFromProps(s, p) {
-    console.log(
-      '%c [AccountBox.js] getDerivedStateFromProps',
-      'background:#00FFC7',
-      s,
-      p
-    );
-  }
-
   openModalHandler = ev => {
     const formName = ev.currentTarget.name;
     this.props.openModal(formName);
@@ -67,7 +58,7 @@ class AccountBox extends Component {
     const { user } = this.props;
     console.log('this', this.props);
     if (!user) {
-      return null;
+      return false;
     }
     return (
       <div className={styles.container}>
