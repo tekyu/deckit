@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Select from 'components/Select/Select';
+import Select from 'components/Generic/Select';
 import * as styles from './Sort.module.scss';
 
 class Sort extends Component {

@@ -21,7 +21,6 @@ const RoomCard = ({ options }) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <span className={styles.copy}>copy</span>
         <div className={styles.logo}>
           <span>{gameCode.toUpperCase()}</span>
         </div>
