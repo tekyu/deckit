@@ -1,18 +1,22 @@
 const sortData = [
   {
-    fieldName: 'Author',
+    displayName: 'Author',
+    fieldName: 'createdBy',
     searchable: true
   },
   {
-    fieldName: 'Latest',
+    displayName: 'Latest',
+    fieldName: 'createdAt',
     searchable: false
   },
   {
-    fieldName: 'Name',
+    displayName: 'Name',
+    fieldName: 'name',
     searchable: true
   },
   {
-    fieldName: 'Players',
+    displayName: 'Players',
+    fieldName: 'playersCurrent',
     searchable: false
   }
 ];
