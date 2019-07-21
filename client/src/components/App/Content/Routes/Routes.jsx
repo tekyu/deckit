@@ -1,8 +1,8 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import * as Loadable from './Loadable';
+import * as Loadable from 'utils/Loadable';
 
-const Routes = props => {
+const Routes = () => {
   return (
     <Switch>
       <Route path="/logout" exact render={() => <Loadable.Logout />} />

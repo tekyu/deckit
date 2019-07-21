@@ -1,5 +1,5 @@
 import React from 'react';
-import Routes from 'routes/Routes';
+import Routes from './Routes';
 import * as styles from './Content.module.scss';
 
 const Content = auth => {
