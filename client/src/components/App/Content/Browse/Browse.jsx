@@ -36,8 +36,8 @@ class Browse extends Component {
         }
       },
       {
-        id: '1234',
-        name: 'Room 2',
+        id: '12345',
+        name: 'Room 3',
         createdBy: 'rimyi',
         createdById: '345',
         createdAt: '1541888514131',
@@ -61,13 +61,7 @@ class Browse extends Component {
   render() {
     return (
       <React.Fragment>
-        {/* <Sort handler={this.sortHandler} /> */}
-        <CardList
-          rooms={this.state.rooms}
-          handler={this.joinHandler}
-          sort="ASC_CREATEDAT"
-          view="cards"
-        />
+        <CardList rooms={this.state.rooms} sort="ASC_CREATEDAT" />
       </React.Fragment>
     );
   }

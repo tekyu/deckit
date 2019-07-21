@@ -1,7 +1,7 @@
 import React from 'react';
 import * as styles from './RoomCard.module.scss';
 
-const RoomCard = ({ options, handler }) => {
+const RoomCard = ({ options }) => {
   const {
     id,
     name,
