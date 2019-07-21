@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Input from 'components/Generic/Input';
 import Select from 'components/Generic/Select';
 import * as styles from './Sort.module.scss';
 import sortFields from './sortFields';
@@ -6,12 +7,22 @@ import sortFields from './sortFields';
 class Sort extends Component {
   state = {
     fields: sortFields,
+    searchPhrase: '',
     sortBy: sortFields[0].fieldName
+  };
+
+  changeSearchHandler = searchValue => {
+    this.setState(() => {
+      return {
+        searchPhrase: searchValue
+      };
+    });
   };
 
   changeSortHandler = sortField => {
     this.setState(() => {
       return {
+        searchPhrase: '',
         sortBy: sortField
       };
     });
@@ -31,7 +42,11 @@ class Sort extends Component {
           {this.state.fields.find(
             element => element.fieldName === this.state.sortBy
           ).searchable && (
-            <input type="text" placeholder={`Search by ${this.state.sortBy}`} />
+            <Input
+              handler={this.changeSearchHandler}
+              value={this.state.searchPhrase}
+              text={`Search by ${this.state.sortBy}`}
+            />
           )}
         </div>
       </div>

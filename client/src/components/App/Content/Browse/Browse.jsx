@@ -62,7 +62,7 @@ class Browse extends Component {
     return (
       <React.Fragment>
         <Sort />
-        <CardList rooms={this.state.rooms} sort="ASC_CREATEDAT" />
+        <CardList rooms={this.state.rooms} />
       </React.Fragment>
     );
   }
