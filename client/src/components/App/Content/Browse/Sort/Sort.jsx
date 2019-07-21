@@ -15,15 +15,19 @@ class Sort extends Component {
 
   changeSearchHandler = event => {
     const { value } = event.target;
-    this.setState(() => {
-      return {
-        searchPhrase: value
-      };
-    });
+    this.setState(
+      () => {
+        return {
+          searchPhrase: value
+        };
+      },
+      () => {
+        this.notifySort();
+      }
+    );
   };
 
   changeSortHandler = name => {
-    const { handler } = this.props;
     this.setState(
       state => {
         return {
@@ -35,9 +39,18 @@ class Sort extends Component {
         };
       },
       () => {
-        handler({ sortBy: this.state.sortBy });
+        this.notifySort();
       }
     );
+  };
+
+  notifySort = () => {
+    const { handler } = this.props;
+    const { searchPhrase, sortBy } = this.state;
+    handler({
+      searchPhrase,
+      sortBy
+    });
   };
 
   render() {

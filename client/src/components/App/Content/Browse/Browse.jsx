@@ -12,10 +12,12 @@ class Browse extends Component {
   };
 
   sortHandler = options => {
-    const { sortBy } = options;
-    console.log(sortBy);
+    const { searchPhrase, sortBy } = options;
+    const newRooms = mockRooms.filter(room =>
+      room[sortBy].includes(searchPhrase)
+    );
     this.setState(() => {
-      return { rooms: mockRooms.sort(dynamicSort(sortBy)) };
+      return { rooms: newRooms.sort(dynamicSort(sortBy)) };
     });
   };
 
