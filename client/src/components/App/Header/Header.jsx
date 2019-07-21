@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Navigation from 'layout/Header/Navigation/Navigation';
 import Logo from 'components/Logo/Logo';
+import Navigation from './Navigation/Navigation';
 import * as styles from './Header.module.scss';
 import AccountBox from './AccountBox/AccountBox';
 

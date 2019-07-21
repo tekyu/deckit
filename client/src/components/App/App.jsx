@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import Header from 'layout/Header/Header';
-import Content from 'layout/Content/Content';
-// import axios from "@app/axios";
 import { connect } from 'react-redux';
 import ModalContainer from 'modals/ModalContainer';
+import Header from './Header/Header';
+import Content from './Content/Content';
+// import axios from "@app/axios";
 
-class Layout extends Component {
+class App extends Component {
   state = {
     auth: false
   };
@@ -37,4 +37,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Layout);
+)(App);
