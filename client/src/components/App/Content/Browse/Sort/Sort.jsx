@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Input from 'components/Generic/Input';
 import Select from 'components/Generic/Select';
 import * as styles from './Sort.module.scss';
@@ -22,15 +23,21 @@ class Sort extends Component {
   };
 
   changeSortHandler = name => {
-    this.setState(state => {
-      return {
-        searchPhrase: '',
-        sortBy: name,
-        sortByDisplayName: state.fields.find(
-          element => element.fieldName === name
-        ).displayName
-      };
-    });
+    const { handler } = this.props;
+    this.setState(
+      state => {
+        return {
+          searchPhrase: '',
+          sortBy: name,
+          sortByDisplayName: state.fields.find(
+            element => element.fieldName === name
+          ).displayName
+        };
+      },
+      () => {
+        handler({ sortBy: this.state.sortBy });
+      }
+    );
   };
 
   render() {
@@ -60,5 +67,9 @@ class Sort extends Component {
     );
   }
 }
+
+Sort.propTypes = {
+  handler: PropTypes.func.isRequired
+};
 
 export default Sort;
