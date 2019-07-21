@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ModalContainer from 'modals/ModalContainer';
-import Header from './Header/Header';
-import Content from './Content/Content';
+import Header from './Header';
+import Content from './Content';
 // import axios from "@app/axios";
 
 class App extends Component {
