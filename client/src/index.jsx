@@ -5,13 +5,13 @@ import { BrowserRouter } from 'react-router-dom';
 import './assets/css/reset.css';
 import './assets/css/index.scss';
 import store from 'store/store';
-import Layout from 'layout/Layout';
+import App from 'components/App';
 import * as serviceWorker from './serviceWorker';
 
 const app = (
   <Provider store={store}>
     <BrowserRouter>
-      <Layout />
+      <App />
     </BrowserRouter>
   </Provider>
 );
