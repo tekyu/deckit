@@ -4,14 +4,15 @@ import PropTypes from 'prop-types';
 class Input extends PureComponent {
   handleChange = event => {
     const { handler } = this.props;
-    handler(event.target.value);
+    handler(event);
   };
 
   render() {
-    const { text, value } = this.props;
+    const { name, text, value } = this.props;
     return (
       <input
         type="text"
+        name={name}
         onChange={this.handleChange}
         placeholder={text}
         value={value}
@@ -22,6 +23,7 @@ class Input extends PureComponent {
 
 Input.propTypes = {
   handler: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired
 };

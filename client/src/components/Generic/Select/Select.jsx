@@ -51,11 +51,12 @@ class Select extends PureComponent {
   };
 
   render() {
-    const { keys, selectedOption } = this.props;
+    const { options, selectedOption } = this.props;
     const dropdown = (
       <div className={styles.dropdown}>
         <ul>
-          {keys.map(key => {
+          {options.map(option => {
+            const { key, name } = option;
             if (key !== this.props.selectedOption) {
               return (
                 <li
@@ -63,8 +64,9 @@ class Select extends PureComponent {
                     this.changeSelection(key);
                   }}
                   key={key}
+                  name={name}
                 >
-                  {key}
+                  {name}
                 </li>
               );
             }
@@ -86,7 +88,7 @@ class Select extends PureComponent {
 
 Select.propTypes = {
   handler: PropTypes.func.isRequired,
-  keys: PropTypes.arrayOf(PropTypes.string).isRequired,
+  options: PropTypes.array.isRequired,
   selectedOption: PropTypes.string.isRequired
 };
 

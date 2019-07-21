@@ -8,44 +8,51 @@ class Sort extends Component {
   state = {
     fields: sortFields,
     searchPhrase: '',
-    sortBy: sortFields[0].fieldName
+    sortBy: sortFields[0].fieldName,
+    sortByDisplayName: sortFields[0].displayName
   };
 
-  changeSearchHandler = searchValue => {
+  changeSearchHandler = event => {
+    const { value } = event.target;
     this.setState(() => {
       return {
-        searchPhrase: searchValue
+        searchPhrase: value
       };
     });
   };
 
-  changeSortHandler = sortField => {
-    this.setState(() => {
+  changeSortHandler = name => {
+    this.setState(state => {
       return {
         searchPhrase: '',
-        sortBy: sortField
+        sortBy: name,
+        sortByDisplayName: state.fields.find(
+          element => element.fieldName === name
+        ).displayName
       };
     });
   };
 
   render() {
-    const { fields, sortBy } = this.state;
+    const { fields, searchPhrase, sortBy, sortByDisplayName } = this.state;
     return (
       <div className={styles.container}>
         <label>Sort by </label>
         <Select
           handler={this.changeSortHandler}
-          selectedOption={sortBy}
-          keys={fields.map(key => key.fieldName)}
+          selectedOption={sortByDisplayName}
+          options={fields.map(field => {
+            const option = { key: field.fieldName, name: field.displayName };
+            return option;
+          })}
         />
         <div className={styles.search}>
-          {this.state.fields.find(
-            element => element.fieldName === this.state.sortBy
-          ).searchable && (
+          {fields.find(element => element.fieldName === sortBy).searchable && (
             <Input
               handler={this.changeSearchHandler}
-              value={this.state.searchPhrase}
-              text={`Search by ${this.state.sortBy}`}
+              name={sortBy}
+              value={searchPhrase}
+              text={`Search by ${sortByDisplayName}`}
             />
           )}
         </div>
