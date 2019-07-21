@@ -1,29 +1,14 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import * as styles from './Select.module.scss';
 
-export default class Select extends Component {
+class Select extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       show: false,
-      display: null
+      wrapperRef: null
     };
-    this.setWrapperRef = this.setWrapperRef.bind(this);
-    this.handleClickOutside = this.handleClickOutside.bind(this);
-  }
-
-  setWrapperRef(node) {
-    this.wrapperRef = node;
-  }
-
-  handleClickOutside(event) {
-    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-      this.setState(() => {
-        return {
-          show: false
-        };
-      });
-    }
   }
 
   componentDidMount() {
@@ -34,7 +19,25 @@ export default class Select extends Component {
     document.removeEventListener('mousedown', this.handleClickOutside);
   }
 
-  showDrodpown = () => {
+  setWrapperRef = node => {
+    this.setState(() => {
+      return {
+        wrapperRef: node
+      };
+    });
+  };
+
+  handleClickOutside = event => {
+    if (!this.state.wrapperRef.contains(event.target)) {
+      this.setState(() => {
+        return {
+          show: false
+        };
+      });
+    }
+  };
+
+  hideShowDropdown = () => {
     this.setState(state => {
       return {
         show: !state.show
@@ -42,62 +45,49 @@ export default class Select extends Component {
     });
   };
 
-  changeSort = key => {
-    this.setState(
-      state => {
-        return {
-          display: state.display === key ? state.display : key
-        };
-      },
-      () => {
-        if (this.handler && typeof this.handler === 'function') {
-          this.handler(this.state.display);
-        }
-      }
-    );
-  };
-
-  populateOptions = () => {
-    const displayOption = this.state.display
-      ? this.state.display
-      : this.props.data[0];
-    const options = this.props.data.map(key => {
-      if (key === displayOption) {
-        return null;
-      }
-      return (
-        <li
-          onClick={() => {
-            this.changeSort(key);
-          }}
-          key={key}
-        >
-          {key}
-        </li>
-      );
-    });
-    return { displayOption, options };
+  changeSelection = key => {
+    this.hideShowDropdown();
+    this.props.handler(key);
   };
 
   render() {
-    const { displayOption, options } = this.populateOptions();
-    const display = (
-      <div className={styles.display} onClick={this.showDrodpown}>
-        {this.state.display ? this.state.display : displayOption}
-      </div>
-    );
+    const { keys, selectedOption } = this.props;
     const dropdown = (
       <div className={styles.dropdown}>
-        <ul>{options}</ul>
+        <ul>
+          {keys.map(key => {
+            if (key !== this.props.selectedOption) {
+              return (
+                <li
+                  onClick={() => {
+                    this.changeSelection(key);
+                  }}
+                  key={key}
+                >
+                  {key}
+                </li>
+              );
+            }
+            return null;
+          })}
+        </ul>
       </div>
     );
     return (
       <div className={styles.container} ref={this.setWrapperRef}>
-        {display}
+        <div className={styles.display} onClick={this.hideShowDropdown}>
+          {selectedOption}
+        </div>
         {this.state.show ? dropdown : null}
       </div>
     );
   }
 }
 
-// export default Select;
+Select.propTypes = {
+  handler: PropTypes.func.isRequired,
+  keys: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selectedOption: PropTypes.string.isRequired
+};
+
+export default Select;

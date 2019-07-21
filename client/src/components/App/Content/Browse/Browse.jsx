@@ -9,7 +9,7 @@ class Browse extends Component {
     rooms: [
       {
         id: '123',
-        name: 'Room 1',
+        name: 'WRoom 1',
         createdBy: 'tekoy',
         createdById: '345',
         createdAt: '1541888514131',
