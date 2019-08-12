@@ -1,51 +1,61 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { checkAuth } from 'store/actions/user';
-import dynamicSort from 'utils/dynamicSort';
-import CardList from './CardList';
-import Sort from './Sort/Sort';
-import mockRooms from './mockRooms';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { checkAuth } from "store/actions/user";
+import dynamicSort from "utils/dynamicSort";
+import RoomList from "./RoomList/RoomList";
+import Sort from "./Sort/Sort";
+import mockRooms from "./mockRooms";
+import io from "socket.io-client";
+const socket = io("localhost:3012");
 
 class Browse extends Component {
-  state = {
-    rooms: mockRooms
-  };
+	state = {
+		rooms: mockRooms
+	};
 
-  sortHandler = options => {
-    const { searchPhrase, sortBy } = options;
-    const newRooms = mockRooms.filter(room =>
-      room[sortBy].includes(searchPhrase)
-    );
-    this.setState(() => {
-      return { rooms: newRooms.sort(dynamicSort(sortBy)) };
-    });
-  };
+	sortHandler = options => {
+		const { searchPhrase, sortBy } = options;
+		const newRooms = mockRooms.filter(room =>
+			room[sortBy].includes(searchPhrase)
+		);
+		this.setState(() => {
+			return { rooms: newRooms.sort(dynamicSort(sortBy)) };
+		});
+	};
 
-  componentDidMount() {
-    this.props.checkAuth();
-  }
+	selectHandler = ({ target }) => {
+		console.log("selectHandler", target, target.value);
+	};
 
-  render() {
-    return (
-      <React.Fragment>
-        <Sort handler={this.sortHandler} />
-        <CardList rooms={this.state.rooms} />
-      </React.Fragment>
-    );
-  }
+	componentDidMount() {
+		this.props.checkAuth();
+	}
+
+	render() {
+		return (
+			<React.Fragment>
+				<Sort handler={this.sortHandler} />
+				<RoomList
+					rooms={this.state.rooms}
+					handler={this.selectHandler}
+					isAnonymous={!this.auth}
+				/>
+			</React.Fragment>
+		);
+	}
 }
 
 const mapStateToProps = ({ auth, user }) => {
-  return {
-    auth,
-    user
-  };
+	return {
+		auth,
+		user
+	};
 };
 
 const mapDispatchToProps = {
-  checkAuth
+	checkAuth
 };
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(Browse);
