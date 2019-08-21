@@ -7,11 +7,11 @@ export default interface IUser {
 	avatar: String;
 	activeGames: Array<Number>;
 	ranking: Number;
-	notifications?: Array<String>;
+	createdAt: Number;
 	emailConsent: Boolean;
 	privacyConsent: Boolean;
+	notifications?: Array<String>;
 	createdCards?: Array<Object>;
 	createdDecks?: Array<Object>;
 	achievements?: Array<Object>;
-	createdAt: Number;
 }

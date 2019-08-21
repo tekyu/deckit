@@ -5,8 +5,6 @@ import dynamicSort from "utils/dynamicSort";
 import RoomList from "./RoomList/RoomList";
 import Sort from "./Sort/Sort";
 import mockRooms from "./mockRooms";
-import io from "socket.io-client";
-const socket = io("localhost:3012");
 
 class Browse extends Component {
 	state = {

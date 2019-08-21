@@ -1,30 +1,9 @@
-import initialStore from 'store/initialStore';
-import * as actionCreators from 'store/actions/actionCreators';
-import simpleState from 'store/utils';
+import { combineReducers } from "redux";
+import { app, modal, user, socket } from "store/reducers";
 
-const reducer = (state = initialStore, action) => {
-  switch (action.type) {
-    case actionCreators.CLOSE_MODAL:
-      return simpleState(state, {
-        showModal: false,
-        modalType: null
-      });
-    case actionCreators.OPEN_MODAL:
-      return simpleState(state, {
-        showModal: true,
-        modalType: action.payload.modalType
-      });
-    case actionCreators.UPDATE_USER:
-      return simpleState(state, {
-        user: action.payload
-      });
-    case actionCreators.AUTH_USER:
-      return simpleState(state, {
-        auth: action.payload
-      });
-    default:
-      return state;
-  }
-};
-
-export default reducer;
+export default combineReducers({
+	app,
+	user,
+	modal,
+	socket
+});
