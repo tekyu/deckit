@@ -1,12 +1,16 @@
-const gameMapping = {
-  d: 'Deckit',
-  k: 'Karcianka'
+export const gameMapping = {
+	d: "Deckit",
+	k: "Karcianka"
 };
 
-const getGameMapping = game => {
-  if (!gameMapping[game]) {
-    throw Error(`Game ${game} is not defined within mapping`);
-  }
-  return gameMapping[game];
+export const listGameMapping = () => {
+	return Object.values(gameMapping);
 };
-export default getGameMapping;
+
+export const getGameMapping = game => {
+	if (!gameMapping[game]) {
+		throw Error(`Game ${game} is not defined within mapping`);
+	}
+	return gameMapping[game];
+};
+// export  getGameMapping;
