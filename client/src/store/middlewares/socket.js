@@ -1,46 +1,68 @@
 import io from "socket.io-client";
 import {
-	SOCKET_LEAVE,
-	SOCKET_EMIT,
-	SOCKET_LISTENER
+  SOCKET_LEAVE,
+  SOCKET_EMIT,
+  SOCKET_LISTENER
 } from "store/actions/actionCreators";
 const SOCKET_ADDRESS = "localhost:3012";
 
 export default function socketMiddleware() {
-	const socket = io(SOCKET_ADDRESS);
+  const socket = io(SOCKET_ADDRESS);
 
-	return ({ dispatch }) => next => action => {
-		if (typeof action === "function") {
-			return next(action);
-		}
-		const { event, type, handle, payload, ...rest } = action;
+  return ({ dispatch }) => next => action => {
+    console.log("SOCKET MIDDLEWARE", action, next);
+    if (typeof action === "function") {
+      return next(action);
+    }
+    const { event, type, handler, payload, ...rest } = action;
 
-		console.log("SOCKET MIDDLEWARE", action);
-		if (!event) {
-			return next(action);
-		}
+    if (!event) {
+      return next(action);
+    }
+    switch (type) {
+      case SOCKET_LEAVE:
+        console.log("%c SOCKET LEAVE", "background:#FFA09E", type);
+        socket.removeListener(event);
+        break;
+      case SOCKET_EMIT:
+        console.log("%c SOCKET EMIT", "background:#90D6E8", event, {
+          ...payload
+        });
+        socket.emit(event, { ...payload, ...rest });
+        break;
+      case SOCKET_LISTENER:
+        console.log("%c SOCKET LISTENER 0000", "background:#C1FFAB");
+        socket.on(event, data => {
+          if (data.error) {
+            dispatch({ type: "ERROR", payload: data.error });
+            return;
+          }
+          console.log("%c SOCKET LISTENER", "background:#C1FFAB");
+          handler(data);
+          // dispatch({ type: "SAVE_DATA", payload });
+        });
 
-		if (type === SOCKET_LEAVE) {
-			console.log("SOCKET LEAVE", type);
-			socket.removeListener(event);
-		}
+        break;
+      default:
+        throw Error("No type defined");
+    }
 
-		if (type === SOCKET_EMIT) {
-			console.log("SOCKET EMIT", event, { ...payload, ...rest });
-			socket.emit(event, { ...payload, ...rest });
-		}
-
-		if (type === SOCKET_LISTENER) {
-			console.log("SOCKET LISTENER", type);
-			socket.on(event, payload => {
-				if (payload.error) {
-					dispatch({ type: "ERROR", payload: payload.error });
-					return;
-				}
-				dispatch({ type: "SAVE_DATA", payload });
-			});
-		}
-
-		return next(action);
-	};
+    return next(action);
+  };
 }
+
+// PoC of key lookup with functions
+/**
+ *     const types = {};
+    types[SOCKET_LEAVE] = () => {
+      console.log("types socket leave");
+    };
+    types[SOCKET_EMIT] = () => {
+      console.log("types socket emit");
+    };
+    types[SOCKET_LISTENER] = () => {
+      console.log("types socket listener");
+    };
+    types[type]();
+
+ */
