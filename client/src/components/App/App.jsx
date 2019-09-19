@@ -11,8 +11,8 @@ import io from "socket.io-client";
 
 class App extends Component {
 	componentDidMount() {
-		const socket = io("localhost:3012");
-		this.props.initializeSocket(socket);
+		// const socket = io("localhost:3012");
+		// this.props.initializeSocket(socket);
 	}
 	render() {
 		const { auth, modalType, showModal } = this.props;
