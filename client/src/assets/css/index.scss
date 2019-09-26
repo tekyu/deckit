@@ -1,81 +1,81 @@
 @import "./palette";
 
 // @import url("https://fonts.googleapis.com/css?family=Lobster|Sacramento|Poiret+One");
-@import url("https://fonts.googleapis.com/css?family=Fira+Sans:300,400,500");
-@import url("https://fonts.googleapis.com/css?family=Playfair+Display:600");
-@import url("https://fonts.googleapis.com/css?family=Hammersmith+One:300,400,500");
-@import url("https://fonts.googleapis.com/css?family=Nothing+You+Could+Do|Shadows+Into+Light");
+// @import url("https://fonts.googleapis.com/css?family=Fira+Sans:300,400,500");
+// @import url("https://fonts.googleapis.com/css?family=Playfair+Display:600");
+// @import url("https://fonts.googleapis.com/css?family=Hammersmith+One:300,400,500");
+// @import url("https://fonts.googleapis.com/css?family=Nothing+You+Could+Do|Shadows+Into+Light");
 body {
-	background: map-get($map: $color-map, $key: "white");
-	font-size: 16px;
-	// font-family: "Hammersmith One";
-	font-family: "Fira Sans";
+  background: map-get($map: $color-map, $key: "white");
+  font-size: 16px;
+  // font-family: "Hammersmith One";
+  font-family: "Fira Sans";
 
-	min-height: 100vh; //TEMP
+  min-height: 100vh; //TEMP
 }
 #root {
-	min-height: 100vh; //TEMP
+  min-height: 100vh; //TEMP
 }
 
 * {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 a {
-	text-decoration: none;
-	font-size: 14px;
-	font-family: "Hammersmith One";
-	// text-transform: uppercase;
-	cursor: pointer;
-	// color: map-get($map: $color-map, $key: "charcoal");
-	// &:active,
-	// &:focus,
-	// &:hover {
-	// 	color: map-get($map: $color-map, $key: "chilli");
-	// }
+  text-decoration: none;
+  font-size: 14px;
+  font-family: "Hammersmith One";
+  // text-transform: uppercase;
+  cursor: pointer;
+  // color: map-get($map: $color-map, $key: "charcoal");
+  // &:active,
+  // &:focus,
+  // &:hover {
+  // 	color: map-get($map: $color-map, $key: "chilli");
+  // }
 }
 
 button {
-	border: 0;
-	// background: map-get($map: $color-map, $key: "chilli");
-	background: none;
-	color: map-get($map: $color-map, $key: "black");
-	font-family: "Hammersmith One";
-	font-size: 14px;
-	padding: 7px 21px;
-	// border-radius: 100px;
-	letter-spacing: 0.1em;
-	cursor: pointer;
-	&:hover {
-		// background: map-get($map: $color-map, $key: "sea");
-		background: linear-gradient(
-			45deg,
-			map-get($map: $color-map, $key: "lagoon") 0%,
-			map-get($map: $color-map, $key: "sea") 100%
-		);
-		color: map-get($map: $color-map, $key: "white");
-	}
-	&.button--primary {
-		background: linear-gradient(
-			45deg,
-			map-get($map: $color-map, $key: "lagoon") 0%,
-			map-get($map: $color-map, $key: "sea") 100%
-		);
-		color: map-get($map: $color-map, $key: "white");
-		&:hover {
-			background: linear-gradient(
-				45deg,
-				map-get($map: $color-map, $key: "burnt-orange") 0%,
-				map-get($map: $color-map, $key: "sea") 100%
-			);
-		}
-	}
-	&.button--secondary {
-		color: rgba(map-get($map: $color-map, $key: "black"), 0.54);
-		&:hover {
-			background: none;
-			color: map-get($map: $color-map, $key: "sea");
-			// border: 2px solid map-get($map: $color-map, $key: "sea");
-		}
-	}
+  border: 0;
+  // background: map-get($map: $color-map, $key: "chilli");
+  background: none;
+  color: map-get($map: $color-map, $key: "black");
+  font-family: "Hammersmith One";
+  font-size: 14px;
+  padding: 7px 21px;
+  // border-radius: 100px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  &:hover {
+    // background: map-get($map: $color-map, $key: "sea");
+    background: linear-gradient(
+      45deg,
+      map-get($map: $color-map, $key: "lagoon") 0%,
+      map-get($map: $color-map, $key: "sea") 100%
+    );
+    color: map-get($map: $color-map, $key: "white");
+  }
+  &.button--primary {
+    background: linear-gradient(
+      45deg,
+      map-get($map: $color-map, $key: "lagoon") 0%,
+      map-get($map: $color-map, $key: "sea") 100%
+    );
+    color: map-get($map: $color-map, $key: "white");
+    &:hover {
+      background: linear-gradient(
+        45deg,
+        map-get($map: $color-map, $key: "burnt-orange") 0%,
+        map-get($map: $color-map, $key: "sea") 100%
+      );
+    }
+  }
+  &.button--secondary {
+    color: rgba(map-get($map: $color-map, $key: "black"), 0.54);
+    &:hover {
+      background: none;
+      color: map-get($map: $color-map, $key: "sea");
+      // border: 2px solid map-get($map: $color-map, $key: "sea");
+    }
+  }
 }

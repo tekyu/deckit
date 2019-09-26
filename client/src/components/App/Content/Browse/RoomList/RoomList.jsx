@@ -17,23 +17,26 @@ import * as styles from "./RoomList.module.scss";
 // export default CardList;
 
 class CardList extends Component {
-	state = {};
+  state = {};
 
-	render() {
-		const { handler, rooms, isAnonymous } = this.props;
-		console.log("isan", isAnonymous);
-		const roomList = rooms.map(room => {
-			return (
-				<RoomCard
-					key={room.id}
-					options={room}
-					handler={handler}
-					isAnonymous={isAnonymous}
-				/>
-			);
-		});
-		return <div className={styles.container}>{roomList}</div>;
-	}
+  render() {
+    const { handler, rooms, isAnonymous } = this.props;
+    if (!rooms) {
+      return null;
+    }
+    console.log("isan", isAnonymous, rooms);
+    const roomList = rooms.map(room => {
+      return (
+        <RoomCard
+          key={room.id}
+          options={room}
+          handler={handler}
+          isAnonymous={isAnonymous}
+        />
+      );
+    });
+    return <div className={styles.container}>{roomList}</div>;
+  }
 }
 
 // const mapStateToProps = ({ auth, user }) => {

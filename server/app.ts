@@ -8,6 +8,6 @@ import Passport from "./src/api/Passport";
 import Mongoose from "./src/mongo/mongoose";
 import appWrapper from "./appWrapper";
 
-Mongoose();
+// Mongoose();
 Api(appWrapper(), Passport);
 SocketIo();
