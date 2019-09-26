@@ -21,12 +21,13 @@ export const initializeSocket = socket => {
 //   };
 // };
 
-export const emitter = (event, data) => {
+export const emitter = (event, data, handler) => {
   console.log("emitter", event, data);
   return {
     type: SOCKET_EMIT,
     payload: data,
-    event: event
+    event,
+    handler
   };
 };
 

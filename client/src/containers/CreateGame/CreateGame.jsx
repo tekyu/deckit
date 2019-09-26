@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import * as styles from "./CreateGame.module.scss";
 import { connect } from "react-redux";
-import { listGameMapping, inputOnChangeHandler } from "utils";
+import sillyname from "sillyname";
+import { gameMapping, inputOnChangeHandler } from "utils";
 import { listener, emitter } from "store/actions/socket";
 import { CREATE_ROOM } from "store/actions/socketCreators";
 /**
@@ -12,31 +13,49 @@ import { CREATE_ROOM } from "store/actions/socketCreators";
 class CreateGame extends Component {
   state = {
     isPublic: false, //TODO: change this
-    players: 5,
+    playersMax: 5,
+    gameCode: "d",
+    nickname: sillyname(),
+    password: "",
     created: false
   };
 
   inputOnChangeHandler = inputOnChangeHandler.bind(this);
 
   componentDidMount() {
-    this.props.listener(CREATE_ROOM, () => {
-      this.setState({ created: true });
-    });
+    //TODO: POC
+    // this.props.listener(CREATE_ROOM, () => {
+    //   this.setState({ created: true });
+    // });
   }
 
   submitCreateHandler = event => {
-    const { isPublic, players, name, nickname, password } = this.state;
-    const { emitter, listener } = this.props;
-    const options = {
+    const anonymous = true; //TODO: Change it to state management
+    const {
       isPublic,
-      players,
+      playersMax,
       name,
       nickname,
-      password
+      password,
+      gameCode
+    } = this.state;
+    const { emitter } = this.props;
+    const options = {
+      isPublic: !isPublic,
+      playersMax: +playersMax,
+      name,
+      password,
+      gameCode
     };
     event.preventDefault();
-    emitter(CREATE_ROOM, options);
-
+    emitter(CREATE_ROOM, options, data => {
+      this.setState(() => {
+        return { created: data.created };
+      });
+    });
+    if (anonymous) {
+      emitter("updateUser", { nickname });
+    }
     console.log("submitCreateHandler", options);
   };
 
@@ -51,13 +70,15 @@ class CreateGame extends Component {
           id="nickname"
           type="text"
           placeholder="Write it here!"
+          onChange={this.inputOnChangeHandler}
+          value={this.state.nickname}
         />
       </div>
     );
 
-    const mappedGameSelect = listGameMapping().map(game => (
-      <option key={game} value={game}>
-        {game}
+    const mappedGameSelect = Object.keys(gameMapping).map(gameCode => (
+      <option key={gameCode} value={gameCode}>
+        {gameMapping[gameCode]}
       </option>
     ));
 
@@ -94,11 +115,12 @@ class CreateGame extends Component {
           <div className={styles.formGroup}>
             <label htmlFor="players">Game</label>
             <select
-              name="game"
+              name="gameCode"
               id="game"
               type="text"
               placeholder="Select game"
               onChange={this.inputOnChangeHandler}
+              value={this.state.game}
             >
               {mappedGameSelect}
             </select>
@@ -117,7 +139,7 @@ class CreateGame extends Component {
           <div className={styles.formGroup}>
             <label htmlFor="players">Number of players</label>
             <input
-              name="players"
+              name="playersMax"
               id="players"
               type="range"
               min="2"

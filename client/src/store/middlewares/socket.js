@@ -21,23 +21,27 @@ export default function socketMiddleware() {
     }
     switch (type) {
       case SOCKET_LEAVE:
-        console.log("%c SOCKET LEAVE", "background:#FFA09E", type);
+        console.log("%c SOCKET LEAVE", "background:#FFA09E", event);
         socket.removeListener(event);
         break;
       case SOCKET_EMIT:
         console.log("%c SOCKET EMIT", "background:#90D6E8", event, {
-          ...payload
+          ...payload,
+          ...rest
         });
-        socket.emit(event, { ...payload, ...rest });
+        if (handler) {
+          socket.emit(event, { ...payload, ...rest }, handler);
+        } else {
+          socket.emit(event, { ...payload, ...rest });
+        }
         break;
       case SOCKET_LISTENER:
-        console.log("%c SOCKET LISTENER 0000", "background:#C1FFAB");
         socket.on(event, data => {
           if (data.error) {
             dispatch({ type: "ERROR", payload: data.error });
             return;
           }
-          console.log("%c SOCKET LISTENER", "background:#C1FFAB");
+          console.log("%c SOCKET LISTENER", "background:#C1FFAB", event, data);
           handler(data);
           // dispatch({ type: "SAVE_DATA", payload });
         });

@@ -1,5 +1,5 @@
-const Game = socket => {
-	console.log("Game events");
+const Game = (socket: any, io: any) => {
+  console.log("Game events");
 };
 
 export default Game;
