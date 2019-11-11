@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { checkAuth } from "store/actions/user";
@@ -10,24 +10,26 @@ import * as styles from "./Browse.module.scss";
 
 const Browse = ({ auth, checkAuth, emitter }) => {
   const [rooms, setRooms] = useState([]);
-  const refreshList = () => {
+  const refreshList = useCallback(() => {
     emitter(`getRooms`, null, rooms => {
       setRooms(rooms);
     });
-  };
+  }, [emitter]);
   useEffect(() => {
     checkAuth();
     refreshList();
-  }, []);
-  const selectHandler = ({ target }) => {};
-  const refreshListHandler = () => {
-    refreshList();
-  };
-  const sortHandler = options => {
-    const { searchPhrase, sortBy } = options;
-    const newRooms = rooms.filter(room => room[sortBy].includes(searchPhrase));
-    setRooms(newRooms.sort(dynamicSort(sortBy)));
-  };
+  }, [checkAuth, refreshList]);
+  const selectHandler = useCallback(() => {}, []);
+  const sortHandler = useCallback(
+    options => {
+      const { searchPhrase, sortBy } = options;
+      const newRooms = rooms.filter(room =>
+        room[sortBy].includes(searchPhrase)
+      );
+      setRooms(newRooms.sort(dynamicSort(sortBy)));
+    },
+    [rooms]
+  );
   const roomCards = rooms
     ? rooms.map(room => (
         <RoomCard
@@ -40,10 +42,10 @@ const Browse = ({ auth, checkAuth, emitter }) => {
     : null;
   return (
     <>
-      <button type="button" onClick={refreshListHandler}>
+      <button type="button" onClick={refreshList}>
         Refresh
       </button>
-      <Sort handler={sortHandler} />
+      <Sort sortHandler={sortHandler} />
       {roomCards && (
         <div className={styles[`browse__cardlist-container`]}>{roomCards}</div>
       )}

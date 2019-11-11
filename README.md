@@ -44,6 +44,7 @@ Go to server directory and start the server using `npm start`.
 - [ ] Settings panel for registered users
 - [ ] Allow to choose multiple decks when creating room (with preview cards)
 - [ ] Make couple of themed decks
+- [ ] Refactor & declutter of RoomCard(together with it's styles)
 
 
 ### Features that might or might not appear further down the road

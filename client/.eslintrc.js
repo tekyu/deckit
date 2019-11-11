@@ -5,7 +5,7 @@ module.exports = {
     node: true,
     jest: true
   },
-  plugins: ['jsx-a11y', 'prettier', 'react'],
+  plugins: ['jsx-a11y', 'prettier', 'react', 'react-hooks'],
   extends: [
     'eslint:recommended',
     'airbnb-base',
@@ -41,7 +41,9 @@ module.exports = {
     ],
     'react/prop-types': 1,
     'react/jsx-key': 1,
-    'class-methods-use-this': 0
+    'class-methods-use-this': 0,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error"
   },
   settings: {
     'import/resolver': {
