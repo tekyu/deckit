@@ -22,6 +22,7 @@ module.exports = {
     quotes: [2, 'backtick'],
     'no-unused-vars': 1,
     'no-console': 1,
+    "no-shadow": 0,
     'prettier/prettier': [
       2,
       {
