@@ -4,16 +4,25 @@ import chalk from "chalk";
 //TODO: Move interfaces to other file
 interface Iparams {
   id: string;
-  nickname?: string;
+  username?: string;
   avatar?: string;
   ranking?: number;
 }
 
 //TODO: Change types
 const RoomEvents = (socket: any, io: any) => {
+  const getRoom = (id: string) => {
+    const room = io.gameRooms[id];
+    if (!room) {
+      console.log(chalk.bgRedBright(`Room with id of ${id} doesn't exist`));
+      // throw Error(`Room with id of ${id} doesn't exist`);
+    }
+    return room;
+  };
+
   console.log("Room events");
   socket.on("createRoom", (params: any, callback: Function) => {
-    const { nickname, ...roomParams } = params;
+    const { username, ...roomParams } = params;
     const room = new Room(roomParams, socket.id);
     socket.join(room.id);
     io.gameRooms[room.id] = room;
@@ -32,7 +41,21 @@ const RoomEvents = (socket: any, io: any) => {
       Object.keys(io.sockets.connected)
     );
     // socket.emit("createRoom", { created: true }, );
-    callback({ created: true });
+    callback({ created: true, roomId: room.id });
+  });
+
+  socket.on("getRoomInfo", (params: Object, callback: Function) => {
+    const room = getRoom(params.id);
+    const roomInfo = room.roomOptions;
+    console.log("getRoomInfo", roomInfo);
+    callback(roomInfo);
+  });
+
+  socket.on("newConnectedPlayer", data => {
+    const { roomId, ...playerData } = data;
+    const room = getRoom(roomId);
+    room.connectPlayer(playerData);
+    socket.in(roomId).emit("roomUpdated", room.roomOptions);
   });
 };
 

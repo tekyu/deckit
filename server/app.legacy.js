@@ -207,7 +207,7 @@ const updateRoom = (roomId, data) => {
  * @param {Object} player
  * @param player.id Socket Id
  * @param player.uuid Generated UUID
- * @param player.nickname Chosen or default nickname
+ * @param player.username Chosen or default username
  */
 const pushToWaitingRoom = player => {
 	if (
@@ -219,7 +219,7 @@ const pushToWaitingRoom = player => {
 	io.sockets.adapter.rooms[waitingRoom].playersConnected.push({
 		id: player.id,
 		uuid: player.uuid,
-		nickname: player.nickname
+		username: player.username
 	});
 };
 
@@ -266,14 +266,14 @@ io.on("connection", socket => {
 		// const player = new Player({
 		//     id: socket.id,
 		//     uuid: socket.uuid,
-		//     nickname: socket.nickname,
+		//     username: socket.username,
 		//     gameProperties: socket.gameProperties,
 		//     color: _color
 		// });
 		data.playersConnected.push({
 			id: socket.id,
 			uuid: socket.uuid,
-			nickname: socket.nickname,
+			username: socket.username,
 			gameProperties: socket.gameProperties,
 			status: false,
 			color: _color,
@@ -344,18 +344,18 @@ io.on("connection", socket => {
 		);
 	});
 
-	socket.on("getUUID", nickname => {
-		console.log(chalk.bgGreen("[receiving] getUUID"), nickname);
+	socket.on("getUUID", username => {
+		console.log(chalk.bgGreen("[receiving] getUUID"), username);
 		socket.uuid = UUID();
-		socket.nickname = nickname;
+		socket.username = username;
 		socket.emit("playerConnected", {
 			uuid: socket.uuid,
-			nickname: socket.nickname,
+			username: socket.username,
 			gameProperties: socket.gameProperties
 		});
 		console.log(chalk.bgBlue("[emitting] playerConnected"), {
 			uuid: socket.uuid,
-			nickname: socket.nickname,
+			username: socket.username,
 			gameProperties: socket.gameProperties
 		});
 		socket.join(waitingRoom);
@@ -363,7 +363,7 @@ io.on("connection", socket => {
 		pushToWaitingRoom({
 			id: socket.id,
 			uuid: socket.uuid,
-			nickname: socket.nickname
+			username: socket.username
 		});
 
 		socket
@@ -376,7 +376,7 @@ io.on("connection", socket => {
 			chalk.bgBlue("[emitting] playersInWaitingRoom [on] getUUID"),
 			{
 				uuid: socket.uuid,
-				nickname: socket.nickname,
+				username: socket.username,
 				gameProperties: socket.gameProperties
 			}
 		);
@@ -401,7 +401,7 @@ io.on("connection", socket => {
 				room.playersConnected.push({
 					id: socket.id,
 					uuid: socket.uuid,
-					nickname: socket.nickname,
+					username: socket.username,
 					gameProperties: socket.gameProperties,
 					status: false,
 					color: _color,
@@ -1057,13 +1057,13 @@ io.on("connection", socket => {
 		socket.to(room).emit("messageSentToRoom", {
 			msg: msg,
 			id: socket.id,
-			nickname: socket.nickname,
+			username: socket.username,
 			color: socket.color
 		});
 		console.log(chalk.bgBlue("[emitting] messageSentToRoom"), {
 			msg: msg,
 			id: socket.id,
-			nickname: socket.nickname,
+			username: socket.username,
 			color: socket.color
 		});
 	});

@@ -37,4 +37,11 @@ const CreateGame = Loadable({
 	}
 });
 
-export { Login, Register, Logout, Browse, CreateGame };
+const GameContainer = Loadable({
+	loader: () => import("containers/GameContainer/GameContainer"),
+	loading() {
+		return <p>Loading...</p>;
+	}
+});
+
+export { Login, Register, Logout, Browse, CreateGame, GameContainer };

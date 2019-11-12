@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import axios from 'utils/axios';
-import * as styles from './RegisterModal.module.scss';
+import React, { Component } from "react";
+import axios from "utils/axios";
+import * as styles from "./RegisterModal.module.scss";
 
 class RegisterModal extends Component {
   state = {
-    username: '',
-    password: '',
-    confirmPassword: '',
+    username: "",
+    password: "",
+    confirmPassword: "",
     formError: null,
     errors: {
-      empty: 'It seems like you forgot to fill your',
-      '401': 'Oops! It looks like you misspelled your username or password',
-      misspelledPass: 'Passwords are not the same'
+      empty: "It seems like you forgot to fill your",
+      "401": "Oops! It looks like you misspelled your username or password",
+      misspelledPass: "Passwords are not the same"
     }
   };
 
@@ -61,13 +61,11 @@ class RegisterModal extends Component {
   submitRegisterHandler = event => {
     event.preventDefault();
     const { username, password, confirmPassword } = this.state;
-    console.log('username, password', username, password);
     if (!username || !password) {
       this.setState((state, props) => {
-        console.log('setsatate', state, props);
         return {
           formError: `${state.errors.empty} ${
-            !username ? ' username' : ' password'
+            !username ? " username" : " password"
           }`
         };
       });
@@ -75,7 +73,6 @@ class RegisterModal extends Component {
     }
     if (password !== confirmPassword) {
       this.setState((state, props) => {
-        console.log('setsatate', state, props);
         return {
           formError: state.errors.misspelledPass
         };
@@ -83,13 +80,11 @@ class RegisterModal extends Component {
       return false;
     }
     axios
-      .post('/api/register', {
+      .post("/api/register", {
         username,
         password
       })
-      .then(response => {
-        console.log('response', response);
-      })
+      .then(response => {})
       .catch(error => {
         throw error;
       });

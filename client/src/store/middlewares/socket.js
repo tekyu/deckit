@@ -10,7 +10,6 @@ export default function socketMiddleware() {
   const socket = io(SOCKET_ADDRESS);
 
   return ({ dispatch }) => next => action => {
-    console.log("SOCKET MIDDLEWARE", action, next);
     if (typeof action === "function") {
       return next(action);
     }
@@ -42,7 +41,8 @@ export default function socketMiddleware() {
             return;
           }
           console.log("%c SOCKET LISTENER", "background:#C1FFAB", event, data);
-          handler(data);
+          const readyData = { ...data, id: socket.id };
+          handler(readyData);
           // dispatch({ type: "SAVE_DATA", payload });
         });
 

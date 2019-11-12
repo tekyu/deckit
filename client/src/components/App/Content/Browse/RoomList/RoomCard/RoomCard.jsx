@@ -1,5 +1,6 @@
 import React from "react";
 import * as styles from "./RoomCard.module.scss";
+import {Link} from 'react-router-dom';
 
 const RoomCard = ({ handler, options, isAnonymous }) => {
 	const {
@@ -39,12 +40,13 @@ const RoomCard = ({ handler, options, isAnonymous }) => {
 				</div>
 			</div>
 			<div className={styles.footer}>
-				<button
+				<Link
 					className="button--primary"
-					onClick={handler}
+					// onClick={handler}
+					to={`/game/${id}`}
 					value={id}>
 					{isAnonymous ? "Play as anonymous" : "Join"}
-				</button>
+				</Link>
 			</div>
 		</div>
 	);

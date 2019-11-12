@@ -18,6 +18,10 @@ const Routes = () => {
 				render={() => <Loadable.Browse auth={false} />}
 			/>
 			<Route
+				path="/game/:id"
+				render={() => <Loadable.GameContainer />}
+			/>
+			<Route
 				path="/create"
 				exact
 				render={() => <Loadable.CreateGame auth={false} />}
