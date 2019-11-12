@@ -5,8 +5,8 @@ import socketMiddleware from "store/middlewares/socket";
 import { initialStore } from "store/initialStore";
 
 const enhancers = compose(
-	applyMiddleware(thunk, socketMiddleware()),
-	window.devToolsExtension ? window.devToolsExtension() : f => f
+  applyMiddleware(thunk, socketMiddleware()),
+  window.devToolsExtension ? window.devToolsExtension() : f => f
 );
 const store = createStore(reducer, enhancers);
 export default store;
@@ -43,7 +43,7 @@ export default store;
 // 			{
 // 				msg: data.msg,
 // 				id: data.id,
-// 				nickname: data.nickname,
+// 				username: data.username,
 // 				mine: false
 // 			}
 // 		]

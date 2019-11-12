@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { checkAuth } from "store/actions/user";
 import { emitter } from "store/actions/socket";
+import axios from "utils/axios";
 import dynamicSort from "utils/dynamicSort";
 import RoomList from "./RoomList/RoomList";
 import Sort from "./Sort/Sort";
-
 class Browse extends Component {
   state = {
     rooms: []
@@ -36,6 +36,7 @@ class Browse extends Component {
         return { rooms: rooms };
       });
     });
+    axios.get("/getRooms").then(rooms => {});
   };
   componentDidMount() {
     const { checkAuth } = this.props;
@@ -44,7 +45,6 @@ class Browse extends Component {
   }
 
   render() {
-    console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeee", this.state);
     return (
       <React.Fragment>
         <button type="button" onClick={this.refreshListHandler}>

@@ -1,111 +1,112 @@
 @import "assets/css/_palette.scss";
 
 .modal_backdrop {
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-	background-color: rgba(map-get($map: $color-map, $key: "white"), 0.9);
-	position: absolute;
-	z-index: 10;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(map-get($map: $color-map, $key: "white"), 0.9);
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
 }
 
 .modal_close {
-	// should be svg
-	position: absolute;
-	top: 20px;
-	right: 20px;
-	display: block;
-	width: 20px;
-	height: 20px;
-	cursor: pointer;
-	&:before,
-	&:after {
-		content: "";
-		display: block;
-		position: absolute;
-		height: 20px;
-		width: 2px;
-		border-radius: 2px;
-		background: map-get($map: $color-map, $key: "black");
-		opacity: 0.54;
-		top: 0;
-		right: 50%;
-		transform: translateX(-50%);
-	}
-	&:before {
-		transform: rotate(45deg);
-	}
-	&:after {
-		transform: rotate(-45deg);
-	}
-	&:hover,
-	&:active {
-		&:before,
-		&:after {
-			box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.24);
-		}
-	}
+  // should be svg
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: block;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  &:before,
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 20px;
+    width: 2px;
+    border-radius: 2px;
+    background: map-get($map: $color-map, $key: "black");
+    opacity: 0.54;
+    top: 0;
+    right: 50%;
+    transform: translateX(-50%);
+  }
+  &:before {
+    transform: rotate(45deg);
+  }
+  &:after {
+    transform: rotate(-45deg);
+  }
+  &:hover,
+  &:active {
+    &:before,
+    &:after {
+      box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.24);
+    }
+  }
 }
 
 .modal_container {
-	box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.14);
-	background-color: rgba(map-get($map: $color-map, $key: "white"), 0.9);
-	width: 500px;
-	height: auto;
-	min-height: 600px;
-	border-radius: 6px;
-	padding: 20px;
-	text-align: center;
-	display: flex;
-	flex-direction: column;
-	position: relative;
+  box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.14);
+  background-color: rgba(map-get($map: $color-map, $key: "white"), 0.9);
+  width: 500px;
+  height: auto;
+  min-height: 600px;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .modal_header {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding-bottom: 20px;
-	i {
-		display: block;
-		width: 100px;
-		height: 100px;
-		border-radius: 50%;
-		box-shadow: 0px 2px 10px 0px
-			rgba(map-get($map: $color-map, $key: "sandstone"), 0.24);
-		margin-bottom: 10px;
-		background: linear-gradient(
-			45deg,
-			map-get($map: $color-map, $key: "sandstone") 0%,
-			map-get($map: $color-map, $key: "burnt-orange") 100%
-		);
-	}
-	h2 {
-		font-size: 30px;
-	}
-	p {
-		margin-top: 6px;
-		font-size: 14px;
-		color: rgba(map-get($map: $color-map, $key: "black"), 0.54);
-	}
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 20px;
+  i {
+    display: block;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    box-shadow: 0px 2px 10px 0px
+      rgba(map-get($map: $color-map, $key: "sandstone"), 0.24);
+    margin-bottom: 10px;
+    background: linear-gradient(
+      45deg,
+      map-get($map: $color-map, $key: "sandstone") 0%,
+      map-get($map: $color-map, $key: "burnt-orange") 100%
+    );
+  }
+  h2 {
+    font-size: 30px;
+  }
+  p {
+    margin-top: 6px;
+    font-size: 14px;
+    color: rgba(map-get($map: $color-map, $key: "black"), 0.54);
+  }
 }
 
 .modal_body {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal_footer {
-	margin-top: auto;
-	.create_account {
-		font-size: 16px;
-		color: rgba(map-get($map: $color-map, $key: "black"), 0.54);
-	}
+  margin-top: auto;
+  .create_account {
+    font-size: 16px;
+    color: rgba(map-get($map: $color-map, $key: "black"), 0.54);
+  }
 }

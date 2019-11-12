@@ -2,7 +2,7 @@ class Player {
 	constructor(data) {
 		this.id = data.id;
 		this.uuid = data.uuid;
-		this.nickname = data.nickname;
+		this.username = data.username;
 		this.gameProperties = {};
 		this.status = false;
 		this.color = data.color;

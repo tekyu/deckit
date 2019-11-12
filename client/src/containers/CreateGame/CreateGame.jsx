@@ -4,7 +4,9 @@ import { connect } from "react-redux";
 import sillyname from "sillyname";
 import { gameMapping, inputOnChangeHandler } from "utils";
 import { listener, emitter } from "store/actions/socket";
-import { CREATE_ROOM } from "store/actions/socketCreators";
+import { updateAnonUser } from "store/actions/user";
+import { CREATE_ROOM, UPDATE_ANON_USER } from "store/actions/socketCreators";
+import { withRouter } from "react-router-dom";
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
@@ -15,31 +17,16 @@ class CreateGame extends Component {
     isPublic: false, //TODO: change this
     playersMax: 5,
     gameCode: "d",
-    nickname: sillyname(),
+    username: sillyname(),
     password: "",
     created: false
   };
 
   inputOnChangeHandler = inputOnChangeHandler.bind(this);
 
-  componentDidMount() {
-    //TODO: POC
-    // this.props.listener(CREATE_ROOM, () => {
-    //   this.setState({ created: true });
-    // });
-  }
-
   submitCreateHandler = event => {
-    const anonymous = true; //TODO: Change it to state management
-    const {
-      isPublic,
-      playersMax,
-      name,
-      nickname,
-      password,
-      gameCode
-    } = this.state;
-    const { emitter } = this.props;
+    const { isPublic, playersMax, name, password, gameCode } = this.state;
+    const { updateUser } = this.props;
     const options = {
       isPublic: !isPublic,
       playersMax: +playersMax,
@@ -49,36 +36,44 @@ class CreateGame extends Component {
     };
     event.preventDefault();
     emitter(CREATE_ROOM, options, data => {
-      this.setState(() => {
-        return { created: data.created };
-      });
+      if (!data.error) {
+        this.props.history.push(`/game/${data.roomId}`);
+      }
+      updateUser(data.roomId);
     });
+  };
+
+  updateUser = roomId => {
+    const anonymous = true; //TODO: Change it to state management
+    const { username } = this.state;
+    const { emitter, updateAnonUser } = this.props;
     if (anonymous) {
-      emitter("updateUser", { nickname });
+      emitter(UPDATE_ANON_USER, { username, roomId }, userData => {
+        updateAnonUser(userData);
+      });
     }
-    console.log("submitCreateHandler", options);
   };
 
   render() {
     const { isPublic } = this.state;
     const { user } = this.props;
-    const anonNicknameInput = (
+    const anonusernameInput = (
       <div className={styles.formGroup}>
-        <label htmlFor="name">Your nickname</label>
+        <label htmlFor="name">Your username</label>
         <input
-          name="nickname"
-          id="nickname"
+          name="username"
+          id="username"
           type="text"
           placeholder="Write it here!"
           onChange={this.inputOnChangeHandler}
-          value={this.state.nickname}
+          value={this.state.username}
         />
       </div>
     );
 
     const mappedGameSelect = Object.keys(gameMapping).map(gameCode => (
       <option key={gameCode} value={gameCode}>
-        {gameMapping[gameCode]}
+        {gameMapping[gameCode].name}
       </option>
     ));
 
@@ -101,7 +96,7 @@ class CreateGame extends Component {
           <label className={styles.header}>
             Create room {this.state.created ? "true" : "false"}
           </label>
-          {user ? anonNicknameInput : null}
+          {user ? anonusernameInput : null}
           <div className={styles.formGroup}>
             <label htmlFor="name">Name of the room</label>
             <input
@@ -164,8 +159,8 @@ const mapStateToProps = ({ auth, user }, store) => {
   };
 };
 
-const mapDispatchToProps = { emitter, listener };
+const mapDispatchToProps = { emitter, listener, updateAnonUser };
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CreateGame);
+)(withRouter(CreateGame));

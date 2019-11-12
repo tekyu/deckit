@@ -24,7 +24,6 @@ class CardList extends Component {
     if (!rooms) {
       return null;
     }
-    console.log("isan", isAnonymous, rooms);
     const roomList = rooms.map(room => {
       return (
         <RoomCard

@@ -1,82 +1,83 @@
 @import "assets/css/_palette.scss";
 .backdrop {
-	position: fixed;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-	background: rgba(map-get($map: $color-map, $key: "white"), 0.8);
-	z-index: 10;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(map-get($map: $color-map, $key: "white"), 0.8);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
 }
 .container {
-	// background: red;
-	width: 500px;
-	height: auto;
-	min-height: 600px;
-	position: relative;
+  // background: red;
+  width: 500px;
+  height: auto;
+  min-height: 600px;
+  position: relative;
 }
 .header {
-	// background: blue;
+  // background: blue;
 }
 .content {
-	// background: violet;
-	display: flex;
-	flex-direction: column;
-	position: relative;
+  // background: violet;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .modal_container {
-	box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.14);
-	background-color: rgba(map-get($map: $color-map, $key: "white"), 0.9);
-	width: 500px;
-	height: auto;
-	min-height: 600px;
-	border-radius: 6px;
-	padding: 20px;
-	text-align: center;
-	display: flex;
-	flex-direction: column;
-	position: relative;
+  box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.14);
+  background-color: rgba(map-get($map: $color-map, $key: "white"), 0.9);
+  width: 500px;
+  height: auto;
+  min-height: 600px;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .close {
-	// should be svg
-	z-index: 10;
-	position: absolute;
-	top: 20px;
-	right: 20px;
-	display: block;
-	width: 20px;
-	height: 20px;
-	cursor: pointer;
-	&:before,
-	&:after {
-		content: "";
-		display: block;
-		position: absolute;
-		height: 20px;
-		width: 2px;
-		border-radius: 2px;
-		background: map-get($map: $color-map, $key: "black");
-		opacity: 0.54;
-		top: 0;
-		right: 50%;
-		transform: translateX(-50%);
-	}
-	&:before {
-		transform: rotate(45deg);
-	}
-	&:after {
-		transform: rotate(-45deg);
-	}
-	&:hover,
-	&:active {
-		&:before,
-		&:after {
-			box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.24);
-		}
-	}
+  // should be svg
+  z-index: 10;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: block;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  &:before,
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 20px;
+    width: 2px;
+    border-radius: 2px;
+    background: map-get($map: $color-map, $key: "black");
+    opacity: 0.54;
+    top: 0;
+    right: 50%;
+    transform: translateX(-50%);
+  }
+  &:before {
+    transform: rotate(45deg);
+  }
+  &:after {
+    transform: rotate(-45deg);
+  }
+  &:hover,
+  &:active {
+    &:before,
+    &:after {
+      box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.24);
+    }
+  }
 }

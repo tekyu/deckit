@@ -4,6 +4,7 @@ import chalk from "chalk";
 import mockRooms from "../mocks/Rooms";
 import roomEvents from "./events/RoomEvents";
 import gameEvents from "./events/Game";
+import UserEvents from "./events/UserEvents";
 //TODO: Change types
 const ioEvents = (io: any) => {
   io.on("connection", (socket: any) => {
@@ -16,6 +17,7 @@ const ioEvents = (io: any) => {
     });
     roomEvents(socket, io);
     gameEvents(socket, io);
+    UserEvents(socket, io);
   });
 };
 
@@ -24,10 +26,9 @@ const SocketIo = () => {
   const server = http.createServer();
   const io = socketIo(server);
 
+  // console.log("gamerooms", mockRooms);
   io.gameRooms = {};
   io.gameRooms = mockRooms;
-  console.log("getRooms", Object.values(io.gameRooms));
-  // console.log("gamerooms", mockRooms);
   ioEvents(io);
   server.listen(port, () =>
     console.log(chalk.black.bgGreen(`Socket server listening on port ${port}`))

@@ -1,23 +1,28 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { closeModal } from 'store/actions/modals';
-import * as styles from './ModalContainer.module.scss';
-import LoginModal from './LoginModal/LoginModal';
-import RegisterModal from './RegisterModal/RegisterModal';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { closeModal } from "store/actions/modals";
+import * as styles from "./ModalContainer.module.scss";
+import LoginModal from "./LoginModal/LoginModal";
+import RegisterModal from "./RegisterModal/RegisterModal";
+import AnonymousLoginModal from "./AnonymousLoginModal/AnonymousLoginModal";
 
 class ModalContainer extends Component {
   state = {};
 
   getModal = () => {
-    const modelTypes = {
-      login: 'login',
-      register: 'register'
+    const modalTypes = {
+      login: "login",
+      register: "register",
+      anonymous: "anonymous"
     };
-    switch (this.props.modalType) {
-      case modelTypes.login:
+    const { modalType } = this.props;
+    switch (modalType) {
+      case modalTypes.login:
         return <LoginModal />;
-      case modelTypes.register:
+      case modalTypes.register:
         return <RegisterModal />;
+      case modalTypes.anonymous:
+        return <AnonymousLoginModal />;
       default:
         return null;
     }
@@ -42,7 +47,7 @@ class ModalContainer extends Component {
   }
 }
 
-const mapStateToProps = ({ modalType }) => {
+const mapStateToProps = ({ modal: { modalType } }) => {
   return {
     modalType
   };

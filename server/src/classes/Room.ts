@@ -8,7 +8,7 @@ interface CreateRoomOptions {
   playersMax: number;
   gameCode: string;
   name?: string;
-  nickname?: string;
+  username?: string;
   gameOptions?: Object;
 }
 
@@ -97,6 +97,16 @@ export default class Room implements IRoom {
   }
 
   get roomView() {
+    const {
+      isPublic,
+      playersMax,
+      playersCurrent,
+      gameCode,
+      name,
+      id,
+      owner,
+      state
+    } = this;
     return {
       isPublic,
       playersMax,
