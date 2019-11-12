@@ -1,65 +1,60 @@
-import React, { Component } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { checkAuth } from "store/actions/user";
 import { emitter } from "store/actions/socket";
 import axios from "utils/axios";
 import dynamicSort from "utils/dynamicSort";
-import RoomList from "./RoomList/RoomList";
+import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
-class Browse extends Component {
-  state = {
-    rooms: []
-  };
+import * as styles from "./Browse.module.scss";
 
-  sortHandler = options => {
-    const { searchPhrase, sortBy } = options;
-    const newRooms = this.state.rooms.filter(room =>
-      room[sortBy].includes(searchPhrase)
-    );
-    this.setState(() => {
-      return { rooms: newRooms.sort(dynamicSort(sortBy)) };
+const Browse = ({ auth, checkAuth, emitter }) => {
+  const [rooms, setRooms] = useState([]);
+  const refreshList = useCallback(() => {
+    emitter(`getRooms`, null, rooms => {
+      setRooms(rooms);
     });
-  };
-
-  selectHandler = ({ target }) => {
-    console.log("selectHandler", target, target.value);
-  };
-
-  refreshListHandler = () => {
-    this.refreshList();
-  };
-
-  refreshList = () => {
-    const { emitter } = this.props;
-    emitter("getRooms", null, rooms => {
-      this.setState(() => {
-        return { rooms: rooms };
-      });
-    });
-    axios.get("/getRooms").then(rooms => {});
-  };
-  componentDidMount() {
-    const { checkAuth } = this.props;
+    axios.get(`/getRooms`).then(() => {});
+  }, [emitter]);
+  useEffect(() => {
     checkAuth();
-    this.refreshList();
-  }
-
-  render() {
-    return (
-      <React.Fragment>
-        <button type="button" onClick={this.refreshListHandler}>
-          Refresh
-        </button>
-        <Sort handler={this.sortHandler} />
-        <RoomList
-          rooms={this.state.rooms}
-          handler={this.selectHandler}
-          isAnonymous={!this.auth}
+    refreshList();
+  }, [checkAuth, refreshList]);
+  const selectHandler = useCallback(() => {}, []);
+  const sortHandler = useCallback(options => {
+    const { searchPhrase, sortBy } = options;
+    const newRooms = rooms.filter(room => room[sortBy].includes(searchPhrase));
+    setRooms(newRooms.sort(dynamicSort(sortBy)));
+  }, []);
+  const roomCards = rooms
+    ? rooms.map(room => (
+        <RoomCard
+          key={room.id}
+          options={room}
+          handler={selectHandler}
+          isAnonymous={!auth}
         />
-      </React.Fragment>
-    );
-  }
-}
+      ))
+    : null;
+  return (
+    <>
+      <button type="button" onClick={refreshList}>
+        Refresh
+      </button>
+      <Sort sortHandler={sortHandler} />
+      {roomCards && (
+        <div className={styles[`browse__cardlist-container`]}>{roomCards}</div>
+      )}
+    </>
+  );
+};
+
+Browse.propTypes = {
+  auth: PropTypes.bool,
+  checkAuth: PropTypes.func.isRequired,
+  emitter: PropTypes.func.isRequired
+};
 
 const mapStateToProps = ({ auth, user }) => {
   return {
@@ -72,7 +67,10 @@ const mapDispatchToProps = {
   checkAuth,
   emitter
 };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Browse);
+
+export default memo(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Browse)
+);

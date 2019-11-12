@@ -5,23 +5,30 @@ module.exports = {
     node: true,
     jest: true
   },
-  plugins: ['jsx-a11y', 'prettier'],
+  plugins: ['jsx-a11y', 'prettier', 'react', 'react-hooks'],
   extends: [
     'eslint:recommended',
     'airbnb-base',
-    //'plugin:jsx-a11y/recommended',
+    'plugin:react/recommended',
+    'plugin:jsx-a11y/recommended',
+    'prettier/react',
     'plugin:prettier/recommended',
-    'plugin:react/recommended'
   ],
   parser: 'babel-eslint',
   parserOptions: {
     ecmaVersion: 2019
   },
   rules: {
-    quotes: [2, 'single', { avoidEscape: true }],
+    quotes: [2, 'backtick'],
     'no-unused-vars': 1,
     'no-console': 1,
-    'prettier/prettier': [2, { singleQuote: true, endOfLine: 'auto' }],
+    "no-shadow": 0,
+    'prettier/prettier': [
+      2,
+      {
+        endOfLine: 'auto'
+      }
+    ],
     'jsx-a11y/label-has-for': [
       0,
       {
@@ -34,13 +41,15 @@ module.exports = {
     ],
     'react/prop-types': 1,
     'react/jsx-key': 1,
-    'class-methods-use-this': 0
+    'class-methods-use-this': 0,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error"
   },
   settings: {
     'import/resolver': {
-      node: { 
-        extensions: ['.js','.jsx'],
-        paths: 'src' 
+      node: {
+        extensions: ['.js', '.jsx'],
+        paths: 'src'
       }
     }
   }
