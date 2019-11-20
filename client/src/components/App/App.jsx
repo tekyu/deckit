@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
@@ -10,25 +10,16 @@ import Content from "./Content/Content";
 import { initializeSocket } from "store/actions/socket";
 import io from "socket.io-client";
 
-class App extends Component {
-  // componentDidMount() {
-  //   // const socket = io("localhost:3012");
-  //   // this.props.initializeSocket(socket);
-  // }
-  static getDerivedStateFromProps(props, state) {}
-
-  render() {
-    const { auth, modalType, showModal, error, state } = this.props;
-    return (
-      <React.Fragment>
-        <Header />
-        {error && <Error message={error} />}
-        <Content auth={auth} />
-        {showModal && <ModalContainer type={modalType} />}
-      </React.Fragment>
-    );
-  }
-}
+const App = ({ auth, modalType, showModal, error, state }) => {
+  return (
+    <React.Fragment>
+      <Header />
+      {error && <Error message={error} />}
+      <Content auth={auth} />
+      {showModal && <ModalContainer type={modalType} />}
+    </React.Fragment>
+  );
+};
 
 App.propTypes = {
   auth: PropTypes.bool.isRequired,

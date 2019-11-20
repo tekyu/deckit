@@ -1,108 +1,94 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect, useCallback } from "react";
+import styled from "styled-components";
 import { connect } from "react-redux";
-import { listener, emitter } from "store/actions/socket";
-import { withRouter } from "react-router-dom";
-import * as styles from "./SidePanel.module.scss";
+import { listener } from "store/actions/socket";
 import ScorePanel from "./panels/score/ScorePanel";
 import ChatPanel from "./panels/chat/ChatPanel";
 import OptionsPanel from "./panels/options/OptionsPanel";
+import Bubbles from "./Bubbles/Bubbles";
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
  * should be in the main game/room creation topic
  */
-class SidePanel extends Component {
-  constructor(props) {
-    super(props);
-    console.log("panels", props);
-    this.state = {
-      openedPanel: "chat", // props.panels[0] || null, //TODO: temp
-      score: [],
-      chat: [],
-      log: []
-    };
 
-    //TODO: Util function
-    //TODO: Panels as components, import them
-    this.panelMapping = {
-      score: <ScorePanel scoreData={this.state.score} />,
-      chat: <ChatPanel chatData={this.state.chat} />,
-      options: <OptionsPanel />
-    };
-  }
+const Container = styled.div`
+  background: blue;
+  min-width: 320px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+`;
 
-  componentDidMount() {
-    const { listener } = this.props;
-    listener("scoreUpdate", data => {
-      this.setState(() => {
-        return { score: data };
+const Panel = styled.div`
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #000;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+`;
+
+const SidePanel = ({ panels, listener }) => {
+  const [openedPanel, setOpenedPanel] = useState("chat"); //Object.keys(panels)[0]
+  const [sidePanels, setSidePanels] = useState({});
+  const panelMapping = {
+    score: <ScorePanel scoreData={sidePanels.score} />,
+    chat: <ChatPanel chatData={sidePanels.chat} />,
+    options: <OptionsPanel />
+  };
+  const addPanelListeners = useCallback(() => {
+    console.log("%c addPanelListeners", "background: #E88341");
+
+    Object.keys(panels).forEach(panel => {
+      listener(panels[panel].listener, data => {
+        setSidePanels(prevSidePanels => ({
+          ...prevSidePanels,
+          [panel]: panels[panel]
+        }));
       });
     });
-    listener("incomingChatMessage", message => {
-      this.setState(({ chat }) => {
-        const newChatState = [...chat, message];
-        return { chat: newChatState };
-      });
-    });
-    listener("incomingLog", message => {
-      this.setState(({ log }) => {
-        const newLogState = [...log, message];
-        return { chat: newLogState };
-      });
-    });
-  }
+  }, [listener, panels]);
 
-  changePanel = ({ target }) => {
-    this.setState(() => {
-      return { openedPanel: target.getAttribute("name") };
+  const makePanels = useCallback(() => {
+    console.log("%c makePanels", "background: #FF4762");
+    Object.keys(panels).forEach(panel => {
+      setSidePanels(prevSidePanels => ({
+        ...prevSidePanels,
+        [panel]: panels[panel]
+      }));
     });
+  }, [panels]);
+
+  useEffect(() => {
+    makePanels();
+    addPanelListeners();
+  }, [makePanels, addPanelListeners]);
+
+  const changePanel = useCallback(({ target }) => {
+    console.log("changePanel", target);
+    setOpenedPanel(target.getAttribute("name"));
+  });
+
+  const getPanel = () => {
+    return panelMapping[openedPanel];
   };
 
-  get panel() {
-    return this.panelMapping[this.state.openedPanel];
-  }
-
-  get bubbles() {
-    console.log("get bubbles");
-    const { panels } = this.props;
-    const { openedPanel } = this.state;
-    const bubbleClass = styles.bubble;
-    const openedBubbleClass = styles.openedPanel;
-    return panels.map(panel => {
-      const classes = [bubbleClass];
-      if (openedPanel === panel) {
-        classes.push(openedBubbleClass);
-      }
-      console.log("bubbles", classes, openedPanel, panel);
-      return (
-        <div
-          name={panel}
-          className={classes.join(" ")}
-          onClick={this.changePanel}
-          key={panel}
-        ></div>
-      );
-    });
-  }
-
-  render() {
-    return (
-      <div className={styles.sidePanel}>
-        <div className={styles.bubbles}>{this.bubbles}</div>
-        <div className={styles.panel}>{this.panel}</div>
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = ({ user: { user } }) => {
-  return {
-    user
-  };
+  return (
+    <Container>
+      <Bubbles
+        panels={panels}
+        openedPanel={openedPanel}
+        handler={changePanel}
+      />
+      <Panel>{getPanel()}</Panel>
+    </Container>
+  );
 };
 
-const mapDispatchToProps = { emitter, listener };
+const mapDispatchToProps = { listener };
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(SidePanel);

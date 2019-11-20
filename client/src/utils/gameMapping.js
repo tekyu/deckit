@@ -8,11 +8,20 @@ import { lazy } from "react";
 export const gameMapping = {
   d: {
     name: "Deckit",
-    panels: ["score", "chat", "log", "settings"]
+    panels: {
+      score: { listener: "scoreUpdate" },
+      chat: { listener: "incomingChatMessage" },
+      log: { listener: "incomingLog" },
+      settings: { listener: "roomSettings" }
+    }
   },
   k: {
     name: "Karcianka",
-    panels: ["score", "chat"]
+    panels: {
+      score: {},
+      chat: {},
+      log: {}
+    }
   }
 };
 
@@ -21,10 +30,7 @@ export const listGameMapping = index => {
 };
 
 export const getGames = index => {
-  if (typeof index !== "undefined") {
-    return Object.keys(gameMapping)[index];
-  }
-  return Object.values(gameMapping);
+  return index ? Object.keys(gameMapping)[index] : Object.values(gameMapping);
 };
 
 export const getGameMapping = game => {

@@ -2,22 +2,24 @@ import http from "http";
 import socketIo from "socket.io";
 import chalk from "chalk";
 import mockRooms from "../mocks/Rooms";
-import roomEvents from "./events/RoomEvents";
-import gameEvents from "./events/Game";
-import UserEvents from "./events/UserEvents";
+import { RoomEvents, GameEvents, UserEvents, ChatEvents } from "./events";
+
 //TODO: Change types
 const ioEvents = (io: any) => {
   io.on("connection", (socket: any) => {
     console.log(
       chalk.black.bgBlue(`Connection with socket established for ${socket.id}`)
     );
-    socket.pswOptions = {};
+    socket.pswOptions = {
+      rooms: {}
+    };
     socket.on("getRooms", (data, callback) => {
       callback(Object.values(io.gameRooms));
     });
-    roomEvents(socket, io);
-    gameEvents(socket, io);
+    RoomEvents(socket, io);
+    GameEvents(socket, io);
     UserEvents(socket, io);
+    ChatEvents(socket, io);
   });
 };
 
@@ -26,7 +28,6 @@ const SocketIo = () => {
   const server = http.createServer();
   const io = socketIo(server);
 
-  // console.log("gamerooms", mockRooms);
   io.gameRooms = {};
   io.gameRooms = mockRooms;
   ioEvents(io);

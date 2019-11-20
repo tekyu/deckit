@@ -1,72 +1,82 @@
-import React, { Component, Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState, useEffect, useCallback } from "react";
 import { connect } from "react-redux";
-import sillyname from "sillyname";
-import { gameMapping, inputOnChangeHandler, getGame } from "utils";
-import { listener, emitter } from "store/actions/socket";
-import { CREATE_ROOM, GET_ROOM_INFO } from "store/actions/socketCreators";
+import styled from "styled-components";
+import { gameMapping, getGame } from "utils";
+import { emitter } from "store/actions/socket";
+import { GET_ROOM_INFO } from "store/actions/socketCreators";
 import { withRouter } from "react-router-dom";
 import { openModal } from "store/actions/modals";
+import { setActiveRoom } from "store/actions/room";
 import SidePanel from "./SidePanel/SidePanel";
-import * as styles from "./GameContainer.module.scss";
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
  * should be in the main game/room creation topic
  */
-class GameContainer extends Component {
-  //TODO: Rename this to RoomContainer
-  state = {
-    roomInfo: null,
-    GameComponent: null,
-    panels: []
-  };
 
-  componentDidMount() {
-    const { user, openModal } = this.props;
+const Container = styled.div`
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 70px - 40px);
+`;
+
+const GameContainer = ({
+  user,
+  emitter,
+  match: {
+    params: { id }
+  },
+  openModal,
+  setActiveRoom
+}) => {
+  const [roomInfo, setRoomInfo] = useState(null);
+  const [GameComponent, setGameComponent] = useState(null);
+  const [panels, setPanels] = useState({});
+  const getRoomInfo = useCallback(
+    id => {
+      emitter(GET_ROOM_INFO, { id }, roomData => {
+        const { gameCode } = roomData;
+        console.log("[GameContainer][getRoomInfo]", gameCode, roomData);
+        setRoomInfo(roomData);
+        setGameComponent(getGame(gameCode));
+        setPanels(gameMapping[gameCode].panels);
+      });
+    },
+    [emitter]
+  );
+
+  useEffect(() => {
     if (!user) {
       // return modal with username option
       openModal("anonymous");
     } else {
       emitter("newConnectedPlayer", user);
     }
-    this.getRoomInfo();
-  }
+    getRoomInfo(id);
+    setActiveRoom(id);
 
-  getRoomInfo = () => {
-    const { emitter } = this.props;
-    emitter(GET_ROOM_INFO, { id: this.props.match.params.id }, roomData => {
-      this.setState({
-        roomInfo: roomData,
-        GameComponent: getGame(roomData.gameCode),
-        panels: gameMapping[roomData.gameCode].panels
-      });
-    });
-  };
+    return () => {
+      setActiveRoom();
+    };
+  });
+  return (
+    <Container>
+      <Suspense fallback={<div>LOADING GAME</div>}>
+        {GameComponent && <GameComponent options={roomInfo} />}
+        {Object.keys(panels).length && <SidePanel panels={panels} />}
+      </Suspense>
+    </Container>
+  );
+};
 
-  render() {
-    const { GameComponent, roomInfo, panels } = this.state;
-    return (
-      <div className={styles.container}>
-        <Suspense fallback={<div>LOADING GAME</div>}>
-          {GameComponent && <GameComponent options={roomInfo} />}
-          {panels.length && (
-            <SidePanel roomId={this.props.match.params.id} panels={panels} />
-          )}
-        </Suspense>
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = ({ auth, user: { user } }, state) => {
+const mapStateToProps = ({ auth, user: { user } }) => {
   return {
     auth,
-    user,
-    state
+    user
   };
 };
 
-const mapDispatchToProps = { emitter, listener, openModal };
+const mapDispatchToProps = { emitter, openModal, setActiveRoom };
 export default connect(
   mapStateToProps,
   mapDispatchToProps

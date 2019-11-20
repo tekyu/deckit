@@ -2,6 +2,100 @@ import { gameOptions } from "./../utils/gameMapping";
 import shortId from "shortid";
 import IRoom from "../interfaces/IRoom";
 import { getGameOptions } from "../utils/gameMapping";
+import mockRooms from "../mocks/Rooms";
+
+const mockChat = [
+  {
+    id: "12qw34",
+    ownerId: "5qw43",
+    ownerName: "blabla",
+    timestamp: 1573382208916,
+    color: "#FFAB87",
+    avatar: "https://via.placeholder.com/40x40",
+    message: "blabla"
+  },
+  {
+    id: "12q34",
+    ownerId: "543qwe",
+    ownerName: "blabla",
+    timestamp: 1573382218917,
+    color: "#FFAB87",
+    avatar: "https://via.placeholder.com/40x40",
+    message: "blabla"
+  },
+  {
+    id: "12d34",
+    ownerId: "543",
+    ownerName: "blabla",
+    timestamp: 1573382228918,
+    color: "#FFAB87",
+    avatar: "https://via.placeholder.com/40x40",
+    message: "blabla"
+  },
+  {
+    id: "123g4",
+    ownerId: "543",
+    ownerName: "blabla",
+    timestamp: 1573382238916,
+    color: "#FFAB87",
+    avatar: "https://via.placeholder.com/40x40",
+    message: "blabla"
+  },
+  {
+    id: "123h4",
+    ownerId: "543",
+    ownerName: "blabla",
+    timestamp: 1573382248916,
+    color: "#FFAB87",
+    avatar: "https://via.placeholder.com/40x40",
+    message: "blabla"
+  },
+  {
+    id: "123cc4",
+    ownerId: "5qqe43",
+    ownerName: "blabla",
+    timestamp: 1573382258916,
+    color: "#FFAB87",
+    avatar: "https://via.placeholder.com/40x40",
+    message: "blabla"
+  },
+  {
+    id: "12ss34",
+    ownerId: "543",
+    ownerName: "blabla",
+    timestamp: 1573382268916,
+    color: "#FFAB87",
+    avatar: "https://via.placeholder.com/40x40",
+    message: "blabla"
+  },
+  {
+    id: "123sa4",
+    ownerId: "5423",
+    ownerName: "blabla1",
+    timestamp: 1573382278916,
+    color: "#FFAB87",
+    avatar: "https://via.placeholder.com/40x40",
+    message: "blabla"
+  },
+  {
+    id: "123gdf4",
+    ownerId: "567543",
+    ownerName: "blabla2",
+    timestamp: 1573382288916,
+    color: "#FFAB87",
+    avatar: "https://via.placeholder.com/40x40",
+    message: "blabla"
+  },
+  {
+    id: "123ytht4",
+    ownerId: "234543", // ownerId should be an object, returned from server; reduce computing on front side
+    ownerName: "blabla3",
+    timestamp: 1573382298916,
+    color: "#FFAB87",
+    avatar: "https://via.placeholder.com/40x40",
+    message: "blablanbvdesr dfdgdgdfdfd fdsfdsfdsfdf sfsdfsdfsdfs"
+  }
+];
 
 interface CreateRoomOptions {
   isPublic: boolean;
@@ -34,6 +128,7 @@ export default class Room implements IRoom {
   winners: Array<String>;
   createdAt: number;
   gameOptions: Object;
+  chat: Array<Object>;
 
   constructor(
     {
@@ -60,6 +155,7 @@ export default class Room implements IRoom {
     this.gameOptions = gameOptions
       ? Object.assign(gameOptions, getGameOptions(gameCode))
       : getGameOptions(gameCode);
+    this.chat = mockChat;
   }
 
   get instance() {

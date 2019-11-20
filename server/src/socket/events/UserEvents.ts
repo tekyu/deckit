@@ -1,7 +1,7 @@
 import chalk from "chalk";
 
 //TODO: Change types
-const UserEvents = (socket: any, io: any) => {
+export const UserEvents = (socket: any, io: any) => {
   console.log("User events");
   socket.on("updateUser", (params: any) => {
     socket.pswOptions = { ...socket.pswOptions, params };
@@ -28,5 +28,3 @@ const UserEvents = (socket: any, io: any) => {
     // socket.in(params.roomId).emit("userUpdated", socket.pswOptions);
   });
 };
-
-export default UserEvents;
