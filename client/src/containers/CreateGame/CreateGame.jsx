@@ -50,6 +50,7 @@ class CreateGame extends Component {
     if (anonymous) {
       emitter(UPDATE_ANON_USER, { username, roomId }, userData => {
         updateAnonUser(userData);
+        emitter("newConnectedPlayer", userData);
       });
     }
   };

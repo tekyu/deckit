@@ -1,4 +1,5 @@
 import Room from "../../classes/Room";
+import randomColor from "random-color";
 // import { Socket, socketIo } from "socket.io";
 import chalk from "chalk";
 //TODO: Move interfaces to other file
@@ -10,12 +11,13 @@ interface Iparams {
 }
 
 //TODO: Change types
-const RoomEvents = (socket: any, io: any) => {
+export const RoomEvents = (socket: any, io: any) => {
   const getRoom = (id: string) => {
     const room = io.gameRooms[id];
     if (!room) {
       console.log(chalk.bgRedBright(`Room with id of ${id} doesn't exist`));
       // throw Error(`Room with id of ${id} doesn't exist`);
+      return null;
     }
     return room;
   };
@@ -46,6 +48,10 @@ const RoomEvents = (socket: any, io: any) => {
 
   socket.on("getRoomInfo", (params: Object, callback: Function) => {
     const room = getRoom(params.id);
+    if (!room) {
+      callback({});
+      return;
+    }
     const roomInfo = room.roomOptions;
     console.log("getRoomInfo", roomInfo);
     callback(roomInfo);
@@ -54,9 +60,10 @@ const RoomEvents = (socket: any, io: any) => {
   socket.on("newConnectedPlayer", data => {
     const { roomId, ...playerData } = data;
     const room = getRoom(roomId);
+    playerData.color = randomColor(0.3, 0.99);
     room.connectPlayer(playerData);
+    socket.pswOptions.rooms[roomId] = playerData;
+    console.log("newConnectedPlayer", socket.pswOptions);
     socket.in(roomId).emit("roomUpdated", room.roomOptions);
   });
 };
-
-export default RoomEvents;

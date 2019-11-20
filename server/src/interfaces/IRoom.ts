@@ -12,4 +12,5 @@ export default interface IRoom {
   winners: Array<String>;
   createdAt: number;
   gameOptions: Object;
+  chat: Array<Object>;
 }

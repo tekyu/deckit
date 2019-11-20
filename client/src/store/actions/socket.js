@@ -22,7 +22,7 @@ export const initializeSocket = socket => {
 // };
 
 export const emitter = (event, data, handler) => {
-  console.log("emitter", event, data);
+  console.log("%c emitter", "background:#93FFB7", event, data);
   return {
     type: SOCKET_EMIT,
     payload: data,

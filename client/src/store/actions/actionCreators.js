@@ -16,3 +16,4 @@ export const SOCKET_LISTENER = "SOCKET_LISTENER";
 export const SAVE_DATA = "SAVE_DATA";
 
 export const CREATE_ROOM = "createRoom";
+export const SET_ACTIVE_ROOM = "SET_ACTIVE_ROOM";

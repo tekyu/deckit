@@ -35,6 +35,7 @@ class AnonymousLoginModal extends Component {
     emitter(UPDATE_ANON_USER, { username }, data => {
       // update user on this side
       updateAnonUser(data);
+      emitter("newConnectedPlayer", data);
     });
   };
 
