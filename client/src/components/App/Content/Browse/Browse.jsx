@@ -1,18 +1,18 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { checkAuth, emitter } from "store/actions";
+import { checkAuth, emitter, updateRooms } from "store/actions";
 import axios from "utils/axios";
 import dynamicSort from "utils/dynamicSort";
 import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
 import * as styles from "./Browse.module.scss";
 
-const Browse = ({ auth, checkAuth, emitter }) => {
-  const [rooms, setRooms] = useState([]);
+const Browse = ({ auth, checkAuth, emitter, rooms, updateRooms }) => {
+  const [parsedRooms, setParsedRooms] = useState([]);
   const refreshList = useCallback(() => {
     emitter(`getRooms`, null, rooms => {
-      setRooms(rooms);
+      updateRooms(rooms);
     });
   }, [emitter]);
   useEffect(() => {
@@ -69,19 +69,22 @@ const Browse = ({ auth, checkAuth, emitter }) => {
 Browse.propTypes = {
   auth: PropTypes.bool,
   checkAuth: PropTypes.func.isRequired,
-  emitter: PropTypes.func.isRequired
+  emitter: PropTypes.func.isRequired,
+  updateRooms: PropTypes.func.isRequired
 };
 
-const mapStateToProps = ({ auth, user }) => {
+const mapStateToProps = ({ auth, room, user }) => {
   return {
     auth,
+    rooms: room.rooms,
     user
   };
 };
 
 const mapDispatchToProps = {
   checkAuth,
-  emitter
+  emitter,
+  updateRooms
 };
 
 export default memo(

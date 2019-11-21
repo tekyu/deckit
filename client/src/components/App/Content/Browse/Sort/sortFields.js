@@ -1,10 +1,5 @@
 const sortData = [
   {
-    displayName: `Author`,
-    fieldName: `createdBy`,
-    searchable: true
-  },
-  {
     displayName: `Latest`,
     fieldName: `createdAt`,
     searchable: false
