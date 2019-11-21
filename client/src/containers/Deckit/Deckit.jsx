@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import sillyname from "sillyname";
 import { gameMapping, inputOnChangeHandler } from "utils";
-import { listener, emitter } from "store/actions/socket";
-import { CREATE_ROOM } from "store/actions/socketCreators";
-import { withRouter } from "react-router-dom";
+import { listener, emitter } from "store/actions";
 import * as styles from "./Deckit.module.scss";
 import SidePanel from "../GameContainer/SidePanel/SidePanel";
 /**

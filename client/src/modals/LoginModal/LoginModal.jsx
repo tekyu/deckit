@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { loginUser } from "store/actions/user";
-import { closeModal } from "store/actions/modals";
+import { loginUser, closeModal } from "store/actions";
 import { connect } from "react-redux";
 import * as styles from "./LoginModal.module.scss";
 

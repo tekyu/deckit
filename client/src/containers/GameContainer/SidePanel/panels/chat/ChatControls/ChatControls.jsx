@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { inputOnChangeHandler } from "utils/genericInput";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { emitter } from "store/actions/socket";
+import { emitter } from "store/actions";
 
 const Container = styled.div`
   display: flex;

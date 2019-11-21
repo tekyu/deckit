@@ -1,10 +1,14 @@
 import { combineReducers } from "redux";
-import { app, modal, user, socket, room } from "store/reducers";
+import { socketReducer } from "./socket/socketReducer";
+import { appReducer } from "./app/appReducer";
+import { modalReducer } from "./modal/modalReducer";
+import { roomReducer } from "./room/roomReducer";
+import { userReducer } from "./user/userReducer";
 
 export default combineReducers({
-  app,
-  user,
-  modal,
-  socket,
-  room
+  app: appReducer,
+  user: userReducer,
+  modal: modalReducer,
+  room: roomReducer,
+  socket: socketReducer
 });

@@ -3,7 +3,7 @@ import {
   SOCKET_LEAVE,
   SOCKET_EMIT,
   SOCKET_LISTENER
-} from "store/actions/actionCreators";
+} from "store/socket/socketActions";
 
 const SOCKET_ADDRESS = `localhost:3012`;
 

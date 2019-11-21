@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { listener, emitter } from "store/actions/socket";
+import { listener, emitter } from "store/actions";
 import ChatElement from "./ChatElement/ChatElement";
 import ChatControls from "./ChatControls/ChatControls";
 /**

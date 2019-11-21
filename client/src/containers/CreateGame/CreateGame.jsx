@@ -2,9 +2,13 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import sillyname from "sillyname";
 import { gameMapping, inputOnChangeHandler } from "utils";
-import { listener, emitter } from "store/actions/socket";
-import { updateAnonUser } from "store/actions/user";
-import { CREATE_ROOM, UPDATE_ANON_USER } from "store/actions/socketCreators";
+import {
+  listener,
+  emitter,
+  updateAnonUser,
+  CREATE_ROOM,
+  UPDATE_ANON_USER
+} from "store/actions";
 import { withRouter } from "react-router-dom";
 import * as styles from "./CreateGame.module.scss";
 /**

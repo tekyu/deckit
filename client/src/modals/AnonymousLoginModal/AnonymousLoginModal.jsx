@@ -1,10 +1,14 @@
 import React, { Component } from "react";
-import { loginUser, updateAnonUser } from "store/actions/user";
-import { closeModal } from "store/actions/modals";
+import {
+  updateAnonUser,
+  closeModal,
+  emitter,
+  UPDATE_ANON_USER
+} from "store/actions";
+
 import { connect } from "react-redux";
 import sillyname from "sillyname";
-import { emitter } from "store/actions/socket";
-import { UPDATE_ANON_USER } from "store/actions/socketCreators";
+
 import * as styles from "./AnonymousLoginModal.module.scss";
 
 class AnonymousLoginModal extends Component {
