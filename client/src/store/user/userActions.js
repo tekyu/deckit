@@ -1,11 +1,12 @@
 import axios from "utils/axios";
-import {
-  AUTH_USER,
-  UPDATE_USER,
-  UPDATE_ANON_USER,
-  SHOW_ERROR
-} from "store/actions/actionCreators";
-import { closeModal } from "store/actions/modals";
+
+import { showError } from "store/app/appActions";
+import { closeModal } from "store/modal/modalActions";
+
+export const CHECK_USER = `CHECK_USER`;
+export const AUTH_USER = `AUTH_USER`;
+export const UPDATE_USER = `UPDATE_USER`;
+export const UPDATE_ANON_USER = `UPDATE_ANON_USER`;
 
 // TODO:
 // make it as a promise cos you cant send formError here
@@ -53,17 +54,17 @@ export const checkAuth = () => {
         .then(({ data }) => {
           dispatch({
             type: UPDATE_USER,
-            payload: data
+            user: data
           });
           dispatch({
             type: AUTH_USER,
-            payload: true
+            auth: true
           });
         })
         .catch(() => {
           dispatch({
             type: AUTH_USER,
-            payload: false
+            auth: false
           });
         });
     }
@@ -71,20 +72,20 @@ export const checkAuth = () => {
 };
 
 export const logoutUser = () => {
-  axios.get(`/api/logout`).then(response => {
+  axios.get(`/api/logout`).then(() => {
     return dispatch => {
       dispatch({
         type: AUTH_USER,
-        payload: true
+        auth: true
       });
     };
   });
 };
 
-export const updateAnonUser = data => {
+export const updateAnonUser = user => {
   return {
     type: UPDATE_USER,
-    payload: data
+    user
   };
 };
 
@@ -93,18 +94,13 @@ export const updateUser = data => {
     if (getState.user) {
       axios
         .post(`/api/update/user`, data)
-        .then(data => {
+        .then(() => {
           dispatch({
             type: UPDATE_USER,
-            payload: true
+            auth: true
           });
         })
-        .catch(error => {
-          dispatch({
-            type: SHOW_ERROR,
-            payload: { showError: true, errorMessage: error }
-          });
-        });
+        .catch(error => showError(error));
     }
   };
 };

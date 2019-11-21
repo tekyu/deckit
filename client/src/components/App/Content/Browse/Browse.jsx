@@ -1,8 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { checkAuth } from "store/actions/user";
-import { emitter } from "store/actions/socket";
+import { checkAuth, emitter } from "store/actions";
 import axios from "utils/axios";
 import dynamicSort from "utils/dynamicSort";
 import RoomCard from "./RoomCard/RoomCard";

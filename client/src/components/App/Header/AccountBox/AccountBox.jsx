@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { openModal } from "store/actions/modals";
+import { openModal } from "store/actions";
 import * as styles from "./AccountBox.module.scss";
 // import { logoutUser } from "@store/actions/user";
 class AccountBox extends Component {

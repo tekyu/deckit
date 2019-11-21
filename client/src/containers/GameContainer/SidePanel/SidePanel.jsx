@@ -1,7 +1,7 @@
-import React, { Component, useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { listener } from "store/actions/socket";
+import { listener } from "store/actions";
 import ScorePanel from "./panels/score/ScorePanel";
 import ChatPanel from "./panels/chat/ChatPanel";
 import OptionsPanel from "./panels/options/OptionsPanel";

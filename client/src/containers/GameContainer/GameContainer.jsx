@@ -2,11 +2,14 @@ import React, { Suspense, lazy, useState, useEffect, useCallback } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { gameMapping, getGame } from "utils";
-import { emitter } from "store/actions/socket";
-import { GET_ROOM_INFO } from "store/actions/socketCreators";
+import {
+  GET_ROOM_INFO,
+  emitter,
+  openModal,
+  setActiveRoom
+} from "store/actions";
 import { withRouter } from "react-router-dom";
-import { openModal } from "store/actions/modals";
-import { setActiveRoom } from "store/actions/room";
+
 import SidePanel from "./SidePanel/SidePanel";
 /**
  * TODO:

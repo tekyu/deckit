@@ -1,11 +1,11 @@
-import {
-  OPEN_SOCKET,
-  SOCKET_EMIT,
-  SOCKET_LISTENER
-} from "store/actions/actionCreators";
+export const OPEN_SOCKET = `OPEN_SOCKET`;
+export const SOCKET_LEAVE = `SOCKET_LEAVE`;
+export const SOCKET_EMIT = `SOCKET_EMIT`;
+export const SOCKET_LISTENER = `SOCKET_LISTENER`;
+export const SAVE_DATA = `SAVE_DATA`;
+export const GET_ROOM_INFO = `GET_ROOM_INFO`;
 
 export const initializeSocket = socket => {
-  console.log(`initializeSocket`, socket);
   return {
     type: OPEN_SOCKET,
     payload: { socket }

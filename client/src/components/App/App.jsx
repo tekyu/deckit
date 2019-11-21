@@ -1,15 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-
 import ModalContainer from "modals/ModalContainer";
 import Error from "components/Generic/Error/Error";
-import { initializeSocket } from "store/actions/socket";
-import io from "socket.io-client";
+import { initializeSocket } from "store/actions";
 import Header from "./Header/Header";
 import Content from "./Content/Content";
 
-const App = ({ auth, modalType, showModal, error, state }) => {
+const App = ({ auth, modalType, showModal, error }) => {
   return (
     <React.Fragment>
       <Header />
@@ -24,19 +22,20 @@ App.propTypes = {
   auth: PropTypes.bool.isRequired,
   modalType: PropTypes.string,
   showModal: PropTypes.bool.isRequired,
-  initializeSocket: PropTypes.func
+  error: PropTypes.string
 };
 
-const mapStateToProps = (
-  { user: { auth }, modal: { showModal, modalType }, app: { error } },
-  state
-) => {
+const mapStateToProps = state => {
+  const {
+    user: { auth },
+    modal: { showModal, modalType },
+    app: { error }
+  } = state;
   return {
     auth,
     modalType,
     showModal,
-    error,
-    state
+    error
   };
 };
 const mapDispatchToProps = {
