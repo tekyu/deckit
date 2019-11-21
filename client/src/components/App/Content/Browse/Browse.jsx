@@ -1,21 +1,21 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { checkAuth, emitter } from "store/actions";
+import { checkAuth, emitter, updateRooms } from "store/actions";
 import axios from "utils/axios";
 import dynamicSort from "utils/dynamicSort";
 import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
 import * as styles from "./Browse.module.scss";
 
-const Browse = ({ auth, checkAuth, emitter }) => {
-  const [rooms, setRooms] = useState([]);
+const Browse = ({ auth, checkAuth, emitter, rooms, updateRooms }) => {
+  const [parsedRooms, setParsedRooms] = useState([]);
   const refreshList = useCallback(() => {
     emitter(`getRooms`, null, rooms => {
-      setRooms(rooms);
+      updateRooms(rooms);
     });
     axios.get(`/getRooms`).then(() => {});
-  }, [emitter]);
+  }, [emitter, updateRooms]);
   useEffect(() => {
     checkAuth();
     refreshList();
@@ -24,15 +24,15 @@ const Browse = ({ auth, checkAuth, emitter }) => {
   const sortHandler = useCallback(
     options => {
       const { searchPhrase, sortBy } = options;
-      const newRooms = rooms.filter(room =>
-        room[sortBy].includes(searchPhrase)
-      );
-      setRooms(newRooms.sort(dynamicSort(sortBy)));
+      const newRooms = rooms.filter(room => {
+        return room[sortBy].toString().includes(searchPhrase);
+      });
+      setParsedRooms(newRooms.sort(dynamicSort(sortBy)));
     },
     [rooms]
   );
-  const roomCards = rooms
-    ? rooms.map(room => (
+  const roomCards = parsedRooms
+    ? parsedRooms.map(room => (
         <RoomCard
           key={room.id}
           options={room}
@@ -57,19 +57,22 @@ const Browse = ({ auth, checkAuth, emitter }) => {
 Browse.propTypes = {
   auth: PropTypes.bool,
   checkAuth: PropTypes.func.isRequired,
-  emitter: PropTypes.func.isRequired
+  emitter: PropTypes.func.isRequired,
+  updateRooms: PropTypes.func.isRequired
 };
 
-const mapStateToProps = ({ auth, user }) => {
+const mapStateToProps = ({ auth, room, user }) => {
   return {
     auth,
+    rooms: room.rooms,
     user
   };
 };
 
 const mapDispatchToProps = {
   checkAuth,
-  emitter
+  emitter,
+  updateRooms
 };
 
 export default memo(
