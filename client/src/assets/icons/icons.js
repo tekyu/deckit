@@ -4,7 +4,7 @@ import {
   faUserCircle,
   faTrophy,
   faUsers
-} from '@fortawesome/free-solid-svg-icons';
+} from "@fortawesome/free-solid-svg-icons";
 
 const FontAwesomeIcons = [
   faHome,

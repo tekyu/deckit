@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import { loginUser } from 'store/actions/user';
-import { closeModal } from 'store/actions/modals';
-import { connect } from 'react-redux';
-import * as styles from './LoginModal.module.scss';
+import React, { Component } from "react";
+import { loginUser } from "store/actions/user";
+import { closeModal } from "store/actions/modals";
+import { connect } from "react-redux";
+import * as styles from "./LoginModal.module.scss";
 
 class LoginModal extends Component {
   state = {
-    username: '',
-    password: '',
+    username: ``,
+    password: ``,
     formError: null,
     errors: {
-      empty: 'It seems like you forgot to fill your',
-      401: 'Oops! It looks like you misspelled your username or password'
+      empty: `It seems like you forgot to fill your`,
+      401: `Oops! It looks like you misspelled your username or password`
     }
   };
 
@@ -38,7 +38,7 @@ class LoginModal extends Component {
     // 	return false;
     // }
     // loginUser(username, password);
-    loginUser('test', 'test')
+    loginUser(`test`, `test`)
       .then()
       .catch(error => {
         throw error;

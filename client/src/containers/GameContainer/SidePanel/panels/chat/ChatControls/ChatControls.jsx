@@ -12,21 +12,23 @@ class ChatControls extends Component {
     super(props);
     this.sentMessageHandler = this.sentMessageHandler.bind(this);
     const inputOptions = {
-      keys: ["enter"],
+      keys: [`enter`],
       handler: this.sentMessageHandler
     };
     this.inputOnChangeHandler = inputOnChangeHandler.bind(this, inputOptions);
     this.state = {
-      message: ""
+      message: ``
     };
   }
+
   sentMessageHandler() {
     const { emitter, activeRoomId } = this.props;
     const { message } = this.state;
-    console.log("sentMessageHandler", this.state.message);
-    emitter("sendingMessage", { activeRoomId, message });
-    //TODO: ACTIVE ROOM IN REDUX
+    console.log(`sentMessageHandler`, this.state.message);
+    emitter(`sendingMessage`, { activeRoomId, message });
+    // TODO: ACTIVE ROOM IN REDUX
   }
+
   render() {
     return (
       <Container>

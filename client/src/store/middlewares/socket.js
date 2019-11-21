@@ -4,13 +4,14 @@ import {
   SOCKET_EMIT,
   SOCKET_LISTENER
 } from "store/actions/actionCreators";
-const SOCKET_ADDRESS = "localhost:3012";
+
+const SOCKET_ADDRESS = `localhost:3012`;
 
 export default function socketMiddleware() {
   const socket = io(SOCKET_ADDRESS);
 
   return ({ dispatch }) => next => action => {
-    if (typeof action === "function") {
+    if (typeof action === `function`) {
       return next(action);
     }
     const { event, type, handler, payload, ...rest } = action;
@@ -20,11 +21,11 @@ export default function socketMiddleware() {
     }
     switch (type) {
       case SOCKET_LEAVE:
-        console.log("%c SOCKET LEAVE", "background:#FFA09E", event);
+        console.log(`%c SOCKET LEAVE`, `background:#FFA09E`, event);
         socket.removeListener(event);
         break;
       case SOCKET_EMIT:
-        console.log("%c SOCKET EMIT", "background:#90D6E8", event, {
+        console.log(`%c SOCKET EMIT`, `background:#90D6E8`, event, {
           ...payload,
           ...rest
         });
@@ -37,10 +38,10 @@ export default function socketMiddleware() {
       case SOCKET_LISTENER:
         socket.on(event, data => {
           if (data.error) {
-            dispatch({ type: "ERROR", payload: data.error });
+            dispatch({ type: `ERROR`, payload: data.error });
             return;
           }
-          console.log("%c SOCKET LISTENER", "background:#C1FFAB", event, data);
+          console.log(`%c SOCKET LISTENER`, `background:#C1FFAB`, event, data);
           const readyData = { ...data, id: socket.id };
           handler(readyData);
           // dispatch({ type: "SAVE_DATA", payload });
@@ -48,7 +49,7 @@ export default function socketMiddleware() {
 
         break;
       default:
-        throw Error("No type defined");
+        throw Error(`No type defined`);
     }
 
     return next(action);

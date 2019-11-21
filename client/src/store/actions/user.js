@@ -13,7 +13,7 @@ export const loginUser = (username, password) => {
   return dispatch => {
     Promise.then((resolve, reject) => {
       axios
-        .post("/api/login", {
+        .post(`/api/login`, {
           username,
           password
         })
@@ -49,7 +49,7 @@ export const checkAuth = () => {
   return (dispatch, getState) => {
     if (!getState.user) {
       axios
-        .post("/api/check")
+        .post(`/api/check`)
         .then(({ data }) => {
           dispatch({
             type: UPDATE_USER,
@@ -71,7 +71,7 @@ export const checkAuth = () => {
 };
 
 export const logoutUser = () => {
-  axios.get("/api/logout").then(response => {
+  axios.get(`/api/logout`).then(response => {
     return dispatch => {
       dispatch({
         type: AUTH_USER,
@@ -92,7 +92,7 @@ export const updateUser = data => {
   return (dispatch, getState) => {
     if (getState.user) {
       axios
-        .post("/api/update/user", data)
+        .post(`/api/update/user`, data)
         .then(data => {
           dispatch({
             type: UPDATE_USER,

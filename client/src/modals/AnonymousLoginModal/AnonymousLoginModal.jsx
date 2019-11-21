@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import { loginUser, updateAnonUser } from "store/actions/user";
 import { closeModal } from "store/actions/modals";
 import { connect } from "react-redux";
-import * as styles from "./AnonymousLoginModal.module.scss";
 import sillyname from "sillyname";
 import { emitter } from "store/actions/socket";
 import { UPDATE_ANON_USER } from "store/actions/socketCreators";
+import * as styles from "./AnonymousLoginModal.module.scss";
 
 class AnonymousLoginModal extends Component {
   state = {
@@ -35,7 +35,7 @@ class AnonymousLoginModal extends Component {
     emitter(UPDATE_ANON_USER, { username }, data => {
       // update user on this side
       updateAnonUser(data);
-      emitter("newConnectedPlayer", data);
+      emitter(`newConnectedPlayer`, data);
     });
   };
 

@@ -36,7 +36,7 @@ const GameContainer = ({
     id => {
       emitter(GET_ROOM_INFO, { id }, roomData => {
         const { gameCode } = roomData;
-        console.log("[GameContainer][getRoomInfo]", gameCode, roomData);
+        console.log(`[GameContainer][getRoomInfo]`, gameCode, roomData);
         setRoomInfo(roomData);
         setGameComponent(getGame(gameCode));
         setPanels(gameMapping[gameCode].panels);
@@ -48,9 +48,9 @@ const GameContainer = ({
   useEffect(() => {
     if (!user) {
       // return modal with username option
-      openModal("anonymous");
+      openModal(`anonymous`);
     } else {
-      emitter("newConnectedPlayer", user);
+      emitter(`newConnectedPlayer`, user);
     }
     getRoomInfo(id);
     setActiveRoom(id);

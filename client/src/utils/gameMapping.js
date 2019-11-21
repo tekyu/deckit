@@ -7,16 +7,16 @@ import { lazy } from "react";
 
 export const gameMapping = {
   d: {
-    name: "Deckit",
+    name: `Deckit`,
     panels: {
-      score: { listener: "scoreUpdate" },
-      chat: { listener: "incomingChatMessage" },
-      log: { listener: "incomingLog" },
-      settings: { listener: "roomSettings" }
+      score: { listener: `scoreUpdate` },
+      chat: { listener: `incomingChatMessage` },
+      log: { listener: `incomingLog` },
+      settings: { listener: `roomSettings` }
     }
   },
   k: {
-    name: "Karcianka",
+    name: `Karcianka`,
     panels: {
       score: {},
       chat: {},
@@ -42,8 +42,8 @@ export const getGameMapping = game => {
 
 export const getGame = gameCode => {
   switch (gameCode) {
-    case "d":
-      return lazy(() => import("../containers/Deckit/Deckit"));
+    case `d`:
+      return lazy(() => import(`../containers/Deckit/Deckit`));
     default:
       throw Error(`Game doesn't exist`);
   }

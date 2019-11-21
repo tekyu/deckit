@@ -4,14 +4,14 @@ import * as styles from "./RegisterModal.module.scss";
 
 class RegisterModal extends Component {
   state = {
-    username: "",
-    password: "",
-    confirmPassword: "",
+    username: ``,
+    password: ``,
+    confirmPassword: ``,
     formError: null,
     errors: {
-      empty: "It seems like you forgot to fill your",
-      "401": "Oops! It looks like you misspelled your username or password",
-      misspelledPass: "Passwords are not the same"
+      empty: `It seems like you forgot to fill your`,
+      "401": `Oops! It looks like you misspelled your username or password`,
+      misspelledPass: `Passwords are not the same`
     }
   };
 
@@ -65,7 +65,7 @@ class RegisterModal extends Component {
       this.setState((state, props) => {
         return {
           formError: `${state.errors.empty} ${
-            !username ? " username" : " password"
+            !username ? ` username` : ` password`
           }`
         };
       });
@@ -80,7 +80,7 @@ class RegisterModal extends Component {
       return false;
     }
     axios
-      .post("/api/register", {
+      .post(`/api/register`, {
         username,
         password
       })

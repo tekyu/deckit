@@ -22,11 +22,16 @@ const Browse = ({ auth, checkAuth, emitter }) => {
     refreshList();
   }, [checkAuth, refreshList]);
   const selectHandler = useCallback(() => {}, []);
-  const sortHandler = useCallback(options => {
-    const { searchPhrase, sortBy } = options;
-    const newRooms = rooms.filter(room => room[sortBy].includes(searchPhrase));
-    setRooms(newRooms.sort(dynamicSort(sortBy)));
-  }, []);
+  const sortHandler = useCallback(
+    options => {
+      const { searchPhrase, sortBy } = options;
+      const newRooms = rooms.filter(room =>
+        room[sortBy].includes(searchPhrase)
+      );
+      setRooms(newRooms.sort(dynamicSort(sortBy)));
+    },
+    [rooms]
+  );
   const roomCards = rooms
     ? rooms.map(room => (
         <RoomCard

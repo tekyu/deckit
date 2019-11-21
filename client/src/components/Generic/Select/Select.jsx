@@ -1,6 +1,6 @@
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import * as styles from './Select.module.scss';
+import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
+import * as styles from "./Select.module.scss";
 
 class Select extends PureComponent {
   constructor(props) {
@@ -12,11 +12,11 @@ class Select extends PureComponent {
   }
 
   componentDidMount() {
-    document.addEventListener('mousedown', this.handleClickOutside);
+    document.addEventListener(`mousedown`, this.handleClickOutside);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('mousedown', this.handleClickOutside);
+    document.removeEventListener(`mousedown`, this.handleClickOutside);
   }
 
   setWrapperRef = node => {

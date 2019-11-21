@@ -1,6 +1,6 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import * as styles from './Fail.module.scss';
+import React from "react";
+import { NavLink } from "react-router-dom";
+import * as styles from "./Fail.module.scss";
 
 const Fail = () => {
   return (

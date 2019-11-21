@@ -25,7 +25,7 @@ const ChatPanel = ({ activeRoomId, emitter }) => {
     emitter(`getChatHistory`, { activeRoomId }, messages => {
       setMessages(messages);
     });
-  }, [emitter]);
+  }, [activeRoomId, emitter]);
   useEffect(() => {
     messageList();
   }, [messageList]);
@@ -33,7 +33,7 @@ const ChatPanel = ({ activeRoomId, emitter }) => {
     // const { user: { id = "" } = {} } = this.props;
     return messages.map(({ id, ownerId, ...message }) => {
       return (
-        <ChatElement isMine={ownerId === "5qqe43"} {...message} key={id} />
+        <ChatElement isMine={ownerId === `5qqe43`} {...message} key={id} />
       );
     });
   };

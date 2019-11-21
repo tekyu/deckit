@@ -5,13 +5,13 @@ import * as styles from "./Header.module.scss";
 import AccountBox from "./AccountBox/AccountBox";
 
 const Header = () => {
-	return (
-		<header className={styles.header}>
-			<Logo />
-			<Navigation />
-			<AccountBox />
-		</header>
-	);
+  return (
+    <header className={styles.header}>
+      <Logo />
+      <Navigation />
+      <AccountBox />
+    </header>
+  );
 };
 
 export default Header;

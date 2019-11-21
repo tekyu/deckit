@@ -11,9 +11,9 @@ class ModalContainer extends Component {
 
   getModal = () => {
     const modalTypes = {
-      login: "login",
-      register: "register",
-      anonymous: "anonymous"
+      login: `login`,
+      register: `register`,
+      anonymous: `anonymous`
     };
     const { modalType } = this.props;
     switch (modalType) {

@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Moment from "react-moment";
+
 const Container = styled.div`
   display: flex;
   margin: 7px 0;
@@ -94,7 +95,7 @@ const ChatElement = ({
   color,
   isMine
 }) => {
-  console.log("ChatElement", isMine);
+  console.log(`ChatElement`, isMine);
   return (
     <Container isMine={isMine} id={id} owner={ownerId} timestamp={timestamp}>
       <Display isMine={isMine}>
