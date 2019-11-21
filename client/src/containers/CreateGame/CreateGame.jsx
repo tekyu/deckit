@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import * as styles from "./CreateGame.module.scss";
 import { connect } from "react-redux";
 import sillyname from "sillyname";
 import { gameMapping, inputOnChangeHandler } from "utils";
@@ -7,6 +6,7 @@ import { listener, emitter } from "store/actions/socket";
 import { updateAnonUser } from "store/actions/user";
 import { CREATE_ROOM, UPDATE_ANON_USER } from "store/actions/socketCreators";
 import { withRouter } from "react-router-dom";
+import * as styles from "./CreateGame.module.scss";
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
@@ -14,11 +14,11 @@ import { withRouter } from "react-router-dom";
  */
 class CreateGame extends Component {
   state = {
-    isPublic: false, //TODO: change this
+    isPublic: false, // TODO: change this
     playersMax: 5,
-    gameCode: "d",
+    gameCode: `d`,
     username: sillyname(),
-    password: "",
+    password: ``,
     created: false
   };
 
@@ -44,13 +44,13 @@ class CreateGame extends Component {
   };
 
   updateUser = roomId => {
-    const anonymous = true; //TODO: Change it to state management
+    const anonymous = true; // TODO: Change it to state management
     const { username } = this.state;
     const { emitter, updateAnonUser } = this.props;
     if (anonymous) {
       emitter(UPDATE_ANON_USER, { username, roomId }, userData => {
         updateAnonUser(userData);
-        emitter("newConnectedPlayer", userData);
+        emitter(`newConnectedPlayer`, userData);
       });
     }
   };
@@ -95,7 +95,7 @@ class CreateGame extends Component {
       <div className={styles.container}>
         <form onSubmit={this.submitCreateHandler} className={styles.form}>
           <label className={styles.header}>
-            Create room {this.state.created ? "true" : "false"}
+            Create room {this.state.created ? `true` : `false`}
           </label>
           {user ? anonusernameInput : null}
           <div className={styles.formGroup}>
@@ -139,7 +139,7 @@ class CreateGame extends Component {
               id="players"
               type="range"
               min="2"
-              max="10" //TODO: get json with all of the specs from the request on site visit
+              max="10" // TODO: get json with all of the specs from the request on site visit
               value={this.state.players}
               placeholder="Write it here!"
               onChange={this.inputOnChangeHandler}

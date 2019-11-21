@@ -9,13 +9,13 @@ import App from "components/App/App";
 import * as serviceWorker from "./serviceWorker";
 
 const app = (
-	<Provider store={store}>
-		<BrowserRouter>
-			<App />
-		</BrowserRouter>
-	</Provider>
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>
 );
-ReactDOM.render(app, document.getElementById("root"));
+ReactDOM.render(app, document.getElementById(`root`));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

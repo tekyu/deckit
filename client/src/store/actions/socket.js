@@ -5,7 +5,7 @@ import {
 } from "store/actions/actionCreators";
 
 export const initializeSocket = socket => {
-  console.log("initializeSocket", socket);
+  console.log(`initializeSocket`, socket);
   return {
     type: OPEN_SOCKET,
     payload: { socket }
@@ -22,7 +22,7 @@ export const initializeSocket = socket => {
 // };
 
 export const emitter = (event, data, handler) => {
-  console.log("%c emitter", "background:#93FFB7", event, data);
+  console.log(`%c emitter`, `background:#93FFB7`, event, data);
   return {
     type: SOCKET_EMIT,
     payload: data,
@@ -32,7 +32,7 @@ export const emitter = (event, data, handler) => {
 };
 
 export const listener = (event, handler) => {
-  console.log("listener", event, SOCKET_LISTENER);
+  console.log(`listener`, event, SOCKET_LISTENER);
   return {
     type: SOCKET_LISTENER,
     handler,

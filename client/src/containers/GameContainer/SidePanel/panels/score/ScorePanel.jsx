@@ -20,26 +20,26 @@ class ScorePanel extends Component {
 
   mockData = [
     {
-      id: "test1",
+      id: `test1`,
       avatar: null,
-      username: "test1",
-      color: "red",
+      username: `test1`,
+      color: `red`,
       progress: 0.4,
       points: 14
     },
     {
-      id: "test2",
+      id: `test2`,
       avatar: null,
-      username: "test2",
-      color: "black",
+      username: `test2`,
+      color: `black`,
       progress: 0.7,
       points: 17
     },
     {
-      id: "test3",
+      id: `test3`,
       avatar: null,
-      username: "test3",
-      color: "purple",
+      username: `test3`,
+      color: `purple`,
       progress: 0.6,
       points: 16
     }
@@ -47,7 +47,7 @@ class ScorePanel extends Component {
 
   get scoreComponents() {
     return this.mockData.map(score => {
-      console.log("mockdata", score);
+      console.log(`mockdata`, score);
       return <ScoreElement key={score.id} data={score} />;
     });
   }

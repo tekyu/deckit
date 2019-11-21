@@ -7,9 +7,9 @@ import * as styles from "./AccountBox.module.scss";
 class AccountBox extends Component {
   state = {
     userData: {
-      _id: "ewrewr34w4532324e3wed23321432erw",
-      avatar: "https://via.placeholder.com/200x150",
-      name: "Annabel Maverick"
+      _id: `ewrewr34w4532324e3wed23321432erw`,
+      avatar: `https://via.placeholder.com/200x150`,
+      name: `Annabel Maverick`
     }
   };
 
@@ -19,7 +19,7 @@ class AccountBox extends Component {
   };
 
   getAuthFalse() {
-    console.log("getAuthFalse", this.props);
+    console.log(`getAuthFalse`, this.props);
     if (this.props.user.user) {
       return this.renderUser();
     }
@@ -83,7 +83,7 @@ class AccountBox extends Component {
               src={
                 this.props.auth
                   ? this.state.userData.avatar
-                  : "https://via.placeholder.com/40x40"
+                  : `https://via.placeholder.com/40x40`
               }
               alt="Users avatar"
             />

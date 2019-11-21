@@ -1,12 +1,12 @@
 export function inputOnChangeHandler(options, event) {
   if (!this || !this.setState) {
-    //TODO: Change to hooks version
-    throw Error("No setState in parent component");
+    // TODO: Change to hooks version
+    throw Error(`No setState in parent component`);
   }
-  console.log("inputOnChangeHandler", event.key, options);
+  console.log(`inputOnChangeHandler`, event.key, options);
   const change = {};
   switch (event.target.type) {
-    case "checkbox":
+    case `checkbox`:
       change[event.target.name] = event.target.checked;
       break;
     default:
@@ -27,8 +27,8 @@ export function inputOnChangeHandler(options, event) {
 
 export function getSelectInput(options) {
   if (!options.list) {
-    throw Error("Cannot create select input because options list is empty");
+    throw Error(`Cannot create select input because options list is empty`);
   }
   // const mappedOptions =
-  //TODO: for array || object
+  // TODO: for array || object
 }

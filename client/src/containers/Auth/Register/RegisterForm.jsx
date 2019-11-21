@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import axios from 'utils/axios';
-import * as styles from './RegisterForm.module.scss';
+import React, { Component } from "react";
+import axios from "utils/axios";
+import * as styles from "./RegisterForm.module.scss";
 
 class Register extends Component {
   state = {
-    username: '',
-    password: '',
-    confirmPassword: '',
+    username: ``,
+    password: ``,
+    confirmPassword: ``,
     formError: null,
     errors: {
-      empty: 'It seems like you forgot to fill your',
-      '401': 'Oops! It looks like you misspelled your username or password'
+      empty: `It seems like you forgot to fill your`,
+      "401": `Oops! It looks like you misspelled your username or password`
     }
   };
 
@@ -30,13 +30,13 @@ class Register extends Component {
       this.setState(state => {
         return {
           formError:
-            state.errors.empty + (!username ? ' username' : ' password')
+            state.errors.empty + (!username ? ` username` : ` password`)
         };
       });
       return false;
     }
     axios
-      .post('/api/login', {
+      .post(`/api/login`, {
         username,
         password
       })
@@ -58,13 +58,13 @@ class Register extends Component {
       this.setState(state => {
         return {
           formError:
-            state.errors.empty + (!username ? ' username' : ' password')
+            state.errors.empty + (!username ? ` username` : ` password`)
         };
       });
       return false;
     }
     axios
-      .post('/register', {
+      .post(`/register`, {
         username,
         password
       })

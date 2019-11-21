@@ -4,7 +4,7 @@ import * as styles from "./Error.module.scss";
 
 class Error extends PureComponent {
   render() {
-    return <div class={styles.container}>{this.props.message}</div>;
+    return <div className={styles.container}>{this.props.message}</div>;
   }
 }
 

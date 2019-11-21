@@ -4,11 +4,10 @@ import { connect } from "react-redux";
 
 import ModalContainer from "modals/ModalContainer";
 import Error from "components/Generic/Error/Error";
-import Header from "./Header/Header";
-import Content from "./Content/Content";
-
 import { initializeSocket } from "store/actions/socket";
 import io from "socket.io-client";
+import Header from "./Header/Header";
+import Content from "./Content/Content";
 
 const App = ({ auth, modalType, showModal, error, state }) => {
   return (

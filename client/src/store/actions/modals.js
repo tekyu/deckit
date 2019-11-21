@@ -2,7 +2,7 @@ import {
   UPDATE_MODAL,
   CLOSE_MODAL,
   OPEN_MODAL
-} from 'store/actions/actionCreators';
+} from "store/actions/actionCreators";
 
 // export const updateModal = ({ showModal, modalType }) => {
 // 	return {

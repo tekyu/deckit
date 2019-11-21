@@ -1,6 +1,6 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import * as styles from './Passes.module.scss';
+import React from "react";
+import { NavLink } from "react-router-dom";
+import * as styles from "./Passes.module.scss";
 
 const Passes = ({ userData, logoutHandler }) => {
   return (

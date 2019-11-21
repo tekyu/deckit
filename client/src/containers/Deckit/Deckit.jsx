@@ -14,7 +14,7 @@ import SidePanel from "../GameContainer/SidePanel/SidePanel";
  */
 class Deckit extends Component {
   render() {
-    console.log("Deckit", this.props);
+    console.log(`Deckit`, this.props);
     return (
       <div className={styles.table}>
         <div className={styles.draft}></div>

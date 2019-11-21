@@ -31,7 +31,7 @@ const Panel = styled.div`
 `;
 
 const SidePanel = ({ panels, listener }) => {
-  const [openedPanel, setOpenedPanel] = useState("chat"); //Object.keys(panels)[0]
+  const [openedPanel, setOpenedPanel] = useState(`chat`); // Object.keys(panels)[0]
   const [sidePanels, setSidePanels] = useState({});
   const panelMapping = {
     score: <ScorePanel scoreData={sidePanels.score} />,
@@ -39,7 +39,7 @@ const SidePanel = ({ panels, listener }) => {
     options: <OptionsPanel />
   };
   const addPanelListeners = useCallback(() => {
-    console.log("%c addPanelListeners", "background: #E88341");
+    console.log(`%c addPanelListeners`, `background: #E88341`);
 
     Object.keys(panels).forEach(panel => {
       listener(panels[panel].listener, data => {
@@ -52,7 +52,7 @@ const SidePanel = ({ panels, listener }) => {
   }, [listener, panels]);
 
   const makePanels = useCallback(() => {
-    console.log("%c makePanels", "background: #FF4762");
+    console.log(`%c makePanels`, `background: #FF4762`);
     Object.keys(panels).forEach(panel => {
       setSidePanels(prevSidePanels => ({
         ...prevSidePanels,
@@ -67,8 +67,8 @@ const SidePanel = ({ panels, listener }) => {
   }, [makePanels, addPanelListeners]);
 
   const changePanel = useCallback(({ target }) => {
-    console.log("changePanel", target);
-    setOpenedPanel(target.getAttribute("name"));
+    console.log(`changePanel`, target);
+    setOpenedPanel(target.getAttribute(`name`));
   });
 
   const getPanel = () => {

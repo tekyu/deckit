@@ -1,5 +1,6 @@
 import React from "react";
 import * as styles from "./ScoreElement.module.scss";
+
 const ScoreElement = ({
   data: { id, avatar, username, progress, points, color }
 }) => {

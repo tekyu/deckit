@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import axios from 'utils/axios';
-import * as styles from './LoginForm.module.scss';
+import React, { Component } from "react";
+import axios from "utils/axios";
+import * as styles from "./LoginForm.module.scss";
 
 class LoginForm extends Component {
   state = {
-    username: '',
-    password: '',
+    username: ``,
+    password: ``,
     formError: null,
     errors: {
-      empty: 'It seems like you forgot to fill your',
-      '401': 'Oops! It looks like you misspelled your username or password'
+      empty: `It seems like you forgot to fill your`,
+      "401": `Oops! It looks like you misspelled your username or password`
     }
   };
 
@@ -29,13 +29,13 @@ class LoginForm extends Component {
       this.setState(state => {
         return {
           formError:
-            state.errors.empty + (!username ? ' username' : ' password')
+            state.errors.empty + (!username ? ` username` : ` password`)
         };
       });
       return false;
     }
     axios
-      .post('/api/login', {
+      .post(`/api/login`, {
         username,
         password
       })
@@ -57,13 +57,13 @@ class LoginForm extends Component {
       this.setState(state => {
         return {
           formError:
-            state.errors.empty + (!username ? ' username' : ' password')
+            state.errors.empty + (!username ? ` username` : ` password`)
         };
       });
       return false;
     }
     axios
-      .post('/register', {
+      .post(`/register`, {
         username,
         password
       })
@@ -120,7 +120,7 @@ class LoginForm extends Component {
           </div>
           <div className={styles.modal_footer}>
             <label className={styles.create_account}>
-              You don&apos;t have an account yet?{' '}
+              You don&apos;t have an account yet?{` `}
               <a href="#">Create one here!</a>
             </label>
           </div>

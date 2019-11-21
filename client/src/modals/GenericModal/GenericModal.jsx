@@ -1,25 +1,25 @@
-import React, { Component } from 'react';
-import * as styles from './GenericModal.module.scss';
+import React, { Component } from "react";
+import * as styles from "./GenericModal.module.scss";
 
 class GenericModal extends Component {
   state = {};
 
   listenKeyboard(event) {
-    if (event.key === 'Escape' || event.keyCode === 27) {
+    if (event.key === `Escape` || event.keyCode === 27) {
       this.props.onClose();
     }
   }
 
   componentDidMount() {
     if (this.props.onClose) {
-      window.addEventListener('keydown', this.listenKeyboard.bind(this), true);
+      window.addEventListener(`keydown`, this.listenKeyboard.bind(this), true);
     }
   }
 
   componentWillUnmount() {
     if (this.props.onClose) {
       window.removeEventListener(
-        'keydown',
+        `keydown`,
         this.listenKeyboard.bind(this),
         true
       );
