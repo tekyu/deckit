@@ -1,7 +1,6 @@
 import axios from "utils/axios";
 
-import { showError } from "store/app/appActions";
-import { closeModal } from "store/modal/modalActions";
+import { closeModal, showError } from "store/app/appActions";
 
 export const CHECK_USER = `CHECK_USER`;
 export const AUTH_USER = `AUTH_USER`;

@@ -33,7 +33,6 @@ class AnonymousLoginModal extends Component {
 
   submitHandler = event => {
     event.preventDefault();
-
     const { emitter, updateAnonUser } = this.props;
     const { username } = this.state;
     emitter(UPDATE_ANON_USER, { username }, data => {

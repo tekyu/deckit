@@ -1,63 +1,41 @@
-import React, { Component } from "react";
+import React, { memo, useCallback, useMemo } from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { closeModal } from "store/actions";
 import * as styles from "./ModalContainer.module.scss";
-import LoginModal from "./LoginModal/LoginModal";
-import RegisterModal from "./RegisterModal/RegisterModal";
-import AnonymousLoginModal from "./AnonymousLoginModal/AnonymousLoginModal";
+import modals from "./modals";
 
-class ModalContainer extends Component {
-  state = {};
-
-  getModal = () => {
-    const modalTypes = {
-      login: `login`,
-      register: `register`,
-      anonymous: `anonymous`
-    };
-    const { modalType } = this.props;
-    switch (modalType) {
-      case modalTypes.login:
-        return <LoginModal />;
-      case modalTypes.register:
-        return <RegisterModal />;
-      case modalTypes.anonymous:
-        return <AnonymousLoginModal />;
-      default:
-        return null;
-    }
-  };
-
-  closeModal = e => {
-    e.preventDefault();
-    this.props.closeModal();
-  };
-
-  render() {
-    const modal = this.getModal();
-    return (
-      <div className={styles.backdrop}>
-        <div className={styles.container}>
-          <div onClick={this.closeModal} className={styles.close} />
-
-          <div className={styles.content}>{modal}</div>
-        </div>
+const ModalContainer = ({ closeModal, modalType }) => {
+  const onClose = useCallback(
+    e => {
+      e.preventDefault();
+      closeModal();
+    },
+    [closeModal]
+  );
+  const modal = useMemo(() => modals[modalType], [modalType]);
+  return modalType ? (
+    <div className={styles.backdrop}>
+      <div className={styles.container}>
+        <div onClick={onClose} className={styles.close} />
+        <div className={styles.content}>{modal}</div>
       </div>
-    );
-  }
-}
+    </div>
+  ) : null;
+};
 
-const mapStateToProps = ({ modal: { modalType } }) => {
-  return {
-    modalType
-  };
+ModalContainer.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+  modalType: PropTypes.string
 };
 
 const mapDispatchToProps = {
   closeModal
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ModalContainer);
+export default memo(
+  connect(
+    null,
+    mapDispatchToProps
+  )(ModalContainer)
+);

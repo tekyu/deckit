@@ -3,17 +3,16 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import ModalContainer from "modals/ModalContainer";
 import Error from "components/Generic/Error/Error";
-import { initializeSocket } from "store/actions";
 import Header from "./Header/Header";
 import Content from "./Content/Content";
 
-const App = ({ auth, modalType, showModal, error }) => {
+const App = ({ auth, modalType, error }) => {
   return (
     <React.Fragment>
       <Header />
       {error && <Error message={error} />}
       <Content auth={auth} />
-      {showModal && <ModalContainer type={modalType} />}
+      <ModalContainer modalType={modalType} />
     </React.Fragment>
   );
 };
@@ -27,22 +26,14 @@ App.propTypes = {
 
 const mapStateToProps = state => {
   const {
-    user: { auth },
-    modal: { showModal, modalType },
-    app: { error }
+    app: { error, modalType },
+    user: { auth }
   } = state;
   return {
     auth,
     modalType,
-    showModal,
     error
   };
 };
-const mapDispatchToProps = {
-  initializeSocket
-};
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App);
+export default connect(mapStateToProps)(App);
