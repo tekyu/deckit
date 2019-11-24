@@ -1,9 +1,14 @@
 import React, { memo, useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { Button } from "components/Generic";
 import { closeModal } from "store/actions";
 import modals from "./modals";
-import { $Backdrop, $Container } from "./ModalContainer.styled";
+import {
+  $Backdrop,
+  $Container,
+  $exitButtonStyle
+} from "./ModalContainer.styled";
 
 const ModalContainer = ({ closeModal, modalType }) => {
   const onClose = useCallback(
@@ -17,7 +22,9 @@ const ModalContainer = ({ closeModal, modalType }) => {
   return modalType ? (
     <$Backdrop>
       <$Container>
-        <button onClick={onClose}>Exit</button>
+        <Button onClick={onClose} styles={$exitButtonStyle}>
+          X
+        </Button>
         {modal}
       </$Container>
     </$Backdrop>
