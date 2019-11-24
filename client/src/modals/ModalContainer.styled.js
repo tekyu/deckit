@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { rgba } from "polished";
 
 export const $Backdrop = styled.div`
@@ -17,7 +17,15 @@ export const $Backdrop = styled.div`
 `;
 
 export const $Container = styled.div`
-  width: 500px;
+  background-color: ${props => props.theme.background};
+  display: flex;
+  flex-direction: column;
   min-height: 600px;
-  position: relative;
+  width: 500px;
+`;
+
+export const $exitButtonStyle = css`
+  align-self: flex-end;
+  background-color: red;
+  color: cyan;
 `;

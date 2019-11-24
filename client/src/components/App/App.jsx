@@ -24,7 +24,6 @@ const App = ({ auth, modalType, error }) => {
 App.propTypes = {
   auth: PropTypes.bool.isRequired,
   modalType: PropTypes.string.isRequired,
-  showModal: PropTypes.bool.isRequired,
   error: PropTypes.string.isRequired
 };
 
