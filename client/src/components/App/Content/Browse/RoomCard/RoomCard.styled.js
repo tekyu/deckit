@@ -1,28 +1,24 @@
-@import "assets/css/_palette.scss";
+import styled from "styled-components";
+import { rgba } from "polished";
 
-.container {
+export const Container = styled.div`
   height: 270px;
   width: 230px;
-  background: map-get($map: $color-map, $key: "white");
-  box-shadow: 0px 4px 18px -2px rgba(map-get($map: $color-map, $key: "charcoal"), 0.2);
-  // padding: 10px 8px;
+  background: white;
+  box-shadow: ${props =>
+    `0px 4px 18px -2px ${rgba(props.theme.tempPal_charcoal, 0.2)}`};
   margin: 10px 15px;
   display: flex;
   flex-direction: column;
-}
+`;
 
-.header {
+export const Header = styled.div`
   height: 60px;
   width: 100%;
-  // background: rgba(
-  // 	map-get($map: $color-map, $key: "breeze"),
-  // 	map-get($map: $opacity-map, $key: "dark-divider")
-  // );
-  // background: red;
   position: relative;
-}
+`;
 
-.logo {
+export const Logo = styled.div`
   width: 74px;
   height: 74px;
   position: absolute;
@@ -32,11 +28,11 @@
   cursor: default;
   user-select: none;
   background: transparent;
-  border: 3px solid
-    rgba(
-      map-get($map: $color-map, $key: "breeze"),
-      map-get($map: $opacity-map, $key: "dark-low")
-    );
+  border: ${props =>
+    `3px solid ${rgba(
+      props.theme.tempPal_breeze,
+      props.theme.tempPal_dark_low
+    )}`};
   border-radius: 50%;
   span {
     border-radius: 50%;
@@ -47,67 +43,53 @@
     left: 50%;
     font-size: 34px;
     transform: translate(-50%, -50%);
-    background: map-get($map: $color-map, $key: "breeze");
-    color: map-get($map: $color-map, $key: "white");
+    background: ${props => props.theme.tempPal_breeze};
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-}
+`;
 
-.content {
+export const Content = styled.div`
   height: 150px;
   width: 100%;
-  // background: yellow;
-  // padding-top: 40px;
   padding: 60px 20px 0 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
+`;
 
-.name {
-  // width: 80%;
-  // padding: 0 20px;
+export const Name = styled.label`
   text-align: center;
   font-size: 16px;
   font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
-  opacity: map-get($map: $opacity-map, $key: "dark-high");
-}
+  opacity: ${props => props.theme.tempPal_dark_high};
+`;
 
-.owner {
+export const Owner = styled.p`
   text-align: center;
   font-size: 14px;
   font-weight: 400;
-  opacity: map-get($map: $opacity-map, $key: "dark-low");
+  opacity: ${props => props.theme.tempPal_dark_low};
   white-space: nowrap;
   text-overflow: ellipsis;
   padding-top: 10px;
-}
+`;
 
-.footer {
-  height: 50px;
-  width: 100%;
-  // background: yellowgreen;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.details {
+export const Details = styled.div`
   width: 100%;
   padding: 30px 10px 10px 10px;
-  // background: rebeccapurple;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
-}
+`;
 
-.players {
+export const Players = styled.div`
   display: flex;
   align-items: center;
   font-size: 14px;
@@ -120,8 +102,16 @@
       padding: 0 2px;
     }
   }
-}
+`;
 
-.mode {
-  opacity: map-get($map: $opacity-map, $key: "dark-low");
-}
+export const Mode = styled.div`
+  opacity: ${props => props.theme.tempPal_dark_low};
+`;
+
+export const Footer = styled.div`
+  height: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;

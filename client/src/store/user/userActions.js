@@ -4,8 +4,8 @@ import { closeModal, showError } from "store/app/appActions";
 
 export const CHECK_USER = `CHECK_USER`;
 export const AUTH_USER = `AUTH_USER`;
-export const UPDATE_USER = `UPDATE_USER`;
-export const UPDATE_ANON_USER = `UPDATE_ANON_USER`;
+export const UPDATE_USER = `updateUser`;
+export const UPDATE_ANON_USER = `updateAnonymousUser`;
 
 // TODO:
 // make it as a promise cos you cant send formError here

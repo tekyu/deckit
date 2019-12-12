@@ -3,7 +3,7 @@ export const SOCKET_LEAVE = `SOCKET_LEAVE`;
 export const SOCKET_EMIT = `SOCKET_EMIT`;
 export const SOCKET_LISTENER = `SOCKET_LISTENER`;
 export const SAVE_DATA = `SAVE_DATA`;
-export const GET_ROOM_INFO = `GET_ROOM_INFO`;
+export const GET_ROOM_INFO = `getRoomInfo`;
 
 export const initializeSocket = socket => {
   return {

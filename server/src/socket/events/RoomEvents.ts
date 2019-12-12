@@ -60,10 +60,12 @@ export const RoomEvents = (socket: any, io: any) => {
   socket.on("newConnectedPlayer", data => {
     const { roomId, ...playerData } = data;
     const room = getRoom(roomId);
-    playerData.color = randomColor(0.3, 0.99);
-    room.connectPlayer(playerData);
-    socket.pswOptions.rooms[roomId] = playerData;
-    console.log("newConnectedPlayer", socket.pswOptions);
-    socket.in(roomId).emit("roomUpdated", room.roomOptions);
+    if (room) {
+      playerData.color = randomColor(0.3, 0.99);
+      room.connectPlayer(playerData);
+      socket.pswOptions.rooms[roomId] = playerData;
+      console.log("newConnectedPlayer", socket.pswOptions);
+      socket.in(roomId).emit("roomUpdated", room.roomOptions);
+    }
   });
 };
