@@ -1,13 +1,14 @@
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import { Button } from "components/Generic";
 import * as Styled from "./RoomCard.styled";
 
-const RoomCard = ({ options, isAnonymous }) => {
+const RoomCard = ({ isAnonymous, options }) => {
   const {
     id,
     name,
-    createdBy,
+    owner,
     playersCurrent,
     playersMax,
     isPublic,
@@ -15,27 +16,22 @@ const RoomCard = ({ options, isAnonymous }) => {
   } = options;
   return (
     <Styled.Container>
-      <Styled.Header>
-        <Styled.Logo>
-          <span>{gameCode.toUpperCase()}</span>
-        </Styled.Logo>
-      </Styled.Header>
+      <Styled.Logo>{gameCode.toUpperCase()}</Styled.Logo>
+      <Styled.Name>{name}</Styled.Name>
+      <Styled.Owner>{owner}</Styled.Owner>
       <Styled.Content>
-        <Styled.Name>{name}</Styled.Name>
-        <Styled.Owner>{createdBy}</Styled.Owner>
         <Styled.Details>
           <Styled.Players>
-            <span>{playersCurrent}</span>
-            <span>{playersMax}</span>
+            {playersCurrent}/{playersMax}
           </Styled.Players>
           <Styled.Mode>{isPublic ? `Public` : `Private`}</Styled.Mode>
         </Styled.Details>
       </Styled.Content>
-      <Styled.Footer>
-        <Link className="button--primary" to={`/game/${id}`} value={id}>
+      <Link to={`/game/${id}`} value={id}>
+        <Button preset={`primary`}>
           {isAnonymous ? `Play as anonymous` : `Join`}
-        </Link>
-      </Styled.Footer>
+        </Button>
+      </Link>
     </Styled.Container>
   );
 };
@@ -45,7 +41,7 @@ RoomCard.propTypes = {
   options: PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    createdBy: PropTypes.string.isRequired,
+    owner: PropTypes.string.isRequired,
     playersCurrent: PropTypes.number.isRequired,
     playersMax: PropTypes.number.isRequired,
     isPublic: PropTypes.bool.isRequired,

@@ -2,116 +2,75 @@ import styled from "styled-components";
 import { rgba } from "polished";
 
 export const Container = styled.div`
-  height: 270px;
-  width: 230px;
-  background: white;
-  box-shadow: ${props =>
-    `0px 4px 18px -2px ${rgba(props.theme.tempPal_charcoal, 0.2)}`};
-  margin: 10px 15px;
   display: flex;
   flex-direction: column;
-`;
-
-export const Header = styled.div`
-  height: 60px;
-  width: 100%;
-  position: relative;
+  align-items: center;
+  height: 270px;
+  width: 230px;
+  box-shadow: ${props =>
+    `0px 4px 18px -2px ${rgba(props.theme.tempPal_charcoal, 0.2)}`};
+  margin: 0.6em 1em;
+  padding: 1em;
 `;
 
 export const Logo = styled.div`
-  width: 74px;
-  height: 74px;
-  position: absolute;
-  bottom: -37px;
-  left: 50%;
-  transform: translateX(-50%);
-  cursor: default;
-  user-select: none;
-  background: transparent;
+  background: ${props => props.theme.tempPal_breeze};
+  background-clip: content-box;
   border: ${props =>
     `3px solid ${rgba(
       props.theme.tempPal_breeze,
       props.theme.tempPal_dark_low
     )}`};
   border-radius: 50%;
-  span {
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    font-size: 34px;
-    transform: translate(-50%, -50%);
-    background: ${props => props.theme.tempPal_breeze};
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-`;
-
-export const Content = styled.div`
-  height: 150px;
-  width: 100%;
-  padding: 60px 20px 0 20px;
+  color: white;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  font-size: 2em;
+  height: 74px;
+  width: 74px;
+  line-height: 74px;
+  padding: 0.1em;
+  user-select: none;
 `;
 
 export const Name = styled.label`
-  text-align: center;
-  font-size: 16px;
   font-weight: 500;
+  margin-top: 1.2em;
   white-space: nowrap;
   text-overflow: ellipsis;
   opacity: ${props => props.theme.tempPal_dark_high};
 `;
 
 export const Owner = styled.p`
-  text-align: center;
-  font-size: 14px;
-  font-weight: 400;
+  font-size: 0.9em;
+  margin-top: 0.8em;
   opacity: ${props => props.theme.tempPal_dark_low};
   white-space: nowrap;
   text-overflow: ellipsis;
-  padding-top: 10px;
+`;
+
+export const Content = styled.div`
+  height: 150px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const Details = styled.div`
-  width: 100%;
-  padding: 30px 10px 10px 10px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 14px;
+  justify-content: space-between;
+  padding: 0.8em;
+  width: 100%;
 `;
 
 export const Players = styled.div`
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  span:first-of-type {
-    display: flex;
-    align-items: center;
-    &:after {
-      content: "/";
-      font-size: 10px;
-      padding: 0 2px;
-    }
-  }
+  font-size: 0.8em;
 `;
 
 export const Mode = styled.div`
   opacity: ${props => props.theme.tempPal_dark_low};
-`;
-
-export const Footer = styled.div`
-  height: 50px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;

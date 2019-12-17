@@ -8,5 +8,11 @@
   "prettier.disableLanguages": ["js"],
   "editor.formatOnSave": true,
   "eslint.autoFixOnSave": true,
-  "cSpell.words": ["deckit", "hygge"]
+  "cSpell.words": [
+    "deckit",
+    "hygge"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }

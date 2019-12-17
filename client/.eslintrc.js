@@ -20,8 +20,8 @@ module.exports = {
   },
   rules: {
     quotes: [2, 'backtick'],
-    'no-unused-vars': 1,
     'no-console': 1,
+    'import/prefer-default-export': 0,
     "no-shadow": 0,
     'prettier/prettier': [
       2,
@@ -42,8 +42,8 @@ module.exports = {
     'react/prop-types': 1,
     'react/jsx-key': 1,
     'class-methods-use-this': 0,
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "error"
+    "react-hooks/rules-of-hooks": 2,
+    "react-hooks/exhaustive-deps": 2
   },
   settings: {
     'import/resolver': {
