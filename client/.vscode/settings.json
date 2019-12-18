@@ -2,17 +2,13 @@
   "css.validate": true,
   "scss.validate": true,
   "less.validate": true,
+  "prettier.disableLanguages": ["js"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.formatOnSave": true,
   "[javascript]": {
     "editor.formatOnSave": false
   },
-  "prettier.disableLanguages": ["js"],
-  "editor.formatOnSave": true,
-  "eslint.autoFixOnSave": true,
-  "cSpell.words": [
-    "deckit",
-    "hygge"
-  ],
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  }
+  "cSpell.words": ["deckit", "hygge"]
 }

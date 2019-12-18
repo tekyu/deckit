@@ -29,19 +29,6 @@ module.exports = {
         endOfLine: 'auto'
       }
     ],
-    'jsx-a11y/label-has-for': [
-      0,
-      {
-        components: ['Label'],
-        required: {
-          every: ['nesting', 'id']
-        },
-        allowChildren: false
-      }
-    ],
-    'react/prop-types': 1,
-    'react/jsx-key': 1,
-    'class-methods-use-this': 0,
     "react-hooks/rules-of-hooks": 2,
     "react-hooks/exhaustive-deps": 2
   },
