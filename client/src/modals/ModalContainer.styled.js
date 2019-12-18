@@ -27,5 +27,6 @@ export const $Container = styled.div`
 export const $exitButtonStyle = css`
   align-self: flex-end;
   background-color: red;
-  color: cyan;
+  color: white;
+  font-size: 1.4em;
 `;

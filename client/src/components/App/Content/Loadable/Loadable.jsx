@@ -1,6 +1,5 @@
 import Loadable from "react-loadable";
 import React from "react";
-import App from "components/App/Content/Content";
 
 const Login = Loadable({
   loader: () => import(`containers/Auth/Login/LoginForm`),
