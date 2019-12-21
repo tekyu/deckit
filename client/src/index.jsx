@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-import "./assets/css/reset.css";
+import "./assets/css/normalize.min.css";
 import "./assets/css/index.scss";
 import store from "store/store";
 import App from "components/App/App";
