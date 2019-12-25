@@ -23,7 +23,7 @@ const Logout = Loadable({
 });
 
 const Browse = Loadable({
-  loader: () => import(`components/App/Content/Browse/Browse`),
+  loader: () => import(`../Browse/Browse`),
   loading() {
     return <p>Loading...</p>;
   }
@@ -37,7 +37,7 @@ const CreateGame = Loadable({
 });
 
 const GameContainer = Loadable({
-  loader: () => import(`containers/GameContainer/GameContainer`),
+  loader: () => import(`../GameContainer/GameContainer`),
   loading() {
     return <p>Loading...</p>;
   }

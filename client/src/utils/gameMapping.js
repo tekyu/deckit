@@ -43,7 +43,9 @@ export const getGameMapping = game => {
 export const getGame = gameCode => {
   switch (gameCode) {
     case `d`:
-      return lazy(() => import(`../containers/Deckit/Deckit`));
+      return lazy(() =>
+        import(`components/App/Content/GameContainer/Deckit/Deckit`)
+      );
     default:
       throw Error(`Game doesn't exist`);
   }

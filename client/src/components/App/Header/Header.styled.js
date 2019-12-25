@@ -4,5 +4,4 @@ export const Header = styled.header`
   display: flex;
   align-items: center;
   height: 70px;
-  margin: 0 20px;
 `;

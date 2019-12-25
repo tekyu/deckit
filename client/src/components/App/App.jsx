@@ -21,8 +21,8 @@ const App = ({ auth, error, modalType }) => {
 
 App.propTypes = {
   auth: PropTypes.bool.isRequired,
-  error: PropTypes.string.isRequired,
-  modalType: PropTypes.string.isRequired
+  error: PropTypes.string,
+  modalType: PropTypes.string
 };
 
 const mapStateToProps = state => {
