@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { ThemeProvider } from "styled-components";
 import themes from "assets/themes";
-import ModalContainer from "modals/ModalContainer";
+import ModalContainer from "components/Modals/ModalContainer";
 import { Error } from "components/Generic";
 import Header from "./Header/Header";
 import Content from "./Content/Content";
@@ -14,7 +14,7 @@ const App = ({ auth, error, modalType }) => {
       <Header />
       <Content auth={auth} />
       {error && <Error message={error} />}
-      <ModalContainer modalType={modalType} />
+      {modalType && <ModalContainer modalType={modalType} />}
     </ThemeProvider>
   );
 };

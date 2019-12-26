@@ -4,30 +4,27 @@ import { connect } from "react-redux";
 import { Button } from "components/Generic";
 import { closeModal } from "store/actions";
 import modals from "./modals";
-import {
-  $Backdrop,
-  $Container,
-  $exitButtonStyle
-} from "./ModalContainer.styled";
+import * as Styled from "./ModalContainer.styled";
 
 const ModalContainer = ({ closeModal, modalType }) => {
-  const onClose = useCallback(
-    e => {
-      e.preventDefault();
-      closeModal();
-    },
-    [closeModal]
-  );
+  const onClose = useCallback(() => {
+    closeModal();
+  }, [closeModal]);
   const modal = useMemo(() => modals[modalType], [modalType]);
   return modalType ? (
-    <$Backdrop>
-      <$Container>
-        <Button onClick={onClose} styles={$exitButtonStyle}>
+    <Styled.Backdrop>
+      <Styled.Container>
+        <Button onClick={onClose} styles={Styled.ExitButton}>
           X
         </Button>
-        {modal}
-      </$Container>
-    </$Backdrop>
+        <Styled.Icon />
+        <Styled.Header>
+          <h2>{modal.title}</h2>
+          <p>Lets have fun!</p>
+        </Styled.Header>
+        {modal.component}
+      </Styled.Container>
+    </Styled.Backdrop>
   ) : null;
 };
 

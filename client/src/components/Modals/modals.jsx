@@ -4,9 +4,18 @@ import RegisterModal from "./RegisterModal/RegisterModal";
 import AnonymousLoginModal from "./AnonymousLoginModal/AnonymousLoginModal";
 
 const modals = {
-  login: <LoginModal />,
-  register: <RegisterModal />,
-  anonymous: <AnonymousLoginModal />
+  login: {
+    component: <LoginModal />,
+    title: `Login`
+  },
+  register: {
+    component: <RegisterModal />,
+    title: `Register`
+  },
+  anonymous: {
+    component: <AnonymousLoginModal />,
+    title: `Choose your username`
+  }
 };
 
 export default modals;
