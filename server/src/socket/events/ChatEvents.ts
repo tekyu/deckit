@@ -12,7 +12,7 @@ export const ChatEvents = (socket: any, io: any) => {
   console.log("Chat events");
   socket.on(chatListeners.getHistory, (params: any, callback: Function) => {
     // console.log(chatListeners.getHistory, params, io.gameRooms[params.roomId]);
-    callback(io.gameRooms[params.roomId].chat);
+    //callback(io.gameRooms[params.roomId].chat);
   });
   socket.on(chatListeners.onmessage, ({ roomId, message }) => {
     // {

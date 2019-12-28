@@ -1,45 +1,40 @@
-import { User } from "../schemas/User";
-import AuthApi from "../Api/auth/auth";
+import { Request, Response, NextFunction } from 'express';
+import { Room } from "../schemas";
+import AuthApi from "./auth/auth";
+import { generateToken } from '../utils/generateHash';
+
 const Api = (app: any, passport: any) => {
   console.log("Api loaded");
   AuthApi(app, passport);
-
-  app.post("/api/getRooms", (req, res, next) => {
-    console.log("check", req.isAuthenticated());
-
-    // app.post("/api/check", (req, res, next) => {
-    //   console.log("check", req.isAuthenticated());
-    //   if (req.isAuthenticated()) {
-    //     console.log("true", req.user);
-    //     const {
-    //       friends,
-    //       activeGames,
-    //       username,
-    //       ranking,
-    //       notifications
-    //     } = req.user;
-    //     const data = {
-    //       friends,
-    //       activeGames,
-    //       username,
-    //       ranking,
-    //       notifications
-    //     };
-    //     res.status(200).send(data);
-    //   } else {
-    //     res.status(401).send();
-    //   }
+  app.get("/api/rooms", async (req: Request, res: Response, next : NextFunction) => {
+    const allRooms = await Room.find();
+    res.status(200).send({ rooms: allRooms });
   });
+
+  app.get("/api/rooms/:roomId", async (req: Request, res: Response, next : NextFunction) => {
+    const { roomId } = req.params;
+    const room = await Room.findOne({hash:roomId})
+    if(room) {
+      res.status(200).send({ room })
+    }
+    else {
+      res.sendStatus(404);
+    }
+  });
+
+  app.post("/api/rooms", async (req: Request, res: Response, next : NextFunction) => {
+    const { gameCode, isPublic, name, playersMax } = req.body;
+    const newRoom = new Room({
+      gameCode,
+      hash: generateToken(),
+      isPublic,
+      name,
+      playersMax
+    });
+    await newRoom.save();
+    res.status(201).send();
+  });
+
 };
 
 export default Api;
-
-// const loggedInOnly = (req, res, next) => {
-// 	if (req.isAuthenticated()) next();
-// 	else res.redirect("/login");
-// };
-
-// const loggedOutOnly = (req, res, next) => {
-// 	if (req.isUnauthenticated()) next();
-// 	else res.redirect("/");
-// };
