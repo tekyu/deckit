@@ -24,8 +24,10 @@ const roomSchema: Schema = new Schema({
 	gameCode: { type: String, required: true},
 	isPublic: { type: Boolean, required: true},
 	name: { type: String, required: true },
+	owner: { type: String, required: true},
+	players: { type: Array, default: []},
 	playersMax: { type: Number, required: true},
-	roomId: { type: String, default: generateToken() }
+	roomId: { type: String, default: () => generateToken() }
 });
 
 export const Room: Model<IRoomModel> = model<IRoomModel>("Room", roomSchema);

@@ -6,9 +6,6 @@ import * as Loadable from "./Loadable/Loadable";
 const Content = ({ auth }) => {
   return (
     <Switch>
-      <Route path="/logout" exact render={() => <Loadable.Logout />} />
-      <Route path="/register" exact render={() => <Loadable.Register />} />
-      <Route path="/login" exact render={() => <Loadable.Login />} />
       <Route
         path="/browse"
         exact
@@ -22,11 +19,6 @@ const Content = ({ auth }) => {
       />
       <Route
         path="/user"
-        exact
-        render={() => <Loadable.CreateGame auth={auth} />}
-      />
-      <Route
-        path="/leaderboards"
         exact
         render={() => <Loadable.CreateGame auth={auth} />}
       />

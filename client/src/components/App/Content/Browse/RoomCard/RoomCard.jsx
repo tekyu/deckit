@@ -6,13 +6,13 @@ import * as Styled from "./RoomCard.styled";
 
 const RoomCard = ({ isAnonymous, options }) => {
   const {
-    id,
+    gameCode,
+    isPublic,
     name,
     owner,
-    playersCurrent,
+    players,
     playersMax,
-    isPublic,
-    gameCode
+    roomId
   } = options;
   return (
     <Styled.Container>
@@ -22,12 +22,12 @@ const RoomCard = ({ isAnonymous, options }) => {
       <Styled.Content>
         <Styled.Details>
           <Styled.Players>
-            {playersCurrent}/{playersMax}
+            {players.length}/{playersMax}
           </Styled.Players>
           <Styled.Mode>{isPublic ? `Public` : `Private`}</Styled.Mode>
         </Styled.Details>
       </Styled.Content>
-      <Link to={`/game/${id}`} value={id}>
+      <Link to={`/game/${roomId}`} value={roomId}>
         <Button preset={`primary`}>
           {isAnonymous ? `Play as anonymous` : `Join`}
         </Button>
@@ -39,13 +39,13 @@ const RoomCard = ({ isAnonymous, options }) => {
 RoomCard.propTypes = {
   isAnonymous: PropTypes.bool.isRequired,
   options: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    gameCode: PropTypes.string.isRequired,
+    isPublic: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
     owner: PropTypes.string.isRequired,
-    playersCurrent: PropTypes.number.isRequired,
+    players: PropTypes.array.isRequired,
     playersMax: PropTypes.number.isRequired,
-    isPublic: PropTypes.bool.isRequired,
-    gameCode: PropTypes.string.isRequired
+    roomId: PropTypes.string.isRequired
   }).isRequired
 };
 

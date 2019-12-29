@@ -47,26 +47,26 @@ export const loginUser = (username, password) => {
 
 export const checkAuth = () => {
   return (dispatch, getState) => {
-    if (!getState.user) {
-      axios
-        .post(`/api/check`)
-        .then(({ data }) => {
-          dispatch({
-            type: UPDATE_USER,
-            user: data
-          });
-          dispatch({
-            type: AUTH_USER,
-            auth: true
-          });
-        })
-        .catch(() => {
-          dispatch({
-            type: AUTH_USER,
-            auth: false
-          });
-        });
-    }
+    // if (!getState.user) {
+    //   axios
+    //     .post(`/api/check`)
+    //     .then(({ data }) => {
+    //       dispatch({
+    //         type: UPDATE_USER,
+    //         user: data
+    //       });
+    //       dispatch({
+    //         type: AUTH_USER,
+    //         auth: true
+    //       });
+    //     })
+    //     .catch(() => {
+    //       dispatch({
+    //         type: AUTH_USER,
+    //         auth: false
+    //       });
+    //     });
+    // }
   };
 };
 

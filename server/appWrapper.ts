@@ -12,23 +12,12 @@ const appWrapper = (IncomingPort = 3011) => {
   const port = IncomingPort;
 
   /* APP */
+  app.use(cors({
+    methods: 'GET,POST,PATCH,DELETE',
+    optionsSuccessStatus: 200,
+    origin: process.env.DEV_ADDRESS
+  }));
   app.options(
-    "*",
-    cors({
-      credentials: true,
-      origin: process.env.DEV_ADDRESS,
-      optionsSuccessStatus: 200
-    })
-  );
-  app.post(
-    "*",
-    cors({
-      credentials: true,
-      origin: process.env.DEV_ADDRESS,
-      optionsSuccessStatus: 200
-    })
-  );
-  app.get(
     "*",
     cors({
       credentials: true,

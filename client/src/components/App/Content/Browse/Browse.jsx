@@ -11,11 +11,14 @@ import * as styles from "./Browse.module.scss";
 const Browse = ({ auth, checkAuth, emitter, rooms, updateRooms }) => {
   const [parsedRooms, setParsedRooms] = useState([]);
   const refreshList = useCallback(() => {
-    emitter(`getRooms`, null, rooms => {
+    // emitter(`getRooms`, null, rooms => {
+    //   updateRooms(rooms);
+    // });
+    axios.get(`/rooms`).then(res => {
+      const { rooms } = res.data;
       updateRooms(rooms);
     });
-    axios.get(`/getRooms`).then(() => {});
-  }, [emitter, updateRooms]);
+  }, [updateRooms]);
   useEffect(() => {
     checkAuth();
     refreshList();
@@ -34,7 +37,7 @@ const Browse = ({ auth, checkAuth, emitter, rooms, updateRooms }) => {
   const roomCards = parsedRooms
     ? parsedRooms.map(room => (
         <RoomCard
-          key={room.id}
+          key={room.roomId}
           options={room}
           handler={selectHandler}
           isAnonymous={!auth}

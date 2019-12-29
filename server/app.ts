@@ -7,5 +7,5 @@ import Mongoose from "./src/mongo/mongoose";
 import appWrapper from "./appWrapper";
 
 Mongoose();
-//SocketIo();
+SocketIo();
 Api(appWrapper(process.env.APP_PORT), Passport);
