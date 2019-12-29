@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { Room } from "../schemas";
+import { Room } from "../models";
 import AuthApi from "./auth/auth";
-import { generateToken } from '../utils/generateHash';
 
 const Api = (app: any, passport: any) => {
   console.log("Api loaded");
@@ -26,13 +25,13 @@ const Api = (app: any, passport: any) => {
     const { gameCode, isPublic, name, playersMax } = req.body;
     const newRoom = new Room({
       gameCode,
-      hash: generateToken(),
       isPublic,
       name,
       playersMax
     });
     await newRoom.save();
-    res.status(201).send();
+    const { roomId } = newRoom;
+    res.status(201).send({ roomId });
   });
 
 };

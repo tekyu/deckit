@@ -1,7 +1,7 @@
 const LocalStrategy = require("passport-local").Strategy;
 import LocalStrategy from "passport-local";
 import passport from "passport";
-import { User } from "../schemas/User";
+import { User } from "../models/User";
 
 const Passport = () => {
 	const LS = LocalStrategy.Strategy;

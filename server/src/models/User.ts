@@ -1,11 +1,25 @@
-// const mongoose = require("mongoose");
-// const uniqueValidator = require("mongoose-unique-validator");
-// const bcrypt = require("bcrypt");
-// import mongoose from 'mongoose';
 import { Document, Schema, Model, model } from "mongoose";
+
+interface IUser {
+	username: String;
+	hash: String;
+	token: String;
+	friends: Array<String>;
+	email: String;
+	avatar: String;
+	activeGames: Array<Number>;
+	ranking: Number;
+	createdAt: Number;
+	emailConsent: Boolean;
+	privacyConsent: Boolean;
+	notifications?: Array<String>;
+	createdCards?: Array<Object>;
+	createdDecks?: Array<Object>;
+	achievements?: Array<Object>;
+}
+
 import uniqueValidator from "mongoose-unique-validator";
 import bcrypt from "bcrypt";
-import IUser from "../interfaces/IUser";
 export interface IUserModel extends IUser, Document {
 	validPassword(password: string): any;
 }
@@ -34,7 +48,7 @@ UserSchema.methods.validPassword = function(password: string) {
 	return bcrypt.compareSync(password, this.hash);
 };
 
-UserSchema.virtual("password").set(function(value: any) {
+UserSchema.virtual("password").set(function(value: string) {
 	this.hash = bcrypt.hashSync(value, 12);
 });
 

@@ -1,4 +1,4 @@
-import { User } from "../../schemas/User";
+import { User } from "../../models/User";
 
 const AuthApi = (app: any, passport: any) => {
   app.post("/api/check", (req, res, next) => {
