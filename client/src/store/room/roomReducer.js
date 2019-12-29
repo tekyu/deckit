@@ -1,7 +1,7 @@
 import { SET_ACTIVE_ROOM, UPDATE_ROOMS } from "./roomActions";
 
 export const initialState = {
-  activeRoomId: null,
+  activeRoom: null,
   rooms: []
 };
 
@@ -10,7 +10,7 @@ export const roomReducer = (state = initialState, action) => {
     case SET_ACTIVE_ROOM:
       return {
         ...state,
-        activeRoomId: action.activeRoomId
+        activeRoom: { ...action.room }
       };
     case UPDATE_ROOMS:
       return {

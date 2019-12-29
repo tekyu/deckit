@@ -1,6 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { Room } from "../models";
 import AuthApi from "./auth/auth";
+import { generateToken } from '../utils/generateHash';
 
 const Api = (app: any, passport: any) => {
   console.log("Api loaded");
@@ -12,7 +13,7 @@ const Api = (app: any, passport: any) => {
 
   app.get("/api/rooms/:roomId", async (req: Request, res: Response) => {
     const { roomId } = req.params;
-    const room = await Room.findOne({hash:roomId})
+    const room = await Room.findOne({roomId})
     if(room) {
       res.status(200).send({ room })
     }

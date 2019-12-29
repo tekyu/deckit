@@ -11,9 +11,6 @@ import * as styles from "./Browse.module.scss";
 const Browse = ({ auth, checkAuth, emitter, rooms, updateRooms }) => {
   const [parsedRooms, setParsedRooms] = useState([]);
   const refreshList = useCallback(() => {
-    // emitter(`getRooms`, null, rooms => {
-    //   updateRooms(rooms);
-    // });
     axios.get(`/rooms`).then(res => {
       const { rooms } = res.data;
       updateRooms(rooms);

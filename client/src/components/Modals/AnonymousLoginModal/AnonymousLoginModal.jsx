@@ -35,7 +35,7 @@ const AnonymousLogin = ({ emitter, updateAnonUser }) => {
         value={username}
       />
       <Button preset="primary" styles={Styled.LoginButton} type="submit">
-        Login
+        Enter
       </Button>
       <Styled.CreateAccount>
         {/* TODO Create account redirect */}
