@@ -9,7 +9,7 @@ const Browse = Loadable({
 });
 
 const CreateGame = Loadable({
-  loader: () => import(`containers/CreateGame/CreateGame`),
+  loader: () => import(`../CreateGame/CreateGame`),
   loading() {
     return <p>Loading...</p>;
   }

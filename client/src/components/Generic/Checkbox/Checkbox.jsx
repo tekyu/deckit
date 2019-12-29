@@ -1,47 +1,35 @@
 import React from "react";
 import PropTypes from "prop-types";
-import * as Styled from "./TextInput.styled";
+import * as Styled from "./Checkbox.styled";
 
-const TextInput = ({
-  disabled,
-  id,
-  onChange,
-  name,
-  placeholder,
-  type,
-  value
-}) => {
+const Checkbox = ({ id, onChange, name, value }) => {
   const onInputChange = e => {
-    onChange(e.target.value);
+    onChange(e.target.checked);
   };
   return (
     <Styled.Container>
       <Styled.Label htmlFor={id}>{name} </Styled.Label>
       <Styled.Input
-        disabled={disabled}
-        type={type}
+        type="checkbox"
         name={id}
-        placeholder={placeholder}
         onChange={onInputChange}
-        value={value}
+        checked={value}
       />
     </Styled.Container>
   );
 };
 
-TextInput.defaultProps = {
+Checkbox.defaultProps = {
   disabled: false,
   type: `text`
 };
 
-TextInput.propTypes = {
+Checkbox.propTypes = {
   disabled: PropTypes.bool,
   id: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
-  placeholder: PropTypes.string,
-  type: PropTypes.string,
-  value: PropTypes.string.isRequired
+  value: PropTypes.bool.isRequired
 };
 
-export default TextInput;
+export default Checkbox;
