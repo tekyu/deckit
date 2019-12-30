@@ -11,7 +11,7 @@ const sortData = [
   },
   {
     displayName: `Players`,
-    fieldName: `playersCurrent`,
+    fieldName: `playersMax`,
     searchable: false
   }
 ];

@@ -1,95 +1,44 @@
-import React, { PureComponent } from "react";
+import React, { useCallback } from "react";
 import PropTypes from "prop-types";
-import * as styles from "./Select.module.scss";
+import * as Styled from "./Select.styled";
 
-class Select extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      show: false,
-      wrapperRef: null
-    };
-  }
-
-  componentDidMount() {
-    document.addEventListener(`mousedown`, this.handleClickOutside);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener(`mousedown`, this.handleClickOutside);
-  }
-
-  setWrapperRef = node => {
-    this.setState(() => {
-      return {
-        wrapperRef: node
-      };
-    });
-  };
-
-  handleClickOutside = event => {
-    if (!this.state.wrapperRef.contains(event.target)) {
-      this.setState(() => {
-        return {
-          show: false
-        };
-      });
-    }
-  };
-
-  hideShowDropdown = () => {
-    this.setState(state => {
-      return {
-        show: !state.show
-      };
-    });
-  };
-
-  changeSelection = key => {
-    this.hideShowDropdown();
-    this.props.handler(key);
-  };
-
-  render() {
-    const { options, selectedOption } = this.props;
-    const dropdown = (
-      <div className={styles.dropdown}>
-        <ul>
-          {options.map(option => {
-            const { key, name } = option;
-            if (key !== this.props.selectedOption) {
-              return (
-                <li
-                  onClick={() => {
-                    this.changeSelection(key);
-                  }}
-                  key={key}
-                  name={name}
-                >
-                  {name}
-                </li>
-              );
-            }
-            return null;
-          })}
-        </ul>
-      </div>
-    );
-    return (
-      <div className={styles.container} ref={this.setWrapperRef}>
-        <div className={styles.display} onClick={this.hideShowDropdown}>
-          {selectedOption}
-        </div>
-        {this.state.show ? dropdown : null}
-      </div>
-    );
-  }
-}
+const Select = ({ handler, options, selected }) => {
+  const onSelectionChanged = useCallback(
+    e => {
+      handler(e.target.value);
+    },
+    [handler]
+  );
+  return (
+    <Styled.Select
+      onBlur={onSelectionChanged}
+      onChange={onSelectionChanged}
+      defaultValue={selected}
+    >
+      {options.map(option => {
+        const { id = option, name = option } = option;
+        return (
+          <option key={id} value={id}>
+            {name}
+          </option>
+        );
+      })}
+    </Styled.Select>
+  );
+};
 
 Select.propTypes = {
   handler: PropTypes.func.isRequired,
-  options: PropTypes.array.isRequired,
-  selectedOption: PropTypes.string.isRequired
+  options: PropTypes.oneOfType([
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired
+      })
+    ),
+    PropTypes.arrayOf(PropTypes.string.isRequired)
+  ]).isRequired,
+  selected: PropTypes.string.isRequired
 };
 
 export default Select;

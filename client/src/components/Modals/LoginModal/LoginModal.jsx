@@ -22,14 +22,13 @@ const LoginModal = () => {
         id="username"
         name="Username"
         onChange={setUsername}
-        placeholder="Type your username here"
         value={username}
       />
       <TextInput
         id="password"
         name="Password"
         onChange={setPassword}
-        placeholder="Type your password here"
+        type="password"
         value={password}
       />
       <Styled.PasswordRecovery>

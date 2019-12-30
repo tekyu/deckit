@@ -15,8 +15,8 @@ const TextInput = ({
     onChange(e.target.value);
   };
   return (
-    <Styled.Container>
-      <Styled.Label htmlFor={id}>{name} </Styled.Label>
+    <Styled.Container isInputEntered={!!value}>
+      <Styled.Label htmlFor={id}>{name}</Styled.Label>
       <Styled.Input
         disabled={disabled}
         type={type}

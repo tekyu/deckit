@@ -31,7 +31,6 @@ const AnonymousLogin = ({ emitter, updateAnonUser }) => {
         id="username"
         name="Username"
         onChange={setUsername}
-        placeholder="Type your username here"
         value={username}
       />
       <Button preset="primary" styles={Styled.LoginButton} type="submit">

@@ -9,7 +9,13 @@ import {
   UPDATE_ANON_USER
 } from "store/actions";
 import { withRouter } from "react-router-dom";
-import { Button, Checkbox, RangeInput, TextInput } from "components/Generic";
+import {
+  Button,
+  Checkbox,
+  RangeInput,
+  Select,
+  TextInput
+} from "components/Generic";
 import * as Styled from "./CreateGame.styled";
 
 const CreateGame = ({ updateUser, user }) => {
@@ -45,6 +51,7 @@ const CreateGame = ({ updateUser, user }) => {
         onChange={setRoomName}
         value={roomName}
       />
+      <Select handler={setGameCode} options={[`d`]} selectedOption="d" />
       <RangeInput
         id="playersMax"
         min={3}

@@ -1,14 +1,14 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { checkAuth, emitter, updateRooms } from "store/actions";
+import { checkAuth, updateRooms } from "store/actions";
 import axios from "utils/axios";
 import dynamicSort from "utils/dynamicSort";
 import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
 import * as styles from "./Browse.module.scss";
 
-const Browse = ({ auth, checkAuth, emitter, rooms, updateRooms }) => {
+const Browse = ({ auth, checkAuth, rooms, updateRooms }) => {
   const [parsedRooms, setParsedRooms] = useState([]);
   const refreshList = useCallback(() => {
     axios.get(`/rooms`).then(res => {
@@ -25,9 +25,9 @@ const Browse = ({ auth, checkAuth, emitter, rooms, updateRooms }) => {
     options => {
       const { searchPhrase, sortBy } = options;
       const newRooms = rooms.filter(room => {
-        return room[sortBy].toString().includes(searchPhrase);
+        return room[sortBy.fieldName].toString().includes(searchPhrase);
       });
-      setParsedRooms(newRooms.sort(dynamicSort(sortBy)));
+      setParsedRooms(newRooms.sort(dynamicSort(sortBy.fieldName)));
     },
     [rooms]
   );
@@ -57,7 +57,7 @@ const Browse = ({ auth, checkAuth, emitter, rooms, updateRooms }) => {
 Browse.propTypes = {
   auth: PropTypes.bool,
   checkAuth: PropTypes.func.isRequired,
-  emitter: PropTypes.func.isRequired,
+  rooms: PropTypes.array.isRequired,
   updateRooms: PropTypes.func.isRequired
 };
 
@@ -71,7 +71,6 @@ const mapStateToProps = ({ auth, room, user }) => {
 
 const mapDispatchToProps = {
   checkAuth,
-  emitter,
   updateRooms
 };
 

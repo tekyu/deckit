@@ -1,53 +1,53 @@
 import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import Input from "components/Generic/Input/Input";
-import Select from "components/Generic/Select/Select";
-import * as styles from "./Sort.module.scss";
+import { Select, TextInput } from "components/Generic";
+import * as Styled from "./Sort.styled";
 import sortFields from "./sortFields";
 
 const Sort = ({ sortHandler }) => {
   const [searchPhrase, setSearchPhrase] = useState(``);
-  const [sortBy, setSortBy] = useState(sortFields[0].fieldName);
-  const [sortByDisplayName, setSortByDisplayName] = useState(
-    sortFields[0].displayName
-  );
+  const [sortBy, setSortBy] = useState(sortFields[0]);
   useEffect(() => {
     sortHandler({ searchPhrase, sortBy });
   }, [searchPhrase, sortBy, sortHandler]);
-  const changeSortHandler = useCallback(newSortBy => {
+  const changeSortHandler = useCallback(sortById => {
     setSearchPhrase(``);
-    setSortBy(newSortBy);
-    setSortByDisplayName(
-      sortFields.find(element => element.fieldName === newSortBy).displayName
+    const newSortBy = sortFields.find(
+      element => element.fieldName === sortById
     );
+    setSortBy(newSortBy);
   }, []);
-  const changeSearchHandler = useCallback(e => {
-    setSearchPhrase(e.target.value);
+  const changeSearchHandler = useCallback(newSearchPhrase => {
+    setSearchPhrase(newSearchPhrase);
   }, []);
   const options = sortFields.map(field => ({
-    key: field.fieldName,
+    id: field.fieldName,
     name: field.displayName
   }));
   return (
-    <div className={styles.container}>
+    <Styled.Container>
       <span>Sort by </span>
       <Select
         handler={changeSortHandler}
-        selectedOption={sortByDisplayName}
+        selected={sortBy.fieldName}
         options={options}
       />
-      <div className={styles.search}>
-        {sortFields.find(element => element.fieldName === sortBy)
-          .searchable && (
-          <Input
-            handler={changeSearchHandler}
-            name={sortBy}
+      <div>
+        {
+          <TextInput
+            disabled={
+              !sortFields.find(
+                element => element.fieldName === sortBy.fieldName
+              ).searchable
+            }
+            id="filterBy"
+            name="Search"
+            onChange={changeSearchHandler}
             value={searchPhrase}
-            text={`Search by ${sortByDisplayName}`}
           />
-        )}
+        }
       </div>
-    </div>
+    </Styled.Container>
   );
 };
 
