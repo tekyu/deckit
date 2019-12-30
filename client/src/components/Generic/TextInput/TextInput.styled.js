@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { rgba } from "polished";
 
 export const Container = styled.div`
@@ -7,25 +7,17 @@ export const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   position: relative;
-  &:focus-within > label {
+  ${props => props.isInputEntered && `> label,`}
+  :focus-within > label {
     font-size: 0.75em;
-    padding-left: 0.25em;
-    top: 0.25em;
+    left: 0.25em;
+    top: 0.75em;
   }
-  ${props =>
-    props.isInputEntered &&
-    css`
-      & > label {
-        font-size: 0.75em;
-        padding-left: 0.25em;
-        top: 0.25em;
-      }
-    `}
 `;
 
 export const Label = styled.label`
   color: ${rgba(`black`, 0.5)};
-  padding-left: 0.5em;
+  left: 0.5em;
   pointer-events: none;
   position: absolute;
   transition: all 0.25s ease;
@@ -38,11 +30,11 @@ export const Input = styled.input`
   padding: 0.5em 0.5em;
   border-bottom: ${props => `2px solid ${props.theme.tempPal_sea}`};
   transition: background 0.2s ease-in-out;
-  &:disabled {
+  :disabled {
     background: none;
     border-color: grey;
   }
-  &:focus {
+  :focus {
     outline: none;
     background: ${props => rgba(props.theme.tempPal_sea, 0.05)};
   }

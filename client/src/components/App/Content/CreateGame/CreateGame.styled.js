@@ -5,8 +5,7 @@ export const Form = styled.form`
   flex-direction: column;
   justify-content: center;
   width: 400px;
-  & > div {
-    /* display: inline-block; */
+  div {
     height: 4em;
     label {
       display: inline-block;

@@ -88,7 +88,7 @@ class AccountBox extends Component {
               alt="Users avatar"
             />
           </div>
-          <span className={styles.name}>{this.props.user.user.username}</span>
+          <span className={styles.name}>{this.props.user.username}</span>
         </div>
         {this.renderDropdown()}
       </div>

@@ -1,12 +1,12 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import { checkAuth, updateRooms } from "store/actions";
 import axios from "utils/axios";
 import dynamicSort from "utils/dynamicSort";
 import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
-import * as styles from "./Browse.module.scss";
+import * as Styled from "./Browse.styled";
 
 const Browse = ({ auth, checkAuth, rooms, updateRooms }) => {
   const [parsedRooms, setParsedRooms] = useState([]);
@@ -47,9 +47,7 @@ const Browse = ({ auth, checkAuth, rooms, updateRooms }) => {
         Refresh
       </button>
       <Sort sortHandler={sortHandler} />
-      {roomCards && (
-        <div className={styles[`browse__cardlist-container`]}>{roomCards}</div>
-      )}
+      {roomCards && <Styled.CardContainer>{roomCards}</Styled.CardContainer>}
     </>
   );
 };

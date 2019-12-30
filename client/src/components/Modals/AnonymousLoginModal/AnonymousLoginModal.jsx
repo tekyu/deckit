@@ -18,6 +18,7 @@ const AnonymousLogin = ({ emitter, updateAnonUser }) => {
       event.preventDefault();
       emitter(UPDATE_ANON_USER, { username }, data => {
         // update user on this side
+        console.log(data);
         updateAnonUser(data);
         emitter(`newConnectedPlayer`, data);
       });

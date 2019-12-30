@@ -23,7 +23,7 @@ const Api = (app: any, passport: any) => {
   });
 
   app.post("/api/rooms", async (req: Request, res: Response) => {
-    const { gameCode, isPublic, name, owner, playersMax } = req.body;
+    const { gameCode, isPublic, name, owner = generateToken(), playersMax } = req.body;
     const newRoom = new Room({
       gameCode,
       isPublic,
@@ -33,7 +33,7 @@ const Api = (app: any, passport: any) => {
     });
     await newRoom.save();
     const { roomId } = newRoom;
-    res.status(201).send({ roomId });
+    res.status(201).send({ owner, roomId });
   });
 
 };

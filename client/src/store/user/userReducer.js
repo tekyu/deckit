@@ -16,7 +16,10 @@ export const userReducer = (state = initialState, action) => {
     case UPDATE_USER:
       return {
         ...state,
-        user: action.user
+        user: {
+          ...state.user,
+          ...action.params
+        }
       };
     default:
       return state;

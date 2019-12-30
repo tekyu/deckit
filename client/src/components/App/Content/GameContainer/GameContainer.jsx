@@ -55,7 +55,7 @@ const GameContainer = ({
   );
 };
 
-const mapStateToProps = ({ auth, user: { user } }) => {
+const mapStateToProps = ({ auth, user }) => {
   return {
     auth,
     user
