@@ -14,7 +14,7 @@ import SidePanel from "./SidePanel/SidePanel";
  */
 
 const GameContainer = ({
-  user,
+  userId,
   match: {
     params: { id }
   },
@@ -34,7 +34,7 @@ const GameContainer = ({
   //   });
   // }, []);
   useEffect(() => {
-    if (!user.userId) {
+    if (!userId) {
       openModal(`anonymous`);
     } else {
       // emitter(`newConnectedPlayer`, user);
@@ -43,7 +43,7 @@ const GameContainer = ({
       const { room } = res.data;
       setActiveRoom(room);
     });
-  }, [id, openModal, setActiveRoom, user]);
+  }, [id, openModal, setActiveRoom, userId]);
   return (
     <Styled.Container>
       <Suspense fallback={<div>LOADING GAME</div>}>
@@ -54,10 +54,9 @@ const GameContainer = ({
   );
 };
 
-const mapStateToProps = ({ auth, user }) => {
+const mapStateToProps = ({ user: { userId } }) => {
   return {
-    auth,
-    user
+    userId
   };
 };
 

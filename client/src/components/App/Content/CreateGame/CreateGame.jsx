@@ -34,7 +34,6 @@ const CreateGame = ({ history, updateUser, user }) => {
       axios.post(`/rooms`, { ...options }).then(res => {
         const { owner, roomId } = res.data;
         if (!user.userId) {
-          console.log(owner);
           updateUser({
             userId: owner,
             username

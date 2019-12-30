@@ -21,7 +21,6 @@ const AccountBox = ({ isAuthorized, logout, openModal, username }) => {
         </Button>
       ) : (
         <>
-          {` `}
           <Button onClick={openModalHandler} name="register" preset="secondary">
             Register
           </Button>
