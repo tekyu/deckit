@@ -1,8 +1,9 @@
 import React, { Suspense, useState, useEffect, useCallback } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import { gameMapping, getGame } from "utils";
-import { emitter, openModal, setActiveRoom } from "store/actions";
+import { emitter, openModal, setRoom } from "store/actions";
 import axios from "utils/axios";
 import * as Styled from "./GameContainer.styled";
 
@@ -14,12 +15,12 @@ import SidePanel from "./SidePanel/SidePanel";
  */
 
 const GameContainer = ({
-  userId,
   match: {
     params: { id }
   },
   openModal,
-  setActiveRoom
+  setRoom,
+  userId
 }) => {
   const [roomInfo, setRoomInfo] = useState(null);
   const [GameComponent, setGameComponent] = useState(null);
@@ -41,9 +42,9 @@ const GameContainer = ({
     }
     axios.get(`/rooms/${id}`).then(res => {
       const { room } = res.data;
-      setActiveRoom(room);
+      setRoom(room);
     });
-  }, [id, openModal, setActiveRoom, userId]);
+  }, [id, openModal, setRoom, userId]);
   return (
     <Styled.Container>
       <Suspense fallback={<div>LOADING GAME</div>}>
@@ -54,13 +55,23 @@ const GameContainer = ({
   );
 };
 
+GameContainer.propTypes = {
+  openModal: PropTypes.func.isRequired,
+  match: PropTypes.shape({
+    params: PropTypes.shape({ id: PropTypes.string.isRequired })
+  }),
+  setRoom: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired
+};
+
 const mapStateToProps = ({ user: { userId } }) => {
   return {
     userId
   };
 };
 
-const mapDispatchToProps = { emitter, openModal, setActiveRoom };
+const mapDispatchToProps = { emitter, openModal, setRoom };
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps

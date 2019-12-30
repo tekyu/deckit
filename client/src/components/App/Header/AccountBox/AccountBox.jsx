@@ -41,9 +41,9 @@ AccountBox.propTypes = {
 };
 
 const mapStateToProps = state => {
-  const { auth, username } = state.user;
+  const { isAuthorized, username } = state.user;
   return {
-    auth,
+    isAuthorized,
     username
   };
 };

@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import sillyname from "sillyname";
-import { gameMapping, inputOnChangeHandler } from "utils";
 import { listener, emitter } from "store/actions";
 import * as styles from "./Deckit.module.scss";
 

@@ -100,7 +100,7 @@ const ChatElement = ({
     <Container isMine={isMine} id={id} owner={ownerId} timestamp={timestamp}>
       <Display isMine={isMine}>
         <AvatarContainer>
-          <img src={avatar} />
+          <img src={avatar} alt="avatar" />
         </AvatarContainer>
         <ColorIndicator style={{ background: color }}></ColorIndicator>
       </Display>

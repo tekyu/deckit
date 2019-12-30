@@ -20,15 +20,7 @@ export function inputOnChangeHandler(options, event) {
   this.setState(() => {
     return change;
   });
-  if (options.keys.indexOf(event.key.toLowerCase()) != -1) {
+  if (options.keys.indexOf(event.key.toLowerCase()) !== -1) {
     options.handler();
   }
-}
-
-export function getSelectInput(options) {
-  if (!options.list) {
-    throw Error(`Cannot create select input because options list is empty`);
-  }
-  // const mappedOptions =
-  // TODO: for array || object
 }

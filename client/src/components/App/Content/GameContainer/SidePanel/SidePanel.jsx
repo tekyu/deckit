@@ -69,7 +69,7 @@ const SidePanel = ({ panels, listener }) => {
   const changePanel = useCallback(({ target }) => {
     console.log(`changePanel`, target);
     setOpenedPanel(target.getAttribute(`name`));
-  });
+  }, []);
 
   const getPanel = () => {
     return panelMapping[openedPanel];

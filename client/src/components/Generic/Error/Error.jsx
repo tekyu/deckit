@@ -1,17 +1,13 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import * as styles from "./Error.module.scss";
 
-class Error extends PureComponent {
-  render() {
-    return <div className={styles.container}>{this.props.message}</div>;
-  }
-}
+const Error = ({ message }) => {
+  return <div className={styles.container}>{message}</div>;
+};
 
-// Error.propTypes = {
-//   handler: PropTypes.func.isRequired,
-//   options: PropTypes.array.isRequired,
-//   selectedOption: PropTypes.string.isRequired
-// };
+Error.propTypes = {
+  message: PropTypes.string.isRequired
+};
 
 export default Error;
