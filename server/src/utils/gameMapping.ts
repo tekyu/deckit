@@ -31,7 +31,7 @@ export const listGameMapping = index => {
 
 export const getGameMapping = gameCode => {
   if (!gameMapping[gameCode]) {
-    //TODO: Change to error component
+    // TODO: Change to error component
     throw Error(`Game ${gameCode} is not defined within mapping`);
   }
   return gameMapping[gameCode];

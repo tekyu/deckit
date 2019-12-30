@@ -1,11 +1,8 @@
 {
-	"prettier.disableLanguages": ["js"],
-	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": true
-	},
-	"editor.formatOnSave": true,
-	"[javascript]": {
-		"editor.formatOnSave": false
-	},
-	"cSpell.words": ["deckit", "hygge", "leaderboards"]
+  "prettier.disableLanguages": ["js"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.formatOnSave": false,
+  "cSpell.words": ["deckit", "hygge", "leaderboards"]
 }

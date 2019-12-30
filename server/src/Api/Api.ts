@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 import { Room } from "../models";
 import AuthApi from "./auth/auth";
-import { generateToken } from '../utils/generateHash';
+import { generateToken } from "../utils/generateHash";
 
 const Api = (app: any, passport: any) => {
   console.log("Api loaded");
@@ -13,18 +13,17 @@ const Api = (app: any, passport: any) => {
 
   app.get("/api/rooms/:roomId", async (req: Request, res: Response) => {
     const { roomId } = req.params;
-    const room = await Room.findOne({roomId})
-    if(room) {
-      res.status(200).send({ room })
-    }
-    else {
+    const room = await Room.findOne({ roomId });
+    if (room) {
+      res.status(200).send({ room });
+    } else {
       res.sendStatus(404);
     }
   });
 
   app.post("/api/rooms", async (req: Request, res: Response) => {
     const { gameCode, isPublic, name, playersMax } = req.body;
-    const owner = req.body.owner || generateToken()
+    const owner = req.body.owner || generateToken();
     const newRoom = new Room({
       gameCode,
       isPublic,
@@ -36,7 +35,6 @@ const Api = (app: any, passport: any) => {
     const { roomId } = newRoom;
     res.status(201).send({ owner, roomId });
   });
-
 };
 
 export default Api;

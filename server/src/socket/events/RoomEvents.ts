@@ -1,7 +1,7 @@
 import randomColor from "random-color";
 import chalk from "chalk";
 
-//TODO: Change types
+// TODO: Change types
 export const RoomEvents = (socket: any, io: any) => {
   const getRoom = (id: string) => {
     const room = io.gameRooms[id];

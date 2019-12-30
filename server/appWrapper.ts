@@ -12,11 +12,13 @@ const appWrapper = (IncomingPort = 3011) => {
   const port = IncomingPort;
 
   /* APP */
-  app.use(cors({
-    methods: 'GET,POST,PATCH,DELETE',
-    optionsSuccessStatus: 200,
-    origin: process.env.DEV_ADDRESS
-  }));
+  app.use(
+    cors({
+      methods: "GET,POST,PATCH,DELETE",
+      optionsSuccessStatus: 200,
+      origin: process.env.DEV_ADDRESS
+    })
+  );
   app.options(
     "*",
     cors({
@@ -30,8 +32,8 @@ const appWrapper = (IncomingPort = 3011) => {
   app.use(
     expressSession({
       secret: "hanabala dzis nie srala",
-      resave: false, //required
-      saveUninitialized: false //required
+      resave: false, // required
+      saveUninitialized: false // required
     })
   );
   app.use(Passport.initialize());
@@ -39,8 +41,8 @@ const appWrapper = (IncomingPort = 3011) => {
   app.listen(port, () =>
     console.log(chalk.black.bgGreen(`Server listening on port ${port}`))
   );
-  app.get("/", function(req, res) {
-    res.sendFile(__dirname + "/index.html");
+  app.get("/", (req, res) => {
+    res.sendFile(`${__dirname}/index.html`);
   });
   return app;
 };

@@ -37,7 +37,7 @@ const AuthApi = (app: any, passport: any) => {
   });
 
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", function(err, user, info) {
+    passport.authenticate("local", (err, user, info) => {
       if (err) {
         return;
       }
@@ -45,7 +45,7 @@ const AuthApi = (app: any, passport: any) => {
         res.status(401).send(info.message);
         return;
       }
-      req.login(user, function(err) {
+      req.login(user, err => {
         if (err) {
           return next(err);
         }

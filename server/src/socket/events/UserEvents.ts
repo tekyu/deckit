@@ -1,6 +1,6 @@
 import chalk from "chalk";
 
-//TODO: Change types
+// TODO: Change types
 export const UserEvents = (socket: any, io: any) => {
   console.log("User events");
   socket.on("updateUser", (params: any) => {
@@ -9,7 +9,7 @@ export const UserEvents = (socket: any, io: any) => {
       chalk.bgYellow.black(`[USer] User ${socket.id} updated with `),
       params
     );
-    //emit to socket
+    // emit to socket
     // socket.in(params.roomId).emit("userUpdated", socket.pswOptions);
   });
   socket.on("updateAnonymousUser", (params: any, callback: Function) => {
@@ -24,7 +24,7 @@ export const UserEvents = (socket: any, io: any) => {
       socket.id
     );
     callback(socket.pswOptions);
-    //emit to socket
+    // emit to socket
     // socket.in(params.roomId).emit("userUpdated", socket.pswOptions);
   });
 };

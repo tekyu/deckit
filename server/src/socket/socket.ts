@@ -4,7 +4,7 @@ import chalk from "chalk";
 import mockRooms from "../mocks/Rooms";
 import { RoomEvents, GameEvents, UserEvents, ChatEvents } from "./events";
 
-//TODO: Change types
+// TODO: Change types
 const ioEvents = (io: any) => {
   io.on("connection", (socket: any) => {
     console.log(

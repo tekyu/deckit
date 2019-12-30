@@ -4,8 +4,9 @@ module.exports = {
     es6: true,
   },
   extends: [
-		'prettier',
+ 	 	'prettier',
     'airbnb-base',
+    'plugin:prettier/recommended',
   ],
   globals: {
     Atomics: 'readonly',
@@ -17,10 +18,19 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-		'@typescript-eslint',
-		'prettier'
+ 	 	'@typescript-eslint',
+ 	 	'prettier'
   ],
   rules: {
-		"prettier/prettier": 2
+    'import/extensions': 0,
+    'import/prefer-default-export': 0,
+ 	 	"prettier/prettier": 2
+  },
+  settings: {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".ts"]
+      }
+    }
   },
 };

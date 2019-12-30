@@ -1,7 +1,7 @@
-import { gameOptions } from "./../utils/gameMapping";
 import shortId from "shortid";
+import { gameOptions, getGameOptions } from "../utils/gameMapping";
 import IRoom from "../interfaces/IRoom";
-import { getGameOptions } from "../utils/gameMapping";
+
 import mockRooms from "../mocks/Rooms";
 
 const mockChat = [
@@ -116,18 +116,31 @@ interface CreateRoomOptions {
  */
 export default class Room implements IRoom {
   isPublic: boolean;
+
   playersMax: number;
+
   playersCurrent: number;
+
   name: string;
+
   id: string;
+
   owner: string;
+
   admin: string;
+
   gameCode: string;
+
   state: number; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
+
   players: Array<Object>;
+
   winners: Array<String>;
+
   createdAt: number;
+
   gameOptions: Object;
+
   chat: Array<Object>;
 
   constructor(
@@ -161,6 +174,7 @@ export default class Room implements IRoom {
   get instance() {
     return this;
   }
+
   get roomOptions() {
     const {
       isPublic,
@@ -224,8 +238,6 @@ export default class Room implements IRoom {
   }
 
   disconnectPlayer(id: string) {
-    this.players = this.players.filter((player: any) => {
-      return player.id !== id;
-    });
+    this.players = this.players.filter((player: any) => player.id !== id);
   }
 }
