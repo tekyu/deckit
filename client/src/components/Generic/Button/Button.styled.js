@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const Button = styled.button`
   border: 0;
-  cursor: pointer;
   font-family: "Hammersmith One";
   font-size: 14px;
   letter-spacing: 0.1em;
@@ -25,7 +24,6 @@ export const Button = styled.button`
   &.secondary {
     color: black;
     &:hover {
-      background: none;
       color: ${props => props.theme.tempPal_sea};
     }
   }

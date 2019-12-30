@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { checkAuth, updateRooms } from "store/actions";
 import axios from "utils/axios";
 import dynamicSort from "utils/dynamicSort";
+import { Button } from "components/Generic";
 import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
 import * as Styled from "./Browse.styled";
@@ -43,9 +44,9 @@ const Browse = ({ auth, checkAuth, rooms, updateRooms }) => {
     : null;
   return (
     <>
-      <button type="button" onClick={refreshList}>
+      <Button onClick={refreshList} preset="secondary">
         Refresh
-      </button>
+      </Button>
       <Sort sortHandler={sortHandler} />
       {roomCards && <Styled.CardContainer>{roomCards}</Styled.CardContainer>}
     </>

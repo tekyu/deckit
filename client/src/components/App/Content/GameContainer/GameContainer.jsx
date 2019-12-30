@@ -33,9 +33,8 @@ const GameContainer = ({
   //     setPanels(gameMapping[gameCode].panels);
   //   });
   // }, []);
-
   useEffect(() => {
-    if (!user) {
+    if (!user.userId) {
       openModal(`anonymous`);
     } else {
       // emitter(`newConnectedPlayer`, user);

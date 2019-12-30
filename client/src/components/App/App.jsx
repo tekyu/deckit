@@ -8,11 +8,11 @@ import { Error } from "components/Generic";
 import Header from "./Header/Header";
 import Content from "./Content/Content";
 
-const App = ({ auth, error, modalType }) => {
+const App = ({ error, modalType }) => {
   return (
     <ThemeProvider theme={themes.default}>
       <Header />
-      <Content auth={auth} />
+      <Content />
       {error && <Error message={error} />}
       {modalType && <ModalContainer modalType={modalType} />}
     </ThemeProvider>
@@ -20,18 +20,15 @@ const App = ({ auth, error, modalType }) => {
 };
 
 App.propTypes = {
-  auth: PropTypes.bool.isRequired,
   error: PropTypes.string,
   modalType: PropTypes.string
 };
 
 const mapStateToProps = state => {
   const {
-    app: { error, modalType },
-    user: { auth }
+    app: { error, modalType }
   } = state;
   return {
-    auth,
     error,
     modalType
   };

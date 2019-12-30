@@ -23,7 +23,8 @@ const Api = (app: any, passport: any) => {
   });
 
   app.post("/api/rooms", async (req: Request, res: Response) => {
-    const { gameCode, isPublic, name, owner = generateToken(), playersMax } = req.body;
+    const { gameCode, isPublic, name, playersMax } = req.body;
+    const owner = req.body.owner || generateToken()
     const newRoom = new Room({
       gameCode,
       isPublic,

@@ -1,8 +1,10 @@
-import { AUTH_USER, UPDATE_USER } from "./userActions";
+import { AUTH_USER, LOGOUT, UPDATE_USER } from "./userActions";
 
 export const initialState = {
-  auth: false,
-  user: null
+  isAuthorized: false,
+  rooms: [],
+  userId: null,
+  username: null
 };
 
 export const userReducer = (state = initialState, action) => {
@@ -11,15 +13,16 @@ export const userReducer = (state = initialState, action) => {
     case AUTH_USER:
       return {
         ...state,
-        auth: action.auth
+        isAuthorized: action.isAuthorized
       };
     case UPDATE_USER:
       return {
         ...state,
-        user: {
-          ...state.user,
-          ...action.params
-        }
+        ...action.params
+      };
+    case LOGOUT:
+      return {
+        ...initialState
       };
     default:
       return state;

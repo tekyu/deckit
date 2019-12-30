@@ -10,10 +10,11 @@ import * as Styled from "./Button.styled";
  * @param {Array.<string>} styles Additional styles to apply
  * @param {string} type One of button types - [button, reset, submit]
  */
-const Button = ({ children, onClick, preset, styles, type }) => {
+const Button = ({ children, name, onClick, preset, styles, type }) => {
   return (
     <Styled.Button
       className={preset}
+      name={name}
       onClick={onClick}
       styles={styles}
       type={type}
@@ -24,13 +25,15 @@ const Button = ({ children, onClick, preset, styles, type }) => {
 };
 
 Button.defaultProps = {
-  styles: [],
+  name: ``,
   preset: ``,
+  styles: [],
   type: `button`
 };
 
 Button.propTypes = {
   children: PropTypes.node,
+  name: PropTypes.string,
   onClick: PropTypes.func,
   preset: PropTypes.oneOf([``, `primary`, `secondary`]),
   styles: PropTypes.arrayOf(PropTypes.string),

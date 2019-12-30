@@ -5,6 +5,7 @@ import { closeModal, showError } from "store/app/appActions";
 export const CHECK_USER = `CHECK_USER`;
 export const AUTH_USER = `AUTH_USER`;
 export const UPDATE_USER = `UPDATE_USER`;
+export const LOGOUT = `LOGOUT_USER`;
 export const UPDATE_ANON_USER = `updateAnonymousUser`;
 
 export const updateUser = params => {
@@ -13,6 +14,14 @@ export const updateUser = params => {
       type: UPDATE_USER,
       params
     });
+};
+
+export const logout = () => {
+  return dispatch => {
+    dispatch({
+      type: LOGOUT
+    });
+  };
 };
 
 // TODO:
@@ -76,17 +85,6 @@ export const checkAuth = () => {
     //     });
     // }
   };
-};
-
-export const logoutUser = () => {
-  axios.get(`/api/logout`).then(() => {
-    return dispatch => {
-      dispatch({
-        type: AUTH_USER,
-        auth: true
-      });
-    };
-  });
 };
 
 export const updateAnonUser = user => {

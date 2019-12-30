@@ -14,7 +14,7 @@ import {
 } from "components/Generic";
 import * as Styled from "./CreateGame.styled";
 
-const CreateGame = ({ history, user }) => {
+const CreateGame = ({ history, updateUser, user }) => {
   const [roomName, setRoomName] = useState(sillyname());
   const [username, setUsername] = useState(sillyname());
   const [password, setPassword] = useState(``);
@@ -27,12 +27,14 @@ const CreateGame = ({ history, user }) => {
       const options = {
         gameCode,
         isPublic: !isPrivate,
+        owner: user.userId,
         name: roomName,
         playersMax
       };
       axios.post(`/rooms`, { ...options }).then(res => {
         const { owner, roomId } = res.data;
-        if (!user) {
+        if (!user.userId) {
+          console.log(owner);
           updateUser({
             userId: owner,
             username
@@ -41,11 +43,20 @@ const CreateGame = ({ history, user }) => {
         history.push(`/game/${roomId}`);
       });
     },
-    [gameCode, history, isPrivate, playersMax, roomName, user, username]
+    [
+      gameCode,
+      history,
+      isPrivate,
+      playersMax,
+      roomName,
+      updateUser,
+      user.userId,
+      username
+    ]
   );
   return (
     <Styled.Form onSubmit={submitHandler}>
-      {!user && (
+      {!user.userId && (
         <TextInput
           id="username"
           name="Username"
@@ -98,16 +109,18 @@ CreateGame.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired
   }).isRequired,
+  updateUser: PropTypes.func.isRequired,
   user: PropTypes.object
 };
 
-const mapStateToProps = ({ user: { user } }) => {
+const mapStateToProps = ({ user }) => {
   return {
     user
   };
 };
 
 const mapDispatchToProps = { updateUser };
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps
