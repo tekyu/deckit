@@ -1,16 +1,4 @@
-import {
-  faHome,
-  faTachometerAlt,
-  faUserCircle,
-  faTrophy,
-  faUsers
-} from "@fortawesome/free-solid-svg-icons";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faComments, faCog, faStar } from "@fortawesome/free-solid-svg-icons";
 
-const FontAwesomeIcons = [
-  faHome,
-  faTachometerAlt,
-  faUserCircle,
-  faTrophy,
-  faUsers
-];
-export default FontAwesomeIcons;
+library.add(faComments, faCog, faStar);

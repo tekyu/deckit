@@ -1,26 +1,37 @@
-import React from "react";
-import styled from "styled-components";
-import Bubble from "../Bubble/Bubble";
+import React, { memo } from "react";
+import PropTypes from "prop-types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as Styled from "./Bubbles.styled";
 
-const Container = styled.div`
-  display: flex;
-`;
-
-const Bubbles = ({ panels, openedPanel, handler }) => {
-  const bubbles = () => {
-    return Object.keys(panels).map(panel => {
-      return (
-        <Bubble
-          openedPanel={openedPanel === panel}
-          name={panel}
-          handler={handler}
-          key={panel}
-        ></Bubble>
-      );
-    });
-  };
-
-  return <Container>{bubbles()}</Container>;
+const Bubbles = ({ handler, openedPanel, panels }) => {
+  return (
+    <Styled.Container>
+      {panels.map(panel => (
+        <Styled.Bubble
+          key={panel.key}
+          name={panel.key}
+          color={panel.color}
+          isOpen={panel.key === openedPanel}
+          onClick={() => handler(panel.key)}
+        >
+          <FontAwesomeIcon color={panel.iconColor} icon={panel.icon} />
+        </Styled.Bubble>
+      ))}
+    </Styled.Container>
+  );
 };
 
-export default Bubbles;
+Bubbles.propTypes = {
+  handler: PropTypes.func.isRequired,
+  openedPanel: PropTypes.string.isRequired,
+  panels: PropTypes.arrayOf(
+    PropTypes.shape({
+      color: PropTypes.string,
+      icon: PropTypes.string.isRequired,
+      iconColor: PropTypes.string,
+      key: PropTypes.string.isRequired
+    })
+  )
+};
+
+export default memo(Bubbles);

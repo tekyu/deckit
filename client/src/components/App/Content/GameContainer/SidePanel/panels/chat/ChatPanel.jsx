@@ -1,23 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import styled from "styled-components";
 import { connect } from "react-redux";
 import { addListener } from "store/actions";
 import ChatElement from "./ChatElement/ChatElement";
 import ChatControls from "./ChatControls/ChatControls";
-/**
- * TODO:
- * Change the store/actions/socket to topic wise, createGame
- * should be in the main game/room creation topic
- */
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Messages = styled.div`
-  overflow-y: auto;
-`;
+import * as Styled from "./ChatPanel.styled";
 
 const ChatPanel = ({ activeRoomId }) => {
   const [messages, setMessages] = useState([]);
@@ -39,10 +25,10 @@ const ChatPanel = ({ activeRoomId }) => {
   };
 
   return (
-    <Container>
-      <Messages>{getMessages()}</Messages>
+    <Styled.Container>
+      <Styled.Messages>{getMessages()}</Styled.Messages>
       <ChatControls />
-    </Container>
+    </Styled.Container>
   );
 };
 
