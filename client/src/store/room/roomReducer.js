@@ -1,6 +1,7 @@
 import { SET_ROOM, UPDATE_ROOMS } from "./roomActions";
 
 export const initialState = {
+  chat: [],
   createdAt: null,
   decks: [],
   gameCode: null,
@@ -9,8 +10,7 @@ export const initialState = {
   owner: null,
   players: [],
   playersMax: null,
-  roomId: null,
-  rooms: []
+  roomId: null
 };
 
 export const roomReducer = (state = initialState, action) => {

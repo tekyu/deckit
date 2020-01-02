@@ -8,6 +8,7 @@ const TextInput = ({
   onChange,
   name,
   placeholder,
+  styles,
   type,
   value
 }) => {
@@ -15,8 +16,8 @@ const TextInput = ({
     onChange(e.target.value);
   };
   return (
-    <Styled.Container isInputEntered={!!value}>
-      <Styled.Label htmlFor={id}>{name}</Styled.Label>
+    <Styled.Container isInputEntered={!!value} styles={styles}>
+      {!placeholder && <Styled.Label htmlFor={id}>{name}</Styled.Label>}
       <Styled.Input
         disabled={disabled}
         type={type}
@@ -31,6 +32,7 @@ const TextInput = ({
 
 TextInput.defaultProps = {
   disabled: false,
+  styles: [],
   type: `text`
 };
 
@@ -40,6 +42,7 @@ TextInput.propTypes = {
   onChange: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
+  styles: PropTypes.arrayOf(PropTypes.string),
   type: PropTypes.string,
   value: PropTypes.string.isRequired
 };

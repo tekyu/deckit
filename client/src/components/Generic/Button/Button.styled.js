@@ -2,6 +2,9 @@ import styled from "styled-components";
 
 export const Button = styled.button`
   border: 0;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
   font-family: "Hammersmith One";
   font-size: 14px;
   letter-spacing: 0.1em;

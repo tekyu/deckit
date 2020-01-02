@@ -2,7 +2,8 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   border: 1px solid black;
-  min-width: 320px;
+  min-width: 400px;
+  max-width: 400px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

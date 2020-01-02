@@ -7,12 +7,12 @@ export const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   position: relative;
-  ${props => props.isInputEntered && `> label,`}
-  :focus-within > label {
+  ${props => props.isInputEntered && `> label,`} :focus-within > label {
     font-size: 0.75em;
     left: 0.25em;
     top: 0.75em;
   }
+  ${props => props.styles}
 `;
 
 export const Label = styled.label`

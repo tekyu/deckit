@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import Moment from "react-moment";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Container = styled.div`
   display: flex;
-  margin: 7px 0;
+  margin: 0.5em;
   ${({ isMine }) =>
     isMine &&
     `
@@ -26,16 +27,16 @@ const Display = styled.div`
 `;
 
 const AvatarContainer = styled.div`
-  width: 30px;
-  height: 0;
-  margin: 0 auto;
-  padding-bottom: 30px;
+  background-color: lightGrey;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6em;
+  height: 1.6em;
+  padding: 0.5em;
   position: relative;
-  border-radius: 50%;
+  border-radius: 100%;
   overflow: hidden;
-  img {
-    // position:absolute;
-  }
   span {
     width: 8px;
     height: 8px;
@@ -80,15 +81,15 @@ const Author = styled.label`
 `;
 
 const Timestamp = styled.label`
-  margin: 4px 12px 0 12px;
-  font-size: 10px;
+  margin: 0 0.75em;
+  font-size: 0.6em;
   color: rgba(0, 0, 0, 0.54);
 `;
 
 const ChatElement = ({
   id,
   ownerId,
-  ownerName,
+  author,
   timestamp,
   message,
   avatar,
@@ -100,12 +101,16 @@ const ChatElement = ({
     <Container isMine={isMine} id={id} owner={ownerId} timestamp={timestamp}>
       <Display isMine={isMine}>
         <AvatarContainer>
-          <img src={avatar} alt="avatar" />
+          {avatar ? (
+            <img src={avatar} alt="avatar" />
+          ) : (
+            <FontAwesomeIcon color="white" icon="user" />
+          )}
         </AvatarContainer>
         <ColorIndicator style={{ background: color }}></ColorIndicator>
       </Display>
       <Info isMine={isMine}>
-        <Author>{isMine ? `You` : ownerName}</Author>
+        <Author>{isMine ? `You` : author}</Author>
         <Message>{message}</Message>
         <Timestamp>
           <Moment fromNow>{timestamp}</Moment>

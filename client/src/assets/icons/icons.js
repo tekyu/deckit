@@ -1,4 +1,10 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faComments, faCog, faStar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faComments,
+  faCog,
+  faPaperPlane,
+  faStar,
+  faUser
+} from "@fortawesome/free-solid-svg-icons";
 
-library.add(faComments, faCog, faStar);
+library.add(faComments, faCog, faPaperPlane, faStar, faUser);
