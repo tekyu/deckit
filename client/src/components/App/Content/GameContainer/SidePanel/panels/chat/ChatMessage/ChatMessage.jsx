@@ -9,6 +9,7 @@ const Container = styled.div`
   ${({ isMine }) =>
     isMine &&
     `
+    justify-content: flex-end;
     text-align:right;
   `}
 `;
@@ -28,77 +29,56 @@ const Display = styled.div`
 
 const AvatarContainer = styled.div`
   background-color: lightGrey;
+  border-radius: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.6em;
   height: 1.6em;
+  width: 1.6em;
+  margin-top: 0.4em;
   padding: 0.5em;
-  position: relative;
-  border-radius: 100%;
   overflow: hidden;
-  span {
-    width: 8px;
-    height: 8px;
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-  }
 `;
 
 const ColorIndicator = styled.span`
-  position: absolute;
+  border-radius: 100%;
   display: block;
-  width: 12px;
-  height: 12px;
+  position: absolute;
   bottom: 0px;
-  right: 6px;
-  border-radius: 50%;
+  right: 0.75em;
+  height: 10px;
+  width: 10px;
 `;
 
 const Info = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: ${({ isMine }) => (isMine ? `flex-end` : `flex-start`)}
-  width: 100%;
+  align-items: ${({ isMine }) => (isMine ? `flex-end` : `flex-start`)};
 `;
 
 const Message = styled.p`
-  width: auto;
-  height: auto;
-  padding: 7px 12px;
-  border-radius: 15px;
-  background: #20948b;
+  background-color: ${({ isMine }) => (isMine ? `royalBlue` : `#20948b`)};
+  border-radius: 0.9em;
   color: white;
+  margin: 0.35em 0 0.2em 0;
+  padding: 0.4em 0.75em;
 `;
 
-const Author = styled.label`
+const Author = styled.div`
   text-transform: capitalize;
-  margin-left: 12px;
-  margin: 0px 12px 3px 12px;
-  margin-bottom: 3px;
-  font-size: 12px;
-`;
-
-const Timestamp = styled.label`
   margin: 0 0.75em;
-  font-size: 0.6em;
-  color: rgba(0, 0, 0, 0.54);
+  font-size: 0.75em;
 `;
 
-const ChatElement = ({
-  id,
-  ownerId,
-  author,
-  timestamp,
-  message,
-  avatar,
-  color,
-  isMine
-}) => {
-  console.log(`ChatElement`, isMine);
+const Timestamp = styled.div`
+  margin: 0 1em;
+  font-size: 0.6em;
+  color: rgba(0, 0, 0, 0.6);
+`;
+
+const ChatElement = ({ author, timestamp, message, avatar, color, isMine }) => {
   return (
-    <Container isMine={isMine} id={id} owner={ownerId} timestamp={timestamp}>
+    <Container isMine={isMine} timestamp={timestamp}>
       <Display isMine={isMine}>
         <AvatarContainer>
           {avatar ? (
@@ -111,7 +91,7 @@ const ChatElement = ({
       </Display>
       <Info isMine={isMine}>
         <Author>{isMine ? `You` : author}</Author>
-        <Message>{message}</Message>
+        <Message isMine={isMine}>{message}</Message>
         <Timestamp>
           <Moment fromNow>{timestamp}</Moment>
         </Timestamp>

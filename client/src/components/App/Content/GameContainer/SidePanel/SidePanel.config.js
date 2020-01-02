@@ -12,14 +12,14 @@ export const panels = [
     key: `chat`
   },
   {
-    color: `coral`,
+    color: `steelBlue`,
     component: <OptionsPanel />,
     icon: `cog`,
-    iconColor: `dimGray`,
+    iconColor: `white`,
     key: `options`
   },
   {
-    color: `indigo`,
+    color: `lightSteelBlue`,
     component: <ScorePanel />,
     icon: `star`,
     iconColor: `gold`,

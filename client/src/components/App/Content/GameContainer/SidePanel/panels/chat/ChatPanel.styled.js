@@ -34,6 +34,7 @@ export const MessageInput = css`
   height: auto;
   input {
     border: none;
+    border-top: 1px solid lightGrey;
     :disabled {
       border: none;
     }
