@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 
 interface IUser {
   username: String;
-  hash: String;
+  userId: String;
   token: String;
   friends: Array<String>;
   email: String;
@@ -26,7 +26,7 @@ export interface IUserModel extends IUser, Document {
 
 export const UserSchema: Schema = new Schema({
   username: { type: String, required: true, unique: true },
-  hash: { type: String, required: true },
+  userId: { type: String, required: true },
   token: String,
   friends: { type: Array, default: [] },
   email: { type: String },

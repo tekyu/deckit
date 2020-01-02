@@ -1,41 +1,25 @@
-export const OPEN_SOCKET = `OPEN_SOCKET`;
-export const SOCKET_LEAVE = `SOCKET_LEAVE`;
+export const SOCKET_OPEN = `SOCKET_OPEN`;
+export const SOCKET_CLOSE = `SOCKET_CLOSE`;
 export const SOCKET_EMIT = `SOCKET_EMIT`;
-export const SOCKET_LISTENER = `SOCKET_LISTENER`;
-export const SAVE_DATA = `SAVE_DATA`;
-export const GET_ROOM_INFO = `getRoomInfo`;
+export const SOCKET_ADD_LISTENER = `SOCKET_ADD_LISTENER`;
+export const SOCKET_REMOVE_LISTENER = `SOCKET_REMOVE_LISTENER`;
 
-export const initializeSocket = socket => {
-  return {
-    type: OPEN_SOCKET,
-    payload: { socket }
-  };
-};
+export const openSocket = () => ({ type: SOCKET_OPEN });
+export const closeSocket = () => ({ type: SOCKET_CLOSE });
 
-// export const createRoom = options => {
-//   console.log("createRoom", options);
-//   return {
-//     type: SOCKET_EMIT,
-//     payload: { options },
-//     event: "createRoom"
-//   };
-// };
+export const addListener = (event, handler) => ({
+  type: SOCKET_ADD_LISTENER,
+  event,
+  handler
+});
 
-export const emitter = (event, data, handler) => {
-  console.log(`%c emitter`, `background:#93FFB7`, event, data);
-  return {
-    type: SOCKET_EMIT,
-    payload: data,
-    event,
-    handler
-  };
-};
+export const removeListener = event => ({
+  SOCKET_REMOVE_LISTENER,
+  event
+});
 
-export const listener = (event, handler) => {
-  console.log(`listener`, event, SOCKET_LISTENER);
-  return {
-    type: SOCKET_LISTENER,
-    handler,
-    event
-  };
-};
+export const emitMessage = (event, data) => ({
+  type: SOCKET_EMIT,
+  event,
+  payload: data
+});

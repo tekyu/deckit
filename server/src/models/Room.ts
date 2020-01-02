@@ -13,19 +13,33 @@ interface IRoom {
   playersMax: number;
   roomId: string;
   state: number; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
-  winners: Array<String>;
 }
 
-interface IRoomModel extends IRoom, Document {}
+interface IRoomModel extends Document, IRoom {}
 
 const roomSchema: Schema = new Schema({
-  createdAt: { type: Number, default: Date.now() },
+  chat: [
+    {
+      author: { type: String, required: true },
+      message: { type: String, required: true },
+      timeStamp: { type: Number, required: true }
+    }
+  ],
+  createdAt: { default: Date.now(), type: Number },
   decks: { type: Array, default: [] },
   gameCode: { type: String, required: true },
   isPublic: { type: Boolean, required: true },
   name: { type: String, required: true },
   owner: { type: String, required: true },
-  players: { type: Array, default: [] },
+  players: [
+    {
+      isConnected: { type: Boolean, required: true },
+      isRegistered: { type: Boolean, default: false },
+      userId: { type: String, required: true },
+      username: { type: String, required: true }
+    }
+  ],
+  playersCurrent: { type: Number, required: true },
   playersMax: { type: Number, required: true },
   roomId: { type: String, default: () => generateToken() }
 });

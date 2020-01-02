@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { listener } from "store/actions";
+import { addListener } from "store/actions";
 import ScorePanel from "./panels/score/ScorePanel";
 import ChatPanel from "./panels/chat/ChatPanel";
 import OptionsPanel from "./panels/options/OptionsPanel";
@@ -30,7 +30,7 @@ const Panel = styled.div`
   padding: 12px;
 `;
 
-const SidePanel = ({ panels, listener }) => {
+const SidePanel = ({ panels, addListener }) => {
   const [openedPanel, setOpenedPanel] = useState(`chat`); // Object.keys(panels)[0]
   const [sidePanels, setSidePanels] = useState({});
   const panelMapping = {
@@ -38,57 +38,54 @@ const SidePanel = ({ panels, listener }) => {
     chat: <ChatPanel chatData={sidePanels.chat} />,
     options: <OptionsPanel />
   };
-  const addPanelListeners = useCallback(() => {
-    console.log(`%c addPanelListeners`, `background: #E88341`);
+  // const addPanelListeners = useCallback(() => {
+  //   console.log(`%c addPanelListeners`, `background: #E88341`);
 
-    Object.keys(panels).forEach(panel => {
-      listener(panels[panel].listener, data => {
-        setSidePanels(prevSidePanels => ({
-          ...prevSidePanels,
-          [panel]: panels[panel]
-        }));
-      });
-    });
-  }, [listener, panels]);
+  //   Object.keys(panels).forEach(panel => {
+  //     listener(panels[panel].listener, data => {
+  //       setSidePanels(prevSidePanels => ({
+  //         ...prevSidePanels,
+  //         [panel]: panels[panel]
+  //       }));
+  //     });
+  //   });
+  // }, [panels]);
 
-  const makePanels = useCallback(() => {
-    console.log(`%c makePanels`, `background: #FF4762`);
-    Object.keys(panels).forEach(panel => {
-      setSidePanels(prevSidePanels => ({
-        ...prevSidePanels,
-        [panel]: panels[panel]
-      }));
-    });
-  }, [panels]);
+  // const makePanels = useCallback(() => {
+  //   console.log(`%c makePanels`, `background: #FF4762`);
+  //   Object.keys(panels).forEach(panel => {
+  //     setSidePanels(prevSidePanels => ({
+  //       ...prevSidePanels,
+  //       [panel]: panels[panel]
+  //     }));
+  //   });
+  // }, [panels]);
 
-  useEffect(() => {
-    makePanels();
-    addPanelListeners();
-  }, [makePanels, addPanelListeners]);
+  // useEffect(() => {
+  //   makePanels();
+  //   addPanelListeners();
+  // }, [makePanels]);
 
-  const changePanel = useCallback(({ target }) => {
-    console.log(`changePanel`, target);
-    setOpenedPanel(target.getAttribute(`name`));
-  }, []);
+  // const changePanel = useCallback(({ target }) => {
+  //   console.log(`changePanel`, target);
+  //   setOpenedPanel(target.getAttribute(`name`));
+  // }, []);
 
-  const getPanel = () => {
-    return panelMapping[openedPanel];
-  };
+  // const getPanel = () => {
+  //   return panelMapping[openedPanel];
+  // };
 
   return (
     <Container>
-      <Bubbles
-        panels={panels}
-        openedPanel={openedPanel}
-        handler={changePanel}
-      />
-      <Panel>{getPanel()}</Panel>
+      {/* <Bubbles
+      panels={panels}
+      openedPanel={openedPanel}
+      handler={changePanel}
+      /> */}
+      {/* <Panel>{getPanel()}</Panel> */}
     </Container>
   );
 };
 
-const mapDispatchToProps = { listener };
-export default connect(
-  null,
-  mapDispatchToProps
-)(SidePanel);
+const mapDispatchToProps = { addListener };
+export default connect(null, mapDispatchToProps)(SidePanel);

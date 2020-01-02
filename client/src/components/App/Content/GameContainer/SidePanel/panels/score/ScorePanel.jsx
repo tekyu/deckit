@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { listener, emitter } from "store/actions";
+import { addListener } from "store/actions";
 import ScoreElement from "./components/ScoreElement";
 import * as styles from "./ScorePanel.module.scss";
 /**
@@ -59,8 +59,5 @@ const mapStateToProps = ({ user: { user } }) => {
   };
 };
 
-const mapDispatchToProps = { emitter, listener };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ScorePanel);
+const mapDispatchToProps = { addListener };
+export default connect(mapStateToProps, mapDispatchToProps)(ScorePanel);

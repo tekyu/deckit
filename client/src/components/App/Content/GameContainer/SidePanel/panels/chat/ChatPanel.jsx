@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { listener, emitter } from "store/actions";
+import { addListener } from "store/actions";
 import ChatElement from "./ChatElement/ChatElement";
 import ChatControls from "./ChatControls/ChatControls";
 /**
@@ -19,13 +19,13 @@ const Messages = styled.div`
   overflow-y: auto;
 `;
 
-const ChatPanel = ({ activeRoomId, emitter }) => {
+const ChatPanel = ({ activeRoomId }) => {
   const [messages, setMessages] = useState([]);
   const messageList = useCallback(() => {
-    emitter(`getChatHistory`, { activeRoomId }, messages => {
-      setMessages(messages);
-    });
-  }, [activeRoomId, emitter]);
+    // emitter(`getChatHistory`, { activeRoomId }, messages => {
+    //   setMessages(messages);
+    // });
+  }, []);
   useEffect(() => {
     messageList();
   }, [messageList]);
@@ -53,8 +53,5 @@ const mapStateToProps = ({ user: { user }, room: { activeRoomId } }) => {
   };
 };
 
-const mapDispatchToProps = { emitter, listener };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ChatPanel);
+const mapDispatchToProps = { addListener };
+export default connect(mapStateToProps, mapDispatchToProps)(ChatPanel);

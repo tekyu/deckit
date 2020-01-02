@@ -4,7 +4,7 @@ import thunk from "redux-thunk";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import rootReducer from "store/rootReducer";
-import socketMiddleware from "store/middlewares/socket";
+import socketMiddleware from "store/socket/socketMiddleware";
 
 const persistConfig = {
   key: `root`,

@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { gameMapping, getGame } from "utils";
-import { emitter, openModal, setRoom } from "store/actions";
+import { closeSocket, openModal, openSocket, setRoom } from "store/actions";
 import axios from "utils/axios";
 import * as Styled from "./GameContainer.styled";
 
@@ -18,18 +18,23 @@ const GameContainer = ({
   match: {
     params: { id }
   },
+  closeSocket,
   openModal,
+  openSocket,
   setRoom,
   userId
 }) => {
-  const [roomInfo, setRoomInfo] = useState(null);
   const [GameComponent, setGameComponent] = useState(null);
-  const [panels, setPanels] = useState({});
+  const [panels, setPanels] = useState({
+    score: { listener: `scoreUpdate` },
+    chat: { listener: `incomingChatMessage` },
+    log: { listener: `incomingLog` },
+    settings: { listener: `roomSettings` }
+  });
   // const getRoomInfo = useCallback(id => eh {
   //   emitter(GET_ROOM_INFO, { id }, roomData => {
   //     const { gameCode } = roomData;
   //     console.log(`[GameContainer][getRoomInfo]`, gameCode, roomData);
-  //     setRoomInfo(roomData);
   //     setGameComponent(getGame(gameCode));
   //     setPanels(gameMapping[gameCode].panels);
   //   });
@@ -42,13 +47,17 @@ const GameContainer = ({
     }
     axios.get(`/rooms/${id}`).then(res => {
       const { room } = res.data;
+      openSocket();
       setRoom(room);
     });
-  }, [id, openModal, setRoom, userId]);
+    return () => {
+      closeSocket();
+    };
+  }, [closeSocket, id, openModal, openSocket, setRoom, userId]);
   return (
     <Styled.Container>
       <Suspense fallback={<div>LOADING GAME</div>}>
-        {GameComponent && <GameComponent options={roomInfo} />}
+        {GameComponent && <GameComponent />}
         {!!Object.keys(panels).length && <SidePanel panels={panels} />}
       </Suspense>
     </Styled.Container>
@@ -70,7 +79,12 @@ const mapStateToProps = ({ user: { userId } }) => {
   };
 };
 
-const mapDispatchToProps = { emitter, openModal, setRoom };
+const mapDispatchToProps = {
+  closeSocket,
+  openModal,
+  openSocket,
+  setRoom
+};
 
 export default connect(
   mapStateToProps,

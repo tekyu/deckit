@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { inputOnChangeHandler } from "utils/genericInput";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { emitter } from "store/actions";
+import {} from "store/actions";
 
 const Container = styled.div`
   display: flex;
@@ -22,10 +22,10 @@ class ChatControls extends Component {
   }
 
   sentMessageHandler() {
-    const { emitter, activeRoomId } = this.props;
+    const { activeRoomId } = this.props;
     const { message } = this.state;
     console.log(`sentMessageHandler`, this.state.message);
-    emitter(`sendingMessage`, { activeRoomId, message });
+    // emitter(`sendingMessage`, { activeRoomId, message });
     // TODO: ACTIVE ROOM IN REDUX
   }
 
@@ -48,8 +48,5 @@ const mapStateToProps = ({ room: { activeRoomId } }) => {
     activeRoomId
   };
 };
-const mapDispatchToProps = { emitter };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ChatControls);
+const mapDispatchToProps = {};
+export default connect(mapStateToProps, mapDispatchToProps)(ChatControls);

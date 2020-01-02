@@ -2,28 +2,15 @@ import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import sillyname from "sillyname";
-import {
-  updateAnonUser,
-  closeModal,
-  emitter,
-  UPDATE_ANON_USER
-} from "store/actions";
+import { updateAnonUser, closeModal } from "store/actions";
 import { Button, TextInput } from "components/Generic";
 import * as Styled from "./AnonymousLogin.styled";
 
-const AnonymousLogin = ({ emitter, updateAnonUser }) => {
+const AnonymousLogin = ({}) => {
   const [username, setUsername] = useState(sillyname());
-  const submitHandler = useCallback(
-    event => {
-      event.preventDefault();
-      emitter(UPDATE_ANON_USER, { username }, data => {
-        // update user on this side
-        updateAnonUser(data);
-        emitter(`newConnectedPlayer`, data);
-      });
-    },
-    [emitter, updateAnonUser, username]
-  );
+  const submitHandler = useCallback(event => {
+    event.preventDefault();
+  }, []);
 
   return (
     <Styled.Form onSubmit={submitHandler}>
@@ -45,8 +32,7 @@ const AnonymousLogin = ({ emitter, updateAnonUser }) => {
 };
 
 AnonymousLogin.propTypes = {
-  emitter: PropTypes.func.isRequired,
-  updateAnonUser: PropTypes.func.isRequired
+  emitter: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ user: { user } }) => {
@@ -56,12 +42,7 @@ const mapStateToProps = ({ user: { user } }) => {
 };
 
 const mapDispatchToProps = {
-  closeModal,
-  emitter,
-  updateAnonUser
+  closeModal
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AnonymousLogin);
+export default connect(mapStateToProps, mapDispatchToProps)(AnonymousLogin);
