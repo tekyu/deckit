@@ -29,7 +29,7 @@ export const roomReducer = (state = initialState, action) => {
     case ADD_MESSAGE:
       return {
         ...state,
-        chat: [...state.chat, action.newMessage]
+        chat: [...state.chat, { ...action.newMessage }]
       };
     default:
       return state;

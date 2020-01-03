@@ -23,7 +23,8 @@ const GameContainer = ({
   openModal,
   openSocket,
   setRoom,
-  userId
+  userId,
+  username
 }) => {
   useEffect(() => {
     if (!userId) {
@@ -32,13 +33,22 @@ const GameContainer = ({
     axios.get(`/rooms/${id}`).then(res => {
       const { room } = res.data;
       openSocket();
-      emitMessage(`playerJoinRoom`, { roomId: room.roomId, userId });
+      emitMessage(`playerJoinRoom`, { roomId: room.roomId, userId, username });
       setRoom(room);
     });
     return () => {
       closeSocket();
     };
-  }, [closeSocket, emitMessage, id, openModal, openSocket, setRoom, userId]);
+  }, [
+    closeSocket,
+    emitMessage,
+    id,
+    openModal,
+    openSocket,
+    setRoom,
+    userId,
+    username
+  ]);
   return isInitialized ? (
     <Styled.Container>
       {/* {GameComponent && <GameComponent />} */}
@@ -57,13 +67,18 @@ GameContainer.propTypes = {
     params: PropTypes.shape({ id: PropTypes.string.isRequired })
   }),
   setRoom: PropTypes.func.isRequired,
-  userId: PropTypes.string.isRequired
+  userId: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired
 };
 
-const mapStateToProps = ({ socket: { isInitialized }, user: { userId } }) => {
+const mapStateToProps = ({
+  socket: { isInitialized },
+  user: { userId, username }
+}) => {
   return {
     isInitialized,
-    userId
+    userId,
+    username
   };
 };
 

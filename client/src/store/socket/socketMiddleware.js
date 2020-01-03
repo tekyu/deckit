@@ -46,7 +46,7 @@ const socketMiddleware = () => {
             return;
           }
           console.log(`%c SOCKET LISTENER`, `background:#C1FFAB`, event, data);
-          handler(...data);
+          handler(data);
         });
         break;
       case SOCKET_REMOVE_LISTENER:

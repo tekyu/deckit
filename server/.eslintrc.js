@@ -24,6 +24,7 @@ module.exports = {
   rules: {
     'import/extensions': 0,
     'import/prefer-default-export': 0,
+    "no-param-reassign": 0,
     "prettier/prettier": 2
   },
   settings: {

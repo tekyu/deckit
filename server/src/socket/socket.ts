@@ -11,7 +11,12 @@ const ioEvents = (io: any) => {
       chalk.black.bgBlue(`Connection with socket established for ${socket.id}`)
     );
     socket.pswOptions = {
-      rooms: {}
+      playerData: {
+        color: null,
+        userId: null,
+        username: null
+      },
+      roomId: null
     };
     socket.on("getRooms", (data, callback) => {
       callback(Object.values(io.gameRooms));

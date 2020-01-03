@@ -21,6 +21,7 @@ const roomSchema: Schema = new Schema({
   chat: [
     {
       msgId: { type: String, required: true },
+      authorId: { type: String },
       author: { type: String },
       message: { type: String, required: true },
       timeStamp: { type: Number, required: true }

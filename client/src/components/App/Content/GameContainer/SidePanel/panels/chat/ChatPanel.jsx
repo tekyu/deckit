@@ -6,6 +6,7 @@ import { addMessage, addListener, emitMessage } from "store/actions";
 import { Button, TextInput } from "components/Generic";
 import ChatMessage from "./ChatMessage/ChatMessage";
 import * as Styled from "./ChatPanel.styled";
+import { removeListener } from "../../../../../../../store/socket/socketActions";
 
 // const messages = [
 //   { message: `lorem ipsum sripsum`, author: `pafiszon`, color: `green` },
@@ -15,7 +16,7 @@ import * as Styled from "./ChatPanel.styled";
 //   { message: `jajeco`, author: `Ferdek`, color: `orange` }
 // ];
 
-const ChatPanel = ({ addListener, addMessage, chat, emitMessage }) => {
+const ChatPanel = ({ addListener, addMessage, chat, emitMessage, userId }) => {
   const [newMessage, setNewMessage] = useState(``);
   const getNewMessage = useCallback(
     newMessage => {
@@ -25,10 +26,12 @@ const ChatPanel = ({ addListener, addMessage, chat, emitMessage }) => {
   );
   const postNewMessage = useCallback(() => {
     emitMessage(`sendingMessage`, { message: newMessage });
+    setNewMessage(``);
   }, [emitMessage, newMessage]);
   useEffect(() => {
     addListener(`newChatMessage`, getNewMessage);
-  });
+    return () => removeListener(`newChatMessage`);
+  }, [addListener, getNewMessage]);
   console.log(chat);
   return (
     <Styled.Container>
@@ -40,7 +43,7 @@ const ChatPanel = ({ addListener, addMessage, chat, emitMessage }) => {
             message={msg.message}
             author={msg.author}
             color={msg.color}
-            isMine={msg.isMine}
+            isMine={msg.authorId === userId}
           />
         ))}
       </Styled.Messages>
@@ -71,13 +74,14 @@ ChatPanel.propTypes = {
       timeStamp: PropTypes.number.isRequired
     })
   ),
-  emitMessage: PropTypes.func.isRequired
+  emitMessage: PropTypes.func.isRequired,
+  userId: PropTypes.string.isRequired
 };
 
-const mapStateToProps = ({ user: { user }, room: { chat } }) => {
+const mapStateToProps = ({ room: { chat }, user: { userId } }) => {
   return {
     chat,
-    user
+    userId
   };
 };
 

@@ -12,27 +12,23 @@ const chatEmitters = {
 
 export const ChatEvents = (socket: any, io: any) => {
   console.log("Chat events");
-  socket.on(chatListeners.getHistory, (params: any, callback: Function) => {
-    // console.log(chatListeners.getHistory, params, io.gameRooms[params.roomId]);
-    // callback(io.gameRooms[params.roomId].chat);
-  });
-  socket.on(
-    chatListeners.onSendMessage,
-    async ({ message, roomId, userId, username }) => {
-      const room = await Room.findOne({ roomId });
-      if (!room) {
-        return;
-      }
-      const newMessage = {
-        msgId: shortId(),
-        message,
-        author: userId,
-        timestamp: Date.now()
-      };
-      const player = socket.pswOptions;
-      console.log(`${chatListeners.onSendMessage} newMessage`, newMessage);
-      await room.chat.push(newMessage);
-      io.in(roomId).emit(chatEmitters.newChatMessage, newMessage);
+  socket.on(chatListeners.onSendMessage, async ({ message }) => {
+    const {
+      roomId,
+      playerData: { userId, username }
+    } = socket.pswOptions;
+    const room = await Room.findOne({ roomId });
+    if (!room || !message) {
+      return;
     }
-  );
+    const newMessage = {
+      msgId: shortId(),
+      message,
+      authorId: userId,
+      author: username,
+      timestamp: Date.now()
+    };
+    await room.chat.push(newMessage);
+    io.in(roomId).emit(chatEmitters.newChatMessage, newMessage);
+  });
 };
