@@ -20,7 +20,8 @@ interface IRoomModel extends Document, IRoom {}
 const roomSchema: Schema = new Schema({
   chat: [
     {
-      author: { type: String, required: true },
+      msgId: { type: String, required: true },
+      author: { type: String },
       message: { type: String, required: true },
       timeStamp: { type: Number, required: true }
     }
@@ -39,7 +40,7 @@ const roomSchema: Schema = new Schema({
       username: { type: String, required: true }
     }
   ],
-  playersCurrent: { type: Number, required: true },
+  playersCurrent: { type: Number, default: 0 },
   playersMax: { type: Number, required: true },
   roomId: { type: String, default: () => generateToken() }
 });

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import styled from "styled-components";
 import Moment from "react-moment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -62,6 +62,8 @@ const Message = styled.p`
   color: white;
   margin: 0.35em 0 0.2em 0;
   padding: 0.4em 0.75em;
+  ${({ isSystem }) =>
+    isSystem && `background: none; color: darkGrey; font-size: 0.75em`}
 `;
 
 const Author = styled.div`
@@ -79,25 +81,31 @@ const Timestamp = styled.div`
 const ChatElement = ({ author, timestamp, message, avatar, color, isMine }) => {
   return (
     <Container isMine={isMine} timestamp={timestamp}>
-      <Display isMine={isMine}>
-        <AvatarContainer>
-          {avatar ? (
-            <img src={avatar} alt="avatar" />
-          ) : (
-            <FontAwesomeIcon color="white" icon="user" />
-          )}
-        </AvatarContainer>
-        <ColorIndicator style={{ background: color }}></ColorIndicator>
-      </Display>
+      {author ? (
+        <Display isMine={isMine}>
+          <AvatarContainer>
+            {avatar ? (
+              <img src={avatar} alt="avatar" />
+            ) : (
+              <FontAwesomeIcon color="white" icon="user" />
+            )}
+          </AvatarContainer>
+          <ColorIndicator style={{ background: color }}></ColorIndicator>
+        </Display>
+      ) : null}
       <Info isMine={isMine}>
         <Author>{isMine ? `You` : author}</Author>
-        <Message isMine={isMine}>{message}</Message>
-        <Timestamp>
-          <Moment fromNow>{timestamp}</Moment>
-        </Timestamp>
+        <Message isSystem={!author} isMine={isMine}>
+          {message}
+        </Message>
+        {author && (
+          <Timestamp>
+            <Moment fromNow>{timestamp}</Moment>
+          </Timestamp>
+        )}
       </Info>
     </Container>
   );
 };
 
-export default ChatElement;
+export default memo(ChatElement);

@@ -1,4 +1,4 @@
-import { SET_ROOM, UPDATE_ROOMS } from "./roomActions";
+import { SET_ROOM, UPDATE_ROOMS, ADD_MESSAGE } from "./roomActions";
 
 export const initialState = {
   chat: [],
@@ -10,7 +10,8 @@ export const initialState = {
   owner: null,
   players: [],
   playersMax: null,
-  roomId: null
+  roomId: null,
+  rooms: []
 };
 
 export const roomReducer = (state = initialState, action) => {
@@ -24,6 +25,11 @@ export const roomReducer = (state = initialState, action) => {
       return {
         ...state,
         rooms: action.rooms
+      };
+    case ADD_MESSAGE:
+      return {
+        ...state,
+        chat: [...state.chat, action.newMessage]
       };
     default:
       return state;

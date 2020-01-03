@@ -1,8 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { closeSocket, openModal, openSocket, setRoom } from "store/actions";
+import {
+  closeSocket,
+  emitMessage,
+  openModal,
+  openSocket,
+  setRoom
+} from "store/actions";
 import axios from "utils/axios";
 import * as Styled from "./GameContainer.styled";
 import SidePanel from "./SidePanel/SidePanel";
@@ -12,6 +18,8 @@ const GameContainer = ({
     params: { id }
   },
   closeSocket,
+  emitMessage,
+  isInitialized,
   openModal,
   openSocket,
   setRoom,
@@ -24,22 +32,25 @@ const GameContainer = ({
     axios.get(`/rooms/${id}`).then(res => {
       const { room } = res.data;
       openSocket();
+      emitMessage(`playerJoinRoom`, { roomId: room.roomId, userId });
       setRoom(room);
     });
     return () => {
       closeSocket();
     };
-  }, [closeSocket, id, openModal, openSocket, setRoom, userId]);
-  return (
+  }, [closeSocket, emitMessage, id, openModal, openSocket, setRoom, userId]);
+  return isInitialized ? (
     <Styled.Container>
       {/* {GameComponent && <GameComponent />} */}
       <SidePanel />
     </Styled.Container>
-  );
+  ) : null;
 };
 
 GameContainer.propTypes = {
   closeSocket: PropTypes.func.isRequired,
+  emitMessage: PropTypes.func.isRequired,
+  isInitialized: PropTypes.bool.isRequired,
   openModal: PropTypes.func.isRequired,
   openSocket: PropTypes.func.isRequired,
   match: PropTypes.shape({
@@ -49,14 +60,16 @@ GameContainer.propTypes = {
   userId: PropTypes.string.isRequired
 };
 
-const mapStateToProps = ({ user: { userId } }) => {
+const mapStateToProps = ({ socket: { isInitialized }, user: { userId } }) => {
   return {
+    isInitialized,
     userId
   };
 };
 
 const mapDispatchToProps = {
   closeSocket,
+  emitMessage,
   openModal,
   openSocket,
   setRoom
