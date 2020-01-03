@@ -6,7 +6,7 @@ const Content = () => {
   return (
     <Switch>
       <Route path="/browse" exact render={() => <Loadable.Browse />} />
-      <Route path="/game/:id" render={() => <Loadable.GameContainer />} />
+      <Route path="/game/:roomId" render={() => <Loadable.GameContainer />} />
       <Route path="/create" exact render={() => <Loadable.CreateGame />} />
       <Route path="/user" exact render={() => <Loadable.CreateGame />} />
       <Route path="/" exact render={() => <Loadable.Browse />} />

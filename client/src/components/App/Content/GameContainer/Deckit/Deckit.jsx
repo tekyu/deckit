@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { addListener } from "store/actions";
 import * as styles from "./Deckit.module.scss";
 
 /**
@@ -27,5 +26,4 @@ const mapStateToProps = ({ user: { user } }) => {
   };
 };
 
-const mapDispatchToProps = { addListener };
-export default connect(mapStateToProps, mapDispatchToProps)(Deckit);
+export default connect(mapStateToProps)(Deckit);

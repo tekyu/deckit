@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Button } from "components/Generic";
 import { closeModal } from "store/actions";
-import modals from "./modals";
+import { modals } from ".";
 import * as Styled from "./ModalContainer.styled";
 
 const ModalContainer = ({ closeModal, modalType }) => {
@@ -41,9 +41,4 @@ const mapDispatchToProps = {
   closeModal
 };
 
-export default memo(
-  connect(
-    null,
-    mapDispatchToProps
-  )(ModalContainer)
-);
+export default memo(connect(null, mapDispatchToProps)(ModalContainer));

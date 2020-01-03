@@ -1,6 +1,13 @@
-import { SET_ROOM, UPDATE_ROOMS, ADD_MESSAGE } from "./roomActions";
+import {
+  UPDATE_ROOMS,
+  ADD_MESSAGE,
+  FETCH_ROOM_REQUEST,
+  FETCH_ROOM_SUCCESS,
+  FETCH_ROOM_FAILURE
+} from "./roomActions";
 
 export const initialState = {
+  isFetchingRoom: false,
   chat: [],
   createdAt: null,
   decks: [],
@@ -15,10 +22,21 @@ export const initialState = {
 
 export const roomReducer = (state = initialState, action) => {
   switch (action.type) {
-    case SET_ROOM:
+    case FETCH_ROOM_REQUEST:
       return {
         ...state,
-        ...action.room
+        isFetchingRoom: true
+      };
+    case FETCH_ROOM_SUCCESS:
+      return {
+        ...state,
+        ...action.room,
+        isFetchingRoom: false
+      };
+    case FETCH_ROOM_FAILURE:
+      return {
+        ...state,
+        isFetchingRoom: false
       };
     case UPDATE_ROOMS:
       return {

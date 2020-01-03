@@ -1,30 +1,43 @@
 import React, { useCallback } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import { logout, openModal } from "store/actions";
+import { LOGIN_MODAL, REGISTER_MODAL } from "components/Modals";
 import { Button } from "components/Generic";
 import * as Styled from "./AccountBox.styled";
 
-const AccountBox = ({ isAuthorized, logout, openModal, username }) => {
+const AccountBox = ({ isAuthorized, username }) => {
+  const dispatch = useDispatch();
   const openModalHandler = useCallback(
     e => {
-      openModal(e.target.name);
+      dispatch(openModal({ modalType: e.target.name }));
     },
-    [openModal]
+    [dispatch]
   );
+  const logoutHandler = useCallback(() => {
+    dispatch(logout());
+  }, [dispatch]);
   return (
     <Styled.Container>
       {username}
       {isAuthorized ? (
-        <Button onClick={logout} preset="primary">
+        <Button onClick={logoutHandler} preset="primary">
           Logout
         </Button>
       ) : (
         <>
-          <Button onClick={openModalHandler} name="register" preset="secondary">
+          <Button
+            onClick={openModalHandler}
+            name={REGISTER_MODAL}
+            preset="secondary"
+          >
             Register
           </Button>
-          <Button onClick={openModalHandler} name="login" preset="primary">
+          <Button
+            onClick={openModalHandler}
+            name={LOGIN_MODAL}
+            preset="primary"
+          >
             Login
           </Button>
         </>
@@ -33,11 +46,13 @@ const AccountBox = ({ isAuthorized, logout, openModal, username }) => {
   );
 };
 
+AccountBox.defaultProps = {
+  username: ``
+};
+
 AccountBox.propTypes = {
   isAuthorized: PropTypes.bool.isRequired,
-  logout: PropTypes.func.isRequired,
-  openModal: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired
+  username: PropTypes.string
 };
 
 const mapStateToProps = state => {
@@ -48,11 +63,4 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = {
-  logout,
-  openModal
-};
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AccountBox);
+export default connect(mapStateToProps)(AccountBox);

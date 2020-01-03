@@ -2,89 +2,52 @@ import React, { useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { connect, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
-import {
-  closeSocket,
-  emitMessage,
-  openModal,
-  openSocket,
-  setRoom
-} from "store/actions";
-import axios from "utils/axios";
+import { joinRoom, openModal } from "store/actions";
+import { ANONYMOUS_MODAL } from "components/Modals";
 import * as Styled from "./GameContainer.styled";
 import SidePanel from "./SidePanel/SidePanel";
 
 const GameContainer = ({
   match: {
-    params: { id }
+    params: { roomId }
   },
-  isInitialized,
   userId,
   username
 }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     if (!username) {
-      dispatch(openModal(`anonymous`));
+      dispatch(openModal({ modalType: ANONYMOUS_MODAL }));
     } else {
-      axios.get(`/rooms/${id}`).then(res => {
-        const { room } = res.data;
-        dispatch(openSocket());
-        dispatch(
-          emitMessage(`playerJoinRoom`, {
-            roomId: room.roomId,
-            userId,
-            username
-          })
-        );
-        dispatch(setRoom(room));
-      });
+      dispatch(joinRoom({ roomId, userId, username }));
     }
-    return () => {
-      dispatch(closeSocket());
-    };
-  }, [dispatch, id, userId, username]);
-  return isInitialized ? (
+  }, [dispatch, roomId, userId, username]);
+  return (
     <Styled.Container>
       {/* {GameComponent && <GameComponent />} */}
       <SidePanel />
     </Styled.Container>
-  ) : null;
+  );
+};
+
+GameContainer.defaultProps = {
+  username: ``
 };
 
 GameContainer.propTypes = {
-  closeSocket: PropTypes.func.isRequired,
-  emitMessage: PropTypes.func.isRequired,
   isInitialized: PropTypes.bool.isRequired,
-  openModal: PropTypes.func.isRequired,
-  openSocket: PropTypes.func.isRequired,
   match: PropTypes.shape({
-    params: PropTypes.shape({ id: PropTypes.string.isRequired })
+    params: PropTypes.shape({ roomId: PropTypes.string.isRequired })
   }),
-  setRoom: PropTypes.func.isRequired,
   userId: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired
+  username: PropTypes.string
 };
 
-const mapStateToProps = ({
-  socket: { isInitialized },
-  user: { userId, username }
-}) => {
+const mapStateToProps = ({ user: { userId, username } }) => {
   return {
-    isInitialized,
     userId,
     username
   };
 };
 
-const mapDispatchToProps = {
-  closeSocket,
-  emitMessage,
-  openModal,
-  openSocket,
-  setRoom
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(GameContainer));
+export default connect(mapStateToProps)(withRouter(GameContainer));

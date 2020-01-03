@@ -1,8 +1,5 @@
 import io from "socket.io-client";
 import {
-  SOCKET_INIT_REQUEST,
-  SOCKET_INIT_SUCCESS,
-  SOCKET_CLOSE,
   SOCKET_EMIT,
   SOCKET_ADD_LISTENER,
   SOCKET_REMOVE_LISTENER
@@ -11,32 +8,18 @@ import {
 const SOCKET_ADDRESS = `localhost:3012`;
 
 const socketMiddleware = () => {
-  let socket;
-  return ({ dispatch, getState }) => next => action => {
+  const socket = io(SOCKET_ADDRESS);
+  return ({ dispatch }) => next => action => {
     if (typeof action === `function`) {
       return next(action);
     }
     const { event, type, handler, payload } = action;
-    const {
-      room: { roomId },
-      user: { userId, username }
-    } = getState();
-    const defaultPayload = { roomId, userId, username };
     switch (type) {
-      case SOCKET_INIT_REQUEST:
-        console.log(`%c SOCKET OPENED `, `background: green`);
-        socket = io(SOCKET_ADDRESS);
-        dispatch({ type: SOCKET_INIT_SUCCESS });
-        break;
-      case SOCKET_CLOSE:
-        console.log(`%c SOCKET CLOSED `, `background: red`);
-        socket.disconnect();
-        break;
       case SOCKET_EMIT:
         console.log(`%c SOCKET EMIT`, `background: aqua`, event, {
           ...payload
         });
-        socket.emit(event, { ...defaultPayload, ...payload });
+        socket.emit(event, { ...payload });
         break;
       case SOCKET_ADD_LISTENER:
         console.log(`%c ADDED SOCKET LISTENER `, `background: olive`, event);

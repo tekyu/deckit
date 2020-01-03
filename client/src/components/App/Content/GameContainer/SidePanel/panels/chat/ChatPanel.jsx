@@ -22,8 +22,10 @@ const ChatPanel = ({ chat, userId }) => {
     [dispatch]
   );
   const postNewMessage = useCallback(() => {
-    dispatch(emitMessage(`sendingMessage`, { message: newMessage }));
-    dispatch(setNewMessage(``));
+    dispatch(
+      emitMessage({ event: `sendingMessage`, data: { message: newMessage } })
+    );
+    setNewMessage(``);
   }, [dispatch, newMessage]);
   const onEnter = useCallback(
     event => {
@@ -34,7 +36,7 @@ const ChatPanel = ({ chat, userId }) => {
     [postNewMessage]
   );
   useEffect(() => {
-    dispatch(addListener(`newChatMessage`, getNewMessage));
+    dispatch(addListener({ event: `newChatMessage`, handler: getNewMessage }));
     return () => dispatch(removeListener(`newChatMessage`));
   }, [dispatch, getNewMessage]);
   return (
