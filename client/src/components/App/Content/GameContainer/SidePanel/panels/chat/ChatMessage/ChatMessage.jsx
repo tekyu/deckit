@@ -79,9 +79,9 @@ const Timestamp = styled.div`
   color: rgba(0, 0, 0, 0.6);
 `;
 
-const ChatElement = ({ author, timestamp, message, avatar, color, isMine }) => {
+const ChatElement = ({ author, timeStamp, message, avatar, color, isMine }) => {
   return (
-    <Container isMine={isMine} timestamp={timestamp}>
+    <Container isMine={isMine} timestamp={timeStamp}>
       {author ? (
         <Display isMine={isMine}>
           <AvatarContainer>
@@ -101,7 +101,7 @@ const ChatElement = ({ author, timestamp, message, avatar, color, isMine }) => {
         </Message>
         {author && (
           <Timestamp>
-            <Moment fromNow>{timestamp}</Moment>
+            <Moment fromNow>{timeStamp}</Moment>
           </Timestamp>
         )}
       </Info>

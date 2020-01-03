@@ -1,8 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { connect } from "react-redux";
-import ScorePanel from "./panels/score/ScorePanel";
 import ChatPanel from "./panels/chat/ChatPanel";
-import OptionsPanel from "./panels/options/OptionsPanel";
 import Bubbles from "./Bubbles/Bubbles";
 import { panels } from "./SidePanel.config";
 import * as Styled from "./SidePanel.styled";

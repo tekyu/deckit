@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { withRouter } from "react-router-dom";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import {
   closeSocket,
@@ -17,43 +17,32 @@ const GameContainer = ({
   match: {
     params: { id }
   },
-  closeSocket,
-  emitMessage,
   isInitialized,
-  openModal,
-  openSocket,
-  setRoom,
   userId,
   username
 }) => {
+  const dispatch = useDispatch();
   useEffect(() => {
     if (!username) {
-      openModal(`anonymous`);
+      dispatch(openModal(`anonymous`));
     } else {
       axios.get(`/rooms/${id}`).then(res => {
         const { room } = res.data;
-        openSocket();
-        emitMessage(`playerJoinRoom`, {
-          roomId: room.roomId,
-          userId,
-          username
-        });
-        setRoom(room);
+        dispatch(openSocket());
+        dispatch(
+          emitMessage(`playerJoinRoom`, {
+            roomId: room.roomId,
+            userId,
+            username
+          })
+        );
+        dispatch(setRoom(room));
       });
     }
     return () => {
-      closeSocket();
+      dispatch(closeSocket());
     };
-  }, [
-    closeSocket,
-    emitMessage,
-    id,
-    openModal,
-    openSocket,
-    setRoom,
-    userId,
-    username
-  ]);
+  }, [dispatch, id, userId, username]);
   return isInitialized ? (
     <Styled.Container>
       {/* {GameComponent && <GameComponent />} */}

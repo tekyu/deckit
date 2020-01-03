@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
-import PropTypes from "prop-types";
 import sillyname from "sillyname";
 import { Button, TextInput } from "components/Generic";
 import { closeModal, updateAnonymousUsername } from "store/actions";
@@ -12,7 +11,7 @@ const AnonymousLogin = () => {
   const submitHandler = useCallback(
     event => {
       event.preventDefault();
-      dispatch(updateAnonymousUsername({ username }));
+      dispatch(updateAnonymousUsername(username));
       dispatch(closeModal());
     },
     [dispatch, username]
@@ -35,11 +34,6 @@ const AnonymousLogin = () => {
       </Styled.CreateAccount>
     </Styled.Form>
   );
-};
-
-AnonymousLogin.propTypes = {
-  emitter: PropTypes.func.isRequired,
-  updateUser: PropTypes.func.isRequired
 };
 
 export default AnonymousLogin;

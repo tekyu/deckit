@@ -1,4 +1,5 @@
 import axios from "utils/axios";
+import { history } from "store/store";
 
 export const CREATE_ROOM = `CREATE_ROOM`;
 export const SET_ROOM = `SET_ROOM`;
@@ -16,7 +17,7 @@ export const createRoom = options => {
       .post(`/rooms`, { ...options })
       .then(res => {
         const { roomId } = res.data;
-        // history.push(`/game/${roomId}`);
+        history.push(`/game/${roomId}`);
         dispatch({ type: CREATE_ROOM_SUCCESS });
       })
       .catch(() => {

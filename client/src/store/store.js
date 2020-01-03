@@ -3,6 +3,7 @@ import { createStore, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { createBrowserHistory } from "history";
 import rootReducer from "store/rootReducer";
 import socketMiddleware from "store/socket/socketMiddleware";
 
@@ -19,5 +20,6 @@ const enhancers = compose(
   window.devToolsExtension ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f
 );
 
+export const history = createBrowserHistory();
 export const store = createStore(persistedReducer, enhancers);
 export const persistor = persistStore(store);

@@ -3,8 +3,7 @@ import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect, useDispatch } from "react-redux";
 import sillyname from "sillyname";
-import { updateAnonymousUsername } from "store/actions";
-import axios from "utils/axios";
+import { createRoom, updateAnonymousUsername } from "store/actions";
 import {
   Button,
   Checkbox,
@@ -14,7 +13,7 @@ import {
 } from "components/Generic";
 import * as Styled from "./CreateGame.styled";
 
-const CreateGame = ({ history, user }) => {
+const CreateGame = ({ user }) => {
   const dispatch = useDispatch();
   const [roomName, setRoomName] = useState(sillyname());
   const [username, setUsername] = useState(sillyname());
@@ -35,16 +34,11 @@ const CreateGame = ({ history, user }) => {
       if (!user.username) {
         dispatch(updateAnonymousUsername({ username }));
       }
-      axios.post(`/rooms`, { ...options }).then(res => {
-        const { roomId } = res.data;
-
-        history.push(`/game/${roomId}`);
-      });
+      dispatch(createRoom(options));
     },
     [
       dispatch,
       gameCode,
-      history,
       isPrivate,
       playersMax,
       roomName,
@@ -108,7 +102,6 @@ CreateGame.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired
   }).isRequired,
-  updateUser: PropTypes.func.isRequired,
   user: PropTypes.object
 };
 

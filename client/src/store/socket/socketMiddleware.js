@@ -30,7 +30,7 @@ const socketMiddleware = () => {
         break;
       case SOCKET_CLOSE:
         console.log(`%c SOCKET CLOSED `, `background: red`);
-        socket = null;
+        socket.disconnect();
         break;
       case SOCKET_EMIT:
         console.log(`%c SOCKET EMIT`, `background: aqua`, event, {

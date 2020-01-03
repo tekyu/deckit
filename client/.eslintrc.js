@@ -21,6 +21,7 @@ module.exports = {
   rules: {
     quotes: [2, 'backtick'],
     'no-console': 1,
+    'import/no-cycle': 0,
     'import/prefer-default-export': 0,
     "no-shadow": 0,
     'prettier/prettier': [

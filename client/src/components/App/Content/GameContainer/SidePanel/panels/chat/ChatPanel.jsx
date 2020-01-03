@@ -1,33 +1,30 @@
 import React, { useEffect, useCallback, useState } from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { addMessage, addListener, emitMessage } from "store/actions";
+import {
+  addMessage,
+  addListener,
+  emitMessage,
+  removeListener
+} from "store/actions";
 import { Button, TextInput } from "components/Generic";
 import ChatMessage from "./ChatMessage/ChatMessage";
 import * as Styled from "./ChatPanel.styled";
-import { removeListener } from "../../../../../../../store/socket/socketActions";
 
-// const messages = [
-//   { message: `lorem ipsum sripsum`, author: `pafiszon`, color: `green` },
-//   { message: `imbo bimbo akimbo`, author: `maupiszon`, color: `magenta` },
-//   { message: `lakukaracza`, author: `el maraczi`, color: `yellow` },
-//   { message: `co tu sie`, author: `pedro`, color: `cyan`, isMine: true },
-//   { message: `jajeco`, author: `Ferdek`, color: `orange` }
-// ];
-
-const ChatPanel = ({ addListener, addMessage, chat, emitMessage, userId }) => {
+const ChatPanel = ({ chat, userId }) => {
+  const dispatch = useDispatch();
   const [newMessage, setNewMessage] = useState(``);
   const getNewMessage = useCallback(
     newMessage => {
-      addMessage(newMessage);
+      dispatch(addMessage(newMessage));
     },
-    [addMessage]
+    [dispatch]
   );
   const postNewMessage = useCallback(() => {
-    emitMessage(`sendingMessage`, { message: newMessage });
-    setNewMessage(``);
-  }, [emitMessage, newMessage]);
+    dispatch(emitMessage(`sendingMessage`, { message: newMessage }));
+    dispatch(setNewMessage(``));
+  }, [dispatch, newMessage]);
   const onEnter = useCallback(
     event => {
       if (event.key === `Enter`) {
@@ -37,19 +34,19 @@ const ChatPanel = ({ addListener, addMessage, chat, emitMessage, userId }) => {
     [postNewMessage]
   );
   useEffect(() => {
-    addListener(`newChatMessage`, getNewMessage);
-    return () => removeListener(`newChatMessage`);
-  }, [addListener, getNewMessage]);
+    dispatch(addListener(`newChatMessage`, getNewMessage));
+    return () => dispatch(removeListener(`newChatMessage`));
+  }, [dispatch, getNewMessage]);
   return (
     <Styled.Container>
       <Styled.Messages>
-        <ChatMessage message="lorem ipsum " author="pafiszon" color="red" />
         {chat.map(msg => (
           <ChatMessage
             key={msg.msgId}
             message={msg.message}
             author={msg.author}
             color={msg.color}
+            timeStamp={msg.timeStamp}
             isMine={msg.authorId === userId}
           />
         ))}
@@ -73,8 +70,6 @@ const ChatPanel = ({ addListener, addMessage, chat, emitMessage, userId }) => {
 };
 
 ChatPanel.propTypes = {
-  addListener: PropTypes.func.isRequired,
-  addMessage: PropTypes.func.isRequired,
   chat: PropTypes.arrayOf(
     PropTypes.shape({
       author: PropTypes.string,
@@ -82,7 +77,6 @@ ChatPanel.propTypes = {
       timeStamp: PropTypes.number.isRequired
     })
   ),
-  emitMessage: PropTypes.func.isRequired,
   userId: PropTypes.string.isRequired
 };
 
@@ -93,5 +87,4 @@ const mapStateToProps = ({ room: { chat }, user: { userId } }) => {
   };
 };
 
-const mapDispatchToProps = { addListener, addMessage, emitMessage };
-export default connect(mapStateToProps, mapDispatchToProps)(ChatPanel);
+export default connect(mapStateToProps)(ChatPanel);

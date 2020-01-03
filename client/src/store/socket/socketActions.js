@@ -15,7 +15,7 @@ export const addListener = (event, handler) => ({
 });
 
 export const removeListener = event => ({
-  SOCKET_REMOVE_LISTENER,
+  type: SOCKET_REMOVE_LISTENER,
   event
 });
 
