@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import sillyname from "sillyname";
 import { Button, TextInput } from "components/Generic";
-import { closeModal, updateUser } from "store/actions";
+import { closeModal, updateAnonymousUsername } from "store/actions";
 import * as Styled from "./AnonymousLogin.styled";
 
 const AnonymousLogin = () => {
@@ -12,7 +12,7 @@ const AnonymousLogin = () => {
   const submitHandler = useCallback(
     event => {
       event.preventDefault();
-      dispatch(updateUser({ username }));
+      dispatch(updateAnonymousUsername({ username }));
       dispatch(closeModal());
     },
     [dispatch, username]

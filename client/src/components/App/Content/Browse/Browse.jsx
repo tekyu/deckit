@@ -1,36 +1,33 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
-import { checkAuth, updateRooms } from "store/actions";
-import axios from "utils/axios";
+import { checkAuth, getRoomList } from "store/actions";
 import dynamicSort from "utils/dynamicSort";
 import { Button } from "components/Generic";
 import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
 import * as Styled from "./Browse.styled";
 
-const Browse = ({ auth, checkAuth, rooms, updateRooms }) => {
+const Browse = ({ isAuthorized, roomList }) => {
+  const dispatch = useDispatch();
   const [parsedRooms, setParsedRooms] = useState([]);
   const refreshList = useCallback(() => {
-    axios.get(`/rooms`).then(res => {
-      const { rooms } = res.data;
-      updateRooms(rooms);
-    });
-  }, [updateRooms]);
+    dispatch(getRoomList());
+  }, [dispatch]);
   useEffect(() => {
-    checkAuth();
+    dispatch(checkAuth());
     refreshList();
-  }, [checkAuth, refreshList]);
+  }, [dispatch, refreshList]);
   const selectHandler = useCallback(() => {}, []);
   const sortHandler = useCallback(
     options => {
       const { searchPhrase, sortBy } = options;
-      const newRooms = rooms.filter(room => {
+      const newRooms = roomList.filter(room => {
         return room[sortBy.fieldName].toString().includes(searchPhrase);
       });
       setParsedRooms(newRooms.sort(dynamicSort(sortBy.fieldName)));
     },
-    [rooms]
+    [roomList]
   );
   const roomCards = parsedRooms
     ? parsedRooms.map(room => (
@@ -38,7 +35,7 @@ const Browse = ({ auth, checkAuth, rooms, updateRooms }) => {
           key={room.roomId}
           options={room}
           handler={selectHandler}
-          isAnonymous={!auth}
+          isAnonymous={!isAuthorized}
         />
       ))
     : null;
@@ -54,28 +51,18 @@ const Browse = ({ auth, checkAuth, rooms, updateRooms }) => {
 };
 
 Browse.propTypes = {
-  auth: PropTypes.bool,
-  checkAuth: PropTypes.func.isRequired,
-  rooms: PropTypes.array.isRequired,
-  updateRooms: PropTypes.func.isRequired
+  isAuthorized: PropTypes.bool.isRequired,
+  roomList: PropTypes.array.isRequired
 };
 
-const mapStateToProps = ({ auth, room, user }) => {
+const mapStateToProps = ({
+  roomList: { roomList },
+  user: { isAuthorized }
+}) => {
   return {
-    auth,
-    rooms: room.rooms,
-    user
+    isAuthorized,
+    roomList
   };
 };
 
-const mapDispatchToProps = {
-  checkAuth,
-  updateRooms
-};
-
-export default memo(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(Browse)
-);
+export default memo(connect(mapStateToProps)(Browse));

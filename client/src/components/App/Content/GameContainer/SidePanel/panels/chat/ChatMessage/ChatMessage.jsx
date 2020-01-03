@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Container = styled.div`
   display: flex;
-  margin: 0.5em;
+  margin: 0.4em;
   ${({ isMine }) =>
     isMine &&
     `
@@ -63,7 +63,8 @@ const Message = styled.p`
   margin: 0.35em 0 0.2em 0;
   padding: 0.4em 0.75em;
   ${({ isSystem }) =>
-    isSystem && `background: none; color: darkGrey; font-size: 0.75em`}
+    isSystem &&
+    `background: none; color: darkGrey; font-size: 0.75em; padding: 0;`}
 `;
 
 const Author = styled.div`

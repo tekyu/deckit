@@ -10,7 +10,8 @@ const TextInput = ({
   placeholder,
   styles,
   type,
-  value
+  value,
+  ...other
 }) => {
   const onInputChange = e => {
     onChange(e.target.value);
@@ -25,6 +26,7 @@ const TextInput = ({
         placeholder={placeholder}
         onChange={onInputChange}
         value={value}
+        {...other}
       />
     </Styled.Container>
   );

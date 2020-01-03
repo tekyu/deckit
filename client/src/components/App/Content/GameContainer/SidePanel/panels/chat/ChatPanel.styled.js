@@ -21,7 +21,7 @@ export const InputContainer = styled.div`
 export const SendButton = css`
   background-color: deepSkyBlue;
   border-radius: 100%;
-  padding: 0.5em;
+  padding: 0.4em;
   position: absolute;
   right: 0.25em;
   top: 50%;

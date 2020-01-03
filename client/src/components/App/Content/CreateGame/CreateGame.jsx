@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import sillyname from "sillyname";
-import { updateUser } from "store/actions";
+import { updateAnonymousUsername } from "store/actions";
 import axios from "utils/axios";
 import {
   Button,
@@ -14,7 +14,8 @@ import {
 } from "components/Generic";
 import * as Styled from "./CreateGame.styled";
 
-const CreateGame = ({ history, updateUser, user }) => {
+const CreateGame = ({ history, user }) => {
+  const dispatch = useDispatch();
   const [roomName, setRoomName] = useState(sillyname());
   const [username, setUsername] = useState(sillyname());
   const [password, setPassword] = useState(``);
@@ -31,31 +32,30 @@ const CreateGame = ({ history, updateUser, user }) => {
         name: roomName,
         playersMax
       };
+      if (!user.username) {
+        dispatch(updateAnonymousUsername({ username }));
+      }
       axios.post(`/rooms`, { ...options }).then(res => {
-        const { owner, roomId } = res.data;
-        if (!user.userId) {
-          updateUser({
-            userId: owner,
-            username
-          });
-        }
+        const { roomId } = res.data;
+
         history.push(`/game/${roomId}`);
       });
     },
     [
+      dispatch,
       gameCode,
       history,
       isPrivate,
       playersMax,
       roomName,
-      updateUser,
       user.userId,
+      user.username,
       username
     ]
   );
   return (
     <Styled.Form onSubmit={submitHandler}>
-      {!user.userId && (
+      {!user.username && (
         <TextInput
           id="username"
           name="Username"
@@ -118,9 +118,4 @@ const mapStateToProps = ({ user }) => {
   };
 };
 
-const mapDispatchToProps = { updateUser };
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(CreateGame));
+export default connect(mapStateToProps)(withRouter(CreateGame));

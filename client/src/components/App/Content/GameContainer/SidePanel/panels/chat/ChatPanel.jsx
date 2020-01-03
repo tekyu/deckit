@@ -28,6 +28,14 @@ const ChatPanel = ({ addListener, addMessage, chat, emitMessage, userId }) => {
     emitMessage(`sendingMessage`, { message: newMessage });
     setNewMessage(``);
   }, [emitMessage, newMessage]);
+  const onEnter = useCallback(
+    event => {
+      if (event.key === `Enter`) {
+        postNewMessage();
+      }
+    },
+    [postNewMessage]
+  );
   useEffect(() => {
     addListener(`newChatMessage`, getNewMessage);
     return () => removeListener(`newChatMessage`);
@@ -51,6 +59,7 @@ const ChatPanel = ({ addListener, addMessage, chat, emitMessage, userId }) => {
           id="chat"
           name="chat"
           onChange={setNewMessage}
+          onKeyDown={onEnter}
           placeholder="Type a message..."
           styles={Styled.MessageInput}
           value={newMessage}

@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
+
 import "./assets/icons/icons";
 import "./assets/css/normalize.min.css";
 import "./assets/css/index.scss";

@@ -10,8 +10,7 @@ export const initialState = {
   owner: null,
   players: [],
   playersMax: null,
-  roomId: null,
-  rooms: []
+  roomId: null
 };
 
 export const roomReducer = (state = initialState, action) => {
