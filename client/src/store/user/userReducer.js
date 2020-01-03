@@ -1,4 +1,10 @@
-import { AUTH_USER, LOGOUT, UPDATE_USER } from "./userActions";
+import {
+  AUTH_USER,
+  GET_TEMPORARY_ID_SUCCESS,
+  LOGOUT,
+  UPDATE_USER,
+  UPDATE_ANONYMOUS_USERNAME
+} from "./userActions";
 
 export const initialState = {
   isAuthorized: false,
@@ -8,7 +14,6 @@ export const initialState = {
 };
 
 export const userReducer = (state = initialState, action) => {
-  // TODO: Change state default to only take in consideration parts than touch this reducer
   switch (action.type) {
     case AUTH_USER:
       return {
@@ -23,6 +28,16 @@ export const userReducer = (state = initialState, action) => {
     case LOGOUT:
       return {
         ...initialState
+      };
+    case GET_TEMPORARY_ID_SUCCESS:
+      return {
+        ...state,
+        userId: action.userId
+      };
+    case UPDATE_ANONYMOUS_USERNAME:
+      return {
+        ...state,
+        username: action.username
       };
     default:
       return state;

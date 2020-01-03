@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -27,15 +27,20 @@ const GameContainer = ({
   username
 }) => {
   useEffect(() => {
-    if (!userId) {
+    if (!username) {
       openModal(`anonymous`);
+    } else {
+      axios.get(`/rooms/${id}`).then(res => {
+        const { room } = res.data;
+        openSocket();
+        emitMessage(`playerJoinRoom`, {
+          roomId: room.roomId,
+          userId,
+          username
+        });
+        setRoom(room);
+      });
     }
-    axios.get(`/rooms/${id}`).then(res => {
-      const { room } = res.data;
-      openSocket();
-      emitMessage(`playerJoinRoom`, { roomId: room.roomId, userId, username });
-      setRoom(room);
-    });
     return () => {
       closeSocket();
     };

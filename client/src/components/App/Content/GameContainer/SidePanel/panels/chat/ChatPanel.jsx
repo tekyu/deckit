@@ -32,7 +32,6 @@ const ChatPanel = ({ addListener, addMessage, chat, emitMessage, userId }) => {
     addListener(`newChatMessage`, getNewMessage);
     return () => removeListener(`newChatMessage`);
   }, [addListener, getNewMessage]);
-  console.log(chat);
   return (
     <Styled.Container>
       <Styled.Messages>

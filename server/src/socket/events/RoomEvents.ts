@@ -5,7 +5,6 @@ import { Room } from "../../models";
 // TODO: Change types
 export const RoomEvents = (socket: any) => {
   console.log("Room events");
-
   socket.on("playerJoinRoom", async data => {
     const { roomId, userId, username } = data;
     const room = await Room.findOne({ roomId });
@@ -20,7 +19,7 @@ export const RoomEvents = (socket: any) => {
     socket.pswOptions = {
       playerData: {
         color: randomColor(0.3, 0.99),
-        userId,
+        userId: userId || shortId(),
         username
       },
       roomId

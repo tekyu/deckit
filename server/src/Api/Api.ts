@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import shortId from "shortid";
 import { Room } from "../models";
 import AuthApi from "./auth/auth";
 import { generateToken } from "../utils/generateHash";
@@ -34,6 +35,9 @@ const Api = (app: any, passport: any) => {
     await newRoom.save();
     const { roomId } = newRoom;
     res.status(201).send({ owner, roomId });
+  });
+  app.get("/api/users/temporary", async (req: Request, res: Response) => {
+    res.status(200).send({ userId: shortId() });
   });
 };
 

@@ -6,7 +6,21 @@ export const CHECK_USER = `CHECK_USER`;
 export const AUTH_USER = `AUTH_USER`;
 export const UPDATE_USER = `UPDATE_USER`;
 export const LOGOUT = `LOGOUT_USER`;
-export const UPDATE_ANON_USER = `updateAnonymousUser`;
+export const GET_TEMPORARY_ID_SUCCESS = `GET_TEMPORARY_ID_SUCCESS`;
+export const UPDATE_ANONYMOUS_USERNAME = `UPDATE_ANONYMOUS_USERNAME`;
+
+export const getTemporaryId = () => {
+  return dispatch => {
+    axios.get(`/users/temporary`).then(res => {
+      const { userId } = res.data;
+      dispatch({ type: GET_TEMPORARY_ID_SUCCESS, userId });
+    });
+  };
+};
+
+export const updateAnonymousUsername = () => ({
+  type: UPDATE_ANONYMOUS_USERNAME
+});
 
 export const updateUser = params => {
   return dispatch =>
