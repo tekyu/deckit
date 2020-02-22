@@ -6,12 +6,14 @@ const Container = styled.div`
   display: flex;
 `;
 
-const Bubbles = ({ panels, openedPanel, handler }) => {
+const Bubbles = ({ panels, openedPanel, updatedPanels, handler }) => {
   const bubbles = () => {
     return Object.keys(panels).map(panel => {
+      console.log("BUBBLE", updatedPanels, openedPanel, panel);
       return (
         <Bubble
-          openedPanel={openedPanel === panel}
+          opened={openedPanel === panel}
+          updated={updatedPanels && updatedPanels.indexOf(panel) !== -1}
           name={panel}
           handler={handler}
           key={panel}

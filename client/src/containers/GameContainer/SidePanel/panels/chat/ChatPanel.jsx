@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { listener, emitter } from "store/actions";
-import ChatElement from "./ChatElement/ChatElement";
 import ChatControls from "./ChatControls/ChatControls";
+import ChatList from "./ChatList/ChatList";
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
@@ -13,13 +13,14 @@ import ChatControls from "./ChatControls/ChatControls";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
-const Messages = styled.div`
+const StyledChatList = styled(ChatList)`
   overflow-y: auto;
 `;
 
-const ChatPanel = ({ activeRoomId, emitter }) => {
+const ChatPanel = ({ activeRoomId, emitter, listener }) => {
   const [messages, setMessages] = useState([]);
   const messageList = useCallback(() => {
     emitter(`getChatHistory`, { activeRoomId }, messages => {
@@ -27,20 +28,17 @@ const ChatPanel = ({ activeRoomId, emitter }) => {
     });
   }, [activeRoomId, emitter]);
   useEffect(() => {
-    messageList();
-  }, [messageList]);
-  const getMessages = () => {
-    // const { user: { id = "" } = {} } = this.props;
-    return messages.map(({ id, ownerId, ...message }) => {
-      return (
-        <ChatElement isMine={ownerId === `5qqe43`} {...message} key={id} />
-      );
+    listener(`incomingChatMessage`, newMessage => {
+      setMessages(messages => [...messages, newMessage]);
     });
-  };
+  }, []);
+  useEffect(() => {
+    messageList();
+  }, []);
 
   return (
     <Container>
-      <Messages>{getMessages()}</Messages>
+      {messages && <StyledChatList messages={messages} />}
       <ChatControls />
     </Container>
   );

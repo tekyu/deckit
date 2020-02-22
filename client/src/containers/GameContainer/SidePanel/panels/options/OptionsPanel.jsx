@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import sillyname from "sillyname";
-import { inputOnChangeHandler } from "utils";
 import { listener, emitter } from "store/actions";
-import { withRouter } from "react-router-dom";
 // import * as styles from "./Deckit.module.scss";
 /**
  * TODO:

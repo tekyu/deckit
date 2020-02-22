@@ -7,6 +7,9 @@ const Navigation = () => {
     <nav className={styles.nav}>
       <ul className={styles.list}>
         <li>
+          <NavLink to="/queue">Fast Game</NavLink>
+        </li>
+        <li>
           <NavLink to="/browse">Browse</NavLink>
         </li>
         <li>

@@ -9,11 +9,11 @@ const RoomCard = ({ handler, options, isAnonymous }) => {
     createdBy,
     createdById,
     createdAt,
-    playersCurrent,
     playersMax,
-    isPublic,
+    mode,
     gameCode,
-    gameOptions
+    gameOptions,
+    players
   } = options;
   // const deckList = gameOptions.decks.map(deck => (
   //   <span className={styles.deckName}>{deck}</span>
@@ -30,16 +30,16 @@ const RoomCard = ({ handler, options, isAnonymous }) => {
         <p className={styles.owner}>{createdBy}</p>
         <div className={styles.details}>
           <div className={styles.players}>
-            <span>{playersCurrent}</span>
+            <span>{players.length}</span>
             <span>{playersMax}</span>
           </div>
-          <div className={styles.mode}>{isPublic ? `Public` : `Private`}</div>
+          <div className={styles.mode}>{mode}</div>
         </div>
       </div>
       <div className={styles.footer}>
-        <button className="button--primary" onClick={handler} value={id}>
+        <Link className="button--primary" to={`/game/${id}`} value={id}>
           {isAnonymous ? `Play as anonymous` : `Join`}
-        </button>
+        </Link>
       </div>
     </div>
   );

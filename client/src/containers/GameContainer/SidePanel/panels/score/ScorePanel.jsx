@@ -1,23 +1,41 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import sillyname from "sillyname";
-import { inputOnChangeHandler } from "utils";
+import React, { useState, useEffect, useCallback } from "react";
 import { listener, emitter } from "store/actions";
-import { withRouter } from "react-router-dom";
-import ScoreElement from "./components/ScoreElement";
-import * as styles from "./ScorePanel.module.scss";
+import { useSelector, useDispatch } from "react-redux";
+import selectUser from "store/selectors/selectUser";
+import selectActiveRoomId from "store/selectors/selectActiveRoomId";
+import selectActiveRoom from "store/selectors/selectActiveRoom";
+import styled from "styled-components";
+import ScoreList from "./components/ScoreList/ScoreList";
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
  * should be in the main game/room creation topic
  */
-class ScorePanel extends Component {
-  // constructor() {
-  //   super(props);
-  // }
-  state = {};
 
-  mockData = [
+const StyledContainer = styled.div``;
+
+const ScorePanel = () => {
+  // const user = useSelector(selectUser);
+  const activeRoomId = useSelector(selectActiveRoomId);
+  const activeRoom = useSelector(selectActiveRoomId);
+  const dispatch = useDispatch();
+  const [scoreData, setScoreData] = useState([]);
+
+  console.log("ScorePanel", scoreData);
+
+  const getScoreData = useCallback(() => {
+    dispatch(
+      emitter(`getScoreData`, { activeRoomId }, newScoreData => {
+        setScoreData(newScoreData);
+      })
+    );
+  }, [activeRoomId, dispatch]);
+
+  useEffect(() => {
+    getScoreData();
+  }, []);
+
+  const mockData = [
     {
       id: `test1`,
       avatar: null,
@@ -43,27 +61,12 @@ class ScorePanel extends Component {
       points: 16
     }
   ];
-
-  get scoreComponents() {
-    return this.mockData.map(score => {
-      console.log(`mockdata`, score);
-      return <ScoreElement key={score.id} data={score} />;
-    });
-  }
-
-  render() {
-    return <div className={styles.container}>{this.scoreComponents}</div>;
-  }
-}
-
-const mapStateToProps = ({ user: { user } }) => {
-  return {
-    user
-  };
+  // const dispatch = useDispatch();
+  return (
+    <StyledContainer>
+      <ScoreList data={scoreData} />
+    </StyledContainer>
+  );
 };
 
-const mapDispatchToProps = { emitter, listener };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ScorePanel);
+export default ScorePanel;

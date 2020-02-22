@@ -1,47 +1,90 @@
 import axios from "utils/axios";
 
 import { closeModal, showError } from "store/app/appActions";
+import { CLOSE_MODAL } from "../app/appActions";
 
 export const CHECK_USER = `CHECK_USER`;
 export const AUTH_USER = `AUTH_USER`;
-export const UPDATE_USER = `UPDATE_USER`;
+export const UPDATED_USER = `UPDATED_USER`;
 export const UPDATE_ANON_USER = `UPDATE_ANON_USER`;
+
+export const updateUser = data => {
+  // console.log("updateUser", data);
+  return dispatch => {
+    return axios.post("/api/user/update", data).then(data => {
+      dispatch({
+        type: UPDATED_USER,
+        data
+      });
+    });
+  };
+};
+
+export const updatedUser = data => {
+  return dispatch => {
+    dispatch({
+      type: UPDATED_USER,
+      user: data
+    });
+  };
+};
 
 // TODO:
 // make it as a promise cos you cant send formError here
 export const loginUser = (username, password) => {
   return dispatch => {
-    Promise.then((resolve, reject) => {
-      axios
-        .post(`/api/login`, {
-          username,
-          password
-        })
-        .then(({ status, data }) => {
-          if (status === 200) {
-            dispatch({
-              type: UPDATE_USER,
-              payload: data
-            });
-            dispatch({
-              type: AUTH_USER,
-              payload: true
-            });
-            closeModal();
-            resolve();
-          }
-        })
-        .catch(error => {
-          reject(error.response.status);
-          throw error;
-          // this.setState((state, props) => {
-          // 	console.log("setsatate", state, props);
-          // 	return {
-          // 		formError: state.errors[error.response.status]
-          // 	};
-          // });
+    // console.log("loginUser", dispatch);
+    // Promise.then((resolve, reject) => {
+    axios
+      .post(`/api/login`, {
+        username,
+        password
+      })
+      .then(({ status, data }) => {
+        if (status === 200) {
+          dispatch(updatedUser(data));
+          dispatch({
+            type: AUTH_USER,
+            auth: true
+          });
+          dispatch(closeModal());
+          // resolve();
+        }
+      })
+      .catch(error => {
+        // reject(error.response.status);
+        throw error;
+        // this.setState((state, props) => {
+        // 	// console.log("setsatate", state, props);
+        // 	return {
+        // 		formError: state.errors[error.response.status]
+        // 	};
+        // });
+      });
+    // });
+  };
+};
+
+export const registerUser = (username, password) => {
+  return dispatch => {
+    axios
+      .post(`/api/register`, {
+        username,
+        password
+      })
+      .then(({ data }) => {
+        dispatch(updatedUser(data));
+        dispatch({
+          type: AUTH_USER,
+          auth: true
         });
-    });
+        dispatch({
+          type: CLOSE_MODAL
+        });
+      })
+      .catch(error => {
+        throw error;
+      });
   };
 };
 
@@ -51,10 +94,7 @@ export const checkAuth = () => {
       axios
         .post(`/api/check`)
         .then(({ data }) => {
-          dispatch({
-            type: UPDATE_USER,
-            user: data
-          });
+          dispatch(updatedUser(data));
           dispatch({
             type: AUTH_USER,
             auth: true
@@ -71,35 +111,30 @@ export const checkAuth = () => {
 };
 
 export const logoutUser = () => {
-  axios.get(`/api/logout`).then(() => {
-    return dispatch => {
+  return dispatch => {
+    return axios.post("/api/logout").then(() => {
       dispatch({
         type: AUTH_USER,
-        auth: true
+        auth: false
       });
-    };
-  });
+      dispatch(updatedUser(null));
+    });
+  };
 };
 
 export const updateAnonUser = user => {
   return {
-    type: UPDATE_USER,
+    type: UPDATED_USER,
     user
   };
 };
 
-export const updateUser = data => {
-  return (dispatch, getState) => {
-    if (getState.user) {
-      axios
-        .post(`/api/update/user`, data)
-        .then(() => {
-          dispatch({
-            type: UPDATE_USER,
-            auth: true
-          });
-        })
-        .catch(error => showError(error));
-    }
-  };
-};
+// export const userCreated = user => {
+//   // console.log("userCreated", user);
+//   return dispatch => {
+//     dispatch({
+//       type: UPDATED_USER,
+//       user
+//     });
+//   };
+// };

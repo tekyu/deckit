@@ -1,7 +1,12 @@
-import Room from "../../classes/Room";
-import randomColor from "random-color";
+import Room from '../../classes/Room';
+import randomColor from 'random-color';
 // import { Socket, socketIo } from "socket.io";
-import chalk from "chalk";
+import chalk from 'chalk';
+import { getUserData } from '../../utils/getUserData';
+import { User } from '../../schemas/User';
+import getRoomObjectForUpdate from '../../utils/getRoomObjectForUpdate';
+import getRoomNamespaceFromList from '../../utils/getRoomNamespaceFromList';
+import getRoom from '../../utils/getRoom';
 //TODO: Move interfaces to other file
 interface Iparams {
   id: string;
@@ -10,60 +15,141 @@ interface Iparams {
   ranking?: number;
 }
 
-//TODO: Change types
-export const RoomEvents = (socket: any, io: any) => {
-  const getRoom = (id: string) => {
-    const room = io.gameRooms[id];
-    if (!room) {
-      console.log(chalk.bgRedBright(`Room with id of ${id} doesn't exist`));
-      // throw Error(`Room with id of ${id} doesn't exist`);
-      return null;
-    }
-    return room;
-  };
+// const gameShapedUser = getGameShapedUser(gameCode, userData)
+// userModel = {
+//   color: #fff,
+//   progress: 0,
+//   score: 0,
+//   status: 'ready', // ready, not ready, disconnected
+//   state: 'waiting', // waiting, hinting, choosing, guessing,
+// }
+// getInitialGameProps = (gameCode) => {
+//   return gameMapping[gameCode].userModel;
+// }
+// getGameShapedUser = (gameCode, userData) => {
+//   return {
+//     ...getInitialGameProps(gameCode)
+//     ...userData
+//   }
+// }
 
-  console.log("Room events");
-  socket.on("createRoom", (params: any, callback: Function) => {
-    const { username, ...roomParams } = params;
-    const room = new Room(roomParams, socket.id);
-    socket.join(room.id);
-    io.gameRooms[room.id] = room;
+const CREATE_ROOM = 'CREATE_ROOM';
+const JOIN_ROOM = 'JOIN_ROOM';
+const WAITING_ROOM = 'WAITING_ROOM';
+
+const updateListOfRooms = (rooms = [], action = null) => {
+  if (!action) {
+    throw Error('Action for updating list of rooms not specified');
+  }
+  const updatedRooms = rooms.map(room =>
+    getRoomObjectForUpdate(room, room.players > 0 ? 'update' : 'remove')
+  );
+  this.io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRooms);
+};
+
+const disconnectFromRoom = (socket, roomId) => {
+  const room = getRoom(roomId);
+  const userId = socket.pswOptions.id;
+  room.disconnectPlayer(userId).then(({ roomOptions }) => {
+    this.io.in(roomId).emit('ROOM_UPDATED', roomOptions);
+    updateListOfRoomsInWaitingRoom(roomId);
+  });
+};
+
+//TODO: Change types
+export const RoomEvents = function(socket: any, io: any) {
+  this.socket = socket;
+  this.io = io;
+  this.updateListOfRooms = updateListOfRooms.bind(this);
+
+  console.log('Room events');
+
+  socket.on(CREATE_ROOM, (params: any, callback: Function) => {
+    const { roomOptions, id } = params;
+    const room = new Room(roomOptions, id);
     console.log(
       chalk.bgYellow.black(`[Room] Room ${room.id} created with options `),
       room
     );
-    console.log(
-      chalk.bgYellow.gray(`[IO] List of rooms by id `),
-      io.gameRooms,
-      Object.keys(io.sockets.adapter.rooms)
-    );
-    console.log(
-      chalk.bgYellow.red(`[IO] List of rooms by id `),
-      // io.sockets.connected[socket.id],
-      Object.keys(io.sockets.connected)
-    );
-    // socket.emit("createRoom", { created: true }, );
+    io.gameRooms[room.mode][room.id] = room;
     callback({ created: true, roomId: room.id });
+    if (room.mode === 'public') {
+      const updatedRoomObject = [getRoomObjectForUpdate(room, 'add')];
+      io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
+    }
   });
 
-  socket.on("getRoomInfo", (params: Object, callback: Function) => {
-    const room = getRoom(params.id);
+  socket.on(JOIN_ROOM, (params: Object, callback: Function) => {
+    const panels = {
+      score: { listener: `scoreUpdate` },
+      chat: { listener: `incomingChatMessage` },
+      log: { listener: `incomingLog` },
+      settings: { listener: `roomSettings` }
+    };
+    const { roomId, userData } = params;
+
+    socket.pswOptions.color = randomColor(0.3, 0.99).hexString();
+    const room = getRoom(roomId, io.gameRooms);
+    socket.pswOptions = { ...socket.pswOptions, ...userData };
+    socket.pswOptions.rooms.push(roomId);
+    socket.join(roomId);
+    socket.leave(WAITING_ROOM);
+    room
+      .connectPlayer(socket.pswOptions)
+      .then(({ roomOptions }) => {
+        const updatedRoomObject = [getRoomObjectForUpdate(room, 'update')];
+        io.in(roomId).emit('ROOM_UPDATED', roomOptions);
+        if (room.mode === 'public') {
+          io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
+        }
+        callback(room.roomOptions);
+      })
+      .catch(error => {
+        Error(
+          `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`
+        );
+      });
+  });
+
+  socket.on('LEAVE_ROOM', ({ roomId }) => {
+    console.log('LEAVE_ROOM', socket.pswOptions, roomId);
+    socket.pswOptions.rooms = socket.pswOptions.rooms.filter(
+      (id: String) => id !== roomId
+    );
+    const room = getRoom(roomId, io.gameRooms);
+    if (!room) {
+      console.log(chalk.bgRedBright(`Cannot fetch room of id ${roomId}`));
+      return;
+    }
+    const { players } = room;
+    room.disconnectPlayer(socket.pswOptions.id);
+    if (!players.length) {
+      const namespace = getRoomNamespaceFromList(roomId, io.gameRooms);
+      delete io.gameRooms[namespace][roomId];
+    }
+    socket.join(WAITING_ROOM);
+    if (room.mode === 'public') {
+      const updatedRoomObject = [
+        getRoomObjectForUpdate(room, players.length > 0 ? 'update' : 'remove')
+      ];
+      io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
+    }
+  });
+
+  socket.on('GET_ROOM_INFO', (params: Object, callback: Function) => {
+    const room = getRoom(params.id, io.gameRooms);
     if (!room) {
       callback({});
       return;
     }
+    console.log('getRoomInfo', room);
     const roomInfo = room.roomOptions;
-    console.log("getRoomInfo", roomInfo);
     callback(roomInfo);
   });
 
-  socket.on("newConnectedPlayer", data => {
-    const { roomId, ...playerData } = data;
-    const room = getRoom(roomId);
-    playerData.color = randomColor(0.3, 0.99);
-    room.connectPlayer(playerData);
-    socket.pswOptions.rooms[roomId] = playerData;
-    console.log("newConnectedPlayer", socket.pswOptions);
-    socket.in(roomId).emit("roomUpdated", room.roomOptions);
+  socket.on('getScoreData', ({ activeRoomId }, callback: Function) => {
+    const room = getRoom(activeRoomId, io.gameRooms);
+    // console.log('getScoreData', room.players, activeRoomId);
+    callback(room.players);
   });
 };

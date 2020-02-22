@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import styled from "styled-components";
 import Moment from "react-moment";
 
@@ -95,12 +95,11 @@ const ChatElement = ({
   color,
   isMine
 }) => {
-  console.log(`ChatElement`, isMine);
   return (
     <Container isMine={isMine} id={id} owner={ownerId} timestamp={timestamp}>
       <Display isMine={isMine}>
         <AvatarContainer>
-          <img src={avatar} />
+          <img src={avatar} alt={ownerName} />
         </AvatarContainer>
         <ColorIndicator style={{ background: color }}></ColorIndicator>
       </Display>
@@ -115,4 +114,4 @@ const ChatElement = ({
   );
 };
 
-export default ChatElement;
+export default memo(ChatElement);

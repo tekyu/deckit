@@ -1,4 +1,4 @@
-import { AUTH_USER, UPDATE_USER } from "./userActions";
+import { AUTH_USER, UPDATED_USER } from "./userActions";
 
 export const initialState = {
   auth: false,
@@ -13,7 +13,8 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         auth: action.auth
       };
-    case UPDATE_USER:
+    case UPDATED_USER:
+      console.log("UPDATED_USER [userReducer]", action.user);
       return {
         ...state,
         user: action.user

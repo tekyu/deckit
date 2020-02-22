@@ -1,55 +1,28 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { inputOnChangeHandler } from "utils/genericInput";
 import styled from "styled-components";
-import { connect } from "react-redux";
+import { connect, useSelector, useDispatch } from "react-redux";
 import { emitter } from "store/actions";
+import selectActiveRoomId from "store/selectors/selectActiveRoomId";
+import GenericInputHooks from "../../../../../../utils/genericInputHooks";
 
 const Container = styled.div`
   display: flex;
 `;
-class ChatControls extends Component {
-  constructor(props) {
-    super(props);
-    this.sentMessageHandler = this.sentMessageHandler.bind(this);
-    const inputOptions = {
-      keys: [`enter`],
-      handler: this.sentMessageHandler
-    };
-    this.inputOnChangeHandler = inputOnChangeHandler.bind(this, inputOptions);
-    this.state = {
-      message: ``
-    };
-  }
 
-  sentMessageHandler() {
-    const { emitter, activeRoomId } = this.props;
-    const { message } = this.state;
-    console.log(`sentMessageHandler`, this.state.message);
-    emitter(`sendingMessage`, { activeRoomId, message });
-    // TODO: ACTIVE ROOM IN REDUX
-  }
-
-  render() {
-    return (
-      <Container>
-        <div>d</div>
-        <input
-          name="message"
-          type="text"
-          onKeyPress={this.inputOnChangeHandler}
-        />
-        <button onClick={this.sentMessageHandler}></button>
-      </Container>
-    );
-  }
-}
-const mapStateToProps = ({ room: { activeRoomId } }) => {
-  return {
-    activeRoomId
+const ChatControls = () => {
+  const activeRoomId = useSelector(selectActiveRoomId);
+  const dispatch = useDispatch();
+  const sendMessageHandler = message => {
+    dispatch(emitter(`sendingMessage`, { activeRoomId, message }));
   };
+
+  return (
+    <Container>
+      <div>settings</div>
+      <GenericInputHooks name="message" handler={sendMessageHandler} />
+      <button onClick={sendMessageHandler}></button>
+    </Container>
+  );
 };
-const mapDispatchToProps = { emitter };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ChatControls);
+export default ChatControls;

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Users from db</title>
+  </head>
+  <body>
+    <h1>Users from db</h1>
+    <% users.forEach(function(user) { %>
+    <div style="margin:20px 0">
+      <h2>
+        <%= user.username %>
+        <span style="margin-left: 20px"><%= user._id %></span>
+      </h2>
+
+      <ul>
+        <li>Created At: <%= user.createdAt %></li>
+        <li>Hash: <%= user.hash %></li>
+        <li>Email Consent: <%= user.emailConsent %></li>
+        <li>Privacy Consent: <%= user.privacyConsent %></li>
+        <li>Achievements: <%= user.achievements %></li>
+        <li>Ranking: <%= user.ranking %></li>
+        <li>Friends: <%= user.friends %></li>
+        <li>Active Games: <%= user.activeGames %></li>
+        <li>Notifications: <%= user.notifications %></li>
+        <li>Created Cards: <%= user.createdCards %></li>
+        <li>Created Decks: <%= user.createdDecks %></li>
+      </ul>
+    </div>
+    <% }) %>
+  </body>
+</html>

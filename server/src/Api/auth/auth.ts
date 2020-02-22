@@ -1,43 +1,28 @@
-import { User } from "../../schemas/User";
+import { User } from '../../schemas/User';
+import chalk from 'chalk';
+import { getUserData } from '../../utils/getUserData';
 
 const AuthApi = (app: any, passport: any) => {
-  app.post("/api/check", (req, res, next) => {
-    console.log("check", req.isAuthenticated());
+  app.post('/api/check', (req, res, next) => {
     if (req.isAuthenticated()) {
-      console.log("true", req.user);
-      const {
-        friends,
-        activeGames,
-        username,
-        ranking,
-        notifications
-      } = req.user;
-      const data = {
-        friends,
-        activeGames,
-        username,
-        ranking,
-        notifications
-      };
-      res.status(200).send(data);
+      res.status(200).send(getUserData(req.user));
     } else {
-      res.status(401).send();
+      res.status(401).send('No session for this user');
     }
   });
 
-  app.get("/api/logout", (req, res) => {
+  app.post('/api/logout', (req, res) => {
     req.session.destroy(err => {
       if (err) return next(err);
 
       req.logout();
 
-      res.sendStatus(200);
-      console.log("req", req.session, req.user);
+      res.status(200).send('ok');
     });
   });
 
-  app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", function(err, user, info) {
+  app.post('/api/login', (req, res, next) => {
+    passport.authenticate('local', function(err, user, info) {
       if (err) {
         return;
       }
@@ -49,29 +34,21 @@ const AuthApi = (app: any, passport: any) => {
         if (err) {
           return next(err);
         }
-        const { friends, activeGames, username, ranking, notifications } = user;
-        const data = {
-          friends,
-          activeGames,
-          username,
-          ranking,
-          notifications
-        };
-        return res.status(200).send(data);
+        return res.status(200).send(getUserData(user));
       });
     })(req, res, next);
   });
 
-  app.post("/api/register", (req, res, next) => {
+  app.post('/api/register', (req, res, next) => {
     const { username, password } = req.body;
     User.create({ username, password })
       .then(user => {
-        console.log(`created user ${user}`);
+        res.status(200).send(getUserData(user));
       })
       .catch(err => {
-        console.log(`Cannot create user with error ${err.name}`);
-        if (err.name === "ValidationError") {
-          res.status(400).send("Username is already taken");
+        // console.log(`Cannot create user with error ${err.name}`);
+        if (err.name === 'ValidationError') {
+          res.status(400).send('Username is already taken');
         }
       });
   });
