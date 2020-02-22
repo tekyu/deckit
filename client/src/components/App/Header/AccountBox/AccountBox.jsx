@@ -19,7 +19,7 @@ class AccountBox extends Component {
   };
 
   getAuthFalse() {
-    console.log(`getAuthFalse`, this.props);
+    // console.log(`getAuthFalse`, this.props);
     if (this.props.user.user) {
       return this.renderUser();
     }
@@ -46,7 +46,32 @@ class AccountBox extends Component {
   }
 
   getAnonymousUserDropdown() {
-    // return ()
+    return (
+      <div className={styles.dropdown}>
+        <ul>
+          <li>
+            <button
+              onClick={this.openModalHandler}
+              name="login"
+              type="button"
+              className="button--secondary"
+            >
+              Login
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={this.openModalHandler}
+              name="register"
+              type="button"
+              className="button--primary"
+            >
+              Join
+            </button>
+          </li>
+        </ul>
+      </div>
+    );
   }
 
   getRegisteredUserDropdown() {
@@ -54,7 +79,7 @@ class AccountBox extends Component {
       <div className={styles.dropdown}>
         <ul>
           <li>
-            <NavLink to="/account/:">Profile</NavLink>
+            <NavLink to="/profile">Profile</NavLink>
           </li>
           <li>
             <NavLink to="/settings">Profile</NavLink>
@@ -68,7 +93,10 @@ class AccountBox extends Component {
   }
 
   renderDropdown() {
-    if (this.props.auth) {
+    const {
+      user: { auth }
+    } = this.props;
+    if (auth) {
       return this.getRegisteredUserDropdown();
     }
     return this.getAnonymousUserDropdown();

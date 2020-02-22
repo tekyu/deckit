@@ -1,16 +1,21 @@
 import React, { Suspense, lazy, useState, useEffect, useCallback } from "react";
-import { connect } from "react-redux";
+import { connect, useSelector, useDispatch } from "react-redux";
+import { useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import { gameMapping, getGame } from "utils";
 import {
-  GET_ROOM_INFO,
+  JOIN_ROOM,
   emitter,
   openModal,
-  setActiveRoom
+  setActiveRoom,
+  setActiveRoomId
 } from "store/actions";
 import { withRouter } from "react-router-dom";
-
+import selectUserForRoom from "store/selectors/selectUserForRoom";
+import selectUser from "store/selectors/selectUser";
+import selectActiveRoomId from "store/selectors/selectActiveRoomId";
 import SidePanel from "./SidePanel/SidePanel";
+import { leaveRoom } from "../../store/room/roomActions";
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
@@ -23,45 +28,52 @@ const Container = styled.div`
   height: calc(100vh - 70px - 40px);
 `;
 
-const GameContainer = ({
-  user,
-  emitter,
-  match: {
+const GameContainer = () => {
+  const {
     params: { id }
-  },
-  openModal,
-  setActiveRoom
-}) => {
+  } = useRouteMatch();
+  const dispatch = useDispatch();
+  const userData = useSelector(selectUser);
   const [roomInfo, setRoomInfo] = useState(null);
   const [GameComponent, setGameComponent] = useState(null);
   const [panels, setPanels] = useState({});
   const getRoomInfo = useCallback(
     id => {
-      emitter(GET_ROOM_INFO, { id }, roomData => {
-        const { gameCode } = roomData;
-        console.log(`[GameContainer][getRoomInfo]`, gameCode, roomData);
-        setRoomInfo(roomData);
-        setGameComponent(getGame(gameCode));
-        setPanels(gameMapping[gameCode].panels);
-      });
+      dispatch(
+        emitter(JOIN_ROOM, { roomId: id, userData }, roomData => {
+          const { gameCode } = roomData;
+          console.log("[GameContainer joinroom]", userData);
+          setRoomInfo(roomData);
+          setGameComponent(getGame(gameCode));
+          setPanels(gameMapping[gameCode].panels);
+        })
+      );
     },
-    [emitter]
+    [dispatch, userData]
   );
 
   useEffect(() => {
-    if (!user) {
-      // return modal with username option
-      openModal(`anonymous`);
-    } else {
-      emitter(`newConnectedPlayer`, user);
-    }
-    getRoomInfo(id);
-    setActiveRoom(id);
-
+    dispatch(setActiveRoomId(id));
     return () => {
-      setActiveRoom();
+      dispatch(leaveRoom(id));
+      dispatch(setActiveRoomId());
     };
-  });
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    dispatch(setActiveRoom(roomInfo));
+    return () => {
+      dispatch(setActiveRoom());
+    };
+  }, [dispatch, roomInfo]);
+
+  useEffect(() => {
+    if (!userData) {
+      dispatch(openModal(`anonymous`));
+    } else {
+      getRoomInfo(id);
+    }
+  }, [getRoomInfo, id, userData, dispatch]);
   return (
     <Container>
       <Suspense fallback={<div>LOADING GAME</div>}>
@@ -72,15 +84,4 @@ const GameContainer = ({
   );
 };
 
-const mapStateToProps = ({ auth, user: { user } }) => {
-  return {
-    auth,
-    user
-  };
-};
-
-const mapDispatchToProps = { emitter, openModal, setActiveRoom };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(GameContainer));
+export default GameContainer;

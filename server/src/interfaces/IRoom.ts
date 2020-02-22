@@ -1,5 +1,5 @@
 export default interface IRoom {
-  isPublic: boolean;
+  mode: string;
   playersMax: number;
   playersCurrent: number;
   name: string;

@@ -25,23 +25,18 @@ class LoginModal extends Component {
 
   submitLoginHandler = event => {
     event.preventDefault();
-    // const [username, password] = [this.state.username, this.state.password];
-    // if (!username || !password) {
-    // 	this.setState((state, props) => {
-    // 		return {
-    // 			formError:
-    // 				state.errors.empty +
-    // 				(!username ? " username" : " password")
-    // 		};
-    // 	});
-    // 	return false;
-    // }
-    // loginUser(username, password);
-    loginUser(`test`, `test`)
-      .then()
-      .catch(error => {
-        throw error;
+    const { loginUser } = this.props;
+    const [username, password] = [this.state.username, this.state.password];
+    if (!username || !password) {
+      this.setState((state, props) => {
+        return {
+          formError:
+            state.errors.empty + (!username ? " username" : " password")
+        };
       });
+      return false;
+    }
+    loginUser(username, password);
   };
 
   componentDidUpdate(prevProps) {

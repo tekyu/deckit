@@ -2,7 +2,8 @@ import io from "socket.io-client";
 import {
   SOCKET_LEAVE,
   SOCKET_EMIT,
-  SOCKET_LISTENER
+  SOCKET_LISTENER,
+  SOCKET_REMOVE_LISTENER
 } from "store/socket/socketActions";
 
 const SOCKET_ADDRESS = `localhost:3012`;
@@ -42,11 +43,14 @@ export default function socketMiddleware() {
             return;
           }
           console.log(`%c SOCKET LISTENER`, `background:#C1FFAB`, event, data);
-          const readyData = { ...data, id: socket.id };
+          const readyData = { data, socketId: socket.id };
           handler(readyData);
           // dispatch({ type: "SAVE_DATA", payload });
         });
 
+        break;
+      case SOCKET_REMOVE_LISTENER:
+        socket.off(event);
         break;
       default:
         throw Error(`No type defined`);
@@ -60,13 +64,13 @@ export default function socketMiddleware() {
 /**
  *     const types = {};
     types[SOCKET_LEAVE] = () => {
-      console.log("types socket leave");
+      // console.log("types socket leave");
     };
     types[SOCKET_EMIT] = () => {
-      console.log("types socket emit");
+      // console.log("types socket emit");
     };
     types[SOCKET_LISTENER] = () => {
-      console.log("types socket listener");
+      // console.log("types socket listener");
     };
     types[type]();
 

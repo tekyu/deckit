@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import axios from "utils/axios";
+import { connect } from "react-redux";
 import * as styles from "./RegisterModal.module.scss";
+import { registerUser } from "../../store/user/userActions";
+import { closeModal } from "../../store/app/appActions";
 
 class RegisterModal extends Component {
   state = {
@@ -24,45 +27,12 @@ class RegisterModal extends Component {
     });
   };
 
-  // submitLoginHandler = event => {
-  // 	event.preventDefault();
-  // 	const [username, password] = [this.state.username, this.state.password];
-  // 	console.log("username, password", username, password);
-  // 	if (!username || !password) {
-  // 		this.setState((state, props) => {
-  // 			console.log("setsatate", state, props);
-  // 			return {
-  // 				formError:
-  // 					state.errors.empty +
-  // 					(!username ? " username" : " password")
-  // 			};
-  // 		});
-  // 		return false;
-  // 	}
-  // 	axios
-  // 		.post("/api/login", {
-  // 			username: username,
-  // 			password: password
-  // 		})
-  // 		.then(response => {
-  // 			console.log("response", response);
-  // 		})
-  // 		.catch(error => {
-  // 			console.log("error", error.response);
-  // 			this.setState((state, props) => {
-  // 				console.log("setsatate", state, props);
-  // 				return {
-  // 					formError: state.errors[error.response.status]
-  // 				};
-  // 			});
-  // 		});
-  // 	console.log("submit", username, password);
-  // };
   submitRegisterHandler = event => {
     event.preventDefault();
     const { username, password, confirmPassword } = this.state;
+    const { registerUser } = this.props;
     if (!username || !password) {
-      this.setState((state, props) => {
+      this.setState(state => {
         return {
           formError: `${state.errors.empty} ${
             !username ? ` username` : ` password`
@@ -72,22 +42,14 @@ class RegisterModal extends Component {
       return false;
     }
     if (password !== confirmPassword) {
-      this.setState((state, props) => {
+      this.setState(state => {
         return {
           formError: state.errors.misspelledPass
         };
       });
       return false;
     }
-    axios
-      .post(`/api/register`, {
-        username,
-        password
-      })
-      .then(response => {})
-      .catch(error => {
-        throw error;
-      });
+    registerUser(username, password);
     return false;
   };
 
@@ -161,4 +123,12 @@ class RegisterModal extends Component {
   }
 }
 
-export default RegisterModal;
+const mapDispatchToProps = {
+  registerUser,
+  closeModal
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(RegisterModal);

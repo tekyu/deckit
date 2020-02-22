@@ -1,46 +1,41 @@
-import shortId from "shortid";
+import shortId from 'shortid';
+import getRoom from '../../utils/getRoom';
+
 //TODO:
 const chatListeners = {
-  onmessage: "sendingMessage",
-  getHistory: "getChatHistory"
+  onmessage: 'sendingMessage',
+  getHistory: 'getChatHistory'
 };
 const chatEmitters = {
-  broadcastMessage: "incomingMessage"
+  broadcastMessage: 'incomingChatMessage'
 };
 
 export const ChatEvents = (socket: any, io: any) => {
-  console.log("Chat events");
-  socket.on(chatListeners.getHistory, (params: any, callback: Function) => {
-    // console.log(chatListeners.getHistory, params, io.gameRooms[params.roomId]);
-    callback(io.gameRooms[params.roomId].chat);
-  });
-  socket.on(chatListeners.onmessage, ({ roomId, message }) => {
-    // {
-    //   id: "123g4",
-    //   ownerId: "543",
-    //   ownerName: "blabla",
-    //   timestamp: 1573382238916,
-    //   color: "#FFAB87",
-    //   avatar: "https://via.placeholder.com/40x40",
-    //   message: "blabla"
-    // },
+  console.log('Chat events');
+  socket.on(
+    chatListeners.getHistory,
+    ({ activeRoomId }: any, callback: Function) => {
+      const room = getRoom(activeRoomId, io.gameRooms);
+      callback(room.chat);
+    }
+  );
 
-    const room = io.gameRooms[roomId];
+  socket.on(chatListeners.onmessage, ({ activeRoomId, message }) => {
+    const room = getRoom(activeRoomId, io.gameRooms);
     const player = socket.pswOptions;
-    console.log(chatListeners.onmessage, roomId, message, player);
-    // console.log(chatListeners.onmessage, player);
-    // console.log(`${chatListeners.onmessage} 2`, socket.pswOptions);
+    console.log(chatListeners.onmessage, player);
     const newMessage = {
       message,
       id: shortId(),
-      timestamp: Date.now()
-      //   ownerId: player.id,
-      //   ownerName: player.username,
-      //   color: player.color,
-      //   avatar: player.avatar
+      timestamp: Date.now(),
+      ownerId: player.id,
+      ownerName: player.username,
+      color: player.color,
+      avatar: player.avatar
     };
     console.log(`${chatListeners.onmessage} newMessage`, newMessage);
+    // TODO: push chat in room class, based on activeRoomId eg. pushMessageToHistory(activeRoomId)
     room.chat.push(newMessage);
-    io.in(roomId).emit(chatEmitters.broadcastMessage, newMessage);
+    io.in(activeRoomId).emit(chatEmitters.broadcastMessage, newMessage);
   });
 };

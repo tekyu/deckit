@@ -1,6 +1,5 @@
 import Loadable from "react-loadable";
 import React from "react";
-import App from "components/App/Content/Content";
 
 const Login = Loadable({
   loader: () => import(`containers/Auth/Login/LoginForm`),
@@ -44,4 +43,11 @@ const GameContainer = Loadable({
   }
 });
 
-export { Login, Register, Logout, Browse, CreateGame, GameContainer };
+const Profile = Loadable({
+  loader: () => import(`containers/Profile/Profile`),
+  loading() {
+    return <p>Loading...</p>;
+  }
+});
+
+export { Login, Register, Logout, Browse, CreateGame, GameContainer, Profile };

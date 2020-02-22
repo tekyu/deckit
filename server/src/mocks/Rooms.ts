@@ -1,39 +1,39 @@
-import Room from "../classes/Room";
+import Room from '../classes/Room';
 const mocks = [
   {
-    name: "AAA Room created last",
+    name: 'AAA Room created last',
     playersMax: 8,
-    isPublic: true,
-    gameCode: "d",
+    mode: 'public',
+    gameCode: 'd',
     gameOptions: {
-      decks: ["standard"]
+      decks: ['standard']
     }
   },
   {
-    name: "BBB Room created first",
+    name: 'BBB Room created first',
     playersMax: 6,
-    isPublic: false,
-    gameCode: "d",
+    mode: 'public',
+    gameCode: 'd',
     gameOptions: {
-      decks: ["wholesome", "countries"]
+      decks: ['wholesome', 'countries']
     }
   },
   {
-    name: "CCC Room created second",
+    name: 'CCC Room created second',
     playersMax: 10,
-    isPublic: true,
-    gameCode: "d",
+    mode: 'public',
+    gameCode: 'd',
     gameOptions: {
-      decks: ["wholesome", "countries"]
+      decks: ['wholesome', 'countries']
     }
   },
   {
-    name: "mock room from server",
+    name: 'mock room from server',
     playersMax: 4,
-    isPublic: true,
-    gameCode: "d",
+    mode: 'public',
+    gameCode: 'd',
     gameOptions: {
-      decks: ["wholesome", "countries"]
+      decks: ['wholesome', 'countries']
     }
   }
 ];

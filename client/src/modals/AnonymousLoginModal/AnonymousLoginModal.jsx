@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {
-  updateAnonUser,
+  updatedUser,
   closeModal,
   emitter,
   UPDATE_ANON_USER
@@ -26,19 +26,19 @@ class AnonymousLoginModal extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    if (this.props.user !== prevProps.user) {
-      this.props.closeModal();
+    const { user, closeModal } = this.props;
+    if (user || user !== prevProps.user) {
+      closeModal();
     }
   }
 
   submitHandler = event => {
     event.preventDefault();
-    const { emitter, updateAnonUser } = this.props;
+    const { emitter, updatedUser } = this.props;
     const { username } = this.state;
-    emitter(UPDATE_ANON_USER, { username }, data => {
+    emitter(UPDATE_ANON_USER, { username }, userData => {
       // update user on this side
-      updateAnonUser(data);
-      emitter(`newConnectedPlayer`, data);
+      updatedUser(userData);
     });
   };
 
@@ -90,7 +90,7 @@ const mapStateToProps = ({ user: { user } }) => {
 const mapDispatchToProps = {
   closeModal,
   emitter,
-  updateAnonUser
+  updatedUser
 };
 
 export default connect(

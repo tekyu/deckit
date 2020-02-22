@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { listener } from "store/actions";
 import ScorePanel from "./panels/score/ScorePanel";
 import ChatPanel from "./panels/chat/ChatPanel";
@@ -30,45 +30,51 @@ const Panel = styled.div`
   padding: 12px;
 `;
 
-const SidePanel = ({ panels, listener }) => {
-  const [openedPanel, setOpenedPanel] = useState(`chat`); // Object.keys(panels)[0]
-  const [sidePanels, setSidePanels] = useState({});
+const SidePanel = ({ panels }) => {
+  const [openedPanel, setOpenedPanel] = useState(`score`); // Object.keys(panels)[0]
+  const [updatedPanels, setUpdatedPanels] = useState([]);
+  const dispatch = useDispatch();
   const panelMapping = {
-    score: <ScorePanel scoreData={sidePanels.score} />,
-    chat: <ChatPanel chatData={sidePanels.chat} />,
+    score: <ScorePanel />,
+    chat: <ChatPanel />,
     options: <OptionsPanel />
   };
+
   const addPanelListeners = useCallback(() => {
-    console.log(`%c addPanelListeners`, `background: #E88341`);
-
     Object.keys(panels).forEach(panel => {
-      listener(panels[panel].listener, data => {
-        setSidePanels(prevSidePanels => ({
-          ...prevSidePanels,
-          [panel]: panels[panel]
-        }));
-      });
+      dispatch(
+        listener(panels[panel].listener, newData => {
+          console.log(
+            `%c addPanelListeners ${panel}`,
+            `background: #E88341`,
+            newData,
+            panel,
+            openedPanel
+          );
+          setUpdatedPanels(oldPanels => {
+            if (oldPanels.indexOf(panel) === -1) {
+              return [...oldPanels, panel];
+            }
+            return oldPanels;
+          });
+        })
+      );
     });
-  }, [listener, panels]);
-
-  const makePanels = useCallback(() => {
-    console.log(`%c makePanels`, `background: #FF4762`);
-    Object.keys(panels).forEach(panel => {
-      setSidePanels(prevSidePanels => ({
-        ...prevSidePanels,
-        [panel]: panels[panel]
-      }));
-    });
-  }, [panels]);
+  }, []);
 
   useEffect(() => {
-    makePanels();
     addPanelListeners();
-  }, [makePanels, addPanelListeners]);
+  }, []);
 
   const changePanel = useCallback(({ target }) => {
     console.log(`changePanel`, target);
-    setOpenedPanel(target.getAttribute(`name`));
+    const panelName = target.getAttribute(`name`);
+    setOpenedPanel(panelName);
+    if (updatedPanels.indexOf(panelName) !== -1) {
+      setUpdatedPanels(oldPanels => {
+        return oldPanels.filter(panel => panel !== panelName);
+      });
+    }
   });
 
   const getPanel = () => {
@@ -77,9 +83,11 @@ const SidePanel = ({ panels, listener }) => {
 
   return (
     <Container>
+      <div>{updatedPanels}</div>
       <Bubbles
         panels={panels}
         openedPanel={openedPanel}
+        updatedPanels={updatedPanels}
         handler={changePanel}
       />
       <Panel>{getPanel()}</Panel>
@@ -87,8 +95,4 @@ const SidePanel = ({ panels, listener }) => {
   );
 };
 
-const mapDispatchToProps = { listener };
-export default connect(
-  null,
-  mapDispatchToProps
-)(SidePanel);
+export default SidePanel;

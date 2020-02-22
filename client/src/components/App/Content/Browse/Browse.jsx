@@ -1,38 +1,85 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { checkAuth, emitter, updateRooms } from "store/actions";
+import { connect, useDispatch } from "react-redux";
+import { checkAuth, emitter, listener, removeListener } from "store/actions";
 import axios from "utils/axios";
 import dynamicSort from "utils/dynamicSort";
 import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
 import * as styles from "./Browse.module.scss";
 
-const Browse = ({ auth, checkAuth, emitter, rooms, updateRooms }) => {
+const Browse = ({ auth, checkAuth, emitter, rooms }) => {
   const [parsedRooms, setParsedRooms] = useState([]);
+  const dispatch = useDispatch();
   const refreshList = useCallback(() => {
     emitter(`getRooms`, null, rooms => {
-      updateRooms(rooms);
+      console.log("getRooms", rooms);
+      setParsedRooms(rooms);
     });
-    axios.get(`/getRooms`).then(() => {});
-  }, [emitter, updateRooms]);
+    axios.get(`/api/getRooms`).then(() => {});
+  }, [emitter]);
   useEffect(() => {
-    checkAuth();
+    // checkAuth();
     refreshList();
-  }, [checkAuth, refreshList]);
+  }, [refreshList]);
   const selectHandler = useCallback(() => {}, []);
-  const sortHandler = useCallback(
-    options => {
-      const { searchPhrase, sortBy } = options;
-      const newRooms = rooms.filter(room => {
-        return room[sortBy].toString().includes(searchPhrase);
+  // const sortHandler = useCallback(
+  //   options => {
+  //     const { searchPhrase, sortBy } = options;
+  //     const newRooms = Object.values(rooms).filter(room => {
+  //       return room[sortBy].toString().includes(searchPhrase);
+  //     });
+  //     setParsedRooms(newRooms.sort(dynamicSort(sortBy)));
+  //   },
+  //   [rooms]
+  // );
+  const updateListOfRooms = ({ socketId, data }) => {
+    console.log("updateListOfRooms", data, parsedRooms);
+    setParsedRooms(oldRooms => {
+      const newRooms = { ...oldRooms };
+      data.forEach(({ id, action, room }) => {
+        console.log("roomAction", id, action, room, newRooms);
+        switch (action) {
+          case "add":
+            newRooms[id] = room;
+            break;
+          case "remove":
+            delete newRooms[id];
+            break;
+          case "update":
+            newRooms[id] = { ...room };
+            break;
+          default:
+            throw Error(
+              `Action of ${action} isn't one of known actions for rooms [add/update/remove]`
+            );
+        }
       });
-      setParsedRooms(newRooms.sort(dynamicSort(sortBy)));
-    },
-    [rooms]
-  );
+      console.log("000000 updateListOfRooms", newRooms);
+      return newRooms;
+    });
+  };
+  const removeRoomFromList = ({ roomId }) => {
+    setParsedRooms(oldRooms => {
+      const newRooms = { ...oldRooms };
+      delete newRooms[roomId];
+      console.log("removeRoomFromList 0000", newRooms, newRooms[roomId]);
+      return newRooms;
+    });
+  };
+
+  useEffect(() => {
+    dispatch(listener(`updateListOfRooms`, updateListOfRooms));
+    dispatch(listener(`addRoomToList`, updateListOfRooms));
+    dispatch(listener(`removeRoomFromList`, removeRoomFromList));
+    return () => {
+      dispatch(removeListener(`updateListOfRooms`, updateListOfRooms));
+      dispatch(removeListener(`addRoomToList`, updateListOfRooms));
+      dispatch(removeListener(`removeRoomFromList`, removeRoomFromList));
+    };
+  }, []);
   const roomCards = parsedRooms
-    ? parsedRooms.map(room => (
+    ? Object.values(parsedRooms).map(room => (
         <RoomCard
           key={room.id}
           options={room}
@@ -46,7 +93,7 @@ const Browse = ({ auth, checkAuth, emitter, rooms, updateRooms }) => {
       <button type="button" onClick={refreshList}>
         Refresh
       </button>
-      <Sort sortHandler={sortHandler} />
+      {/* <Sort sortHandler={sortHandler} /> */}
       {roomCards && (
         <div className={styles[`browse__cardlist-container`]}>{roomCards}</div>
       )}
@@ -57,8 +104,7 @@ const Browse = ({ auth, checkAuth, emitter, rooms, updateRooms }) => {
 Browse.propTypes = {
   auth: PropTypes.bool,
   checkAuth: PropTypes.func.isRequired,
-  emitter: PropTypes.func.isRequired,
-  updateRooms: PropTypes.func.isRequired
+  emitter: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ auth, room, user }) => {
@@ -71,13 +117,10 @@ const mapStateToProps = ({ auth, room, user }) => {
 
 const mapDispatchToProps = {
   checkAuth,
-  emitter,
-  updateRooms
+  emitter
 };
 
-export default memo(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(Browse)
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Browse);

@@ -1,34 +1,13 @@
-import { User } from "../schemas/User";
-import AuthApi from "../Api/auth/auth";
+import { User } from '../schemas/User';
+import AuthApi from '../Api/auth/auth';
+import UserApi from '../Api/user/user';
 const Api = (app: any, passport: any) => {
-  console.log("Api loaded");
+  console.log('Api loaded');
   AuthApi(app, passport);
+  UserApi(app, passport);
 
-  app.post("/api/getRooms", (req, res, next) => {
-    console.log("check", req.isAuthenticated());
-
-    // app.post("/api/check", (req, res, next) => {
-    //   console.log("check", req.isAuthenticated());
-    //   if (req.isAuthenticated()) {
-    //     console.log("true", req.user);
-    //     const {
-    //       friends,
-    //       activeGames,
-    //       username,
-    //       ranking,
-    //       notifications
-    //     } = req.user;
-    //     const data = {
-    //       friends,
-    //       activeGames,
-    //       username,
-    //       ranking,
-    //       notifications
-    //     };
-    //     res.status(200).send(data);
-    //   } else {
-    //     res.status(401).send();
-    //   }
+  app.get('/api/getRooms', (req, res, next) => {
+    console.log('getRooms');
   });
 };
 
