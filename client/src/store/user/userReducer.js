@@ -3,7 +3,8 @@ import {
   GET_TEMPORARY_ID_SUCCESS,
   LOGOUT,
   UPDATE_USER,
-  UPDATE_ANONYMOUS_USERNAME
+  UPDATE_ANONYMOUS_USERNAME,
+  UPDATED_USER
 } from "./userActions";
 
 export const initialState = {
@@ -20,7 +21,8 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         isAuthorized: action.isAuthorized
       };
-    case UPDATE_USER:
+    case UPDATED_USER:
+      console.log("UPDATED_USER [userReducer]", action.user);
       return {
         ...state,
         ...action.params

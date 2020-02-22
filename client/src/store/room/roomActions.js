@@ -1,7 +1,9 @@
 import axios from "utils/axios";
 import { history } from "store/store";
-import { emitMessage } from "store/actions";
+import { emitter } from "store/socket/socketActions";
 
+export const SET_ACTIVE_ROOM_ID = `SET_ACTIVE_ROOM_ID`;
+export const SET_ACTIVE_ROOM = `SET_ACTIVE_ROOM`;
 export const CREATE_ROOM = `CREATE_ROOM`;
 export const SET_ROOM = `SET_ROOM`;
 export const UPDATE_ROOMS = `UPDATE_ROOMS`;
@@ -25,6 +27,25 @@ export const createRoom = options => async dispatch => {
   } catch (error) {
     dispatch({ type: CREATE_ROOM_FAILURE, error });
   }
+}
+
+export const setActiveRoomId = activeRoomId => {
+  return (dispatch, oldState) => {
+    console.log("SETACTIVEROOMID", oldState, activeRoomId);
+    dispatch({
+      type: SET_ACTIVE_ROOM_ID,
+      activeRoomId
+    });
+  };
+};
+
+export const setActiveRoom = activeRoom => {
+  return dispatch => {
+    dispatch({
+      type: SET_ACTIVE_ROOM,
+      activeRoom
+    });
+  };
 };
 
 export const joinRoom = ({ roomId, userId, username }) => async dispatch => {
@@ -33,7 +54,7 @@ export const joinRoom = ({ roomId, userId, username }) => async dispatch => {
     const res = await axios.get(`/rooms/${roomId}`);
     const { room } = res.data;
     dispatch(
-      emitMessage({
+      emitter({
         event: `playerJoinRoom`,
         data: {
           roomId: room.roomId,
@@ -49,3 +70,9 @@ export const joinRoom = ({ roomId, userId, username }) => async dispatch => {
 };
 
 export const addMessage = newMessage => ({ type: ADD_MESSAGE, newMessage });
+
+export const leaveRoom = roomId => {
+  return dispatch => {
+    dispatch(emitter("LEAVE_ROOM", { roomId }));
+  };
+};

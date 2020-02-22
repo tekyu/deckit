@@ -8,6 +8,7 @@ export const initialState = {
 export const appReducer = (state = initialState, action) => {
   switch (action.type) {
     case CLOSE_MODAL:
+      console.log("000000000000000closeModal");
       return {
         ...state,
         modalType: null

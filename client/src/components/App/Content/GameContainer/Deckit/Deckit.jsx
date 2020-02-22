@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { gameMapping, inputOnChangeHandler } from "utils";
+import { listener, emitter } from "store/actions";
 import * as styles from "./Deckit.module.scss";
 
 /**
@@ -10,7 +12,7 @@ import * as styles from "./Deckit.module.scss";
 
 class Deckit extends Component {
   render() {
-    console.log(`Deckit`, this.props);
+    // console.log(`Deckit`, this.props);
     return (
       <div className={styles.table}>
         <div className={styles.draft}></div>

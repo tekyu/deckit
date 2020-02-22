@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { connect, useDispatch } from "react-redux";
+import React, { useEffect, useCallback, useDispatch } from "react";
 import PropTypes from "prop-types";
 import { ThemeProvider } from "styled-components";
 import themes from "assets/themes";
@@ -8,14 +7,15 @@ import { Error } from "components/Generic";
 import { getTemporaryId } from "store/actions";
 import Header from "./Header/Header";
 import Content from "./Content/Content";
+import { checkAuth } from "../../store/user/userActions";
 
-const App = ({ error, modalType, userId }) => {
-  const dispatch = useDispatch();
+const App = ({ auth, checkAuth, modalType, error }) => {
+  const checkIfAuth = useCallback(() => {
+    checkAuth();
+  }, [checkAuth]);
   useEffect(() => {
-    if (!userId) {
-      dispatch(getTemporaryId());
-    }
-  });
+    checkIfAuth();
+  }, [checkIfAuth]);
   return (
     <ThemeProvider theme={themes.default}>
       <Header />
@@ -27,21 +27,10 @@ const App = ({ error, modalType, userId }) => {
 };
 
 App.propTypes = {
-  error: PropTypes.string,
-  modalType: PropTypes.string,
-  userId: PropTypes.string
+  auth: PropTypes.bool.isRequired,
+  checkAuth: PropTypes.func,
+  modalType: PropTypes.string.isRequired,
+  error: PropTypes.string.isRequired
 };
 
-const mapStateToProps = state => {
-  const {
-    app: { error, modalType },
-    user: { userId }
-  } = state;
-  return {
-    error,
-    modalType,
-    userId
-  };
-};
-
-export default connect(mapStateToProps)(App);
+export default App;

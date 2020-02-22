@@ -1,104 +1,13 @@
-import shortId from "shortid";
-import { gameOptions, getGameOptions } from "../utils/gameMapping";
-import IRoom from "../interfaces/IRoom";
+import { gameOptions } from './../utils/gameMapping';
+import shortId from 'shortid';
+import IRoom from '../interfaces/IRoom';
+import { getGameOptions } from '../utils/gameMapping';
+import mockRooms from '../mocks/Rooms';
 
-import mockRooms from "../mocks/Rooms";
-
-const mockChat = [
-  {
-    id: "12qw34",
-    ownerId: "5qw43",
-    ownerName: "blabla",
-    timestamp: 1573382208916,
-    color: "#FFAB87",
-    avatar: "https://via.placeholder.com/40x40",
-    message: "blabla"
-  },
-  {
-    id: "12q34",
-    ownerId: "543qwe",
-    ownerName: "blabla",
-    timestamp: 1573382218917,
-    color: "#FFAB87",
-    avatar: "https://via.placeholder.com/40x40",
-    message: "blabla"
-  },
-  {
-    id: "12d34",
-    ownerId: "543",
-    ownerName: "blabla",
-    timestamp: 1573382228918,
-    color: "#FFAB87",
-    avatar: "https://via.placeholder.com/40x40",
-    message: "blabla"
-  },
-  {
-    id: "123g4",
-    ownerId: "543",
-    ownerName: "blabla",
-    timestamp: 1573382238916,
-    color: "#FFAB87",
-    avatar: "https://via.placeholder.com/40x40",
-    message: "blabla"
-  },
-  {
-    id: "123h4",
-    ownerId: "543",
-    ownerName: "blabla",
-    timestamp: 1573382248916,
-    color: "#FFAB87",
-    avatar: "https://via.placeholder.com/40x40",
-    message: "blabla"
-  },
-  {
-    id: "123cc4",
-    ownerId: "5qqe43",
-    ownerName: "blabla",
-    timestamp: 1573382258916,
-    color: "#FFAB87",
-    avatar: "https://via.placeholder.com/40x40",
-    message: "blabla"
-  },
-  {
-    id: "12ss34",
-    ownerId: "543",
-    ownerName: "blabla",
-    timestamp: 1573382268916,
-    color: "#FFAB87",
-    avatar: "https://via.placeholder.com/40x40",
-    message: "blabla"
-  },
-  {
-    id: "123sa4",
-    ownerId: "5423",
-    ownerName: "blabla1",
-    timestamp: 1573382278916,
-    color: "#FFAB87",
-    avatar: "https://via.placeholder.com/40x40",
-    message: "blabla"
-  },
-  {
-    id: "123gdf4",
-    ownerId: "567543",
-    ownerName: "blabla2",
-    timestamp: 1573382288916,
-    color: "#FFAB87",
-    avatar: "https://via.placeholder.com/40x40",
-    message: "blabla"
-  },
-  {
-    id: "123ytht4",
-    ownerId: "234543", // ownerId should be an object, returned from server; reduce computing on front side
-    ownerName: "blabla3",
-    timestamp: 1573382298916,
-    color: "#FFAB87",
-    avatar: "https://via.placeholder.com/40x40",
-    message: "blablanbvdesr dfdgdgdfdfd fdsfdsfdsfdf sfsdfsdfsdfs"
-  }
-];
+const mockChat = [];
 
 interface CreateRoomOptions {
-  isPublic: boolean;
+  mode: string;
   playersMax: number;
   gameCode: string;
   name?: string;
@@ -115,12 +24,10 @@ interface CreateRoomOptions {
  * easy scaling
  */
 export default class Room implements IRoom {
-  isPublic: boolean;
+  mode: string; // private | public | fast
 
   playersMax: number;
-
-  playersCurrent: number;
-
+  
   name: string;
 
   id: string;
@@ -144,31 +51,24 @@ export default class Room implements IRoom {
   chat: Array<Object>;
 
   constructor(
-    {
-      isPublic,
-      playersMax,
-      gameCode,
-      gameOptions,
-      name = ""
-    }: CreateRoomOptions,
+    { mode, playersMax, gameCode, gameOptions, name = '' }: CreateRoomOptions,
     socketId: any
   ) {
-    this.isPublic = isPublic;
+    this.mode = mode;
     this.playersMax = playersMax || 10; // check for max players per game (adjustable in gameMapping)
-    this.playersCurrent = 1;
     this.name = name;
     this.gameCode = gameCode;
     this.id = shortId();
     this.owner = socketId;
     this.admin = socketId;
     this.state = 0;
-    this.players = [{ id: socketId }];
+    this.players = [];
     this.winners = [];
     this.createdAt = Date.now();
     this.gameOptions = gameOptions
       ? Object.assign(gameOptions, getGameOptions(gameCode))
       : getGameOptions(gameCode);
-    this.chat = mockChat;
+    this.chat = [];
   }
 
   get instance() {
@@ -177,9 +77,8 @@ export default class Room implements IRoom {
 
   get roomOptions() {
     const {
-      isPublic,
+      mode,
       playersMax,
-      playersCurrent,
       gameCode,
       name,
       id,
@@ -191,9 +90,8 @@ export default class Room implements IRoom {
       createdAt
     } = this;
     return {
-      isPublic,
+      mode,
       playersMax,
-      playersCurrent,
       gameCode,
       name,
       id,
@@ -207,20 +105,10 @@ export default class Room implements IRoom {
   }
 
   get roomView() {
-    const {
-      isPublic,
-      playersMax,
-      playersCurrent,
-      gameCode,
-      name,
-      id,
-      owner,
-      state
-    } = this;
+    const { mode, playersMax, gameCode, name, id, owner, state } = this;
     return {
-      isPublic,
+      mode,
       playersMax,
-      playersCurrent,
       gameCode,
       name,
       id,
@@ -233,11 +121,13 @@ export default class Room implements IRoom {
     this.winners.push(id);
   }
 
-  connectPlayer(playerData: Object) {
-    this.players.push(playerData);
+  async connectPlayer(playerData: Object) {
+    return this.players.push(playerData);
   }
 
-  disconnectPlayer(id: string) {
-    this.players = this.players.filter((player: any) => player.id !== id);
+  async disconnectPlayer(id: string) {
+    return (this.players = this.players.filter((player: any) => {
+      return player.id !== id;
+    }));
   }
 }

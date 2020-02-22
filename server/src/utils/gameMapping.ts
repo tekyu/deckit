@@ -1,6 +1,6 @@
 export const gameMapping = {
-  d: "Deckit",
-  k: "Państwa Miasta"
+  d: 'Deckit',
+  k: 'Państwa Miasta'
 };
 
 export const gameOptions = {
@@ -9,21 +9,27 @@ export const gameOptions = {
     stage: 0, // 0 - idle | 1 - initialGiveaway | 2 - pickHint | 3 - pickCard | 4 - chooseCards | 5 - awardPoints | 6 - checkGame | 7 - cardShuffle
     round: 0,
     initialCards: [],
-    hint: "",
-    maxScore: 30
+    hint: '',
+    maxScore: 30,
+    userModel: {
+      id: null,
+      nickname: '',
+      ranking: 1200,
+      avatar: null
+    }
   },
   k: {
     fields: [],
     stage: 0,
     round: 0,
-    letter: "",
+    letter: '',
     maxTime: 120,
     maxScore: 50
   }
 };
 
 export const listGameMapping = index => {
-  if (typeof index !== "undefined") {
+  if (typeof index !== 'undefined') {
     return Object.keys(gameMapping)[index];
   }
   return Object.values(gameMapping);

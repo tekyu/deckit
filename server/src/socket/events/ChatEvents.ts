@@ -1,38 +1,41 @@
-import shortId from "shortid";
-import { Room } from "../../models";
+import shortId from 'shortid';
+import getRoom from '../../utils/getRoom';
 
-// TODO:
+//TODO:
 const chatListeners = {
-  onSendMessage: "sendingMessage",
-  getHistory: "getChatHistory"
+  onmessage: 'sendingMessage',
+  getHistory: 'getChatHistory'
 };
 const chatEmitters = {
-  newChatMessage: "newChatMessage"
+  broadcastMessage: 'incomingChatMessage'
 };
 
 export const ChatEvents = (socket: any, io: any) => {
-  console.log("Chat events");
+  console.log('Chat events');
   socket.on(
-    chatListeners.onSendMessage,
-    async ({ message }: { message: String }) => {
-      const {
-        roomId,
-        playerData: { userId, username }
-      } = socket.pswOptions;
-      const room = await Room.findOne({ roomId });
-      if (!room || !message) {
-        return;
-      }
-      const newMessage = {
-        msgId: shortId(),
-        message,
-        authorId: userId,
-        author: username,
-        timeStamp: Date.now()
-      };
-      room.chat.push(newMessage);
-      await room.save();
-      io.in(roomId).emit(chatEmitters.newChatMessage, newMessage);
+    chatListeners.getHistory,
+    ({ activeRoomId }: any, callback: Function) => {
+      const room = getRoom(activeRoomId, io.gameRooms);
+      callback(room.chat);
     }
   );
+
+  socket.on(chatListeners.onmessage, ({ activeRoomId, message }) => {
+    const room = getRoom(activeRoomId, io.gameRooms);
+    const player = socket.pswOptions;
+    console.log(chatListeners.onmessage, player);
+    const newMessage = {
+      message,
+      id: shortId(),
+      timestamp: Date.now(),
+      ownerId: player.id,
+      ownerName: player.username,
+      color: player.color,
+      avatar: player.avatar
+    };
+    console.log(`${chatListeners.onmessage} newMessage`, newMessage);
+    // TODO: push chat in room class, based on activeRoomId eg. pushMessageToHistory(activeRoomId)
+    room.chat.push(newMessage);
+    io.in(activeRoomId).emit(chatEmitters.broadcastMessage, newMessage);
+  });
 };

@@ -9,10 +9,13 @@ const RoomCard = ({ isAnonymous, options }) => {
     gameCode,
     isPublic,
     name,
-    owner,
-    players,
+    createdBy,
+    createdById,
+    createdAt,
     playersMax,
-    roomId
+    mode,
+    gameOptions,
+    players
   } = options;
   return (
     <Styled.Container>

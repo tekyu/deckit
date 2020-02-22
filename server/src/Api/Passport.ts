@@ -19,13 +19,11 @@ const Passport = () => {
   });
   passport.use("local", local);
 
-  passport.serializeUser((user, done) => {
-    console.log("serialize user", user);
+  passport.serializeUser(function(user, done) {
     done(null, user._id);
   });
 
-  passport.deserializeUser((userId, done) => {
-    console.log("deserialize user", userId);
+  passport.deserializeUser(function(userId, done) {
     User.findById(userId, (err, user) => done(err, user));
   });
   return passport;

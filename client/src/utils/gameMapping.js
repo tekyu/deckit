@@ -9,11 +9,12 @@ export const gameMapping = {
   d: {
     name: `Deckit`,
     panels: {
-      score: { listener: `scoreUpdate` },
-      chat: { listener: `incomingChatMessage` },
-      log: { listener: `incomingLog` },
-      settings: { listener: `roomSettings` }
-    }
+      score: { listener: `scoreUpdate`, data: [] },
+      chat: { listener: `incomingChatMessage`, data: [] },
+      log: { listener: `incomingLog`, data: [] },
+      settings: { listener: `roomSettings`, data: [] }
+    },
+    allowedPlayers: 10
   },
   k: {
     name: `Karcianka`,
@@ -21,7 +22,8 @@ export const gameMapping = {
       score: {},
       chat: {},
       log: {}
-    }
+    },
+    allowedPlayers: 10
   }
 };
 

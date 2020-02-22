@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { addListener } from "store/actions";
+import { listener, emitter } from "store/actions";
 // import * as styles from "./Deckit.module.scss";
 /**
  * TODO:
@@ -25,4 +25,7 @@ const mapStateToProps = ({ user: { user } }) => {
 };
 
 const mapDispatchToProps = { addListener };
-export default connect(mapStateToProps, mapDispatchToProps)(OptionsPanel);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(OptionsPanel);

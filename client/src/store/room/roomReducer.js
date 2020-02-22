@@ -1,9 +1,12 @@
+import produce from "immer";
 import {
   UPDATE_ROOMS,
   ADD_MESSAGE,
   FETCH_ROOM_REQUEST,
   FETCH_ROOM_SUCCESS,
-  FETCH_ROOM_FAILURE
+  FETCH_ROOM_FAILURE,
+  SET_ACTIVE_ROOM_ID,
+  SET_ACTIVE_ROOM,
 } from "./roomActions";
 
 export const initialState = {
@@ -20,37 +23,74 @@ export const initialState = {
   roomId: null
 };
 
-export const roomReducer = (state = initialState, action) => {
+export const roomReducer = produce((draft = initialState, action) => {
   switch (action.type) {
     case FETCH_ROOM_REQUEST:
-      return {
-        ...state,
-        isFetchingRoom: true
-      };
+      draft.isFetchingRoom = true;
+      return draft;
     case FETCH_ROOM_SUCCESS:
-      return {
-        ...state,
-        ...action.room,
-        isFetchingRoom: false
-      };
+      // draft.activeRoom = action.room;
+      draft.isFetchingRoom = false;
+      return draft;
     case FETCH_ROOM_FAILURE:
-      return {
-        ...state,
-        isFetchingRoom: false
-      };
-    case UPDATE_ROOMS:
-      return {
-        ...state,
-        rooms: action.rooms
-      };
+      draft.isFetchingRoom = false;
+      return draft;
     case ADD_MESSAGE:
-      return {
-        ...state,
-        chat: [...state.chat, { ...action.newMessage }]
-      };
+      draft.chat = [...draft.chat, {...action.newMessage}]
+      return draft;
+    case SET_ACTIVE_ROOM_ID:
+      draft.activeRoomId = action.activeRoomId;
+      return draft;
+    case SET_ACTIVE_ROOM:
+      draft.activeRoom = action.activeRoom;
+      return draft;
+    case UPDATE_ROOMS:
+      draft.rooms = action.rooms;
+      return draft;
+    case UPDATE_ACTIVE_ROOM:
+      draft.activeRoom = action.roomData;
+      return draft;
     default:
-      return state;
-  }
+      return draft;
+}
 };
 
 export default roomReducer;
+
+
+
+/* eslint-disable no-param-reassign */
+// import produce from "immer";
+// import {
+//   SET_ACTIVE_ROOM_ID,
+//   SET_ACTIVE_ROOM,
+//   UPDATE_ACTIVE_ROOM,
+//   UPDATE_ROOMS
+// } from "./roomActions";
+
+// export const initialState = {
+//   activeRoomId: null,
+//   rooms: [],
+//   activeRoom: null
+// };
+
+// export const roomReducer = produce((draft = initialState, action) => {
+//   switch (action.type) {
+//     case SET_ACTIVE_ROOM_ID:
+//       draft.activeRoomId = action.activeRoomId;
+//       return draft;
+//     case SET_ACTIVE_ROOM:
+//       draft.activeRoom = action.activeRoom;
+//       return draft;
+//     case UPDATE_ROOMS:
+//       draft.rooms = action.rooms;
+//       return draft;
+//     case UPDATE_ACTIVE_ROOM:
+//       draft.activeRoom = action.roomData;
+//       return draft;
+//     default:
+//       return draft;
+//   }
+// });
+
+// export default roomReducer;
