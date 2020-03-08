@@ -1,34 +1,35 @@
+/* eslint-disable no-param-reassign */
+import produce from "immer";
 import {
   SET_ACTIVE_ROOM_ID,
   SET_ACTIVE_ROOM,
+  UPDATE_ACTIVE_ROOM,
   UPDATE_ROOMS
 } from "./roomActions";
 
 export const initialState = {
   activeRoomId: null,
-  rooms: []
+  rooms: [],
+  activeRoom: null
 };
 
-export const roomReducer = (state = initialState, action) => {
+export const roomReducer = produce((draft = initialState, action) => {
   switch (action.type) {
     case SET_ACTIVE_ROOM_ID:
-      return {
-        ...state,
-        activeRoomId: action.activeRoomId
-      };
+      draft.activeRoomId = action.activeRoomId;
+      return draft;
     case SET_ACTIVE_ROOM:
-      return {
-        ...state,
-        activeRoom: action.activeRoom
-      };
+      draft.activeRoom = action.activeRoom;
+      return draft;
     case UPDATE_ROOMS:
-      return {
-        ...state,
-        rooms: action.rooms
-      };
+      draft.rooms = action.rooms;
+      return draft;
+    case UPDATE_ACTIVE_ROOM:
+      draft.activeRoom = action.roomData;
+      return draft;
     default:
-      return state;
+      return draft;
   }
-};
+});
 
 export default roomReducer;

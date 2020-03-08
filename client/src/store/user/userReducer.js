@@ -17,7 +17,7 @@ export const userReducer = (state = initialState, action) => {
       console.log("UPDATED_USER [userReducer]", action.user);
       return {
         ...state,
-        user: action.user
+        user: { ...state.user, ...action.user }
       };
     default:
       return state;

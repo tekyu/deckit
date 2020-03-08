@@ -5,6 +5,7 @@ import themes from "assets/themes";
 import { connect } from "react-redux";
 import ModalContainer from "modals/ModalContainer";
 import Error from "components/Generic/Error/Error";
+import { ToastContainer } from "react-toastify";
 import Header from "./Header/Header";
 import Content from "./Content/Content";
 import { checkAuth } from "../../store/user/userActions";
@@ -16,6 +17,7 @@ const App = ({ auth, checkAuth, modalType, error }) => {
   useEffect(() => {
     checkIfAuth();
   }, [checkIfAuth]);
+
   return (
     <>
       <ThemeProvider theme={themes.default}>
@@ -23,6 +25,7 @@ const App = ({ auth, checkAuth, modalType, error }) => {
         {error && <Error message={error} />}
         <Content auth={auth} />
         <ModalContainer modalType={modalType} />
+        <ToastContainer />
       </ThemeProvider>
     </>
   );
