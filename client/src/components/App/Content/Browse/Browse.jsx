@@ -1,32 +1,28 @@
-import React, { Component } from "react";
+import React, { memo, useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { checkAuth } from "store/actions/user";
 import { emitter } from "store/actions/socket";
 import axios from "utils/axios";
 import dynamicSort from "utils/dynamicSort";
-import RoomList from "./RoomList/RoomList";
+import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
-class Browse extends Component {
-  state = {
-    rooms: []
-  };
+import * as styles from "./Browse.module.scss";
 
-  sortHandler = options => {
-    const { searchPhrase, sortBy } = options;
-    const newRooms = this.state.rooms.filter(room =>
-      room[sortBy].includes(searchPhrase)
-    );
-    this.setState(() => {
-      return { rooms: newRooms.sort(dynamicSort(sortBy)) };
+const Browse = ({ auth, checkAuth, emitter }) => {
+  const [rooms, setRooms] = useState([]);
+  const refreshList = () => {
+    emitter(`getRooms`, null, rooms => {
+      setRooms(rooms);
     });
   };
-
-  selectHandler = ({ target }) => {
-    console.log("selectHandler", target, target.value);
-  };
-
-  refreshListHandler = () => {
-    this.refreshList();
+  useEffect(() => {
+    checkAuth();
+    refreshList();
+  }, []);
+  const selectHandler = ({ target }) => {};
+  const refreshListHandler = () => {
+    refreshList();
   };
 
   refreshList = () => {
@@ -56,10 +52,26 @@ class Browse extends Component {
           handler={this.selectHandler}
           isAnonymous={!this.auth}
         />
-      </React.Fragment>
-    );
-  }
-}
+      ))
+    : null;
+  return (
+    <>
+      <button type="button" onClick={refreshListHandler}>
+        Refresh
+      </button>
+      <Sort handler={sortHandler} />
+      {roomCards && (
+        <div className={styles[`browse__cardlist-container`]}>{roomCards}</div>
+      )}
+    </>
+  );
+};
+
+Browse.propTypes = {
+  auth: PropTypes.bool,
+  checkAuth: PropTypes.func.isRequired,
+  emitter: PropTypes.func.isRequired
+};
 
 const mapStateToProps = ({ auth, user }) => {
   return {
@@ -72,7 +84,10 @@ const mapDispatchToProps = {
   checkAuth,
   emitter
 };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Browse);
+
+export default memo(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Browse)
+);
