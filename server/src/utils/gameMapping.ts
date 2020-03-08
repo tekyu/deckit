@@ -10,12 +10,17 @@ export const gameOptions = {
     round: 0,
     initialCards: [],
     hint: '',
+    hinter: null,
+    hintCard: {},
     maxScore: 30,
-    userModel: {
+    score: 0,
+    playerModel: {
       id: null,
       nickname: '',
       ranking: 1200,
-      avatar: null
+      avatar: null,
+      cards: [],
+      score: 0
     }
   },
   k: {
@@ -44,7 +49,7 @@ export const getGameMapping = gameCode => {
 };
 
 export const getGameOptions = gameCode => {
-  if (!gameMapping[gameCode]) {
+  if (!gameOptions[gameCode]) {
     throw Error(`Game ${gameCode} is not defined within mapping`);
   }
   return gameOptions[gameCode];

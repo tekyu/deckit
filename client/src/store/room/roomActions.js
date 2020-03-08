@@ -17,6 +17,8 @@ export const FETCH_ROOM_REQUEST = `FETCH_ROOM_REQUEST`;
 export const FETCH_ROOM_SUCCESS = `FETCH_ROOM_SUCCESS`;
 export const FETCH_ROOM_FAILURE = `FETCH_ROOM_FAILURE`;
 
+export const UPDATE_ACTIVE_ROOM = `UPDATE_ACTIVE_ROOM`;
+
 export const createRoom = options => async dispatch => {
   dispatch({ type: CREATE_ROOM_REQUEST });
   try {
@@ -74,5 +76,44 @@ export const addMessage = newMessage => ({ type: ADD_MESSAGE, newMessage });
 export const leaveRoom = roomId => {
   return dispatch => {
     dispatch(emitter("LEAVE_ROOM", { roomId }));
+  };
+};
+
+export const updateActiveRoom = roomData => {
+  return dispatch => {
+    dispatch({
+      type: UPDATE_ACTIVE_ROOM,
+      roomData
+    });
+  };
+};
+
+export const updatePlayerInRoom = data => {
+  return dispatch => {
+    dispatch(emitter(`UPDATE_PLAYER`, data));
+  };
+};
+
+export const startGame = ({ activeRoomId }) => {
+  return dispatch => {
+    dispatch(emitter(`START_GAME`, { activeRoomId }));
+  };
+};
+
+export const kickPlayer = ({ userId, activeRoomId, adminId }) => {
+  return dispatch => {
+    dispatch(emitter(`KICK_PLAYER`, { userId, activeRoomId, adminId }));
+  };
+};
+
+export const changeRoomMode = activeRoomId => {
+  return dispatch => {
+    dispatch(emitter(`CHANGE_ROOM_MODE`, { activeRoomId }));
+  };
+};
+
+export const addSeat = activeRoomId => {
+  return dispatch => {
+    dispatch(emitter(`ADD_SEAT`, { activeRoomId }));
   };
 };

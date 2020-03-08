@@ -15,11 +15,12 @@ const ioEvents = (io: any) => {
     );
     socket.pswOptions = {
       rooms: [],
+      socketId: socket.id,
       state: 0 // 0 - waiting | 1 - ready | 3 - paused | 4 - disconnected
     };
     socket.on('getRooms', (data, callback) => {
       socket.join(WAITING_ROOM);
-      console.log('getRooms', socket.pswOptions);
+      console.log('getRooms', Object.keys(io.gameRooms.public));
       socket.pswOptions.rooms.push(WAITING_ROOM);
       callback(io.gameRooms.public);
     });
@@ -44,6 +45,7 @@ const ioEvents = (io: any) => {
         const room = getRoom(id, io.gameRooms);
         const { players } = room;
         room.disconnectPlayer(socket.pswOptions.id);
+        io.in(id).emit('ROOM_UPDATED', room);
         return getRoomObjectForUpdate(room, players > 0 ? 'update' : 'remove');
       });
       if (updatedRooms.length) {

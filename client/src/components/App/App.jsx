@@ -5,6 +5,8 @@ import themes from "assets/themes";
 import ModalContainer from "components/Modals/ModalContainer";
 import { Error } from "components/Generic";
 import { getTemporaryId } from "store/actions";
+import { connect } from "react-redux";
+import { ToastContainer } from "react-toastify";
 import Header from "./Header/Header";
 import Content from "./Content/Content";
 import { checkAuth } from "../../store/user/userActions";
@@ -16,13 +18,17 @@ const App = ({ auth, checkAuth, modalType, error }) => {
   useEffect(() => {
     checkIfAuth();
   }, [checkIfAuth]);
+
   return (
-    <ThemeProvider theme={themes.default}>
-      <Header />
-      <Content />
-      {error && <Error message={error} />}
-      {modalType && <ModalContainer modalType={modalType} />}
-    </ThemeProvider>
+    <>
+      <ThemeProvider theme={themes.default}>
+        <Header />
+        {error && <Error message={error} />}
+        <Content auth={auth} />
+        <ModalContainer modalType={modalType} />
+        <ToastContainer />
+      </ThemeProvider>
+    </>
   );
 };
 

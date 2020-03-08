@@ -3,7 +3,7 @@ import shortId from 'shortid';
 import IRoom from '../interfaces/IRoom';
 import { getGameOptions } from '../utils/gameMapping';
 import mockRooms from '../mocks/Rooms';
-
+import hri from 'human-readable-ids';
 const mockChat = [];
 
 interface CreateRoomOptions {
@@ -58,7 +58,10 @@ export default class Room implements IRoom {
     this.playersMax = playersMax || 10; // check for max players per game (adjustable in gameMapping)
     this.name = name;
     this.gameCode = gameCode;
-    this.id = shortId();
+    this.id = hri.hri
+      .random()
+      .split('-')
+      .join('');
     this.owner = socketId;
     this.admin = socketId;
     this.state = 0;
@@ -122,10 +125,15 @@ export default class Room implements IRoom {
   }
 
   async connectPlayer(playerData: Object) {
-    return this.players.push(playerData);
+    const newPlayerData = { ...playerData };
+    if (this.owner === playerData.id) {
+      newPlayerData.state = 1;
+    }
+    console.log('connectPlayer', playerData);
+    return this.players.push(newPlayerData);
   }
 
-  async disconnectPlayer(id: string) {
+  disconnectPlayer(id: string) {
     return (this.players = this.players.filter((player: any) => {
       return player.id !== id;
     }));

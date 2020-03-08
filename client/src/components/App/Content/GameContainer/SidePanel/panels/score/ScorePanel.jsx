@@ -17,7 +17,6 @@ const StyledContainer = styled.div``;
 const ScorePanel = () => {
   // const user = useSelector(selectUser);
   const activeRoomId = useSelector(selectActiveRoomId);
-  const activeRoom = useSelector(selectActiveRoomId);
   const dispatch = useDispatch();
   const [scoreData, setScoreData] = useState([]);
 

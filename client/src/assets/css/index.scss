@@ -5,6 +5,12 @@
 @import url("https://fonts.googleapis.com/css?family=Playfair+Display:600");
 @import url("https://fonts.googleapis.com/css?family=Hammersmith+One:300,400,500");
 @import url("https://fonts.googleapis.com/css?family=Nothing+You+Could+Do|Shadows+Into+Light");
+@import url("https://fonts.googleapis.com/css?family=Catamaran|Expletus+Sans|Mukta|Pavanam&display=swap");
+body {
+  background: map-get($map: $color-map, $key: "white");
+  font-size: 16px;
+  // font-family: "Hammersmith One";
+  font-family: "Fira Sans";
 
 html,
 body {
@@ -23,5 +29,16 @@ body {
 
 a {
   text-decoration: none;
+  font-size: 14px;
+  font-family: "Hammersmith One";
+  cursor: pointer;
+}
+
+.button,
+.button--primary {
+  border: 0;
+  // background: map-get($map: $color-map, $key: "chilli");
+  background: none;
+  color: map-get($map: $color-map, $key: "black");
   font-family: "Hammersmith One";
 }
