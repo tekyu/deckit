@@ -1,7 +1,6 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
-import { connect, useDispatch } from "react-redux";
 import { checkAuth, emitter, listener, removeListener } from "store/actions";
 import axios from "utils/axios";
 import dynamicSort from "utils/dynamicSort";
@@ -61,23 +60,11 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
       return newRooms;
     });
   };
-  const removeRoomFromList = ({ roomId }) => {
-    setParsedRooms(oldRooms => {
-      const newRooms = { ...oldRooms };
-      delete newRooms[roomId];
-      console.log("removeRoomFromList 0000", newRooms, newRooms[roomId]);
-      return newRooms;
-    });
-  };
 
   useEffect(() => {
     dispatch(listener(`updateListOfRooms`, updateListOfRooms));
-    dispatch(listener(`addRoomToList`, updateListOfRooms));
-    dispatch(listener(`removeRoomFromList`, removeRoomFromList));
     return () => {
       dispatch(removeListener(`updateListOfRooms`, updateListOfRooms));
-      dispatch(removeListener(`addRoomToList`, updateListOfRooms));
-      dispatch(removeListener(`removeRoomFromList`, removeRoomFromList));
     };
   }, []);
   const roomCards = parsedRooms
@@ -105,16 +92,6 @@ Browse.propTypes = {
   auth: PropTypes.bool,
   checkAuth: PropTypes.func.isRequired,
   emitter: PropTypes.func.isRequired
-};
-
-const mapStateToProps = ({
-  roomList: { roomList },
-  user: { isAuthorized }
-}) => {
-  return {
-    isAuthorized,
-    roomList
-  };
 };
 
 export default Browse;
