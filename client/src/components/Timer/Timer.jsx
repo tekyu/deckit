@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import ms from "pretty-ms";
 import Icon from "../Generic/Icon/Icon";
-import styled from "styled-components";
 
 const StyledContainer = styled.div`
   display: flex;

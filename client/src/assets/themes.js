@@ -1,9 +1,10 @@
 const themes = {
   default: {
     background: `#ffffff`,
-    primary: `#6c606e`,
-    secondary: `#6ab187`,
-    font: `#3c3c3c`
+    primary: `#cb3066`,
+    secondary: `#16bffd`,
+    font: `#3c3c3c`,
+    fontSecondary: `#ffffff`
   }
 };
 

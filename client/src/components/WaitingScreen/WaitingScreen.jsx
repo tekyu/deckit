@@ -2,6 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import { listener } from "store/actions";
+import Switch from "@material-ui/core/Switch";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+
+import { useHistory } from "react-router-dom";
+import { toast } from "react-toastify";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import selectActiveRoom from "../../store/selectors/selectActiveRoom";
 import selectUserId from "../../store/selectors/selectUserId";
 import selectUser from "../../store/selectors/selectUser";
@@ -16,21 +23,24 @@ import {
 import Icon from "../Generic/Icon/Icon";
 import { updatedUser } from "../../store/user/userActions";
 import ActionButton from "./ActionButton/ActionButton";
-import { useHistory } from "react-router-dom";
-import { toast } from "react-toastify";
+import PlayerCounterWithIcon from "../Generic/PlayerCounterWithIcon/PlayerCounterWithIcon";
+import $Button from "../Generic/Button/Button.styled";
 
 const StyledContainer = styled.div`
-  background: rgba(255, 0, 0, 0.1);
   width: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
+  box-shadow: 20px 5px 100px rgba(207, 119, 243, 0.1),
+    0px 5px 100px rgba(0, 155, 255, 0.1),
+    -20px 5px 100px rgba(42, 201, 219, 0.1);
+  border-radius: 6px;
+  padding: 5px 20px 30px 20px;
 `;
 
 const StyledHeader = styled.div`
-  background: yellow;
   font-family: "Catamaran";
   width: 100%;
   height: auto;
@@ -38,7 +48,6 @@ const StyledHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  padding: 10px;
   font-size: 18px;
   min-height: 60px;
 `;
@@ -63,7 +72,26 @@ const StyledMode = styled.div`
 `;
 
 const StyledShowIdContainer = styled.div`
-  margin-top: 60px;
+  margin-top: 20px;
+  text-align: center;
+`;
+
+const StyledButton = styled($Button)`
+  /* background: #16bffd; */
+  border-radius: 3px;
+  margin: 20px 0;
+  padding: 16px 32px;
+  /* box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.28); */
+  /* box-shadow: 20px 5px 40px #cf77f3, 0px 5px 40px #009bff,
+    -20px 5px 40px #2ac9db; */
+  box-shadow: 0px 5px 10px rgba(207, 119, 243, 0.3),
+    0px 5px 10px rgba(0, 155, 255, 0.3), 0px 5px 10px rgba(42, 201, 219, 0.3);
+  background-image: linear-gradient(
+    35deg,
+    #2ac9db 0%,
+    #009bff 47%,
+    #cf77f3 120%
+  );
 `;
 
 const StyledHiddenMessage = styled.h3``;
@@ -74,17 +102,13 @@ const WaitingScreen = () => {
   const room = useSelector(selectActiveRoom);
   const myId = useSelector(selectUserId);
   const dispatch = useDispatch();
-  const user = useSelector(selectUser); // change to selectUserState
   const history = useHistory();
 
   useEffect(() => {
-    // console.log(`USEFFECT`, room);
     if (room) {
       setIsAdmin(myId === room.admin);
     }
   }, [myId, room]);
-
-  // const getKickedHandler = useCallback
 
   useEffect(() => {
     dispatch(
@@ -121,19 +145,29 @@ const WaitingScreen = () => {
               {room.mode}
             </StyledMode>
             <StyledTitle>{room.name}</StyledTitle>
-            <Timer time={3} />
+            <PlayerCounterWithIcon
+              playersNow={room.players.length}
+              playersMax={room.playersMax}
+            />
           </StyledHeader>
           <StyledShowIdContainer>
             {!hideMessage && (
               <StyledHiddenMessage>
-                <button>{room.id}</button> is your room ID. Share it to friends
-                or click on it to copy
+                <p>This is your room id</p>
+                <p> Share it to friends or click on it to copy</p>
+                <CopyToClipboard text={room.id}>
+                  <StyledButton>{room.id}</StyledButton>
+                </CopyToClipboard>
               </StyledHiddenMessage>
             )}
-            <label>
-              <input type="checkbox" onClick={hideMessageHandler} /> Hide this
-              message
-            </label>
+            <FormControlLabel
+              label={
+                hideMessage ? "Show id to share room" : `Hide this message`
+              }
+              control={
+                <Checkbox defaultChecked onChange={hideMessageHandler} />
+              }
+            />
           </StyledShowIdContainer>
           {room && room.id && (
             <PlayersList
@@ -143,20 +177,20 @@ const WaitingScreen = () => {
               room={room}
             />
           )}
-          <div>
-            <h4>Options</h4>
-            <label onClick={changeRoomModeHandler}>
-              <Icon
-                size={20}
-                icon={room.mode === "private" ? "tickBox" : "tickBoxUnchecked"}
+          {isAdmin && (
+            <div>
+              <h4>Options</h4>
+              <FormControlLabel
+                label="Private room"
+                control={
+                  <Switch
+                    checked={room.mode === "private"}
+                    onChange={changeRoomModeHandler}
+                  />
+                }
               />
-              Private room
-              {/* {room.mode === `public` ? ` private` : ` public`} */}
-            </label>
-            {room.mode === "private" && (
-              <p>Changing to public will show your room to everyone</p>
-            )}
-          </div>
+            </div>
+          )}
           <ActionButton />
         </StyledContainer>
       )}

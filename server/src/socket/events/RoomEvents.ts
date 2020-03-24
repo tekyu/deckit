@@ -82,16 +82,17 @@ export const RoomEvents = function(socket: any, io: any) {
     socket.emit('UPDATE_PLAYER', { rooms: socket.pswOptions.rooms });
     room
       .connectPlayer(socket.pswOptions)
-      .then(({ roomOptions }) => {
+      .then(({ players }) => {
         const updatedRoomObject = [
-          getRoomObjectForUpdate(room, room.players > 0 ? 'update' : 'add')
+          getRoomObjectForUpdate(room, players > 0 ? 'update' : 'add')
         ];
-        console.log('ROOM_UPDATED', roomOptions, room);
-        io.in(roomId).emit('ROOM_UPDATED', room);
+        console.log('ROOM_UPDATED', room.roomOptions);
+        // socket.emit('ROOM_UPDATED', { ...room });
+        callback(room.roomOptions);
+        socket.to(roomId).emit('ROOM_UPDATED', { players });
         if (room.mode === 'public') {
           io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
         }
-        callback(room.roomOptions);
       })
       .catch(error => {
         Error(
@@ -126,7 +127,14 @@ export const RoomEvents = function(socket: any, io: any) {
     socket.emit('UPDATE_PLAYER', { rooms: socket.pswOptions.rooms });
     socket.join(WAITING_ROOM);
 
-    io.in(roomId).emit('ROOM_UPDATED', room.roomOptions);
+    io.in(roomId).emit('ROOM_UPDATED', { players: room.players });
+  });
+
+  socket.on('CHECK_FOR_ROOM', ({ id }, callback: Function) => {
+    const room = getRoom(id, io.gameRooms);
+    console.log('CHECK_FOR_ROOM', id, room);
+
+    callback(room ? true : false);
   });
 
   socket.on('GET_ROOM_INFO', (params: Object, callback: Function) => {
@@ -143,7 +151,7 @@ export const RoomEvents = function(socket: any, io: any) {
   socket.on('getScoreData', ({ activeRoomId }, callback: Function) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     // console.log('getScoreData', room.players, activeRoomId);
-    callback(room.players);
+    callback(room.scoreboard);
   });
 
   socket.on('UPDATE_PLAYER', ({ data, activeRoomId, playerId }) => {
@@ -158,14 +166,17 @@ export const RoomEvents = function(socket: any, io: any) {
     const arePlayersReady = room.players.some(({ state }) => state === 1);
     room.state = arePlayersReady ? 1 : 0;
     console.log('UPDATE_PLAYER', data, activeRoomId, playerId, room.players);
-    io.in(activeRoomId).emit('ROOM_UPDATED', room);
+    io.in(activeRoomId).emit('ROOM_UPDATED', {
+      players: room.players,
+      state: room.state
+    });
   });
 
   socket.on('KICK_PLAYER', ({ userId, activeRoomId, adminId }) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     const player = room.players.find(({ id }) => id === userId);
     room.players = room.players.filter(({ id }) => id !== userId);
-    io.in(activeRoomId).emit('ROOM_UPDATED', room);
+    io.in(activeRoomId).emit('ROOM_UPDATED', { players: room.players });
     io.to(player.socketId).emit('KICKED', { activeRoomId });
     io.in(WAITING_ROOM).emit('updateListOfRooms', [
       getRoomObjectForUpdate(room, 'update')
@@ -179,7 +190,7 @@ export const RoomEvents = function(socket: any, io: any) {
     } else {
       room.mode = 'public';
     }
-    io.in(activeRoomId).emit('ROOM_UPDATED', room);
+    io.in(activeRoomId).emit('ROOM_UPDATED', { mode: room.mode });
     io.in(WAITING_ROOM).emit('updateListOfRooms', [
       getRoomObjectForUpdate(room, room.mode === 'public' ? 'update' : 'remove')
     ]);
@@ -188,8 +199,16 @@ export const RoomEvents = function(socket: any, io: any) {
   socket.on('ADD_SEAT', ({ activeRoomId }) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     room.playersMax += 1;
-    io.in(activeRoomId).emit('ROOM_UPDATED', room);
-    console.log('CANNOT START GAME // PLAYERS NOT READY');
+    io.in(activeRoomId).emit('ROOM_UPDATED', { playersMax: room.playersMax });
+    io.in(WAITING_ROOM).emit('updateListOfRooms', [
+      getRoomObjectForUpdate(room, 'update')
+    ]);
+  });
+
+  socket.on('REMOVE_SEAT', ({ activeRoomId }) => {
+    const room = getRoom(activeRoomId, io.gameRooms);
+    room.playersMax -= 1;
+    io.in(activeRoomId).emit('ROOM_UPDATED', { playersMax: room.playersMax });
     io.in(WAITING_ROOM).emit('updateListOfRooms', [
       getRoomObjectForUpdate(room, 'update')
     ]);

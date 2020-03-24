@@ -3,6 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { openModal } from "store/actions";
 import * as styles from "./AccountBox.module.scss";
+import Icon from "../../../Generic/Icon/Icon";
 
 class AccountBox extends Component {
   state = {
@@ -23,26 +24,27 @@ class AccountBox extends Component {
     if (this.props.user.user) {
       return this.renderUser();
     }
-    return (
-      <React.Fragment>
-        <button
-          onClick={this.openModalHandler}
-          name="register"
-          type="button"
-          className="button--secondary"
-        >
-          Join
-        </button>
-        <button
-          onClick={this.openModalHandler}
-          type="button"
-          name="login"
-          className="button--primary"
-        >
-          Login
-        </button>
-      </React.Fragment>
-    );
+    return null;
+    // return (
+    //   <React.Fragment>
+    //     <button
+    //       onClick={this.openModalHandler}
+    //       name="register"
+    //       type="button"
+    //       className="button--secondary"
+    //     >
+    //       Join
+    //     </button>
+    //     <button
+    //       onClick={this.openModalHandler}
+    //       type="button"
+    //       name="login"
+    //       className="button--primary"
+    //     >
+    //       Login
+    //     </button>
+    //   </React.Fragment>
+    // );
   }
 
   getAnonymousUserDropdown() {
@@ -107,18 +109,15 @@ class AccountBox extends Component {
       <div className={styles.container}>
         <div className={styles.display}>
           <div className={styles.avatar}>
-            <img
-              src={
-                this.props.auth
-                  ? this.state.userData.avatar
-                  : `https://via.placeholder.com/40x40`
-              }
-              alt="Users avatar"
-            />
+            {this.props.auth ? (
+              <img src={this.state.userData.avatar} alt="Users avatar" />
+            ) : (
+              <Icon icon="user" size={40} />
+            )}
           </div>
           <span className={styles.name}>{this.props.user.user.username}</span>
         </div>
-        {this.renderDropdown()}
+        {/* {this.renderDropdown()} */}
       </div>
     );
   }

@@ -2,14 +2,14 @@ import getRandomCard from './getRandomCard';
 import checkForDuplicate from './checkForDuplicate';
 import removeCardFromList from './removeCardFromList';
 
-export default function(player: Object, initialCards: Array) {
-  if (!initialCards.length > 0) {
+export default function({ cards }: Array, remainingCards: Array) {
+  if (!remainingCards.length > 0) {
     return null;
   }
-  let { randomCard, randomIndex } = getRandomCard(initialCards);
-  if (checkForDuplicate(randomCard, player.cards)) {
+  let { randomCard, randomIndex } = getRandomCard(remainingCards);
+  if (checkForDuplicate(randomCard, cards)) {
     return null;
   }
-  removeCardFromList(randomIndex, initialCards);
+  removeCardFromList(randomIndex, remainingCards);
   return randomCard;
 }

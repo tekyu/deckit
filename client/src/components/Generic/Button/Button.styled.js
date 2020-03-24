@@ -1,14 +1,19 @@
 import styled from "styled-components";
 
 const $Button = styled.button`
-  background: ${props => props.theme.secondary};
+  background-image: linear-gradient(
+    35deg,
+    #2ac9db 0%,
+    #009bff 47%,
+    #cf77f3 120%
+  );
   border: 0;
-  color: ${props => props.theme.font};
+  color: ${props => props.theme.fontSecondary};
   cursor: pointer;
   font-family: "Hammersmith One";
   font-size: 14px;
-  letter-spacing: 0.1em;
-  padding: 7px 21px;
+  letter-spacing: 0.04em;
+  padding: 14px 21px;
   ${props => props.styles}
 `;
 

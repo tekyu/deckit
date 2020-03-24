@@ -3,10 +3,18 @@ import PropTypes from "prop-types";
 import { connect, useDispatch } from "react-redux";
 import { checkAuth, emitter, listener, removeListener } from "store/actions";
 import axios from "utils/axios";
+import styled from "styled-components";
 import dynamicSort from "utils/dynamicSort";
 import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
 import * as styles from "./Browse.module.scss";
+import RoomJoining from "./RoomJoining/RoomJoining";
+
+const StyledSeparator = styled.div`
+  text-align: center;
+  margin: 24px 0;
+  font-size: 18px;
+`;
 
 const Browse = ({ auth, checkAuth, emitter, rooms }) => {
   const [parsedRooms, setParsedRooms] = useState([]);
@@ -90,10 +98,9 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
     : null;
   return (
     <>
-      <button type="button" onClick={refreshList}>
-        Refresh
-      </button>
+      <RoomJoining />
       {/* <Sort sortHandler={sortHandler} /> */}
+      <StyledSeparator>Browse rooms</StyledSeparator>
       {roomCards && (
         <div className={styles[`browse__cardlist-container`]}>{roomCards}</div>
       )}

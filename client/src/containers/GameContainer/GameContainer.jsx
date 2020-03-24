@@ -17,6 +17,11 @@ import SidePanel from "./SidePanel/SidePanel";
 import { leaveRoom, updateActiveRoom } from "../../store/room/roomActions";
 import WaitingScreen from "../../components/WaitingScreen/WaitingScreen";
 import selectActiveRoom from "../../store/selectors/selectActiveRoom";
+import {
+  updateMyCardsListener,
+  removeUpdateMyCardsListener,
+  updateGameOptionsListener
+} from "../../store/deckit/deckitActions";
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
@@ -25,6 +30,7 @@ import selectActiveRoom from "../../store/selectors/selectActiveRoom";
 
 const Container = styled.div`
   display: flex;
+  align-items: center;
   width: 100%;
   height: calc(100vh - 70px - 40px);
 `;
@@ -39,11 +45,20 @@ const GameContainer = () => {
   const [roomInfo, setRoomInfo] = useState(null);
   const [GameComponent, setGameComponent] = useState(null);
   const [panels, setPanels] = useState({});
+
+  useEffect(() => {
+    dispatch(updateMyCardsListener());
+    dispatch(updateGameOptionsListener());
+    return () => {
+      dispatch(removeUpdateMyCardsListener());
+    };
+  }, []);
+
   const getRoomInfo = useCallback(
     id => {
       dispatch(
         emitter(JOIN_ROOM, { roomId: id, userData }, roomData => {
-          console.log("[GameContainer joinroom]", userData);
+          console.log("[GameContainer joinroom]", roomData);
           dispatch(updateActiveRoom(roomData));
         })
       );
@@ -61,8 +76,8 @@ const GameContainer = () => {
 
   useEffect(() => {
     if (activeRoom && activeRoom.state >= 2) {
-      const { gameCode } = activeRoom;
-      setGameComponent(getGame(gameCode));
+      const { gameCode, id } = activeRoom;
+      setGameComponent(getGame(gameCode, id));
       setPanels(gameMapping[gameCode].panels);
     }
   }, [activeRoom]);
@@ -85,12 +100,6 @@ const GameContainer = () => {
       dispatch(setActiveRoom());
     };
   }, [dispatch, id]);
-
-  // useEffect(() => {
-  //   return () => {
-  //     dispatch(setActiveRoom());
-  //   };
-  // }, [dispatch]);
 
   useEffect(() => {
     if (!userData) {

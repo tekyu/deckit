@@ -16,10 +16,10 @@ export function inputOnChangeHandler(options, event) {
     `[INPUT] Changing state of ${event.target.name} from ${
       this.state[event.target.name]
     } to ${change[event.target.name]}`,
-    options.keys.indexOf(event.key.toLowerCase()) != -1
+    options.keys.indexOf(event.key.toLowerCase()) !== -1
   );
   this.setState(() => change);
-  if (options.keys.indexOf(event.key.toLowerCase()) != -1) {
+  if (options.keys.indexOf(event.key.toLowerCase()) !== -1) {
     change[event.target.name] = "";
     this.setState(() => change);
     options.handler();

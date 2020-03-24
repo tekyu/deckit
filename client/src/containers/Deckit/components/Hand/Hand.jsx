@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import Card from "../Card/Card";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import selectUser from "../../../../store/selectors/selectUser";
 import selectActiveRoom from "../../../../store/selectors/selectActiveRoom";
+import selectMyCards from "../../../../store/deckit/selectors/selectMyCards";
+import {
+  updateMyCardsListener,
+  removeUpdateMyCardsListener
+} from "../../../../store/deckit/deckitActions";
+import selectGameStage from "../../../../store/deckit/selectors/selectGameStage";
+import selectHinter from "../../../../store/deckit/selectors/selectHinter";
 
 const StyledContainer = styled.div`
   bottom: 0;
@@ -19,32 +26,31 @@ const StyledContainer = styled.div`
   }
 `;
 
-const getCards = (cards, isHinter) => {
+const getCards = (cards, state) => {
   return cards.map(card => {
-    return <Card {...card} isHinter={isHinter} />;
+    return <Card card={card} key={card.id} state={state} />;
   });
 };
 
-const getState = (hinter, stage, userId) => {
-  if (hinter === userId && stage === 2) {
+const getState = (hinterId, stage, userId) => {
+  if (stage === 2 && hinterId === userId) {
     return "hinter";
   }
-  if (stage === 3) {
+  if (stage === 3 && hinterId !== userId) {
     return "picker";
   }
   return null;
 };
 
 const Hand = () => {
-  const activeRoom = useSelector(selectActiveRoom);
+  // const dispatch = useDispatch();
+  // const activeRoom = useSelector(selectActiveRoom);
+  const cards = useSelector(selectMyCards);
+  const hinter = useSelector(selectHinter);
+  const stage = useSelector(selectGameStage);
   const user = useSelector(selectUser); // select cards from user
-  const {
-    gameOptions: { hinter, stage }
-  } = activeRoom;
-  const state = getState(hinter, stage, user.id);
-  return (
-    <StyledContainer>{user && getCards(user.cards, state)}</StyledContainer>
-  );
+  const state = getState(hinter.id, stage, user.id);
+  return <StyledContainer>{cards && getCards(cards, state)}</StyledContainer>;
 };
 
 export default Hand;

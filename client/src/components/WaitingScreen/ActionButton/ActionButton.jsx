@@ -1,8 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import styled from "styled-components";
 import selectUser from "../../../store/selectors/selectUser";
 import selectActiveRoom from "../../../store/selectors/selectActiveRoom";
 import { startGame, updatePlayerInRoom } from "../../../store/room/roomActions";
+
+const StyledButton = styled.button`
+  border: 0;
+  background: #cb3066;
+  border-radius: 3px;
+  ${({ isReady }) =>
+    isReady &&
+    `
+    background: transparent;
+    background-image: linear-gradient(
+    35deg,
+    #2ac9db -10%, #009bff 47%,
+    #cf77f3 130%
+  );
+    `}
+  color: #fff;
+  font-family: "Hammersmith One";
+  font-size: 14px;
+  padding: 16px 32px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease-out;
+  box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.28);
+  &:focus,
+  &:hover,
+  &:active {
+    box-shadow: 0px 2px 14px 0px rgba(0, 0, 0, 0.28);
+  }
+`;
+
 const ActionButton = () => {
   const { id: userId, state: userState } = useSelector(selectUser);
   const { id: activeRoomId, admin: adminId, players } = useSelector(
@@ -56,18 +88,19 @@ const ActionButton = () => {
     const hasNotReadyPlayers = players.filter(({ state }) => state === 0)
       .length;
     return (
-      <button
-        isDisabled={hasNotReadyPlayers || players.length < 2}
+      <StyledButton
+        isReady={hasNotReadyPlayers || players.length < 2 ? false : true}
+        isdisabled={(hasNotReadyPlayers || players.length < 2).toString()}
         onClick={startGameHandler}
       >
         {getButtonText(players, hasNotReadyPlayers)}
-      </button>
+      </StyledButton>
     );
   }
   return (
-    <button onClick={readyHandler}>
+    <StyledButton onClick={readyHandler} isReady={playerState === 0}>
       {playerState === 0 ? `Ready` : `Not Ready`}
-    </button>
+    </StyledButton>
   );
 };
 

@@ -1,7 +1,12 @@
-export const calculateRoundPoints = room => {
-  const hintedCard = room.hintCard;
-  const hinter = room.hinter;
-  // const hinterPlayer = findPlayer(room.playersConnected, hinter);
+import cloneDeep from 'clone-deep';
+import chalk from 'chalk';
+
+export const calculateRoundPoints = (
+  scoreboard,
+  { hintCard, hinter, choosedCardsToMatchHint, pickedCardsToHint }
+) => {
+  console.log('calculateRoundPoints', scoreboard);
+  let newScoreboard = cloneDeep(scoreboard);
   /**
    * RULES
    * If all players find the hinter card
@@ -12,92 +17,94 @@ export const calculateRoundPoints = room => {
    * * hinter: 3pts, players who found: 3pts, + bonus per vote
    */
 
-  // if all players find the hinter card
-  const cardsEqualToHinterCard = room.roundCards.filter(card => {
-    return card.card === hintedCard.id;
-  });
-
-  if (cardsEqualToHinterCard.length === room.roundCards.length) {
+  // if all players found hintCard
+  const cardsEqualToHinterCard = choosedCardsToMatchHint.filter(
+    ({ card: { id } }) => {
+      console.log('cardsEqualToHinterCard [0]', id, hintCard.id);
+      return id === hintCard.id;
+    }
+  );
+  const numberOfCardsEqualToHintCard = cardsEqualToHinterCard.length;
+  console.log(
+    'cardsEqualToHinterCard',
+    cardsEqualToHinterCard,
+    numberOfCardsEqualToHintCard
+  );
+  if (numberOfCardsEqualToHintCard === choosedCardsToMatchHint.length) {
     // all players have found a hint card
     // hinter: 0pts, others: 2pts
-    room.playersConnected = room.playersConnected.map(player => {
-      player.score = player.id !== hinter ? +(player.score + 2) : player.score;
-      return player;
-    });
     console.log(
       chalk.bgMagenta(
         'all players have found a hint card, hinter: 0pts, others: 2pts'
       ),
-      room.playersConnected
+      newScoreboard,
+      'cardsEqualToHinterCard',
+      cardsEqualToHinterCard,
+      'choosedCardsToMatchHint',
+      choosedCardsToMatchHint
     );
-    // return room;
-  } else if (cardsEqualToHinterCard.length === 0) {
-    // no player have found a hint card
-    // hinter: 0pts, others: 2pts + bonus per vote
-    const _tempRoom = { ...room };
-    _tempRoom.playersConnected = _tempRoom.playersConnected.map(player => {
-      player.score = player.id !== hinter ? +(player.score + 2) : player.score;
-      return player;
+    Object.entries(newScoreboard).forEach(([id]) => {
+      if (hinter.id !== id) {
+        newScoreboard[id] += 2;
+      }
+    });
+  } else if (numberOfCardsEqualToHintCard === 0) {
+    Object.entries(newScoreboard).forEach(([id]) => {
+      if (hinter.id !== id) {
+        newScoreboard[id] += 2;
+        console.log('UPDATE SCOREBOARD [1]', id, newScoreboard);
+      }
     });
     // bonus
-    _tempRoom.roundCards.forEach(card => {
-      const ownerOfTheCard = findPlayerByCardId(
-        _tempRoom.playersConnected,
-        card.card
-      );
-      // if (ownerOfTheCard.id !== hinter) {
-      //     ownerOfTheCard.score = ownerOfTheCard.score + 1;
-      // }
-      if (ownerOfTheCard.id !== hinter) {
-        ownerOfTheCard.score = +(ownerOfTheCard.score + 1);
+    choosedCardsToMatchHint.forEach(({ owner: { id }, card }) => {
+      if (id !== hinter.id) {
+        newScoreboard[id] += 1;
+        console.log('UPDATE SCOREBOARD [2]', id, card, newScoreboard);
       }
-      _tempRoom.playersConnected = updatePlayer(
-        _tempRoom.playersConnected,
-        ownerOfTheCard
-      );
-      room = { ...room, ..._tempRoom };
     });
     console.log(
       chalk.bgMagenta(
         'no player have found a hint card, hinter: 0pts, others: 2pts + bonus 1pts ea.'
       ),
-      room.playersConnected
+      newScoreboard,
+      'cardsEqualToHinterCard',
+      cardsEqualToHinterCard,
+      'choosedCardsToMatchHint',
+      choosedCardsToMatchHint
     );
   } else {
-    const _tempRoom = { ...room };
-    _tempRoom.roundCards.forEach(card => {
-      const ownerOfTheCard = findPlayerByCardId(
-        _tempRoom.playersConnected,
-        card.card
-      );
-      if (ownerOfTheCard.id !== hinter) {
-        ownerOfTheCard.score = ownerOfTheCard.score + 1;
+    newScoreboard[hinter.id] += 3;
+    console.log('[1]', newScoreboard, hinter.id, hinter);
+    cardsEqualToHinterCard.forEach(({ chooser }) => {
+      newScoreboard[chooser] += 3;
+      console.log('[2]', newScoreboard, chooser);
+    });
+    choosedCardsToMatchHint.forEach(({ owner }) => {
+      if (owner.id !== hinter.id) {
+        newScoreboard[owner.id] += 1;
+        console.log('[3]', newScoreboard, owner.id, owner);
       }
-      _tempRoom.playersConnected = updatePlayer(
-        _tempRoom.playersConnected,
-        ownerOfTheCard
-      );
     });
-    cardsEqualToHinterCard.forEach(card => {
-      hinterPlayer.score = hinterPlayer.score + 3;
-      let ownerOfTheCard = findPlayerByCardId(
-        _tempRoom.playersConnected,
-        card.card
-      );
-      ownerOfTheCard.score = ownerOfTheCard.score + 3;
-
-      _tempRoom.playersConnected = updatePlayer(
-        _tempRoom.playersConnected,
-        ownerOfTheCard
-      );
-    });
-    room = { ...room, ..._tempRoom };
     console.log(
       chalk.bgMagenta(
         'normal round score, hinter: 3pts, players who found: 3pts + bonus 1pts ea., others: bonus 1pts ea.'
       ),
-      room.playersConnected
+      newScoreboard,
+      'cardsEqualToHinterCard',
+      cardsEqualToHinterCard,
+      'choosedCardsToMatchHint',
+      choosedCardsToMatchHint
     );
   }
-  return room.playersConnected;
+  console.log('SCOREBOARD BEFORE RETURN', newScoreboard);
+  return newScoreboard;
 };
+
+/**
+  returned scoreboard
+  {
+    id: score,
+    id: score
+  }
+
+*/

@@ -1,4 +1,4 @@
-export default function(index, initialCards) {
-  // initialCards hold reference to room initial cards
-  initialCards.splice(index, 1);
+export default function(index, remainingCards) {
+  // remainingCards hold reference to room initial cards
+  remainingCards.splice(index, 1);
 }

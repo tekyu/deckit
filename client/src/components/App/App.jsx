@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
+import { StylesProvider } from "@material-ui/core/styles";
 import { ThemeProvider } from "styled-components";
 import themes from "assets/themes";
 import { connect } from "react-redux";
@@ -20,13 +21,15 @@ const App = ({ auth, checkAuth, modalType, error }) => {
 
   return (
     <>
-      <ThemeProvider theme={themes.default}>
-        <Header />
-        {error && <Error message={error} />}
-        <Content auth={auth} />
-        <ModalContainer modalType={modalType} />
-        <ToastContainer />
-      </ThemeProvider>
+      <StylesProvider injectFirst>
+        <ThemeProvider theme={themes.default}>
+          <Header />
+          {error && <Error message={error} />}
+          <Content auth={auth} />
+          <ModalContainer modalType={modalType} />
+          <ToastContainer />
+        </ThemeProvider>
+      </StylesProvider>
     </>
   );
 };

@@ -1,3 +1,5 @@
+import cloneDeep from 'clone-deep';
+
 export const gameMapping = {
   d: 'Deckit',
   k: 'Państwa Miasta'
@@ -6,14 +8,18 @@ export const gameMapping = {
 export const gameOptions = {
   d: {
     decks: [],
-    stage: 0, // 0 - idle | 1 - initialGiveaway | 2 - pickHint | 3 - pickCard | 4 - chooseCards | 5 - awardPoints | 6 - checkGame | 7 - cardShuffle
+    stage: 0, // 0 - idle | 1 - initialGiveaway | 2 - pickHint | 3 - pickCard | 4 - chooseCards | 5 - awardPoints | 6 - checkGame | 7 - cardShuffle | 8 - ended
     round: 0,
-    initialCards: [],
+    remainingCards: [],
     hint: '',
     hinter: null,
     hintCard: {},
     maxScore: 30,
-    score: 0,
+    choosedCardsToMatchHint: [],
+    pickedCardsToHint: [],
+    playersPickedCard: [],
+    playersChoosedCard: [],
+    scoreboard: {},
     playerModel: {
       id: null,
       nickname: '',
@@ -52,5 +58,5 @@ export const getGameOptions = gameCode => {
   if (!gameOptions[gameCode]) {
     throw Error(`Game ${gameCode} is not defined within mapping`);
   }
-  return gameOptions[gameCode];
+  return cloneDeep(gameOptions[gameCode]);
 };

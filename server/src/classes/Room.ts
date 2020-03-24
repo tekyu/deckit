@@ -37,6 +37,7 @@ export default class Room implements IRoom {
   createdAt: number;
   gameOptions: Object;
   chat: Array<Object>;
+  scoreboard: Object;
 
   constructor(
     { mode, playersMax, gameCode, gameOptions, name = '' }: CreateRoomOptions,
@@ -56,6 +57,7 @@ export default class Room implements IRoom {
     this.players = [];
     this.winners = [];
     this.createdAt = Date.now();
+    this.scoreboard = {};
     this.gameOptions = gameOptions
       ? Object.assign(gameOptions, getGameOptions(gameCode))
       : getGameOptions(gameCode);
@@ -75,6 +77,7 @@ export default class Room implements IRoom {
       owner,
       admin,
       state,
+      scoreboard,
       players,
       winners,
       createdAt
@@ -88,6 +91,7 @@ export default class Room implements IRoom {
       owner,
       admin,
       state,
+      scoreboard,
       players,
       winners,
       createdAt
@@ -107,8 +111,13 @@ export default class Room implements IRoom {
     };
   }
 
-  setWinners(id: string) {
-    this.winners.push(id);
+  setWinners() {
+    this.winners = Object.entries(this.scoreboard).filter(([id, score]) => {
+      if (score >= this.gameOptions.maxScore) {
+        return id;
+      }
+    });
+    return this.winners.length;
   }
 
   async connectPlayer(playerData: Object) {

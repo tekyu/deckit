@@ -45,7 +45,7 @@ const ioEvents = (io: any) => {
         const room = getRoom(id, io.gameRooms);
         const { players } = room;
         room.disconnectPlayer(socket.pswOptions.id);
-        io.in(id).emit('ROOM_UPDATED', room);
+        io.in(id).emit('ROOM_UPDATED', { players });
         return getRoomObjectForUpdate(room, players > 0 ? 'update' : 'remove');
       });
       if (updatedRooms.length) {

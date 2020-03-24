@@ -6,6 +6,8 @@ import { getGameMapping } from "../../../utils/gameMapping";
 import Player from "./Player/Player";
 import Icon from "../../Generic/Icon/Icon";
 import Loader from "../../Generic/Loader/Loader";
+import EmptySeat from "./EmptySeat/EmptySeat";
+import AddSeat from "./AddSeat/AddSeat";
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -48,49 +50,11 @@ const PlayersList = ({ players, room, isAdmin, myId }) => {
     const emptySeats = Array.from({
       length: room.playersMax - players.length
     }).map((v, i) => {
-      return (
-        <div
-          key={i}
-          style={{
-            margin: "0 10px 20px 10px"
-          }}
-        >
-          <div
-            style={{
-              width: "100px",
-              height: "100px",
-              borderRadius: "100px"
-            }}
-          >
-            <Icon icon="user" size={100} />
-          </div>
-          {isAdmin && <button>Invite</button>}
-        </div>
-      );
+      return <EmptySeat roomId={room.id} isAdmin={isAdmin} key={i} />;
     });
     const waitingList = [...players, ...emptySeats];
     if (room.admin === myId && waitingList.length < allowedPlayers) {
-      const addPlayer = (
-        <div
-          key="addplayer"
-          style={{
-            margin: "0 10px 20px 10px"
-          }}
-        >
-          <div
-            style={{
-              width: "100px",
-              height: "100px",
-              borderRadius: "100px"
-            }}
-            onClick={addSeatHandler}
-          >
-            <Icon icon="plus" size={60} />
-            Add seat
-          </div>
-        </div>
-      );
-      waitingList.push(addPlayer);
+      waitingList.push(<AddSeat handler={addSeatHandler} />);
     }
     console.log(
       "WAITINGLIST",

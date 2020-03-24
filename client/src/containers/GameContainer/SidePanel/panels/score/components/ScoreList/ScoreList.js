@@ -1,17 +1,41 @@
-import React, { memo } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import ScoreElement from "../ScoreElement";
+import selectScoreboard from "../../../../../../../store/selectors/selectScoreboard";
+import selectPlayers from "../../../../../../../store/selectors/selectPlayers";
+import selectActiveRoom from "../../../../../../../store/selectors/selectActiveRoom";
+import selectMaxScore from "../../../../../../../store/deckit/selectors/selectMaxScore";
 
 const StyledContainer = styled.div`
   height: 100%;
   overflow-y: auto;
 `;
 
-const ScoreList = ({ data = [] }) => {
-  const scores = data.map(score => {
-    return <ScoreElement key={score.id} data={score} />;
-  });
-  return <StyledContainer>{scores}</StyledContainer>;
+const ScoreList = () => {
+  const { players, scoreboard } = useSelector(selectActiveRoom);
+  const maxScore = useSelector(selectMaxScore);
+  const [playersList, setPlayersList] = useState([]);
+  useEffect(() => {
+    console.log("ScoreList ActiveRoom", players, scoreboard);
+  }, [players, scoreboard]);
+  useEffect(() => {
+    setPlayersList(() => {
+      return players.map(player => {
+        console.log("ScoreList ScoreElement", player, scoreboard[player.id]);
+        return (
+          <ScoreElement
+            key={player.id}
+            player={player}
+            score={scoreboard[player.id]}
+            progress={(scoreboard[player.id] / maxScore) * 100}
+          />
+        );
+      });
+    });
+  }, [players, scoreboard]);
+  console.log("ScoreList", scoreboard, players);
+  return <StyledContainer>{playersList}</StyledContainer>;
 };
 
-export default memo(ScoreList);
+export default ScoreList;

@@ -9,24 +9,13 @@ import {
 } from "../../../../store/room/roomActions";
 
 const StyledContainer = styled.div`
-  ${({ itsMe }) =>
-    itsMe &&
-    `
-    background: red;
-  `}
-
-  border: 1px solid black;
-  ${({ isAdmin }) =>
-    isAdmin &&
-    `
-    border:1px solid green;
-  `}
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  position: relative;
   width: 140px;
-  margin: 0 10px 20px 10px;
+  height: 200px;
+  margin: 0 10px 10px 10px;
 `;
 
 const StyledUserIcon = styled.div`
@@ -34,17 +23,51 @@ const StyledUserIcon = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 50px;
-  margin: 15px 0;
   position: relative;
+  margin-top: 20px;
+  transition: box-shadow 0.1s ease-in-out;
+  ${({ isReady }) =>
+    isReady &&
+    `
+    box-shadow: 0px 0px 60px 5px #68CAA0;
+  `}
+`;
+
+const StyledRemoveIcon = styled(Icon)`
+  background: #cb3066;
+  color: #fff;
+  border-radius: 100%;
+  position: absolute;
+  padding: 2px;
+  top: 5px;
+  left: 5px;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease-in;
+  &:focus,
+  &:hover {
+    box-shadow: 0px 0px 7px 0px rgba(80, 19, 40, 0.28);
+  }
 `;
 
 const StyledUsername = styled.h3`
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  text-align: center;
   font-size: 14px;
   font-weight: 600;
   font-family: "Catamaran";
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+`;
+
+const StyledAdminCrown = styled(Icon)`
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
 `;
 
 const StyledYou = styled(Icon)`
@@ -72,56 +95,30 @@ const Player = ({
   amIAdmin
 }) => {
   const dispatch = useDispatch();
-  // const readyHandler = () => {
-  //   dispatch(
-  //     updatePlayerInRoom({
-  //       activeRoomId: roomId,
-  //       playerId: id,
-  //       data: { state: state === 0 ? 1 : 0 }
-  //     })
-  //   );
-  // };
-  // console.log("PLAYER", {
-  //   id,
-  //   state,
-  //   username,
-  //   color,
-  //   admin,
-  //   isAdmin,
-  //   isAnon,
-  //   isOwner,
-  //   avatar,
-  //   roomId
-  // });
 
   const getPlayerState = () => {
-    if (state !== 0) {
-      return <span>READY</span>;
-    }
-    if (!itsMe) {
+    if (state === 0 && !itsMe) {
       return <Loader />;
     }
     return null;
   };
 
   const kickPlayerHandler = () => {
-    console.log("kickPlayerHandler", {
-      userId: id,
-      activeRoomId: roomId,
-      adminId: myId
-    });
     dispatch(kickPlayer({ userId: id, activeRoomId: roomId, adminId: myId }));
   };
 
-  console.log(`PLAYER ${username} state: ${state}`);
   const canKickPlayer = !itsMe && amIAdmin;
   return (
     <StyledContainer key={id} id={id} itsMe={itsMe} isAdmin={isAdmin}>
-      {isAdmin && <Icon icon="crown" size={30} />}
-      <StyledUserIcon color={color}>
+      <StyledUserIcon color={color} isReady={state}>
+        {isAdmin && <StyledAdminCrown icon="crown" size={30} />}
         {itsMe && <StyledYou color={color} icon="user" size={30} />}
         {canKickPlayer && (
-          <Icon onClick={kickPlayerHandler} icon="cancel" size={30} />
+          <StyledRemoveIcon
+            onClick={kickPlayerHandler}
+            icon="cancel"
+            size={30}
+          />
         )}
         {isAnon ? (
           <Icon icon="user" size={100} />
@@ -130,11 +127,6 @@ const Player = ({
         )}
       </StyledUserIcon>
       <StyledUsername>{username}</StyledUsername>
-      {/* {itsMe && !isOwner && (
-        <button onClick={readyHandler}>
-          {state === 0 ? "Ready" : "Not Ready"}
-        </button>
-      )} */}
       {getPlayerState()}
     </StyledContainer>
   );
