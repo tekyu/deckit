@@ -9,6 +9,7 @@ import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
 import * as styles from "./Browse.module.scss";
 import RoomJoining from "./RoomJoining/RoomJoining";
+import Carousel1 from "../../../Carousel1";
 
 const StyledSeparator = styled.div`
   text-align: center;
@@ -21,7 +22,6 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
   const dispatch = useDispatch();
   const refreshList = useCallback(() => {
     emitter(`getRooms`, null, rooms => {
-      console.log("getRooms", rooms);
       setParsedRooms(rooms);
     });
     axios.get(`/api/getRooms`).then(() => {});
@@ -42,11 +42,9 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
   //   [rooms]
   // );
   const updateListOfRooms = ({ socketId, data }) => {
-    console.log("updateListOfRooms", data, parsedRooms);
     setParsedRooms(oldRooms => {
       const newRooms = { ...oldRooms };
       data.forEach(({ id, action, room }) => {
-        console.log("roomAction", id, action, room, newRooms);
         switch (action) {
           case "add":
             newRooms[id] = room;
@@ -63,7 +61,6 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
             );
         }
       });
-      console.log("000000 updateListOfRooms", newRooms);
       return newRooms;
     });
   };
@@ -71,7 +68,6 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
     setParsedRooms(oldRooms => {
       const newRooms = { ...oldRooms };
       delete newRooms[roomId];
-      console.log("removeRoomFromList 0000", newRooms, newRooms[roomId]);
       return newRooms;
     });
   };
@@ -98,6 +94,7 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
     : null;
   return (
     <>
+      <Carousel1 />
       <RoomJoining />
       {/* <Sort sortHandler={sortHandler} /> */}
       <StyledSeparator>Browse rooms</StyledSeparator>

@@ -48,30 +48,33 @@ export const RoomEvents = function(socket: any, io: any) {
   socket.on(CREATE_ROOM, (params: any, callback: Function) => {
     const { roomOptions, id } = params;
     const room = new Room(roomOptions, id);
+    const { id: roomId, mode } = room;
     console.log(
       chalk.bgYellow.black(`[Room] Room ${room.id} created with options `),
       room
     );
-    io.gameRooms[room.mode][room.id] = room;
-    callback({ created: true, roomId: room.id });
-    // if (room.mode === 'public') {
-    //   const updatedRoomObject = [getRoomObjectForUpdate(room, 'add')];
-    //   io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
-    // }
+    io.gameRooms[mode][roomId] = room;
+    callback({ created: true, roomId });
   });
 
   socket.on(JOIN_ROOM, (params: Object, callback: Function) => {
+    console.log('JOIN_ROOM', params);
+    const { roomId, userData } = params;
+    const room = getRoom(roomId, io.gameRooms);
+
+    if (!room) {
+      callback({ error: "Room doesn't exist" });
+      return;
+    }
+    const gameOptions = getGameOptions(room.gameCode).playerModel;
     const panels = {
       score: { listener: `scoreUpdate` },
       chat: { listener: `incomingChatMessage` },
       log: { listener: `incomingLog` },
       settings: { listener: `roomSettings` }
     };
-    const { roomId, userData } = params;
 
     socket.pswOptions.color = randomColor(0.3, 0.99).hexString();
-    const room = getRoom(roomId, io.gameRooms);
-    const gameOptions = getGameOptions(room.gameCode).playerModel;
     socket.pswOptions = { ...gameOptions, ...socket.pswOptions, ...userData };
     socket.pswOptions.rooms = socket.pswOptions.rooms.filter(
       id => id !== WAITING_ROOM
@@ -86,15 +89,19 @@ export const RoomEvents = function(socket: any, io: any) {
         const updatedRoomObject = [
           getRoomObjectForUpdate(room, players > 0 ? 'update' : 'add')
         ];
-        console.log('ROOM_UPDATED', room.roomOptions);
-        // socket.emit('ROOM_UPDATED', { ...room });
+        console.log('ROOM_UPDATED', room.roomOptions, 'players', players);
         callback(room.roomOptions);
-        socket.to(roomId).emit('ROOM_UPDATED', { players });
+        socket
+          .to(roomId)
+          .emit('ROOM_UPDATED', { players: room.roomOptions.players });
         if (room.mode === 'public') {
           io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
         }
       })
       .catch(error => {
+        callback({
+          error: `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`
+        });
         Error(
           `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`
         );

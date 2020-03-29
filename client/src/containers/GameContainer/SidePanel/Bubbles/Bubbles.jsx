@@ -9,7 +9,6 @@ const Container = styled.div`
 const Bubbles = ({ panels, openedPanel, updatedPanels, handler }) => {
   const bubbles = () => {
     return Object.keys(panels).map(panel => {
-      console.log("BUBBLE", updatedPanels, openedPanel, panel);
       return (
         <Bubble
           opened={openedPanel === panel}

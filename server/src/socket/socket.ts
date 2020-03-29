@@ -20,7 +20,6 @@ const ioEvents = (io: any) => {
     };
     socket.on('getRooms', (data, callback) => {
       socket.join(WAITING_ROOM);
-      console.log('getRooms', Object.keys(io.gameRooms.public));
       socket.pswOptions.rooms.push(WAITING_ROOM);
       callback(io.gameRooms.public);
     });
@@ -59,12 +58,8 @@ const SocketIo = App => {
   const port = process.env.SOCKET_PORT || 3012;
   const server = http.createServer();
   const io = socketIo(server);
-
+  // io.eio.pingTimeout = 300000; // 5 minutes
   io.gameRooms = { public: { ...mockRooms }, private: {}, fast: {} };
-  // App.get('/rooms', function(req, res) {
-  //   console.log('getrooms', io.gameRooms);
-  //   res.render('ShowRooms.ejs', { rooms: io.gameRooms });
-  // });
 
   ioEvents(io);
   server.listen(port, () =>

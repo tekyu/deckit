@@ -16,13 +16,11 @@ const ScoreList = () => {
   const { players, scoreboard } = useSelector(selectActiveRoom);
   const maxScore = useSelector(selectMaxScore);
   const [playersList, setPlayersList] = useState([]);
-  useEffect(() => {
-    console.log("ScoreList ActiveRoom", players, scoreboard);
-  }, [players, scoreboard]);
+  useEffect(() => {}, [players, scoreboard]);
   useEffect(() => {
     setPlayersList(() => {
+      console.log("setPlayersList", JSON.stringify(scoreboard), maxScore);
       return players.map(player => {
-        console.log("ScoreList ScoreElement", player, scoreboard[player.id]);
         return (
           <ScoreElement
             key={player.id}
@@ -34,7 +32,6 @@ const ScoreList = () => {
       });
     });
   }, [players, scoreboard]);
-  console.log("ScoreList", scoreboard, players);
   return <StyledContainer>{playersList}</StyledContainer>;
 };
 

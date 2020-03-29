@@ -13,7 +13,7 @@ import Bubbles from "./Bubbles/Bubbles";
  */
 
 const Container = styled.div`
-  background: blue;
+  /* background: blue; */
   min-width: 320px;
   box-sizing: border-box;
   display: flex;
@@ -22,12 +22,14 @@ const Container = styled.div`
 
 const Panel = styled.div`
   background: white;
-  border-radius: 8px;
-  border: 1px solid #000;
+  border-radius: 6px;
+  /* border: 1px solid #000; */
   box-sizing: border-box;
   width: 100%;
   height: 100%;
   padding: 12px;
+  box-shadow: -10px 5px 15px rgba(207, 119, 243, 0.1),
+    5px 5px 15px rgba(0, 155, 255, 0.1), -10px 5px 15px rgba(42, 201, 219, 0.1);
 `;
 
 const SidePanel = ({ panels }) => {
@@ -44,13 +46,6 @@ const SidePanel = ({ panels }) => {
     Object.keys(panels).forEach(panel => {
       dispatch(
         listener(panels[panel].listener, newData => {
-          console.log(
-            `%c addPanelListeners ${panel}`,
-            `background: #E88341`,
-            newData,
-            panel,
-            openedPanel
-          );
           setUpdatedPanels(oldPanels => {
             if (oldPanels.indexOf(panel) === -1) {
               return [...oldPanels, panel];
@@ -67,7 +62,6 @@ const SidePanel = ({ panels }) => {
   }, []);
 
   const changePanel = useCallback(({ target }) => {
-    console.log(`changePanel`, target);
     const panelName = target.getAttribute(`name`);
     setOpenedPanel(panelName);
     if (updatedPanels.indexOf(panelName) !== -1) {

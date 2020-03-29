@@ -70,7 +70,6 @@ const appWrapper = (IncomingPort = 3011) => {
   });
   app.get('/showusers', function(req, res) {
     User.find({}, (err, users) => {
-      console.log('showusers', users);
       res.render('ShowUsers.ejs', { users });
     });
   });

@@ -5,11 +5,39 @@ import {
   emitter,
   UPDATE_ANON_USER
 } from "store/actions";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
 
 import { connect } from "react-redux";
 import sillyname from "sillyname";
 
+import styled from "styled-components";
 import * as styles from "./AnonymousLoginModal.module.scss";
+
+const StyledButton = styled(Button)`
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  background-image: linear-gradient(
+    35deg,
+    #2ac9db -10%,
+    #009bff 47%,
+    #cf77f3 130%
+  );
+  font-size: 14px;
+  padding: 16px 32px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  margin: 40px 0 20px 0;
+  width: 100%;
+  transition: all 0.3s ease-out;
+  box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.28);
+  &:focus,
+  &:hover,
+  &:active {
+    box-shadow: 0px 2px 14px 0px rgba(0, 0, 0, 0.28);
+  }
+`;
 
 class AnonymousLoginModal extends Component {
   state = {
@@ -48,19 +76,16 @@ class AnonymousLoginModal extends Component {
         <div className={styles.modal_header}>
           <i className={styles.ikontest} />
           <h2>Choose your username</h2>
-          <p>Lets have fun!</p>
+          <p>{"Let's have fun!"}</p>
         </div>
         <div className={styles.modal_body}>
           <form onSubmit={this.submitHandler}>
             <div className={styles.input_group}>
-              <label className={styles.input_label} htmlFor="username">
-                Username
-              </label>
-              <input
-                className={styles.input_input}
-                type="text"
+              <TextField
                 name="username"
-                placeholder="Type your username here"
+                label="Nickname"
+                placeholder="Type your nickname here"
+                value={this.state.username}
                 onChange={this.inputOnChangeHandler}
               />
             </div>
@@ -68,14 +93,16 @@ class AnonymousLoginModal extends Component {
               <div className={styles.form_error}>{this.state.formError}</div>
             ) : null}
 
-            <button type="submit">Choose</button>
+            <StyledButton variant="contained" color="primary" type="submit">
+              Choose
+            </StyledButton>
           </form>
         </div>
-        <div className={styles.modal_footer}>
+        {/* <div className={styles.modal_footer}>
           <label className={styles.create_account}>
             You don&apos;t have an account yet? <a href="#">Create one here!</a>
           </label>
-        </div>
+        </div> */}
       </div>
     );
   }

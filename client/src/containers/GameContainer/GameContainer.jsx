@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useRouteMatch } from "react-router-dom";
+import { useRouteMatch, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { gameMapping, getGame } from "utils";
 import {
@@ -13,6 +13,7 @@ import {
   setActiveRoomId
 } from "store/actions";
 import selectUser from "store/selectors/selectUser";
+import { toast } from "react-toastify";
 import SidePanel from "./SidePanel/SidePanel";
 import { leaveRoom, updateActiveRoom } from "../../store/room/roomActions";
 import WaitingScreen from "../../components/WaitingScreen/WaitingScreen";
@@ -20,7 +21,8 @@ import selectActiveRoom from "../../store/selectors/selectActiveRoom";
 import {
   updateMyCardsListener,
   removeUpdateMyCardsListener,
-  updateGameOptionsListener
+  updateGameOptionsListener,
+  setInitialGameOptions
 } from "../../store/deckit/deckitActions";
 /**
  * TODO:
@@ -30,9 +32,15 @@ import {
 
 const Container = styled.div`
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   width: 100%;
   height: calc(100vh - 70px - 40px);
+`;
+const WaitingScreenContainer = styled.div`
+  height: 100%;
+  @media (max-width: 1100px) {
+    height: auto;
+  }
 `;
 
 const GameContainer = () => {
@@ -40,6 +48,7 @@ const GameContainer = () => {
     params: { id }
   } = useRouteMatch();
   const dispatch = useDispatch();
+  const history = useHistory();
   const userData = useSelector(selectUser);
   const activeRoom = useSelector(selectActiveRoom);
   const [roomInfo, setRoomInfo] = useState(null);
@@ -58,7 +67,12 @@ const GameContainer = () => {
     id => {
       dispatch(
         emitter(JOIN_ROOM, { roomId: id, userData }, roomData => {
-          console.log("[GameContainer joinroom]", roomData);
+          if (roomData.error) {
+            history.replace("/");
+            toast.error(roomData.error, {
+              position: toast.POSITION.BOTTOM_RIGHT
+            });
+          }
           dispatch(updateActiveRoom(roomData));
         })
       );
@@ -68,7 +82,6 @@ const GameContainer = () => {
 
   const updateActiveRoomHandler = useCallback(
     ({ data }) => {
-      console.log("ROOM_UPDATED", data);
       dispatch(updateActiveRoom(data));
     },
     [dispatch]
@@ -98,6 +111,7 @@ const GameContainer = () => {
       dispatch(leaveRoom(id));
       dispatch(setActiveRoomId());
       dispatch(setActiveRoom());
+      // dispatch(setInitialGameOptions());
     };
   }, [dispatch, id]);
 
@@ -112,7 +126,11 @@ const GameContainer = () => {
   return (
     <Container>
       <Suspense fallback={<div>LOADING GAME</div>}>
-        {activeRoom && activeRoom.state < 2 && <WaitingScreen />}
+        {activeRoom && activeRoom.state < 2 && (
+          <WaitingScreenContainer>
+            <WaitingScreen />
+          </WaitingScreenContainer>
+        )}
         {GameComponent && <GameComponent options={roomInfo} />}
         {activeRoom && activeRoom.state >= 2 && Object.keys(panels).length && (
           <SidePanel panels={panels} />

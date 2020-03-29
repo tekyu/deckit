@@ -9,6 +9,8 @@ export const UPDATE_MY_CARDS = "UPDATE_MY_CARDS";
 export const SET_HINTER = "SET_HINTER";
 export const UPDATE_GAME_OPTIONS = "UPDATE_GAME_OPTIONS";
 export const SET_MY_PICKED_CARD = `SET_MY_PICKED_CARD`;
+export const SET_MY_CARD = `SET_MY_CARD`;
+export const INITIAL_GAMEOPTIONS = `INITIAL_GAMEOPTIONS`;
 
 export const pickMyCard = ({ activeRoomId, card }) => {
   return dispatch => {
@@ -23,6 +25,10 @@ export const pickMyCard = ({ activeRoomId, card }) => {
 export const sendHintCard = ({ activeRoomId, card }) => {
   return dispatch => {
     dispatch(emitter(SENT_HINT_CARD, { activeRoomId, card }));
+    dispatch({
+      type: SET_MY_CARD,
+      payload: card
+    });
   };
 };
 
@@ -51,7 +57,6 @@ export const updateGameOptionsListener = () => {
   return dispatch => {
     dispatch(
       listener("GAME_UPDATED", ({ data }) => {
-        console.log("UPDATE_GAME_OPTIONS", data);
         dispatch({
           type: UPDATE_GAME_OPTIONS,
           payload: data
@@ -71,7 +76,6 @@ export const updateMyCardsListener = () => {
   return dispatch => {
     dispatch(
       listener(UPDATE_MY_CARDS, ({ data }) => {
-        console.log("UPDATE_MY_CARDS", data);
         dispatch({
           type: UPDATE_MY_CARDS,
           payload: data
@@ -84,5 +88,13 @@ export const updateMyCardsListener = () => {
 export const removeUpdateMyCardsListener = () => {
   return dispatch => {
     dispatch(removeListener(UPDATE_MY_CARDS));
+  };
+};
+
+export const setInitialGameOptions = () => {
+  return dispatch => {
+    dispatch({
+      type: INITIAL_GAMEOPTIONS
+    });
   };
 };

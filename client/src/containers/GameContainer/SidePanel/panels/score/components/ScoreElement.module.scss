@@ -5,19 +5,11 @@
   align-items: center;
   padding: 8px 12px;
 }
-.avatarContainer {
-  width: 30px;
-  height: 30px;
-  min-height: 30px;
-  min-width: 30px;
-  border-radius: 100%;
-  background: black;
-  margin-right: 12px;
-}
 .info {
   display: flex;
   flex-direction: column;
   width: 100%;
+  margin-left: 6px;
 }
 
 .progress {
@@ -38,4 +30,5 @@
 .progressContainer {
   display: flex;
   margin-top: 8px;
+  align-items: center;
 }

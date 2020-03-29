@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { NavLink, useHistory } from "react-router-dom";
 import { Formik, Field, ErrorMessage, Form } from "formik";
-import $Button from "../../../../Generic/Button/Button.styled";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 import { emitter } from "../../../../../store/socket/socketActions";
 
 const StyledContainer = styled.div`
@@ -15,11 +16,17 @@ const StyledContainer = styled.div`
   margin-top: 80px;
 `;
 
-const StyledCreateButton = styled($Button)`
+const StyledCreateButton = styled(Button)`
   padding: 16px 32px;
   font-size: 16px;
   border-radius: 3px;
   box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.28);
+  background-image: linear-gradient(
+    40deg,
+    #2ac9db -30%,
+    #009bff 47%,
+    #cf77f3 150%
+  );
 `;
 
 const StyledForm = styled(Form)`
@@ -71,10 +78,9 @@ const StyledJoinFieldContainer = styled.div`
   }
 `;
 
-const StyledJoinButton = styled($Button)`
+const StyledJoinButton = styled(Button)`
   padding: 16px 32px;
-  border-bottom-right-radius: 3px;
-  border-top-right-radius: 3px;
+  border-radius: 3px;
   background-image: linear-gradient(
     40deg,
     #2ac9db -30%,
@@ -96,7 +102,9 @@ const RoomJoining = () => {
     <StyledContainer>
       <div>
         <NavLink to="/create">
-          <StyledCreateButton>Create your game</StyledCreateButton>
+          <StyledCreateButton variant="contained" color="primary">
+            Create your game
+          </StyledCreateButton>
         </NavLink>
       </div>
       <StyledSeparator>or</StyledSeparator>
@@ -132,12 +140,16 @@ const RoomJoining = () => {
               <StyledField
                 name="id"
                 type="text"
-                placeholer="Type room ID here"
+                placeholder="Type room ID here"
               />
             </StyledJoinFieldContainer>
-            <StyledJoinButton type="submit">Join</StyledJoinButton>
+            <StyledJoinButton variant="contained" color="primary" type="submit">
+              Join
+            </StyledJoinButton>
           </StyledJoinContainer>
-          <StyledErrorMessage name="id" />
+          <Typography color="error">
+            <StyledErrorMessage name="id" />
+          </Typography>
         </StyledForm>
       </Formik>
     </StyledContainer>

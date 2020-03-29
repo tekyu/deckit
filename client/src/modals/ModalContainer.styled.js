@@ -8,7 +8,8 @@ export const $Backdrop = styled.div`
   left: 0;
   bottom: 0;
   right: 0;
-  background: ${rgba(`black`, 0.8)};
+  background: rgba(255,255,255, 0.7);
+  /* background: ${rgba(`black`, 0.8)}; */
   z-index: 10;
   display: flex;
   align-items: center;
@@ -17,11 +18,15 @@ export const $Backdrop = styled.div`
 `;
 
 export const $Container = styled.div`
-  background-color: ${props => props.theme.background};
+  background: #ffffff;
+  box-shadow: -5px 5px 100px rgba(207, 119, 243, 0.3),
+    0px 5px 100px rgba(0, 155, 255, 0.3),
+    -15px 5px 100px rgba(42, 201, 219, 0.3);
   display: flex;
   flex-direction: column;
-  min-height: 600px;
   width: 500px;
+  border-radius: 6px;
+  overflow: hidden;
 `;
 
 export const $exitButtonStyle = css`

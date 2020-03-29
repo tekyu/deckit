@@ -4,11 +4,13 @@ import styled from "styled-components";
 import { listener } from "store/actions";
 import Switch from "@material-ui/core/Switch";
 import Checkbox from "@material-ui/core/Checkbox";
+import Button from "@material-ui/core/Button";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import Slider from "react-slick";
 import selectActiveRoom from "../../store/selectors/selectActiveRoom";
 import selectUserId from "../../store/selectors/selectUserId";
 import selectUser from "../../store/selectors/selectUser";
@@ -25,6 +27,9 @@ import { updatedUser } from "../../store/user/userActions";
 import ActionButton from "./ActionButton/ActionButton";
 import PlayerCounterWithIcon from "../Generic/PlayerCounterWithIcon/PlayerCounterWithIcon";
 import $Button from "../Generic/Button/Button.styled";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Card from "../../containers/Deckit/components/Card/Card";
 
 const StyledContainer = styled.div`
   width: 80%;
@@ -38,6 +43,9 @@ const StyledContainer = styled.div`
     -20px 5px 100px rgba(42, 201, 219, 0.1);
   border-radius: 6px;
   padding: 5px 20px 30px 20px;
+  @media (max-width: 1100px) {
+    width: 100%;
+  }
 `;
 
 const StyledHeader = styled.div`
@@ -76,7 +84,7 @@ const StyledShowIdContainer = styled.div`
   text-align: center;
 `;
 
-const StyledButton = styled($Button)`
+const StyledButton = styled(Button)`
   /* background: #16bffd; */
   border-radius: 3px;
   margin: 20px 0;
@@ -132,8 +140,24 @@ const WaitingScreen = () => {
     });
   };
 
+  const cards1 = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }];
   return (
     <React.Fragment>
+      <h2>Center Mode</h2>
+      <div style={{ width: "800px", overflow: "hidden" }}>
+        <Slider>
+          {cards1.map(card => {
+            console.log("CARD IN CAROUSEL", card);
+            return (
+              <Card
+                card={card}
+                key={card.id}
+                onLoad={() => window.dispatchEvent(new Event("resize"))}
+              />
+            );
+          })}
+        </Slider>
+      </div>
       {room && (
         <StyledContainer id={room.id}>
           <StyledHeader>
@@ -156,7 +180,9 @@ const WaitingScreen = () => {
                 <p>This is your room id</p>
                 <p> Share it to friends or click on it to copy</p>
                 <CopyToClipboard text={room.id}>
-                  <StyledButton>{room.id}</StyledButton>
+                  <StyledButton variant="contained" color="primary">
+                    {room.id}
+                  </StyledButton>
                 </CopyToClipboard>
               </StyledHiddenMessage>
             )}
@@ -165,7 +191,11 @@ const WaitingScreen = () => {
                 hideMessage ? "Show id to share room" : `Hide this message`
               }
               control={
-                <Checkbox defaultChecked onChange={hideMessageHandler} />
+                <Checkbox
+                  color="primary"
+                  defaultChecked
+                  onChange={hideMessageHandler}
+                />
               }
             />
           </StyledShowIdContainer>
@@ -184,6 +214,7 @@ const WaitingScreen = () => {
                 label="Private room"
                 control={
                   <Switch
+                    color="primary"
                     checked={room.mode === "private"}
                     onChange={changeRoomModeHandler}
                   />

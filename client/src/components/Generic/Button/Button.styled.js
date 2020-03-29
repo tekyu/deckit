@@ -8,7 +8,6 @@ const $Button = styled.button`
     #cf77f3 120%
   );
   border: 0;
-  color: ${props => props.theme.fontSecondary};
   cursor: pointer;
   font-family: "Hammersmith One";
   font-size: 14px;

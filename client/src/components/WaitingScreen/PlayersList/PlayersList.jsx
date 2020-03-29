@@ -56,11 +56,6 @@ const PlayersList = ({ players, room, isAdmin, myId }) => {
     if (room.admin === myId && waitingList.length < allowedPlayers) {
       waitingList.push(<AddSeat handler={addSeatHandler} />);
     }
-    console.log(
-      "WAITINGLIST",
-      waitingList,
-      Array.from({ length: room.playersMax - players.length })
-    );
     return waitingList;
   };
 

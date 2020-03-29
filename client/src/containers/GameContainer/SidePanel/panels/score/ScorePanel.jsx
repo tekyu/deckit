@@ -9,7 +9,10 @@ import ScoreList from "./components/ScoreList/ScoreList";
  * should be in the main game/room creation topic
  */
 
-const StyledContainer = styled.div``;
+const StyledContainer = styled.div`
+  height: 100%;
+  overflow: auto;
+`;
 
 const ScorePanel = () => {
   return (

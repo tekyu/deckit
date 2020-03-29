@@ -107,7 +107,6 @@ export default class Player implements IRoom {
     if (this.owner === playerData.id) {
       newPlayerData.state = 1;
     }
-    console.log('connectPlayer', playerData);
     return this.players.push(newPlayerData);
   }
 

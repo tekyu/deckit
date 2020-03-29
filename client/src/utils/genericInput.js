@@ -3,7 +3,6 @@ export function inputOnChangeHandler(options, event) {
     // TODO: Change to hooks version
     throw Error(`No setState in parent component`);
   }
-  // console.log(`inputOnChangeHandler`, event.key, options);
   const change = {};
   switch (event.target.type) {
     case `checkbox`:
@@ -12,12 +11,6 @@ export function inputOnChangeHandler(options, event) {
     default:
       change[event.target.name] = event.target.value;
   }
-  console.log(
-    `[INPUT] Changing state of ${event.target.name} from ${
-      this.state[event.target.name]
-    } to ${change[event.target.name]}`,
-    options.keys.indexOf(event.key.toLowerCase()) !== -1
-  );
   this.setState(() => change);
   if (options.keys.indexOf(event.key.toLowerCase()) !== -1) {
     change[event.target.name] = "";

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Button } from "components/Generic";
 import { closeModal } from "store/actions";
+import { useHistory } from "react-router-dom";
 import modals from "./modals";
 import {
   $Backdrop,
@@ -11,12 +12,14 @@ import {
 } from "./ModalContainer.styled";
 
 const ModalContainer = ({ closeModal, modalType }) => {
+  const history = useHistory();
   const onClose = useCallback(
     e => {
       e.preventDefault();
       closeModal();
+      history.replace("/");
     },
-    [closeModal]
+    [closeModal, history]
   );
   const modal = useMemo(() => modals[modalType], [modalType]);
   return modalType ? (

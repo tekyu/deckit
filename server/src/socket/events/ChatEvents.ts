@@ -23,7 +23,6 @@ export const ChatEvents = (socket: any, io: any) => {
   socket.on(chatListeners.onmessage, ({ activeRoomId, message }) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     const player = socket.pswOptions;
-    console.log(chatListeners.onmessage, player);
     const newMessage = {
       message,
       id: shortId(),

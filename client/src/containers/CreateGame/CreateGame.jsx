@@ -4,8 +4,10 @@ import { useHistory } from "react-router-dom";
 import { gameMapping } from "utils";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
+import Button from "@material-ui/core/Button";
 import Slider from "@material-ui/core/Slider";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Typography from "@material-ui/core/Typography";
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import {
@@ -17,13 +19,14 @@ import {
 import selectUser from "store/selectors/selectUser";
 import sillyname from "sillyname";
 import styled from "styled-components";
+import GradientButton from "../../components/Generic/GradientButton/GradientButton";
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
  * should be in the main game/room creation topic
  */
 
-const StyledButton = styled.button`
+const StyledButton = styled(Button)`
   border: 0;
   border-radius: 3px;
   background: transparent;
@@ -33,8 +36,6 @@ const StyledButton = styled.button`
     #009bff 47%,
     #cf77f3 130%
   );
-  color: #fff;
-  font-family: "Hammersmith One";
   font-size: 14px;
   padding: 16px 32px;
   letter-spacing: 0.1em;
@@ -77,6 +78,11 @@ const StyledForm = styled(Form)`
     -20px 5px 100px rgba(42, 201, 219, 0.1);
   border-radius: 6px;
   padding: 60px;
+  @media (max-width: 600px) {
+    width: 100%;
+    padding: 40px;
+    margin-top: 60px;
+  }
 `;
 
 const StyledHeader = styled.h2`
@@ -86,11 +92,7 @@ const StyledHeader = styled.h2`
 
 const StyledSliderLabel = styled.label`
   width: 100%;
-  margin: 25px 0;
-`;
-
-const StyledErrorMessage = styled.div`
-  color: #cb3066;
+  margin: 25px 0 0 0;
 `;
 
 const getOptions = () =>
@@ -101,7 +103,6 @@ const getOptions = () =>
   ));
 
 const validate = ({ isPrivate, username, name }) => {
-  console.log("validate", username, isPrivate);
   const errors = {};
   if (!username.trim()) {
     errors.username =
@@ -174,7 +175,6 @@ const CreateGame = () => {
         username: sillyname()
       }}
       onSubmit={(values, { setSubmitting }) => {
-        console.log("onsubmit", values);
         submitCreateGameHandler(values);
         setSubmitting(false);
       }}
@@ -198,10 +198,9 @@ const CreateGame = () => {
                   onBlur={handleBlur}
                   value={username}
                 />
-                <ErrorMessage
-                  name="username"
-                  render={msg => <StyledErrorMessage>{msg}</StyledErrorMessage>}
-                />
+                <Typography color="error">
+                  <ErrorMessage name="username" />
+                </Typography>
               </React.Fragment>
             )}
             <React.Fragment>
@@ -212,7 +211,9 @@ const CreateGame = () => {
                 onBlur={handleBlur}
                 value={name}
               />
-              <StyledErrorMessage name="name" />
+              <Typography color="error">
+                <ErrorMessage name="name" />
+              </Typography>
             </React.Fragment>
             {/* <Field as="select" name="gameCode">
               {getOptions()}
@@ -235,6 +236,7 @@ const CreateGame = () => {
               label="Private game"
               control={
                 <Checkbox
+                  color="primary"
                   checked={isPrivate}
                   name="isPrivate"
                   onChange={handleChange}
@@ -242,7 +244,12 @@ const CreateGame = () => {
                 />
               }
             />
-            <StyledButton type="submit" disabled={isSubmitting}>
+            <StyledButton
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={isSubmitting}
+            >
               Create
             </StyledButton>
           </StyledForm>

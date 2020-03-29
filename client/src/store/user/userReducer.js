@@ -14,7 +14,6 @@ export const userReducer = (state = initialState, action) => {
         auth: action.auth
       };
     case UPDATED_USER:
-      console.log("UPDATED_USER [userReducer]", action.user);
       return {
         ...state,
         user: { ...state.user, ...action.user }

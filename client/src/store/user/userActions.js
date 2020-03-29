@@ -9,7 +9,6 @@ export const UPDATED_USER = `UPDATED_USER`;
 export const UPDATE_ANON_USER = `UPDATE_ANON_USER`;
 
 export const updateUser = data => {
-  // console.log("updateUser", data);
   return dispatch => {
     return axios.post("/api/user/update", data).then(data => {
       dispatch({
@@ -33,8 +32,6 @@ export const updatedUser = data => {
 // make it as a promise cos you cant send formError here
 export const loginUser = (username, password) => {
   return dispatch => {
-    // console.log("loginUser", dispatch);
-    // Promise.then((resolve, reject) => {
     axios
       .post(`/api/login`, {
         username,
@@ -48,20 +45,11 @@ export const loginUser = (username, password) => {
             auth: true
           });
           dispatch(closeModal());
-          // resolve();
         }
       })
       .catch(error => {
-        // reject(error.response.status);
         throw error;
-        // this.setState((state, props) => {
-        // 	// console.log("setsatate", state, props);
-        // 	return {
-        // 		formError: state.errors[error.response.status]
-        // 	};
-        // });
       });
-    // });
   };
 };
 
@@ -128,13 +116,3 @@ export const updateAnonUser = user => {
     user
   };
 };
-
-// export const userCreated = user => {
-//   // console.log("userCreated", user);
-//   return dispatch => {
-//     dispatch({
-//       type: UPDATED_USER,
-//       user
-//     });
-//   };
-// };

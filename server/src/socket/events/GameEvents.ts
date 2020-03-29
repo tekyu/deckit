@@ -46,7 +46,8 @@ export const GameEvents = (socket: any, io: any) => {
       remainingCards: gameOptions.remainingCards.length,
       round: gameOptions.round,
       stage: gameOptions.stage,
-      hinter: gameOptions.hinter
+      hinter: gameOptions.hinter,
+      maxScore: gameOptions.maxScore
     });
 
     // distribute cards here
@@ -161,6 +162,8 @@ export const GameEvents = (socket: any, io: any) => {
       username: socket.pswOptions.username,
       color: socket.pswOptions.color
     });
+    pickedCardsToHint;
+    console.log('pickedCardsToHint', pickedCardsToHint);
     console.log('CHOOSED CARD TO MATCH HINT', choosedCardsToMatchHint);
 
     socket.pswOptions.choosedCard = card;
@@ -180,13 +183,13 @@ export const GameEvents = (socket: any, io: any) => {
           state: room.state,
           scoreboard: room.scoreboard
         });
-        io.in(activeRoomId).emit('GAME_UPDATED', {
-          stage: room.gameOptions.stage,
-          pickedCardsToHint: room.pickedCardsToHint
-        });
         return;
       }
       room.gameOptions.stage = 5;
+      io.in(activeRoomId).emit('GAME_UPDATED', {
+        stage: room.gameOptions.stage,
+        pickedCardsToHint
+      });
       io.in(activeRoomId).emit('ROOM_UPDATED', { scoreboard: room.scoreboard });
       console.log('SCOREBOARD', room.scoreboard);
       // io.in(activeRoomId).emit('GAME_UPDATED', { stage });
@@ -210,15 +213,16 @@ export const GameEvents = (socket: any, io: any) => {
       room.players = preparePlayersForNextRound(room.players);
       socket.pswOptions = prepareSocketForNextRound(socket.pswOptions);
 
-      const interval = setTimeout(() => {
-        io.in(activeRoomId).emit('GAME_UPDATED', {
-          ...room.gameOptions,
-          remainingCards: remainingCards.length
-        });
-        io.in(activeRoomId).emit('ROOM_UPDATED', {
-          players: room.players
-        });
-      }, 5000);
+      // TODO: FRONT TESTING FOR STAGE
+      // const interval = setTimeout(() => {
+      //   io.in(activeRoomId).emit('GAME_UPDATED', {
+      //     ...room.gameOptions,
+      //     remainingCards: remainingCards.length
+      //   });
+      //   io.in(activeRoomId).emit('ROOM_UPDATED', {
+      //     players: room.players
+      //   });
+      // }, 5000);
     }
   });
 };

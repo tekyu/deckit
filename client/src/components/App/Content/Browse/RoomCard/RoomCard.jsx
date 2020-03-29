@@ -31,6 +31,8 @@ const PlayButton = styled(Fab)`
   );
   &:hover,
   &:focus {
+    box-shadow: 5px 5px 15px rgba(207, 119, 243, 0.5),
+      5px 5px 15px rgba(0, 155, 255, 0.5), -5px 5px 15px rgba(42, 201, 219, 0.5);
   }
 `;
 

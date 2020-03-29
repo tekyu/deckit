@@ -125,8 +125,9 @@ export default class Room implements IRoom {
     if (this.owner === playerData.id) {
       newPlayerData.state = 1;
     }
-    console.log('connectPlayer', playerData);
-    return this.players.push(newPlayerData);
+    this.players.push(newPlayerData);
+    console.log('connectPlayer', this.players);
+    return this.players;
   }
 
   disconnectPlayer(id: string) {

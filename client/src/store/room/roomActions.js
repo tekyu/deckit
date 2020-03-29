@@ -10,7 +10,6 @@ export const SCORE_UPDATED = `SCORE_UPDATED`;
 
 export const setActiveRoomId = activeRoomId => {
   return (dispatch, oldState) => {
-    console.log("SETACTIVEROOMID", oldState, activeRoomId);
     dispatch({
       type: SET_ACTIVE_ROOM_ID,
       activeRoomId
@@ -41,7 +40,7 @@ export const leaveRoom = roomId => {
 };
 
 export const updateActiveRoom = roomData => {
-  console.log("[ACTION] UPDATEACTIVEROOM", roomData);
+  console.log("updateActiveRoom", roomData);
   return dispatch => {
     dispatch({
       type: UPDATE_ACTIVE_ROOM,
@@ -60,7 +59,6 @@ export const updateScoreListener = () => {
   return dispatch => {
     dispatch(
       listener(SCORE_UPDATED, ({ data }) => {
-        console.log("SCORE_UPDATED", data);
         dispatch({
           type: SCORE_UPDATED,
           payload: data

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import Button from "@material-ui/core/Button";
 import styled from "styled-components";
 import selectUser from "../../../store/selectors/selectUser";
 import selectActiveRoom from "../../../store/selectors/selectActiveRoom";
 import { startGame, updatePlayerInRoom } from "../../../store/room/roomActions";
 
-const StyledButton = styled.button`
+const StyledButton = styled(Button)`
   border: 0;
   background: #cb3066;
   border-radius: 3px;
@@ -19,8 +20,6 @@ const StyledButton = styled.button`
     #cf77f3 130%
   );
     `}
-  color: #fff;
-  font-family: "Hammersmith One";
   font-size: 14px;
   padding: 16px 32px;
   letter-spacing: 0.1em;
@@ -44,7 +43,6 @@ const ActionButton = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [playerState, setPlayerState] = useState(0);
   const startGameHandler = () => {
-    console.log(`STARTGAME`);
     dispatch(startGame({ activeRoomId }));
   };
 
@@ -56,7 +54,6 @@ const ActionButton = () => {
 
   const readyHandler = () => {
     // TODO: Change this to take state from user
-    console.log("readyHandler");
     dispatch(
       updatePlayerInRoom({
         activeRoomId,
@@ -64,11 +61,6 @@ const ActionButton = () => {
         data: { state: playerState === 0 ? 1 : 0 }
       })
     );
-    // const newUser = {
-    //   ...user,
-    //   state: user.state === 0 ? 1 : 0
-    // };
-    // dispatch(updatedUser(newUser));
   };
 
   const getButtonText = (players, hasNotReadyPlayers) => {
@@ -89,6 +81,8 @@ const ActionButton = () => {
       .length;
     return (
       <StyledButton
+        variant="contained"
+        color="primary"
         isReady={hasNotReadyPlayers || players.length < 2 ? false : true}
         isdisabled={(hasNotReadyPlayers || players.length < 2).toString()}
         onClick={startGameHandler}
@@ -98,7 +92,12 @@ const ActionButton = () => {
     );
   }
   return (
-    <StyledButton onClick={readyHandler} isReady={playerState === 0}>
+    <StyledButton
+      variant="contained"
+      color="primary"
+      onClick={readyHandler}
+      isReady={playerState === 0}
+    >
       {playerState === 0 ? `Ready` : `Not Ready`}
     </StyledButton>
   );

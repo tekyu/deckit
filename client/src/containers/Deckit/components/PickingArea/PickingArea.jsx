@@ -27,26 +27,16 @@ const PickingArea = () => {
     });
   };
   const placeHolderCards = () => {
-    return playersPickedCard.map(player => {
-      return <div key={player}>Card of {player}</div>;
+    return playersPickedCard.map((player, i) => {
+      return <Card card={{ id: i }} />;
     });
   };
 
-  const pickedByBlobs = array => {
-    return array.map(({ username, id, color, avatar = null }) => {
-      return (
-        <div key={id}>
-          {username}
-          {id}
-          {color}
-          {avatar && avatar}
-        </div>
-      );
-    });
-  };
   const getRoundSummary = (pickedCardsToHint, hintCard) => {
     return pickedCardsToHint.map(({ card, owner, pickedBy }) => {
-      return <div key={owner}>picked by {pickedByBlobs(pickedBy)}</div>;
+      return (
+        <Card card={card} owner={owner} pickedBy={pickedBy} key={owner.id} />
+      );
     });
   };
 
@@ -55,7 +45,7 @@ const PickingArea = () => {
       PICKING AREA {JSON.stringify(playersPickedCard)}
       {stage === 3 && placeHolderCards()}
       {stage === 4 && getPickedCards(pickedCardsToHint)}
-      {/* {stage === 5 && getRoundSummary(pickedCardsToHint)} */}
+      {stage === 5 && getRoundSummary(pickedCardsToHint)}
     </div>
   );
 };

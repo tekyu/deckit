@@ -4,7 +4,9 @@ import {
   UPDATE_MY_CARDS,
   SET_HINTER,
   UPDATE_GAME_OPTIONS,
-  SET_MY_PICKED_CARD
+  SET_MY_PICKED_CARD,
+  SET_MY_CARD,
+  INITIAL_GAMEOPTIONS
 } from "./deckitActions";
 // import {
 //   SET_ACTIVE_ROOM_ID,
@@ -24,7 +26,6 @@ export const initialState = {
 
 export const deckitReducer = produce(
   (draft = initialState, { type, payload }) => {
-    console.log("deckitReducer", type, payload);
     switch (type) {
       case UPDATE_MY_CARDS:
         draft.cards = payload;
@@ -32,8 +33,14 @@ export const deckitReducer = produce(
       case SET_MY_PICKED_CARD:
         draft.pickedCard = payload;
         return draft;
+      case SET_MY_CARD:
+        draft.myCard = payload;
+        return draft;
       case UPDATE_GAME_OPTIONS:
         Object.assign(draft, payload);
+        return draft;
+      case INITIAL_GAMEOPTIONS:
+        draft = initialState;
         return draft;
       default:
         return draft;

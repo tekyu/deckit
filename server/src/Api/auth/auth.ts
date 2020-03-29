@@ -46,7 +46,6 @@ const AuthApi = (app: any, passport: any) => {
         res.status(200).send(getUserData(user));
       })
       .catch(err => {
-        // console.log(`Cannot create user with error ${err.name}`);
         if (err.name === 'ValidationError') {
           res.status(400).send('Username is already taken');
         }
