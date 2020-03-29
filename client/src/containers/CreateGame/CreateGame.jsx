@@ -1,15 +1,11 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { gameMapping } from "utils";
-import TextField from "@material-ui/core/TextField";
+import { Formik, ErrorMessage } from "formik";
+import sillyname from "sillyname";
 import Checkbox from "@material-ui/core/Checkbox";
-import Button from "@material-ui/core/Button";
-import Slider from "@material-ui/core/Slider";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Typography from "@material-ui/core/Typography";
 
-import { Formik, Form, Field, ErrorMessage } from "formik";
 import {
   emitter,
   CREATE_ROOM,
@@ -17,83 +13,13 @@ import {
   updatedUser
 } from "store/actions";
 import selectUser from "store/selectors/selectUser";
-import sillyname from "sillyname";
-import styled from "styled-components";
-import GradientButton from "../../components/Generic/GradientButton/GradientButton";
+import { gameMapping } from "utils";
+import * as Styled from "./CreateGame.styled";
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
  * should be in the main game/room creation topic
  */
-
-const StyledButton = styled(Button)`
-  border: 0;
-  border-radius: 3px;
-  background: transparent;
-  background-image: linear-gradient(
-    35deg,
-    #2ac9db -10%,
-    #009bff 47%,
-    #cf77f3 130%
-  );
-  font-size: 14px;
-  padding: 16px 32px;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: all 0.3s ease-out;
-  box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.28);
-  &:focus,
-  &:hover,
-  &:active {
-    box-shadow: 0px 2px 14px 0px rgba(0, 0, 0, 0.28);
-  }
-`;
-
-const StyledTextField = styled(TextField)`
-  width: 100%;
-  margin: 15px 0;
-`;
-
-const StyledFormControlLabel = styled(FormControlLabel)`
-  width: 100%;
-  margin: 15px 0;
-`;
-
-const StyledSlider = styled(Slider)`
-  width: 100%;
-  margin: 45px 0 15px 0;
-  color: #009bff;
-`;
-
-const StyledForm = styled(Form)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 600px;
-  margin: 40px auto;
-  box-shadow: 20px 5px 100px rgba(207, 119, 243, 0.1),
-    0px 5px 100px rgba(0, 155, 255, 0.1),
-    -20px 5px 100px rgba(42, 201, 219, 0.1);
-  border-radius: 6px;
-  padding: 60px;
-  @media (max-width: 600px) {
-    width: 100%;
-    padding: 40px;
-    margin-top: 60px;
-  }
-`;
-
-const StyledHeader = styled.h2`
-  margin-bottom: 30px;
-  font-size: 24px;
-`;
-
-const StyledSliderLabel = styled.label`
-  width: 100%;
-  margin: 25px 0 0 0;
-`;
 
 const getOptions = () =>
   Object.keys(gameMapping).map(gameCode => (
@@ -105,11 +31,10 @@ const getOptions = () =>
 const validate = ({ isPrivate, username, name }) => {
   const errors = {};
   if (!username.trim()) {
-    errors.username =
-      "You need to specify your name or login in order to create game";
+    errors.username = `You need to specify your name or login in order to create game`;
   }
   if (!name.trim()) {
-    errors.name = "Game name cannot be empty";
+    errors.name = `Game name cannot be empty`;
   }
   return errors;
 };
@@ -147,7 +72,7 @@ const CreateGame = () => {
     username
   }) => {
     const roomOptions = {
-      mode: isPrivate ? "private" : "public",
+      mode: isPrivate ? `private` : `public`,
       playersMax: +playersMax,
       name,
       password,
@@ -168,7 +93,7 @@ const CreateGame = () => {
       validateOnChange={false}
       validateOnBlur={false}
       initialValues={{
-        gameCode: "d",
+        gameCode: `d`,
         name: sillyname(),
         playersMax: 10,
         isPrivate: true,
@@ -187,11 +112,11 @@ const CreateGame = () => {
         setFieldValue
       }) => {
         return (
-          <StyledForm>
-            <StyledHeader>Create new game</StyledHeader>
+          <Styled.CreateForm>
+            <Styled.Header>Create new game</Styled.Header>
             {!userData && (
-              <React.Fragment>
-                <StyledTextField
+              <>
+                <Styled.TextField
                   label="Your nickname"
                   name="username"
                   onChange={handleChange}
@@ -201,10 +126,10 @@ const CreateGame = () => {
                 <Typography color="error">
                   <ErrorMessage name="username" />
                 </Typography>
-              </React.Fragment>
+              </>
             )}
-            <React.Fragment>
-              <StyledTextField
+            <>
+              <Styled.TextField
                 label="Room name"
                 name="name"
                 onChange={handleChange}
@@ -214,13 +139,10 @@ const CreateGame = () => {
               <Typography color="error">
                 <ErrorMessage name="name" />
               </Typography>
-            </React.Fragment>
-            {/* <Field as="select" name="gameCode">
-              {getOptions()}
-            </Field> */}
-            <StyledSliderLabel htmlFor="playersMax">
+            </>
+            <Styled.SliderLabel htmlFor="playersMax">
               Maximum players in room
-              <StyledSlider
+              <Styled.Slider
                 name="playersMax"
                 defaultValue={4}
                 min={2}
@@ -228,11 +150,11 @@ const CreateGame = () => {
                 step={1}
                 valueLabelDisplay="on"
                 onChange={(event, value) => {
-                  return setFieldValue("playersMax", value);
+                  return setFieldValue(`playersMax`, value);
                 }}
               />
-            </StyledSliderLabel>
-            <StyledFormControlLabel
+            </Styled.SliderLabel>
+            <Styled.ControlLabel
               label="Private game"
               control={
                 <Checkbox
@@ -244,15 +166,15 @@ const CreateGame = () => {
                 />
               }
             />
-            <StyledButton
+            <Styled.CreateButton
               variant="contained"
               color="primary"
               type="submit"
               disabled={isSubmitting}
             >
               Create
-            </StyledButton>
-          </StyledForm>
+            </Styled.CreateButton>
+          </Styled.CreateForm>
         );
       }}
     </Formik>
