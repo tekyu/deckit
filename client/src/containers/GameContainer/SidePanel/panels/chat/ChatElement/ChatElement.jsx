@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import styled from "styled-components";
 import Moment from "react-moment";
+import PlayerBubble from "../../../../../../components/Generic/PlayerBubble/PlayerBubble";
 
 const Container = styled.div`
   display: flex;
@@ -67,7 +68,7 @@ const Message = styled.p`
   height: auto;
   padding: 7px 12px;
   border-radius: 15px;
-  background: #20948b;
+  background: #009bff;
   color: white;
 `;
 
@@ -99,9 +100,9 @@ const ChatElement = ({
     <Container isMine={isMine} id={id} owner={ownerId} timestamp={timestamp}>
       <Display isMine={isMine}>
         <AvatarContainer>
-          <img src={avatar} alt={ownerName} />
+          <PlayerBubble avatar={avatar} color={color} />
+          {/* <img src={avatar} alt={ownerName} /> */}
         </AvatarContainer>
-        <ColorIndicator style={{ background: color }}></ColorIndicator>
       </Display>
       <Info isMine={isMine}>
         <Author>{isMine ? `You` : ownerName}</Author>

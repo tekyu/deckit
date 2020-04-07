@@ -6,10 +6,8 @@ import {
   SOCKET_REMOVE_LISTENER
 } from "store/socket/socketActions";
 
-const SOCKET_ADDRESS = `localhost:3012`;
-
 export default function socketMiddleware() {
-  const socket = io(SOCKET_ADDRESS);
+  const socket = io(process.env.REACT_APP_SOCKET_ADDRESS);
 
   return ({ dispatch }) => next => action => {
     if (typeof action === `function`) {
@@ -22,14 +20,14 @@ export default function socketMiddleware() {
     }
     switch (type) {
       case SOCKET_LEAVE:
-        console.log(`%c SOCKET LEAVE`, `background:#FFA09E`, event);
+        // console.log(`%c SOCKET LEAVE`, `background:#FFA09E`, event);
         socket.removeListener(event);
         break;
       case SOCKET_EMIT:
-        console.log(`%c SOCKET EMIT`, `background:#90D6E8`, event, {
-          ...payload,
-          ...rest
-        });
+        // console.log(`%c SOCKET EMIT`, `background:#90D6E8`, event, {
+        //   ...payload,
+        //   ...rest
+        // });
         if (handler) {
           socket.emit(event, { ...payload, ...rest }, handler);
         } else {
@@ -42,7 +40,7 @@ export default function socketMiddleware() {
             dispatch({ type: `ERROR`, payload: data.error });
             return;
           }
-          console.log(`%c SOCKET LISTENER`, `background:#C1FFAB`, event, data);
+          // console.log(`%c SOCKET LISTENER`, `background:#C1FFAB`, event, data);
           const readyData = { data, socketId: socket.id };
           handler(readyData);
           // dispatch({ type: "SAVE_DATA", payload });

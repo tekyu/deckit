@@ -5,6 +5,7 @@ export class MemoryUsage {
   }
   bytesToSize(this: MemoryUsage, input: any, precision: number) {
     const index = Math.floor(Math.log(input) / Math.log(1024));
+    // @ts-ignore
     if (this.unit >= this.unit.length) return input + ' B';
     return (
       (input / Math.pow(1024, index)).toFixed(precision) +
@@ -15,9 +16,9 @@ export class MemoryUsage {
   }
   testUsage(this: MemoryUsage) {
     const usage = process.memoryUsage();
-    console.log("==================================");
-    console.log("  Empty Node Module Memory Usage  ");
-    console.log("==================================");
+    console.log('==================================');
+    console.log('  Empty Node Module Memory Usage  ');
+    console.log('==================================');
 
     setInterval(() => {
       console.log(

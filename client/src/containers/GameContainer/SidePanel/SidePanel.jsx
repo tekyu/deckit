@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { listener } from "store/actions";
 import ScorePanel from "./panels/score/ScorePanel";
 import ChatPanel from "./panels/chat/ChatPanel";
@@ -13,8 +13,8 @@ import Bubbles from "./Bubbles/Bubbles";
  */
 
 const Container = styled.div`
-  /* background: blue; */
   min-width: 320px;
+  width: 320px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -23,7 +23,6 @@ const Container = styled.div`
 const Panel = styled.div`
   background: white;
   border-radius: 6px;
-  /* border: 1px solid #000; */
   box-sizing: border-box;
   width: 100%;
   height: 100%;
@@ -33,7 +32,7 @@ const Panel = styled.div`
 `;
 
 const SidePanel = ({ panels }) => {
-  const [openedPanel, setOpenedPanel] = useState(`score`); // Object.keys(panels)[0]
+  const [openedPanel, setOpenedPanel] = useState(Object.keys(panels)[0]); // Object.keys(panels)[0]
   const [updatedPanels, setUpdatedPanels] = useState([]);
   const dispatch = useDispatch();
   const panelMapping = {
@@ -77,7 +76,6 @@ const SidePanel = ({ panels }) => {
 
   return (
     <Container>
-      <div>{updatedPanels}</div>
       <Bubbles
         panels={panels}
         openedPanel={openedPanel}

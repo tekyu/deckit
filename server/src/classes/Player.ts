@@ -1,10 +1,8 @@
+// @ts-nocheck
 import { gameOptions } from './../utils/gameMapping';
-import shortId from 'shortid';
 import IRoom from '../interfaces/IRoom';
 import { getGameOptions } from '../utils/gameMapping';
-import mockRooms from '../mocks/Rooms';
 import hri from 'human-readable-ids';
-const mockChat = [];
 
 interface CreateRoomOptions {
   mode: string;

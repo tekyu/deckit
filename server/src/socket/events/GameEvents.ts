@@ -1,5 +1,5 @@
+// @ts-nocheck
 import getRoom from '../../utils/getRoom';
-import cards from './../../cards/cards.json';
 import distributeRandomCard from '../../utils/cards/distributeRandomCard';
 import distributeRandomCardsToPlayers from '../../utils/cards/distributeRandomCardsToPlayers';
 import Room from '../../classes/Room';
@@ -8,20 +8,32 @@ import { calculateRoundPoints } from '../../utils/Deckit/calculateRoundPoints';
 import prepareRoomForNextRound from '../../utils/cards/prepareRoomForNextRound';
 import preparePlayersForNextRound from '../../utils/cards/preparePlayersForNextRound';
 import prepareSocketForNextRound from '../../utils/cards/prepareSocketForNextRound';
+import shuffle from '../../utils/cards/Shuffle';
+import axios from '../../../axios';
 
 export const GameEvents = (socket: any, io: any) => {
-  console.log('Game events');
-
-  socket.on('START_GAME', ({ activeRoomId }) => {
+  socket.on('START_GAME', async ({ activeRoomId }: any) => {
     const room = getRoom(activeRoomId, io.gameRooms);
+    if (!room) return null;
     let { gameOptions } = room;
+    const { decks } = gameOptions;
+    // move this to roomEvents
+    // create prepareRoom func
+    // put this call there
+    await axios
+      .get(`/cards`, {
+        params: {
+          decks
+        }
+      })
+      .then(({ data }) => {
+        room.gameOptions.remainingCards = data;
+      })
+      .catch(res => console.log('AXIOS catch', res.statusCode));
 
-    gameOptions.remainingCards = cards;
-
-    console.log('START_GAME', room);
     const players = distributeRandomCardsToPlayers(
       room.players,
-      gameOptions.remainingCards
+      room.gameOptions.remainingCards
     );
     players.forEach(({ id, cards }) => {
       io.to(id).emit('UPDATE_MY_CARDS', cards);
@@ -43,7 +55,7 @@ export const GameEvents = (socket: any, io: any) => {
       scoreboard: room.scoreboard
     });
     io.in(activeRoomId).emit('GAME_UPDATED', {
-      remainingCards: gameOptions.remainingCards.length,
+      remainingCards: room.gameOptions.remainingCards.length,
       round: gameOptions.round,
       stage: gameOptions.stage,
       hinter: gameOptions.hinter,
@@ -72,7 +84,6 @@ export const GameEvents = (socket: any, io: any) => {
         pickedBy: []
       });
     }
-    console.log('SENT_HINT_CARD', card.id);
   });
 
   socket.on('SENT_HINT', ({ activeRoomId, hint }) => {
@@ -87,7 +98,6 @@ export const GameEvents = (socket: any, io: any) => {
     if (playersPickedCard.indexOf(socket.pswOptions.id) === -1) {
       playersPickedCard.push(socket.pswOptions.id);
     }
-    console.log('SENT_HINT', hint);
     if (room.gameOptions.hintCard) {
       stage = 3;
       io.in(activeRoomId).emit('GAME_UPDATED', {
@@ -96,7 +106,6 @@ export const GameEvents = (socket: any, io: any) => {
         hintCard,
         playersPickedCard
       });
-      console.log('SENT_HINT stage:', stage);
     }
   });
 
@@ -121,16 +130,14 @@ export const GameEvents = (socket: any, io: any) => {
     if (playersPickedCard.indexOf(socket.pswOptions.id) === -1) {
       playersPickedCard.push(socket.pswOptions.id);
     }
-    console.log(
-      'PICKED_CARD_TO_HINT ifplayers:',
-      playersPickedCard.length,
-      players.length
-    );
     io.in(activeRoomId).emit('GAME_UPDATED', { playersPickedCard });
     if (playersPickedCard.length === players.length) {
       stage = 4;
-      io.in(activeRoomId).emit('GAME_UPDATED', { stage, pickedCardsToHint });
-      console.log('PICKED_CARD_TO_HINT stage:', stage);
+      const shuffledPickedCardsToHint = shuffle(pickedCardsToHint);
+      io.in(activeRoomId).emit('GAME_UPDATED', {
+        stage,
+        pickedCardsToHint: shuffledPickedCardsToHint
+      });
     }
   });
 
@@ -148,30 +155,28 @@ export const GameEvents = (socket: any, io: any) => {
     let { stage, round } = gameOptions;
 
     const pickedCard = pickedCardsToHint.find(({ card: { id } }) => {
-      console.log('pickedCard', id, card.id);
       return id === card.id;
     });
-    choosedCardsToMatchHint.push({
-      card: card,
-      chooser: socket.pswOptions.id,
-      owner: pickedCard.owner
-    });
-    console.log('pickedcard2', pickedCard);
-    pickedCard.pickedBy.push({
-      id: socket.pswOptions.id,
-      username: socket.pswOptions.username,
-      color: socket.pswOptions.color
-    });
-    pickedCardsToHint;
-    console.log('pickedCardsToHint', pickedCardsToHint);
-    console.log('CHOOSED CARD TO MATCH HINT', choosedCardsToMatchHint);
+    if (playersChoosedCard.indexOf(socket.pswOptions.id) === -1) {
+      choosedCardsToMatchHint.push({
+        card: card,
+        chooser: socket.pswOptions.id,
+        owner: pickedCard.owner
+      });
+      pickedCard.pickedBy.push({
+        id: socket.pswOptions.id,
+        username: socket.pswOptions.username,
+        color: socket.pswOptions.color
+      });
+      pickedCardsToHint;
 
-    socket.pswOptions.choosedCard = card;
-    playersChoosedCard.push(socket.pswOptions.id);
+      socket.pswOptions.choosedCard = card;
 
-    io.in(activeRoomId).emit('GAME_UPDATED', { playersChoosedCard });
+      playersChoosedCard.push(socket.pswOptions.id);
+      io.in(activeRoomId).emit('GAME_UPDATED', { playersChoosedCard });
+    }
+
     if (choosedCardsToMatchHint.length === players.length - 1) {
-      console.log('areAllPicked');
       room.scoreboard = calculateRoundPoints(scoreboard, gameOptions);
       room.setWinners();
 
@@ -191,19 +196,15 @@ export const GameEvents = (socket: any, io: any) => {
         pickedCardsToHint
       });
       io.in(activeRoomId).emit('ROOM_UPDATED', { scoreboard: room.scoreboard });
-      console.log('SCOREBOARD', room.scoreboard);
-      // io.in(activeRoomId).emit('GAME_UPDATED', { stage });
       // award points
       // show point changes
       // show animations
       // show correct card
       // show timer for next round
       // set timer here with timestamp
-      // io.in(activeRoomId).emit('ROOM_UPDATED', room);
       // const scoreData = players.map(({ id, gameOptions: { score } }) => {
       //   return { id, score };
       // });
-      // io.in(activeRoomId).emit('SCORE_UPDATED', { scoreboard });
       players = distributeRandomCardsToPlayers(players, remainingCards);
       players.forEach(({ id, cards }) => {
         io.to(id).emit('UPDATE_MY_CARDS', cards);
@@ -214,15 +215,15 @@ export const GameEvents = (socket: any, io: any) => {
       socket.pswOptions = prepareSocketForNextRound(socket.pswOptions);
 
       // TODO: FRONT TESTING FOR STAGE
-      // const interval = setTimeout(() => {
-      //   io.in(activeRoomId).emit('GAME_UPDATED', {
-      //     ...room.gameOptions,
-      //     remainingCards: remainingCards.length
-      //   });
-      //   io.in(activeRoomId).emit('ROOM_UPDATED', {
-      //     players: room.players
-      //   });
-      // }, 5000);
+      const interval = setTimeout(() => {
+        io.in(activeRoomId).emit('GAME_UPDATED', {
+          ...room.gameOptions,
+          remainingCards: remainingCards.length
+        });
+        io.in(activeRoomId).emit('ROOM_UPDATED', {
+          players: room.players
+        });
+      }, 5000);
     }
   });
 };

@@ -1,4 +1,4 @@
-export default (room = {}, action = '') => {
+export default (room: any = {}, action = '') => {
   const { id } = room;
   if (!id || !action) {
     throw Error(

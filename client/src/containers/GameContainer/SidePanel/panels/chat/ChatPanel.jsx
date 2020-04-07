@@ -11,13 +11,10 @@ import ChatList from "./ChatList/ChatList";
  */
 
 const Container = styled.div`
+  height: 100%;
   display: flex;
   flex-direction: column;
-  height: 100%;
-`;
-
-const StyledChatList = styled(ChatList)`
-  overflow-y: auto;
+  flex: 1 1 1px;
 `;
 
 const ChatPanel = ({ activeRoomId, emitter, listener }) => {
@@ -28,7 +25,7 @@ const ChatPanel = ({ activeRoomId, emitter, listener }) => {
     });
   }, [activeRoomId, emitter]);
   useEffect(() => {
-    listener(`incomingChatMessage`, newMessage => {
+    listener(`incomingChatMessage`, ({ data: { ...newMessage } }) => {
       setMessages(messages => [...messages, newMessage]);
     });
   }, []);
@@ -38,7 +35,7 @@ const ChatPanel = ({ activeRoomId, emitter, listener }) => {
 
   return (
     <Container>
-      {messages && <StyledChatList messages={messages} />}
+      {messages && <ChatList messages={messages} />}
       <ChatControls />
     </Container>
   );

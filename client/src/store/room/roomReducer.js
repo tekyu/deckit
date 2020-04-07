@@ -6,8 +6,7 @@ import {
   SET_ACTIVE_ROOM_ID,
   SET_ACTIVE_ROOM,
   UPDATE_ACTIVE_ROOM,
-  UPDATE_ROOMS,
-  SCORE_UPDATED
+  UPDATE_ROOMS
 } from "./roomActions";
 
 export const initialState = {
@@ -28,7 +27,6 @@ export const roomReducer = produce((draft = initialState, action) => {
       draft.rooms = action.rooms;
       return draft;
     case UPDATE_ACTIVE_ROOM:
-      console.log("UPDATE_ACTIVE_ROOM", action);
       // bodge, need to change this
       draft.activeRoom = draft.activeRoom || {};
       Object.assign(draft.activeRoom, action.payload);

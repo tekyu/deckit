@@ -7,7 +7,7 @@ export const gameMapping = {
 
 export const gameOptions = {
   d: {
-    decks: [],
+    decks: ['default'],
     stage: 0, // 0 - idle | 1 - initialGiveaway | 2 - pickHint | 3 - pickCard | 4 - chooseCards | 5 - awardPoints | 6 - checkGame | 7 - cardShuffle | 8 - ended
     round: 0,
     remainingCards: [],
@@ -39,14 +39,14 @@ export const gameOptions = {
   }
 };
 
-export const listGameMapping = index => {
+export const listGameMapping = (index: any) => {
   if (typeof index !== 'undefined') {
     return Object.keys(gameMapping)[index];
   }
   return Object.values(gameMapping);
 };
 
-export const getGameMapping = gameCode => {
+export const getGameMapping = (gameCode: string) => {
   if (!gameMapping[gameCode]) {
     //TODO: Change to error component
     throw Error(`Game ${gameCode} is not defined within mapping`);
@@ -54,7 +54,7 @@ export const getGameMapping = gameCode => {
   return gameMapping[gameCode];
 };
 
-export const getGameOptions = gameCode => {
+export const getGameOptions = (gameCode: string) => {
   if (!gameOptions[gameCode]) {
     throw Error(`Game ${gameCode} is not defined within mapping`);
   }

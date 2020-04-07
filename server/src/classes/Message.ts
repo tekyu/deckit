@@ -1,4 +1,4 @@
-import { gameOptions } from './../utils/gameMapping';
+// @ts-nocheck
 import shortId from 'shortid';
 
 /**

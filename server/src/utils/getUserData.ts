@@ -1,4 +1,4 @@
-export const getUserData = user => {
+export const getUserData = (user: any) => {
   const {
     friends,
     activeGames,

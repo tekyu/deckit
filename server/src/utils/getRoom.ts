@@ -1,6 +1,7 @@
 import getRoomNamespaceFromList from './getRoomNamespaceFromList';
+import IGameRooms from '../interfaces/IGameRooms';
 
-export default function(id: String, gameRooms: Object) {
+export default function(id: any, gameRooms: IGameRooms) {
   const namespace = getRoomNamespaceFromList(id, gameRooms);
   if (!namespace) {
     return null;

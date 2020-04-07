@@ -1,18 +1,13 @@
 import { lazy } from "react";
 
-// export const gameMapping = {
-//   d: "Deckit",
-//   k: "Karcianka"
-// };
-
 export const gameMapping = {
   d: {
     name: `Deckit`,
     panels: {
       score: { listener: `scoreUpdate`, data: [] },
-      chat: { listener: `incomingChatMessage`, data: [] },
-      log: { listener: `incomingLog`, data: [] },
-      settings: { listener: `roomSettings`, data: [] }
+      chat: { listener: `incomingChatMessage`, data: [] }
+      // log: { listener: `incomingLog`, data: [] },
+      // settings: { listener: `roomSettings`, data: [] }
     },
     allowedPlayers: 10
   },

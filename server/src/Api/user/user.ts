@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { User } from '../../schemas/User';
 import chalk from 'chalk';
 import { getUserData } from '../../utils/getUserData';

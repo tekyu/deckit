@@ -1,3 +1,3 @@
-export default function(randomCard, deck) {
-  return deck.some(({ id }) => id === randomCard.id);
+export default function(randomCard: any, deck: any) {
+  return deck.some(({ id }: any) => id === randomCard.id);
 }

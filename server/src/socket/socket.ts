@@ -18,7 +18,7 @@ const ioEvents = (io: any) => {
       socketId: socket.id,
       state: 0 // 0 - waiting | 1 - ready | 3 - paused | 4 - disconnected
     };
-    socket.on('getRooms', (data, callback) => {
+    socket.on('getRooms', (data: any, callback: any) => {
       socket.join(WAITING_ROOM);
       socket.pswOptions.rooms.push(WAITING_ROOM);
       callback(io.gameRooms.public);
@@ -42,7 +42,9 @@ const ioEvents = (io: any) => {
       );
       const updatedRooms = socket.pswOptions.rooms.map((id: String) => {
         const room = getRoom(id, io.gameRooms);
+        // @ts-ignore
         const { players } = room;
+        // @ts-ignore
         room.disconnectPlayer(socket.pswOptions.id);
         io.in(id).emit('ROOM_UPDATED', { players });
         return getRoomObjectForUpdate(room, players > 0 ? 'update' : 'remove');
@@ -54,11 +56,13 @@ const ioEvents = (io: any) => {
   });
 };
 
-const SocketIo = App => {
+const SocketIo = (App: any) => {
   const port = process.env.SOCKET_PORT || 3012;
   const server = http.createServer();
   const io = socketIo(server);
   // io.eio.pingTimeout = 300000; // 5 minutes
+
+  // @ts-ignore
   io.gameRooms = { public: { ...mockRooms }, private: {}, fast: {} };
 
   ioEvents(io);

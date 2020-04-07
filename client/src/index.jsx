@@ -7,6 +7,8 @@ import "./assets/css/index.scss";
 import store from "store/store";
 import App from "components/App/App";
 import * as serviceWorker from "./serviceWorker";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const app = (
   <Provider store={store}>

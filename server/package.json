@@ -5,7 +5,9 @@
   "scripts": {
     "test": "jest",
     "start": "ts-node-dev --respawn --transpileOnly ./app.ts",
-    "prod": "tsc && node ./build/app.js"
+    "prod": "tsc && node ./build/app.js",
+    "prodbuild": "cp package.json build/package.json && cd build && npm install --only=production",
+    "build": "tsc -p ."
   },
   "author": "Patryk Rosiak",
   "license": "ISC",
@@ -22,6 +24,7 @@
     "@types/passport": "^1.0.0",
     "@types/shortid": "0.0.29",
     "@types/socket.io": "^2.1.2",
+    "axios": "^0.19.2",
     "bcrypt": "^3.0.3",
     "body-parser": "^1.18.3",
     "clone-deep": "^4.0.1",
@@ -33,21 +36,24 @@
     "ejs": "^3.0.1",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
+    "fs-extra": "^9.0.0",
     "helmet": "^3.21.2",
     "human-readable-ids": "^1.0.4",
     "module-alias": "^2.1.0",
+    "moleculer": "^0.14.5",
     "mongoose": "^5.3.9",
     "mongoose-unique-validator": "^2.0.2",
     "node-uuid": "^1.4.8",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "qs": "^6.9.3",
     "random-color": "^1.0.1",
     "random-hex": "^1.0.2",
     "request": "^2.88.0",
     "shortid": "^2.2.14",
     "socket.io": "^2.1.1",
     "ts-node-dev": "^1.0.0-pre.40",
-    "typescript": "^3.5.3"
+    "typescript": "^3.7.0"
   },
   "devDependencies": {
     "chalk": "^2.4.1",

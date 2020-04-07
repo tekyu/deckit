@@ -1,15 +1,13 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect, useDispatch } from "react-redux";
 import { checkAuth, emitter, listener, removeListener } from "store/actions";
-import axios from "utils/axios";
 import styled from "styled-components";
 import dynamicSort from "utils/dynamicSort";
 import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
 import * as styles from "./Browse.module.scss";
 import RoomJoining from "./RoomJoining/RoomJoining";
-import Carousel1 from "../../../Carousel1";
 
 const StyledSeparator = styled.div`
   text-align: center;
@@ -24,7 +22,6 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
     emitter(`getRooms`, null, rooms => {
       setParsedRooms(rooms);
     });
-    axios.get(`/api/getRooms`).then(() => {});
   }, [emitter]);
   useEffect(() => {
     // checkAuth();
@@ -94,7 +91,6 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
     : null;
   return (
     <>
-      <Carousel1 />
       <RoomJoining />
       {/* <Sort sortHandler={sortHandler} /> */}
       <StyledSeparator>Browse rooms</StyledSeparator>

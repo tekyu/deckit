@@ -1,9 +1,12 @@
+// @ts-nocheck
 import { gameOptions } from './../utils/gameMapping';
 import shortId from 'shortid';
 import IRoom from '../interfaces/IRoom';
 import { getGameOptions } from '../utils/gameMapping';
 import mockRooms from '../mocks/Rooms';
 import hri from 'human-readable-ids';
+import cloneDeep from 'clone-deep';
+
 const mockChat = [];
 
 interface CreateRoomOptions {
@@ -59,8 +62,8 @@ export default class Room implements IRoom {
     this.createdAt = Date.now();
     this.scoreboard = {};
     this.gameOptions = gameOptions
-      ? Object.assign(gameOptions, getGameOptions(gameCode))
-      : getGameOptions(gameCode);
+      ? Object.assign(cloneDeep(getGameOptions(gameCode)), gameOptions)
+      : cloneDeep(getGameOptions(gameCode));
     this.chat = [];
   }
 
@@ -120,13 +123,16 @@ export default class Room implements IRoom {
     return this.winners.length;
   }
 
+  setCards(cards) {
+    this.gameOptions.remainingCards = cards;
+  }
+
   async connectPlayer(playerData: Object) {
     const newPlayerData = { ...playerData };
     if (this.owner === playerData.id) {
       newPlayerData.state = 1;
     }
     this.players.push(newPlayerData);
-    console.log('connectPlayer', this.players);
     return this.players;
   }
 

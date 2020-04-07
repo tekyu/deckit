@@ -1,6 +1,7 @@
 import chalk from 'chalk';
+import IGameRooms from '../interfaces/IGameRooms';
 
-export default function(id: String, gameRooms: Object) {
+export default function(id: string, gameRooms: IGameRooms) {
   if (gameRooms.public[id]) {
     return 'public';
   } else if (gameRooms.private[id]) {

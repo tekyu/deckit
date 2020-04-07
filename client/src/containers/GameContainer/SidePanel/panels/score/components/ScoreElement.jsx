@@ -3,54 +3,52 @@ import styled from "styled-components";
 import * as styles from "./ScoreElement.module.scss";
 import PlayerBubble from "../../../../../../components/Generic/PlayerBubble/PlayerBubble";
 
-const StyledProgressBarContainer = styled.div`
-  height: 12px;
-  border-radius: 3px;
-  background: transparent;
-  width: 100%;
-  overflow: hidden;
-  box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.34);
-`;
-
 const StyledContainer = styled.div`
-  margin: 2px 0;
   display: flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 12px 12px;
+  position: relative;
+  &:before {
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 0%;
+    ${({ progress }) =>
+      progress &&
+      `
+    width: ${progress}%`}
+
+    background-image: linear-gradient(
+      35deg,
+      #2ac9db -10%,
+      #009bff 47%,
+      #cf77f3 130%
+    );
+    top: 0;
+    left: 0;
+  }
+`;
+
+const StyledInfoContainer = styled.div`
+  display: flex;
+  width: 100%;
+  z-index: 1;
 `;
 
 const StyledInfo = styled.div`
-  display: flex;
-  flex-direction: column;
   width: 100%;
   margin-left: 6px;
-`;
-
-const StyledProgressContainer = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 8px;
 `;
 
-const StyledProgressBar = styled.span`
-  display: block;
-  height: 100%;
-  width: 0%;
-  transition: width 0.3s ease-out;
-  background-image: linear-gradient(
-    35deg,
-    #2ac9db -10%,
-    #009bff 47%,
-    #cf77f3 130%
-  );
-  ${({ progress }) =>
-    progress &&
-    `
-    width: ${progress}%`}
+const StyledUsername = styled.div`
+  font-size: 14px;
 `;
 
-const StyledPoints = styled.span`
-  width: 30px;
+const StyledScore = styled.div`
+  font-size: 14px;
 `;
 
 const ScoreElement = ({
@@ -58,10 +56,16 @@ const ScoreElement = ({
   score = 0,
   progress = 0
 }) => {
-  console.log("progrsss", progress, `${progress}%`);
   return (
-    <StyledContainer id={id} className={styles.container}>
-      <PlayerBubble avatar={avatar} color={color} />
+    <StyledContainer id={id} progress={progress}>
+      <StyledInfoContainer>
+        <PlayerBubble avatar={avatar} color={color} />
+        <StyledInfo>
+          <StyledUsername>{username}</StyledUsername>
+          <StyledScore>{score}</StyledScore>
+        </StyledInfo>
+      </StyledInfoContainer>
+      {/* 
       <StyledInfo className={styles.info}>
         <label>{username}</label>
         <StyledProgressContainer className={styles.progressContainer}>
@@ -70,7 +74,7 @@ const ScoreElement = ({
             <StyledProgressBar progress={progress} />
           </StyledProgressBarContainer>
         </StyledProgressContainer>
-      </StyledInfo>
+      </StyledInfo> */}
     </StyledContainer>
   );
 };

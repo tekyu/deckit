@@ -14,15 +14,13 @@ import {
 } from "store/actions";
 import selectUser from "store/selectors/selectUser";
 import { toast } from "react-toastify";
-import SidePanel from "./SidePanel/SidePanel";
 import { leaveRoom, updateActiveRoom } from "../../store/room/roomActions";
 import WaitingScreen from "../../components/WaitingScreen/WaitingScreen";
 import selectActiveRoom from "../../store/selectors/selectActiveRoom";
 import {
   updateMyCardsListener,
   removeUpdateMyCardsListener,
-  updateGameOptionsListener,
-  setInitialGameOptions
+  updateGameOptionsListener
 } from "../../store/deckit/deckitActions";
 /**
  * TODO:
@@ -32,10 +30,11 @@ import {
 
 const Container = styled.div`
   display: flex;
-  /* align-items: center; */
+  justify-content: center;
   width: 100%;
   height: calc(100vh - 70px - 40px);
 `;
+
 const WaitingScreenContainer = styled.div`
   height: 100%;
   @media (max-width: 1100px) {
@@ -53,7 +52,7 @@ const GameContainer = () => {
   const activeRoom = useSelector(selectActiveRoom);
   const [roomInfo, setRoomInfo] = useState(null);
   const [GameComponent, setGameComponent] = useState(null);
-  const [panels, setPanels] = useState({});
+  // const [panels, setPanels] = useState({});
 
   useEffect(() => {
     dispatch(updateMyCardsListener());
@@ -91,7 +90,7 @@ const GameContainer = () => {
     if (activeRoom && activeRoom.state >= 2) {
       const { gameCode, id } = activeRoom;
       setGameComponent(getGame(gameCode, id));
-      setPanels(gameMapping[gameCode].panels);
+      // setPanels(gameMapping[gameCode].panels);
     }
   }, [activeRoom]);
 
@@ -111,7 +110,6 @@ const GameContainer = () => {
       dispatch(leaveRoom(id));
       dispatch(setActiveRoomId());
       dispatch(setActiveRoom());
-      // dispatch(setInitialGameOptions());
     };
   }, [dispatch, id]);
 
@@ -132,9 +130,6 @@ const GameContainer = () => {
           </WaitingScreenContainer>
         )}
         {GameComponent && <GameComponent options={roomInfo} />}
-        {activeRoom && activeRoom.state >= 2 && Object.keys(panels).length && (
-          <SidePanel panels={panels} />
-        )}
       </Suspense>
     </Container>
   );

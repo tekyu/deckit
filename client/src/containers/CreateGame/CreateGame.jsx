@@ -67,6 +67,7 @@ const CreateGame = () => {
     isPrivate,
     playersMax,
     name,
+    maxScore,
     password,
     gameCode,
     username
@@ -77,7 +78,8 @@ const CreateGame = () => {
       name,
       password,
       gameCode,
-      username
+      username,
+      gameOptions: { maxScore: +maxScore }
     };
     if (userData) {
       createRoom(roomOptions, userData.id);
@@ -95,7 +97,8 @@ const CreateGame = () => {
       initialValues={{
         gameCode: `d`,
         name: sillyname(),
-        playersMax: 10,
+        maxScore: 30,
+        playersMax: 4,
         isPrivate: true,
         username: sillyname()
       }}
@@ -106,10 +109,11 @@ const CreateGame = () => {
     >
       {({
         isSubmitting,
-        values: { username, name, playersMax, isPrivate },
+        values: { username, name, isPrivate },
         handleChange,
         handleBlur,
-        setFieldValue
+        setFieldValue,
+        initialValues: { playersMax, maxScore }
       }) => {
         return (
           <Styled.CreateForm>
@@ -144,7 +148,7 @@ const CreateGame = () => {
               Maximum players in room
               <Styled.Slider
                 name="playersMax"
-                defaultValue={4}
+                defaultValue={playersMax}
                 min={2}
                 max={10}
                 step={1}

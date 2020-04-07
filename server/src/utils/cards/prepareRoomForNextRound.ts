@@ -1,6 +1,6 @@
 import cloneDeep from 'clone-deep';
 
-export default function(room) {
+export default function(room: any) {
   const { gameOptions, players } = room;
   let newGameOptions = cloneDeep(gameOptions);
   const { round } = newGameOptions;

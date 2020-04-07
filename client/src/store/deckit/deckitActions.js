@@ -11,6 +11,7 @@ export const UPDATE_GAME_OPTIONS = "UPDATE_GAME_OPTIONS";
 export const SET_MY_PICKED_CARD = `SET_MY_PICKED_CARD`;
 export const SET_MY_CARD = `SET_MY_CARD`;
 export const INITIAL_GAMEOPTIONS = `INITIAL_GAMEOPTIONS`;
+export const RESET_FOR_NEXT_ROUND = `RESET_FOR_NEXT_ROUND`;
 
 export const pickMyCard = ({ activeRoomId, card }) => {
   return dispatch => {
@@ -43,15 +44,6 @@ export const chooseHinterCard = ({ activeRoomId, card }) => {
     dispatch(emitter(CHOOSED_CARD_TO_MATCH_HINT, { activeRoomId, card }));
   };
 };
-
-// export const setHinter = hinter => {
-//   return dispatch => {
-//     dispatch({
-//       type: SET_HINTER,
-//       hinter
-//     });
-//   };
-// };
 
 export const updateGameOptionsListener = () => {
   return dispatch => {
@@ -95,6 +87,14 @@ export const setInitialGameOptions = () => {
   return dispatch => {
     dispatch({
       type: INITIAL_GAMEOPTIONS
+    });
+  };
+};
+
+export const resetOptionsForNextRound = () => {
+  return dispatch => {
+    dispatch({
+      type: RESET_FOR_NEXT_ROUND
     });
   };
 };

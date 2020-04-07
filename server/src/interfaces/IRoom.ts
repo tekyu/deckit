@@ -1,16 +1,20 @@
 export default interface IRoom {
-  mode: string;
-  playersMax: number;
-  playersCurrent: number;
-  name: string;
   id: string;
-  owner: string;
-  admin: string;
-  gameCode: string;
-  state: number; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
+  mode?: string;
+  playersMax: number;
+  playersCurrent?: number;
+  name?: string;
+  owner?: string;
+  admin?: string;
+  gameCode?: string;
+  state?: number; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
+  winners?: Array<String>;
+  createdAt?: number;
+  gameOptions?: Object;
+  chat?: Array<Object>;
   players: Array<Object>;
-  winners: Array<String>;
-  createdAt: number;
-  gameOptions: Object;
-  chat: Array<Object>;
+  scoreboard: Object;
+  roomOptions: Function;
+  connectPlayer: Function;
+  disconnectPlayer: Function;
 }

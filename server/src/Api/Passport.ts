@@ -1,7 +1,8 @@
-const LocalStrategy = require("passport-local").Strategy;
-import LocalStrategy from "passport-local";
-import passport from "passport";
-import { User } from "../schemas/User";
+// @ts-nocheck
+const LocalStrategy = require('passport-local').Strategy;
+import LocalStrategy from 'passport-local';
+import passport from 'passport';
+import { User } from '../schemas/User';
 
 const Passport = () => {
   const LS = LocalStrategy.Strategy;
@@ -9,14 +10,14 @@ const Passport = () => {
     User.findOne({ username })
       .then(user => {
         if (!user || !user.validPassword(password)) {
-          done(null, false, { message: "Invalid username/password" });
+          done(null, false, { message: 'Invalid username/password' });
         } else {
           done(null, user);
         }
       })
       .catch(e => done(e));
   });
-  passport.use("local", local);
+  passport.use('local', local);
 
   passport.serializeUser(function(user, done) {
     done(null, user._id);

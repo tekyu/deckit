@@ -1,3 +1,4 @@
+// @ts-nocheck
 import shortId from 'shortid';
 import getRoom from '../../utils/getRoom';
 
@@ -11,7 +12,6 @@ const chatEmitters = {
 };
 
 export const ChatEvents = (socket: any, io: any) => {
-  console.log('Chat events');
   socket.on(
     chatListeners.getHistory,
     ({ activeRoomId }: any, callback: Function) => {

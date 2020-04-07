@@ -10,7 +10,6 @@ import {
 } from "../../../../store/deckit/deckitActions";
 import PickedBy from "./components/PickedBy";
 import selectPickedCard from "../../../../store/deckit/selectors/selectPickedCard";
-import selectMyCard from "../../../../store/deckit/selectors/selectMyCard";
 
 const StyledContainer = styled.div`
   width: 270px;
@@ -26,11 +25,11 @@ const StyledContainer = styled.div`
     !clicked &&
     `cursor: pointer;
 `}
-  margin: 0 10px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
+  /* margin: 0 4px; */
 `;
 
 const StyledButton = styled(Button)`
@@ -46,25 +45,7 @@ const StyledButton = styled(Button)`
   );
 `;
 
-const StyledPickedBy = styled.div`
-  background: blue;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-self: flex-end;
-  justify-self: right;
-  margin-left: auto;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  width: 30px;
-  height: 30px;
-`;
-
-const StyledPickedBy2 = styled(PickedBy)`
-  background: blue;
-`;
-
 const Card = ({ card = {}, state = null, owner, pickedBy } = {}, props) => {
-  console.log("card", card, state, props);
   const dispatch = useDispatch();
   const [showButton, setShowButton] = useState(false);
   const { id = 123, title = "placeholder", url = "" } = card;
@@ -77,7 +58,6 @@ const Card = ({ card = {}, state = null, owner, pickedBy } = {}, props) => {
         ? false
         : !lastState
     );
-    console.log("showbutton", showButton);
   };
   const pickCardHandler = () => {
     switch (state) {
@@ -112,7 +92,7 @@ const Card = ({ card = {}, state = null, owner, pickedBy } = {}, props) => {
           Pick card
         </StyledButton>
       )}
-      {pickedBy && <PickedBy pickedBy={pickedBy} />}
+      {pickedBy && pickedBy.length > 0 && <PickedBy pickedBy={pickedBy} />}
     </StyledContainer>
   );
 };

@@ -2,7 +2,8 @@ import getRandomCard from './getRandomCard';
 import checkForDuplicate from './checkForDuplicate';
 import removeCardFromList from './removeCardFromList';
 
-export default function({ cards }: Array, remainingCards: Array) {
+export default function({ cards }: any, remainingCards: any) {
+  // @ts-ignore
   if (!remainingCards.length > 0) {
     return null;
   }

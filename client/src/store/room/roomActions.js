@@ -7,9 +7,16 @@ export const UPDATE_ROOMS = `UPDATE_ROOMS`;
 export const SET_ACTIVE_ROOM = `SET_ACTIVE_ROOM`;
 export const UPDATE_ACTIVE_ROOM = `UPDATE_ACTIVE_ROOM`;
 export const SCORE_UPDATED = `SCORE_UPDATED`;
+export const LEAVE_ROOM = `LEAVE_ROOM`;
+export const UPDATE_PLAYER = `UPDATE_PLAYER`;
+export const START_GAME = `START_GAME`;
+export const KICK_PLAYER = `KICK_PLAYER`;
+export const CHANGE_ROOM_MODE = `CHANGE_ROOM_MODE`;
+export const ADD_SEAT = `ADD_SEAT`;
+export const REMOVE_SEAT = `REMOVE_SEAT`;
 
 export const setActiveRoomId = activeRoomId => {
-  return (dispatch, oldState) => {
+  return dispatch => {
     dispatch({
       type: SET_ACTIVE_ROOM_ID,
       activeRoomId
@@ -35,12 +42,11 @@ export const updateRooms = rooms => {
 
 export const leaveRoom = roomId => {
   return dispatch => {
-    dispatch(emitter("LEAVE_ROOM", { roomId }));
+    dispatch(emitter(LEAVE_ROOM, { roomId }));
   };
 };
 
 export const updateActiveRoom = roomData => {
-  console.log("updateActiveRoom", roomData);
   return dispatch => {
     dispatch({
       type: UPDATE_ACTIVE_ROOM,
@@ -51,7 +57,7 @@ export const updateActiveRoom = roomData => {
 
 export const updatePlayerInRoom = data => {
   return dispatch => {
-    dispatch(emitter(`UPDATE_PLAYER`, data));
+    dispatch(emitter(UPDATE_PLAYER, data));
   };
 };
 
@@ -70,40 +76,30 @@ export const updateScoreListener = () => {
 
 export const startGame = ({ activeRoomId }) => {
   return dispatch => {
-    dispatch(emitter(`START_GAME`, { activeRoomId }));
+    dispatch(emitter(START_GAME, { activeRoomId }));
   };
 };
 
-// export const gameStarted = ({ activeRoomId }) => {
-//   return dispatch => {
-//     dispatch(
-//       emitter('GAME_STARTED', { activeRoomId }, userData => {
-//         // dispatch(updatedUser(userData));
-//       })
-//     );
-//   }
-// }
-
 export const kickPlayer = ({ userId, activeRoomId, adminId }) => {
   return dispatch => {
-    dispatch(emitter(`KICK_PLAYER`, { userId, activeRoomId, adminId }));
+    dispatch(emitter(KICK_PLAYER, { userId, activeRoomId, adminId }));
   };
 };
 
 export const changeRoomMode = activeRoomId => {
   return dispatch => {
-    dispatch(emitter(`CHANGE_ROOM_MODE`, { activeRoomId }));
+    dispatch(emitter(CHANGE_ROOM_MODE, { activeRoomId }));
   };
 };
 
 export const addSeat = activeRoomId => {
   return dispatch => {
-    dispatch(emitter(`ADD_SEAT`, { activeRoomId }));
+    dispatch(emitter(ADD_SEAT, { activeRoomId }));
   };
 };
 
 export const removeSeat = activeRoomId => {
   return dispatch => {
-    dispatch(emitter(`REMOVE_SEAT`, { activeRoomId }));
+    dispatch(emitter(REMOVE_SEAT, { activeRoomId }));
   };
 };

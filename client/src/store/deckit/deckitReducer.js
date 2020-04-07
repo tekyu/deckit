@@ -2,18 +2,12 @@
 import produce from "immer";
 import {
   UPDATE_MY_CARDS,
-  SET_HINTER,
   UPDATE_GAME_OPTIONS,
   SET_MY_PICKED_CARD,
   SET_MY_CARD,
-  INITIAL_GAMEOPTIONS
+  INITIAL_GAMEOPTIONS,
+  RESET_FOR_NEXT_ROUND
 } from "./deckitActions";
-// import {
-//   SET_ACTIVE_ROOM_ID,
-//   SET_ACTIVE_ROOM,
-//   UPDATE_ACTIVE_ROOM,
-//   UPDATE_ROOMS
-// } from "./deckitActions";
 
 export const initialState = {
   myCard: null,
@@ -41,6 +35,11 @@ export const deckitReducer = produce(
         return draft;
       case INITIAL_GAMEOPTIONS:
         draft = initialState;
+        return draft;
+      case RESET_FOR_NEXT_ROUND:
+        draft.myCard = null;
+        draft.pickedCard = null;
+        draft.hintCard = null;
         return draft;
       default:
         return draft;

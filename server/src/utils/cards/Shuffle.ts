@@ -4,7 +4,7 @@
  * @returns {Array} Shuffled array
  */
 
-export default function(array) {
+export default function(array: any) {
   var currentIndex = array.length,
     temporaryValue,
     randomIndex;

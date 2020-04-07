@@ -140,24 +140,8 @@ const WaitingScreen = () => {
     });
   };
 
-  const cards1 = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }];
   return (
     <React.Fragment>
-      <h2>Center Mode</h2>
-      <div style={{ width: "800px", overflow: "hidden" }}>
-        <Slider>
-          {cards1.map(card => {
-            console.log("CARD IN CAROUSEL", card);
-            return (
-              <Card
-                card={card}
-                key={card.id}
-                onLoad={() => window.dispatchEvent(new Event("resize"))}
-              />
-            );
-          })}
-        </Slider>
-      </div>
       {room && (
         <StyledContainer id={room.id}>
           <StyledHeader>

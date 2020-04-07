@@ -11,7 +11,9 @@ import ScoreList from "./components/ScoreList/ScoreList";
 
 const StyledContainer = styled.div`
   height: 100%;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 1px;
 `;
 
 const ScorePanel = () => {
