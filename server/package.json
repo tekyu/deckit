@@ -4,8 +4,8 @@
   "main": "app.js",
   "scripts": {
     "test": "jest",
-    "start": "ts-node-dev --respawn --transpileOnly ./app.ts",
-    "prod": "tsc && node ./build/app.js",
+    "start": "ts-node-dev --respawn --transpileOnly -r dotenv/config ./app.ts",
+    "prod": "tsc && node -r dotenv/config ./build/app.js ",
     "prodbuild": "cp package.json build/package.json && cd build && npm install --only=production",
     "build": "tsc -p ."
   },

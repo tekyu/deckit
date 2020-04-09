@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { listener } from "store/actions";
 import ScorePanel from "./panels/score/ScorePanel";
 import ChatPanel from "./panels/chat/ChatPanel";
 import OptionsPanel from "./panels/options/OptionsPanel";
 import Bubbles from "./Bubbles/Bubbles";
+import selectGameCode from "../../../store/selectors/selectGameCode";
+import { gameMapping } from "../../../utils/gameMapping";
+
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
@@ -31,7 +34,9 @@ const Panel = styled.div`
     5px 5px 15px rgba(0, 155, 255, 0.1), -10px 5px 15px rgba(42, 201, 219, 0.1);
 `;
 
-const SidePanel = ({ panels }) => {
+const SidePanel = () => {
+  const gameCode = useSelector(selectGameCode);
+  const [panels, setPanels] = useState({});
   const [openedPanel, setOpenedPanel] = useState(Object.keys(panels)[0]); // Object.keys(panels)[0]
   const [updatedPanels, setUpdatedPanels] = useState([]);
   const dispatch = useDispatch();
@@ -40,6 +45,14 @@ const SidePanel = ({ panels }) => {
     chat: <ChatPanel />,
     options: <OptionsPanel />
   };
+
+  useEffect(() => {
+    console.log("useEffect", gameCode);
+    if (gameCode) {
+      setPanels(gameMapping[gameCode].panels);
+      setOpenedPanel(Object.keys(gameMapping[gameCode].panels)[0]);
+    }
+  }, [gameCode]);
 
   const addPanelListeners = useCallback(() => {
     Object.keys(panels).forEach(panel => {

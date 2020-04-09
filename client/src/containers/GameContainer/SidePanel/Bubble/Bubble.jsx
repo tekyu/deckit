@@ -34,14 +34,12 @@ const Container = styled.div`
     }
   `}
 `;
-const Bubble = ({ handler, opened, updated, name }) => {
+const Bubble = ({ handler, opened, updated, name, icon }) => {
+  console.log("Bubble", opened, updated, name, icon);
   return (
-    <Container
-      name={name}
-      opened={opened}
-      updated={updated}
-      onClick={handler}
-    ></Container>
+    <Container name={name} opened={opened} updated={updated} onClick={handler}>
+      {icon}
+    </Container>
   );
 };
 
@@ -49,7 +47,8 @@ Bubble.propTypes = {
   handler: PropTypes.func.isRequired,
   name: PropTypes.string,
   opened: PropTypes.bool,
-  updated: PropTypes.bool
+  updated: PropTypes.bool,
+  icon: PropTypes.elementType
 };
 
 Bubble.defaultProps = {

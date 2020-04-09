@@ -14,6 +14,8 @@ const appWrapper = (IncomingPort = 3011) => {
   const app = express();
   const port = IncomingPort;
 
+  app.set('port', process.env.APP_PORT || 3011);
+
   /* APP */
 
   // app.use(

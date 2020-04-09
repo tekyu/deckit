@@ -1,6 +1,6 @@
 import { User } from '../schemas/User';
-import AuthApi from './auth/auth';
-import UserApi from './user/user';
+import AuthApi from '../api/auth/auth';
+import UserApi from '../api/user/user';
 const Api = (app: any, passport: any) => {
   console.log('Api loaded');
   AuthApi(app, passport);

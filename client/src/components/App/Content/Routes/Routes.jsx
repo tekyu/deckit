@@ -1,6 +1,7 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
 import * as Loadable from "./Loadable";
+import About from "../../../About/About";
 
 const Routes = auth => {
   // console.log("auth", auth);
@@ -30,6 +31,7 @@ const Routes = auth => {
         exact
         render={() => <Loadable.CreateGame />}
       />
+      <Route path="/about" exact render={() => <About />} />
       <Route path="/" exact render={() => <Loadable.Browse auth={false} />} />
     </Switch>
   );

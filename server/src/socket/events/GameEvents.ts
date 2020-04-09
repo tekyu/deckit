@@ -27,6 +27,7 @@ export const GameEvents = (socket: any, io: any) => {
         }
       })
       .then(({ data }) => {
+        console.log('axios', data);
         room.gameOptions.remainingCards = data;
       })
       .catch(res => console.log('AXIOS catch', res.statusCode));

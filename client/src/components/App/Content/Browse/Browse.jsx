@@ -8,11 +8,18 @@ import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
 import * as styles from "./Browse.module.scss";
 import RoomJoining from "./RoomJoining/RoomJoining";
+import { Link } from "react-scroll";
 
 const StyledSeparator = styled.div`
   text-align: center;
   margin: 24px 0;
   font-size: 18px;
+`;
+
+const StyledAboutLink = styled(Link)`
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
 `;
 
 const Browse = ({ auth, checkAuth, emitter, rooms }) => {
@@ -97,6 +104,7 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
       {roomCards && (
         <div className={styles[`browse__cardlist-container`]}>{roomCards}</div>
       )}
+      <StyledAboutLink to="/about" />
     </>
   );
 };

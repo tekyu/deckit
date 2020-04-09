@@ -9,7 +9,7 @@ const decksList = {
 
 const readFile = async deck => {
   try {
-    return fse.readJson(`./src/Services/CardService/cards/${deck}.json`);
+    return fse.readJson(`./cards/${deck}.json`);
   } catch (err) {
     console.error(err);
   }

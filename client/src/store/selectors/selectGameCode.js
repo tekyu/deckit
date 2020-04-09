@@ -3,7 +3,7 @@ import selectActiveRoom from "./selectActiveRoom";
 
 export default createSelector(
   [selectActiveRoom],
-  ({ players }) => {
-    return players;
+  ({ gameCode }) => {
+    return gameCode;
   }
 );

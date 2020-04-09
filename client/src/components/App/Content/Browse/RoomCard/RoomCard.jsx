@@ -5,6 +5,7 @@ import PlayCircleFilledWhiteIcon from "@material-ui/icons/PlayCircleFilledWhite"
 import PropTypes from "prop-types";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import Fab from "@material-ui/core/Fab";
+import { Button } from "@material-ui/core";
 import * as styles from "./RoomCard.module.scss";
 import $Button from "../../../../Generic/Button/Button.styled";
 import Icon from "../../../../Generic/Icon/Icon";
@@ -21,19 +22,21 @@ const PlayIcon = styled(PlayCircleFilledWhiteIcon)`
     /* color: linear-gradient(40deg, #16bffd 0%, #cb3066 100%); */
   }
 `;
-const PlayButton = styled(Fab)`
-  color: #ffffff;
+const PlayButton = styled(Button)`
+  padding: 16px 32px;
+  border-radius: 3px;
   background-image: linear-gradient(
-    35deg,
-    #2ac9db -10%,
+    40deg,
+    #2ac9db -30%,
     #009bff 47%,
-    #cf77f3 130%
+    #cf77f3 150%
   );
-  &:hover,
+  box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.28);
+  /* &:hover,
   &:focus {
     box-shadow: 5px 5px 15px rgba(207, 119, 243, 0.5),
       5px 5px 15px rgba(0, 155, 255, 0.5), -5px 5px 15px rgba(42, 201, 219, 0.5);
-  }
+  } */
 `;
 
 const RoomCard = ({ handler, options, isAnonymous }) => {
@@ -72,8 +75,8 @@ const RoomCard = ({ handler, options, isAnonymous }) => {
       </div>
       <div className={styles.footer}>
         <Link to={`/game/${id}`} value={id}>
-          <PlayButton aria-label="play">
-            <PlayArrowIcon />
+          <PlayButton variant="contained" color="primary" aria-label="join">
+            Join
           </PlayButton>
           {/* {isAnonymous ? `Play as anonymous` : `Join`} */}
         </Link>

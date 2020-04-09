@@ -1,11 +1,13 @@
-import { lazy } from "react";
+import React, { lazy } from "react";
+import ScoreIcon from "../components/Generic/Icons/ScoreIcon";
+import ChatIcon from "../components/Generic/Icons/ChatIcon";
 
 export const gameMapping = {
   d: {
     name: `Deckit`,
     panels: {
-      score: { listener: `scoreUpdate`, data: [] },
-      chat: { listener: `incomingChatMessage`, data: [] }
+      score: { listener: `scoreUpdate`, data: [], icon: <ScoreIcon /> },
+      chat: { listener: `incomingChatMessage`, data: [], icon: <ChatIcon /> }
       // log: { listener: `incomingLog`, data: [] },
       // settings: { listener: `roomSettings`, data: [] }
     },

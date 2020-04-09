@@ -1,5 +1,5 @@
 // @ts-nocheck
-require('dotenv').config();
+// require('dotenv').config();
 
 import memu from './src/utils/memory-usage';
 

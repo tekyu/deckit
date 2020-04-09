@@ -1,8 +1,8 @@
 import { createSelector } from "reselect";
+import selectActiveRoom from "./selectActiveRoom";
 
 export default createSelector(
-  state => state.room,
-  ({ activeRoom }) => activeRoom,
+  [selectActiveRoom],
   ({ scoreboard = {} }) => {
     return scoreboard;
   }

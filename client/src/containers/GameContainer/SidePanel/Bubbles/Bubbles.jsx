@@ -16,7 +16,8 @@ const Bubbles = ({ panels, openedPanel, updatedPanels, handler }) => {
           name={panel}
           handler={handler}
           key={panel}
-        ></Bubble>
+          icon={panels[panel].icon}
+        />
       );
     });
   };
