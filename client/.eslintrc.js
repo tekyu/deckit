@@ -20,9 +20,10 @@ module.exports = {
   },
   rules: {
     quotes: [2, 'backtick'],
+    'import/prefer-default-export': 0,
     'no-unused-vars': 1,
     'no-console': 1,
-    "no-shadow": 0,
+    'no-shadow': 0,
     'prettier/prettier': [
       2,
       {

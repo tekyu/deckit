@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const $Button = styled.button`
+const Button = styled.button`
   background-image: linear-gradient(
     35deg,
     #2ac9db 0%,
@@ -16,4 +16,4 @@ const $Button = styled.button`
   ${props => props.styles}
 `;
 
-export default $Button;
+export default Button;

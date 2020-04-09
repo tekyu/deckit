@@ -1,15 +1,10 @@
 import React, { memo, useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Button } from "components/Generic";
 import { closeModal } from "store/actions";
 import { useHistory } from "react-router-dom";
 import modals from "./modals";
-import {
-  $Backdrop,
-  $Container,
-  $exitButtonStyle
-} from "./ModalContainer.styled";
+import * as Styled from "./ModalContainer.styled";
 
 const ModalContainer = ({ closeModal, modalType }) => {
   const history = useHistory();
@@ -17,20 +12,20 @@ const ModalContainer = ({ closeModal, modalType }) => {
     e => {
       e.preventDefault();
       closeModal();
-      history.replace("/");
+      history.replace(`/`);
     },
     [closeModal, history]
   );
   const modal = useMemo(() => modals[modalType], [modalType]);
   return modalType ? (
-    <$Backdrop>
-      <$Container>
-        <Button onClick={onClose} styles={$exitButtonStyle}>
+    <Styled.Backdrop>
+      <Styled.Container>
+        <Styled.ExitButton onClick={onClose} styles={Styled.ExitButton}>
           X
-        </Button>
+        </Styled.ExitButton>
         {modal}
-      </$Container>
-    </$Backdrop>
+      </Styled.Container>
+    </Styled.Backdrop>
   ) : null;
 };
 

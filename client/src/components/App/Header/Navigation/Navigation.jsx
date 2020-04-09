@@ -1,44 +1,18 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import styled from "styled-components";
-import * as styles from "./Navigation.module.scss";
-
-const StyledFastGameContainer = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-`;
-
-const StyledComingSoon = styled.span`
-  text-transform: uppercase;
-  background: #009bff;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 600;
-  font-size: 10px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  letter-spacing: 0.02;
-  margin-left: 10px;
-`;
-
-const StyledNavLink = styled.span`
-  color: rgba(0, 0, 0, 0.26);
-  position: relative;
-  cursor: pointer;
-`;
+import * as Styled from "./Navigation.styled";
 
 const Navigation = () => {
   return (
-    <nav className={styles.nav}>
-      <ul className={styles.list}>
+    <Styled.Nav>
+      <Styled.List>
         <li>
-          <StyledFastGameContainer>
-            <StyledNavLink to="/queue">Fast Game</StyledNavLink>
-            <StyledComingSoon>Coming soon</StyledComingSoon>
-          </StyledFastGameContainer>
+          <Styled.FastGameContainer>
+            <Styled.Link to="/queue">Fast Game</Styled.Link>
+            <Styled.ComingSoon>Coming soon</Styled.ComingSoon>
+          </Styled.FastGameContainer>
         </li>
-      </ul>
-    </nav>
+      </Styled.List>
+    </Styled.Nav>
   );
 };
 

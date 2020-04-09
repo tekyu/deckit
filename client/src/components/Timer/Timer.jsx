@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import PropTypes from "prop-types";
 import ms from "pretty-ms";
-import Icon from "../Generic/Icon/Icon";
+import Icon from "components/Generic/Icon/Icon";
+import * as Styled from "./Timer.styled";
 
-const StyledContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-width: 60px;
-`;
-
-const StyledTime = styled.span`
-  margin-left: 6px;
-`;
-
-const Timer = ({ time = 3 }) => {
+const Timer = ({ time }) => {
   const [timeElapsed, setTimeElapsed] = useState(+time * 60 * 1000);
 
   useEffect(() => {
@@ -28,11 +18,19 @@ const Timer = ({ time = 3 }) => {
   }, []);
 
   return (
-    <StyledContainer>
+    <Styled.Container>
       <Icon icon="timer" size={20} />
-      <StyledTime>{ms(timeElapsed, { colonNotation: true })}</StyledTime>
-    </StyledContainer>
+      <Styled.Time>{ms(timeElapsed, { colonNotation: true })}</Styled.Time>
+    </Styled.Container>
   );
+};
+
+Timer.defaultProps = {
+  time: 3
+};
+
+Timer.propTypes = {
+  time: PropTypes.number.isRequired
 };
 
 export default Timer;

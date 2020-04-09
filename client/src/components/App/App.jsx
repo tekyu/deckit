@@ -1,24 +1,20 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import { StylesProvider } from "@material-ui/core/styles";
+import { StylesProvider, ThemeProvider } from "@material-ui/core/styles";
 // import { ThemeProvider } from "styled-components";
-import { ThemeProvider } from "@material-ui/core/styles";
-import themes from "assets/themes";
 import { connect } from "react-redux";
 import ModalContainer from "modals/ModalContainer";
 import Error from "components/Generic/Error/Error";
 import { ToastContainer } from "react-toastify";
+import { checkAuth } from "store/user/userActions";
 import Header from "./Header/Header";
 import Content from "./Content/Content";
-import { checkAuth } from "../../store/user/userActions";
 import Theme from "../../Theme/Theme";
+
 const App = ({ auth, checkAuth, modalType, error }) => {
-  const checkIfAuth = useCallback(() => {
+  useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-  useEffect(() => {
-    checkIfAuth();
-  }, [checkIfAuth]);
 
   return (
     <>

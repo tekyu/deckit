@@ -11,7 +11,8 @@
   "cSpell.words": [
     "deckit",
     "formik",
-    "hygge"
+    "hygge",
+    "scroller"
   ],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true

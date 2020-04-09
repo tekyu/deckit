@@ -1,12 +1,12 @@
 import React, { memo } from "react";
 import PropTypes from "prop-types";
-import $Button from "./Button.styled";
+import * as Styled from "./Button.styled";
 
 const Button = ({ children, onClick, styles, type }) => {
   return (
-    <$Button onClick={onClick} styles={styles} type={type}>
+    <Styled.Button onClick={onClick} styles={styles} type={type}>
       {children}
-    </$Button>
+    </Styled.Button>
   );
 };
 

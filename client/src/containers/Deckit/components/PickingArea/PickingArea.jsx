@@ -1,24 +1,18 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import selectPickedCardsToHint from "../../../../store/deckit/selectors/selectPickedCardsToHint";
+import { selectUserId } from "store/selectors";
+import {
+  selectGameStage,
+  selectHinter,
+  selectPickedCard,
+  selectPickedCardsToHint,
+  selectPlayersPickedCard
+} from "store/deckit/selectors";
 import Card from "../Card/Card";
-import selectGameStage from "../../../../store/deckit/selectors/selectGameStage";
-import selectPlayersPickedCard from "../../../../store/deckit/selectors/selectPlayersPickedCard";
-import selectUserId from "../../../../store/selectors/selectUserId";
-import selectHinter from "../../../../store/deckit/selectors/selectHinter";
-import selectPickedCard from "../../../../store/deckit/selectors/selectPickedCard";
-import { Slider } from "@material-ui/core";
-import styled from "styled-components";
 import PickedCards from "../PickedCards/PickedCards";
 import PlaceholderCardsList from "../PlaceholderCardsList/PlaceholderCardsList";
 import RoundSummary from "../RoundSummary/RoundSummary";
-
-const StyledContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: auto 0;
-`;
+import * as Styled from "./PickingArea.styled";
 
 const PickingArea = () => {
   const pickedCardsToHint = useSelector(selectPickedCardsToHint);
@@ -31,7 +25,7 @@ const PickingArea = () => {
     if (userId === hinter.id || cardId === pickedCard.id) {
       return null;
     }
-    return "chooser";
+    return `chooser`;
   };
 
   const getRoundSummary = (pickedCardsToHint, hintCard) => {
@@ -43,12 +37,12 @@ const PickingArea = () => {
   };
 
   return (
-    <StyledContainer>
+    <Styled.Container>
       {stage === 3 && <PlaceholderCardsList cards={playersPickedCard} />}
       {stage === 4 && <PickedCards cards={pickedCardsToHint} />}
       {/* {stage === 5 && getRoundSummary(pickedCardsToHint)} */}
       {stage === 5 && <RoundSummary cards={pickedCardsToHint} />}
-    </StyledContainer>
+    </Styled.Container>
   );
 };
 

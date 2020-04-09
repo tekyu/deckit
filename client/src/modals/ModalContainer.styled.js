@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 import { rgba } from "polished";
 
-export const $Backdrop = styled.div`
+export const Backdrop = styled.div`
   box-sizing: border-box;
   position: fixed;
   top: 0;
@@ -17,7 +17,7 @@ export const $Backdrop = styled.div`
   backdrop-filter: blur(4px);
 `;
 
-export const $Container = styled.div`
+export const Container = styled.div`
   background: #ffffff;
   box-shadow: -5px 5px 100px rgba(207, 119, 243, 0.3),
     0px 5px 100px rgba(0, 155, 255, 0.3),
@@ -29,7 +29,7 @@ export const $Container = styled.div`
   overflow: hidden;
 `;
 
-export const $exitButtonStyle = css`
+export const ExitButton = css`
   align-self: flex-end;
   background-color: red;
   color: cyan;

@@ -2,25 +2,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect, useDispatch } from "react-redux";
 import { checkAuth, emitter, listener, removeListener } from "store/actions";
-import styled from "styled-components";
 import dynamicSort from "utils/dynamicSort";
 import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
-import * as styles from "./Browse.module.scss";
 import RoomJoining from "./RoomJoining/RoomJoining";
-import { Link } from "react-scroll";
-
-const StyledSeparator = styled.div`
-  text-align: center;
-  margin: 24px 0;
-  font-size: 18px;
-`;
-
-const StyledAboutLink = styled(Link)`
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-`;
+import * as Styled from "./Browse.styled";
 
 const Browse = ({ auth, checkAuth, emitter, rooms }) => {
   const [parsedRooms, setParsedRooms] = useState([]);
@@ -50,13 +36,13 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
       const newRooms = { ...oldRooms };
       data.forEach(({ id, action, room }) => {
         switch (action) {
-          case "add":
+          case `add`:
             newRooms[id] = room;
             break;
-          case "remove":
+          case `remove`:
             delete newRooms[id];
             break;
-          case "update":
+          case `update`:
             newRooms[id] = { ...room };
             break;
           default:
@@ -85,7 +71,7 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
       dispatch(removeListener(`addRoomToList`, updateListOfRooms));
       dispatch(removeListener(`removeRoomFromList`, removeRoomFromList));
     };
-  }, []);
+  }, [dispatch]);
   const roomCards = parsedRooms
     ? Object.values(parsedRooms).map(room => (
         <RoomCard
@@ -100,11 +86,9 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
     <>
       <RoomJoining />
       {/* <Sort sortHandler={sortHandler} /> */}
-      <StyledSeparator>Browse rooms</StyledSeparator>
-      {roomCards && (
-        <div className={styles[`browse__cardlist-container`]}>{roomCards}</div>
-      )}
-      <StyledAboutLink to="/about" />
+      <Styled.Separator>Browse rooms</Styled.Separator>
+      {roomCards && <Styled.CardContainer>{roomCards}</Styled.CardContainer>}
+      <Styled.AboutLink to="/about" />
     </>
   );
 };

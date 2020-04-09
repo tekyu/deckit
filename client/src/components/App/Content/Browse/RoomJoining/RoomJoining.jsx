@@ -1,127 +1,38 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { NavLink, useHistory } from "react-router-dom";
-import { Formik, Field, ErrorMessage, Form } from "formik";
+import { Formik } from "formik";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import { emitter } from "../../../../../store/socket/socketActions";
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 30px;
-  margin-top: 80px;
-`;
-
-const StyledCreateButton = styled(Button)`
-  padding: 16px 32px;
-  font-size: 16px;
-  border-radius: 3px;
-  box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.28);
-  background-image: linear-gradient(
-    40deg,
-    #2ac9db -30%,
-    #009bff 47%,
-    #cf77f3 150%
-  );
-`;
-
-const StyledForm = styled(Form)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const StyledErrorMessage = styled(ErrorMessage)`
-  margin: 6px 0;
-  opacity: 0.6;
-  font-size: 14px;
-`;
-
-const StyledField = styled(Field)`
-  border: 0;
-  background: transparent;
-  padding: 7px;
-  font-size: 18px;
-  text-align: center;
-  outline: none;
-  position: relative;
-`;
-
-const StyledJoinContainer = styled.div`
-  display: flex;
-  margin-bottom: 6px;
-`;
-
-const StyledJoinFieldContainer = styled.div`
-  margin-right: 10px;
-  position: relative;
-  display: flex;
-  box-shadow: 0px 10px 30px -15px rgba(0, 0, 0, 0.28);
-  &:after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background-image: linear-gradient(
-      40deg,
-      #2ac9db 0%,
-      #009bff 47%,
-      #cf77f3 100%
-    );
-  }
-`;
-
-const StyledJoinButton = styled(Button)`
-  padding: 16px 32px;
-  border-radius: 3px;
-  background-image: linear-gradient(
-    40deg,
-    #2ac9db -30%,
-    #009bff 47%,
-    #cf77f3 150%
-  );
-  box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.28);
-`;
-
-const StyledSeparator = styled.div`
-  margin: 20px 0;
-  font-size: 18px;
-`;
+import { emitter } from "store/socket/socketActions";
+import * as Styled from "./RoomJoining.styled";
 
 const RoomJoining = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   return (
-    <StyledContainer>
+    <Styled.Container>
       <div>
         <NavLink to="/create">
-          <StyledCreateButton variant="contained" color="primary">
+          <Styled.CreateButton variant="contained" color="primary">
             Create your game
-          </StyledCreateButton>
+          </Styled.CreateButton>
         </NavLink>
       </div>
-      <StyledSeparator>or</StyledSeparator>
+      <Styled.Separator>or</Styled.Separator>
       <Formik
         validate={({ id }) => {
           if (!id) {
-            return { id: "Id cannot be empty" };
+            return { id: `Id cannot be empty` };
           }
         }}
         initialValues={{
-          id: ""
+          id: ``
         }}
         onSubmit={({ id }, actions) => {
           // check for room
           // if cannot join get error
           dispatch(
-            emitter("CHECK_FOR_ROOM", { id }, roomFound => {
+            emitter(`CHECK_FOR_ROOM`, { id }, roomFound => {
               if (roomFound) {
                 history.push(`/game/${id}`);
               } else {
@@ -134,25 +45,29 @@ const RoomJoining = () => {
           // if can join push to history
         }}
       >
-        <StyledForm>
-          <StyledJoinContainer>
-            <StyledJoinFieldContainer>
-              <StyledField
+        <Styled.JoinForm>
+          <Styled.JoinContainer>
+            <Styled.JoinFieldContainer>
+              <Styled.RoomIdField
                 name="id"
                 type="text"
                 placeholder="Type room ID here"
               />
-            </StyledJoinFieldContainer>
-            <StyledJoinButton variant="contained" color="primary" type="submit">
+            </Styled.JoinFieldContainer>
+            <Styled.JoinButton
+              variant="contained"
+              color="primary"
+              type="submit"
+            >
               Join
-            </StyledJoinButton>
-          </StyledJoinContainer>
+            </Styled.JoinButton>
+          </Styled.JoinContainer>
           <Typography color="error">
-            <StyledErrorMessage name="id" />
+            <Styled.Error name="id" />
           </Typography>
-        </StyledForm>
+        </Styled.JoinForm>
       </Formik>
-    </StyledContainer>
+    </Styled.Container>
   );
 };
 

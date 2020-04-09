@@ -1,12 +1,12 @@
 import React from "react";
 import Routes from "./Routes/Routes";
-import * as styles from "./Content.module.scss";
+import * as Styled from "./Content.styled";
 
 const Content = auth => {
   return (
-    <div className={styles.content}>
+    <Styled.Content>
       <Routes auth={auth} />
-    </div>
+    </Styled.Content>
   );
 };
 

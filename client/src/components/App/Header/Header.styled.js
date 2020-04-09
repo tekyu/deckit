@@ -1,7 +1,9 @@
-.header {
+import styled from "styled-components";
+
+export const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 70px;
   margin: 0 20px;
-}
+`;
