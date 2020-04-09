@@ -3,9 +3,9 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "start": "cross-env NODE_PATH=src/ react-scripts start",
-    "build": "cross-env NODE_PATH=src/ react-scripts build",
-    "test": "react-scripts test",
+    "start": "cross-env NODE_PATH=src/ react-app-rewired start",
+    "build": "cross-env NODE_PATH=src/ react-app-rewired build",
+    "test": "react-app-rewired test",
     "lint": "npm run eslint && npm run stylelint",
     "eslint": "eslint src config --ext js,jsx,ts,tsx",
     "stylelint": "stylelint **/*.css **/*.scss",
@@ -39,6 +39,7 @@
     "@material-ui/styles": "^4.9.6",
     "axios": "^0.19.0",
     "clsx": "^1.1.0",
+    "customize-cra": "^0.9.1",
     "formik": "^2.1.4",
     "formik-material-ui": "^2.0.0-beta.1",
     "immer": "^5.3.6",
@@ -71,6 +72,7 @@
     "swiper": "^5.3.6"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-export-namespace-from": "^7.8.3",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.4.4",
     "@babel/plugin-proposal-optional-chaining": "^7.6.0",
     "babel-plugin-styled-components": "^1.10.6",
@@ -83,6 +85,7 @@
     "eslint-plugin-react-hooks": "^2.2.0",
     "node-sass": "^4.12.0",
     "prettier": "^1.18.2",
+    "react-app-rewired": "^2.1.5",
     "stylelint": "^11.1.1",
     "stylelint-config-prettier": "^6.0.0",
     "stylelint-prettier": "^1.1.1"
