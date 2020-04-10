@@ -29,7 +29,7 @@ export const Container = styled.div`
   overflow: hidden;
 `;
 
-export const ExitButton = css`
+export const ExitButton = styled.button`
   align-self: flex-end;
   background-color: red;
   color: cyan;

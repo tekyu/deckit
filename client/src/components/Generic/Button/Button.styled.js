@@ -1,19 +1,15 @@
 import styled from "styled-components";
+import Button from "@material-ui/core/Button";
 
-const Button = styled.button`
+export const DUIButton = styled(Button)`
   background-image: linear-gradient(
-    35deg,
-    #2ac9db 0%,
+    40deg,
+    #2ac9db -30%,
     #009bff 47%,
-    #cf77f3 120%
+    #cf77f3 150%
   );
-  border: 0;
-  cursor: pointer;
-  font-family: "Hammersmith One";
-  font-size: 14px;
-  letter-spacing: 0.04em;
-  padding: 14px 21px;
-  ${props => props.styles}
+  box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.28);
+  border-radius: 3px;
+  color: white;
+  padding: 16px 32px;
 `;
-
-export default Button;

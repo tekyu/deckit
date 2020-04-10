@@ -113,16 +113,17 @@ class LoginForm extends Component {
               ) : null}
 
               <button type="submit">Login</button>
-              <label className={styles.password_recovery}>
-                Can&apos;t remember your password? <a href="#">Click here!</a>
-              </label>
+              <span className={styles.password_recovery}>
+                Can&apos;t remember your password?{` `}
+                <a href="/forgot">Click here!</a>
+              </span>
             </form>
           </div>
           <div className={styles.modal_footer}>
-            <label className={styles.create_account}>
+            <span className={styles.create_account}>
               You don&apos;t have an account yet?{` `}
-              <a href="#">Create one here!</a>
-            </label>
+              <a href="/create">Create one here!</a>
+            </span>
           </div>
         </div>
       </div>

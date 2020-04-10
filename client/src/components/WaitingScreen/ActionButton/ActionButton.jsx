@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import styled from "styled-components";
+import { roomActions } from "store/actions";
 import { roomSelectors, userSelectors } from "store/selectors";
-import { startGame, updatePlayerInRoom } from "../../../store/room/roomActions";
 
 const StyledButton = styled(Button)`
   border: 0;
@@ -42,7 +42,7 @@ const ActionButton = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [playerState, setPlayerState] = useState(0);
   const startGameHandler = () => {
-    dispatch(startGame({ activeRoomId }));
+    dispatch(roomActions.startGame({ activeRoomId }));
   };
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const ActionButton = () => {
   const readyHandler = () => {
     // TODO: Change this to take state from user
     dispatch(
-      updatePlayerInRoom({
+      roomActions.updatePlayerInRoom({
         activeRoomId,
         playerId: userId,
         data: { state: playerState === 0 ? 1 : 0 }

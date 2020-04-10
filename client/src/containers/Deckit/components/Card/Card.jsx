@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import Button from "@material-ui/core/Button";
+import { Button } from "components/Generic";
 import { deckitActions } from "store/actions";
 import { deckitSelectors, roomSelectors } from "store/selectors";
 import PickedBy from "./components/PickedBy";
@@ -25,19 +25,6 @@ const StyledContainer = styled.div`
   align-items: center;
   justify-content: center;
   /* margin: 0 4px; */
-`;
-
-const StyledButton = styled(Button)`
-  padding: 16px 32px;
-  font-size: 16px;
-  border-radius: 3px;
-  box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.28);
-  background-image: linear-gradient(
-    40deg,
-    #2ac9db -30%,
-    #009bff 47%,
-    #cf77f3 150%
-  );
 `;
 
 const Card = ({ card = {}, state = null, owner, pickedBy } = {}, props) => {
@@ -79,13 +66,9 @@ const Card = ({ card = {}, state = null, owner, pickedBy } = {}, props) => {
       onClick={showButtonHandler}
     >
       {state && showButton && (
-        <StyledButton
-          color="primary"
-          variant="contained"
-          onClick={pickCardHandler}
-        >
+        <Button color="primary" variant="contained" onClick={pickCardHandler}>
           Pick card
-        </StyledButton>
+        </Button>
       )}
       {pickedBy && pickedBy.length > 0 && <PickedBy pickedBy={pickedBy} />}
     </StyledContainer>

@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Button from "@material-ui/core/Button";
 import { Field, ErrorMessage, Form } from "formik";
 
 export const Container = styled.div`
@@ -9,19 +8,6 @@ export const Container = styled.div`
   justify-content: center;
   margin-bottom: 30px;
   margin-top: 80px;
-`;
-
-export const CreateButton = styled(Button)`
-  padding: 16px 32px;
-  font-size: 16px;
-  border-radius: 3px;
-  box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.28);
-  background-image: linear-gradient(
-    40deg,
-    #2ac9db -30%,
-    #009bff 47%,
-    #cf77f3 150%
-  );
 `;
 
 export const JoinForm = styled(Form)`
@@ -71,18 +57,6 @@ export const JoinFieldContainer = styled.div`
       #cf77f3 100%
     );
   }
-`;
-
-export const JoinButton = styled(Button)`
-  padding: 16px 32px;
-  border-radius: 3px;
-  background-image: linear-gradient(
-    40deg,
-    #2ac9db -30%,
-    #009bff 47%,
-    #cf77f3 150%
-  );
-  box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.28);
 `;
 
 export const Separator = styled.div`

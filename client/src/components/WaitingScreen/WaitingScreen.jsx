@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { roomSelectors, userSelectors } from "store/selectors";
 import Icon from "components/Generic/Icon/Icon";
+import { Button } from "components/Generic";
 import PlayersList from "./PlayersList/PlayersList";
 import ActionButton from "./ActionButton/ActionButton";
 import PlayerCounterWithIcon from "../Generic/PlayerCounterWithIcon/PlayerCounterWithIcon";
@@ -77,9 +78,9 @@ const WaitingScreen = () => {
                 <p>This is your room id</p>
                 <p> Share it to friends or click on it to copy</p>
                 <CopyToClipboard text={room.id}>
-                  <Styled.ShareButton variant="contained" color="primary">
+                  <Button variant="contained" color="primary">
                     {room.id}
-                  </Styled.ShareButton>
+                  </Button>
                 </CopyToClipboard>
               </h3>
             )}

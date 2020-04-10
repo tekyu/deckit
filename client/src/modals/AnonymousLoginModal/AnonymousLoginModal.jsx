@@ -1,38 +1,12 @@
 import React, { Component } from "react";
 import { appActions, socketActions, userActions } from "store/actions";
 import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
+import { Button } from "components/Generic";
 
 import { connect } from "react-redux";
 import sillyname from "sillyname";
 
-import styled from "styled-components";
 import * as styles from "./AnonymousLoginModal.module.scss";
-
-const StyledButton = styled(Button)`
-  border: 0;
-  border-radius: 3px;
-  background: transparent;
-  background-image: linear-gradient(
-    35deg,
-    #2ac9db -10%,
-    #009bff 47%,
-    #cf77f3 130%
-  );
-  font-size: 14px;
-  padding: 16px 32px;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  margin: 40px 0 20px 0;
-  width: 100%;
-  transition: all 0.3s ease-out;
-  box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.28);
-  &:focus,
-  &:hover,
-  &:active {
-    box-shadow: 0px 2px 14px 0px rgba(0, 0, 0, 0.28);
-  }
-`;
 
 class AnonymousLoginModal extends Component {
   state = {
@@ -92,9 +66,9 @@ class AnonymousLoginModal extends Component {
               <div className={styles.form_error}>{this.state.formError}</div>
             ) : null}
 
-            <StyledButton variant="contained" color="primary" type="submit">
+            <Button variant="contained" color="primary" type="submit">
               Choose
-            </StyledButton>
+            </Button>
           </form>
         </div>
         {/* <div className={styles.modal_footer}>

@@ -4,6 +4,7 @@ import { NavLink, useHistory } from "react-router-dom";
 import { Formik } from "formik";
 import Typography from "@material-ui/core/Typography";
 import { emitter } from "store/socket/socketActions";
+import { Button } from "components/Generic";
 import * as Styled from "./RoomJoining.styled";
 
 const RoomJoining = () => {
@@ -13,9 +14,9 @@ const RoomJoining = () => {
     <Styled.Container>
       <div>
         <NavLink to="/create">
-          <Styled.CreateButton variant="contained" color="primary">
+          <Button variant="contained" color="primary">
             Create your game
-          </Styled.CreateButton>
+          </Button>
         </NavLink>
       </div>
       <Styled.Separator>or</Styled.Separator>
@@ -54,13 +55,9 @@ const RoomJoining = () => {
                 placeholder="Type room ID here"
               />
             </Styled.JoinFieldContainer>
-            <Styled.JoinButton
-              variant="contained"
-              color="primary"
-              type="submit"
-            >
+            <Button variant="contained" color="primary" type="submit">
               Join
-            </Styled.JoinButton>
+            </Button>
           </Styled.JoinContainer>
           <Typography color="error">
             <Styled.Error name="id" />

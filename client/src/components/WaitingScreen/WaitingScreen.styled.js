@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Button from "@material-ui/core/Button";
 
 export const Container = styled.div`
   width: 80%;
@@ -52,22 +51,4 @@ export const Mode = styled.div`
 export const ShowIdContainer = styled.div`
   margin-top: 20px;
   text-align: center;
-`;
-
-export const ShareButton = styled(Button)`
-  /* background: #16bffd; */
-  border-radius: 3px;
-  margin: 20px 0;
-  padding: 16px 32px;
-  /* box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.28); */
-  /* box-shadow: 20px 5px 40px #cf77f3, 0px 5px 40px #009bff,
-    -20px 5px 40px #2ac9db; */
-  box-shadow: 0px 5px 10px rgba(207, 119, 243, 0.3),
-    0px 5px 10px rgba(0, 155, 255, 0.3), 0px 5px 10px rgba(42, 201, 219, 0.3);
-  background-image: linear-gradient(
-    35deg,
-    #2ac9db 0%,
-    #009bff 47%,
-    #cf77f3 120%
-  );
 `;

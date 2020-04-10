@@ -4,9 +4,9 @@ import * as Styled from "./Button.styled";
 
 const Button = ({ children, onClick, styles, type }) => {
   return (
-    <Styled.Button onClick={onClick} styles={styles} type={type}>
+    <Styled.DUIButton onClick={onClick} styles={styles} type={type}>
       {children}
-    </Styled.Button>
+    </Styled.DUIButton>
   );
 };
 
@@ -17,7 +17,7 @@ Button.defaultProps = {
 
 Button.propTypes = {
   children: PropTypes.node.isRequired,
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
   styles: PropTypes.arrayOf(PropTypes.string),
   type: PropTypes.oneOf([`button`, `submit`, `reset`])
 };
