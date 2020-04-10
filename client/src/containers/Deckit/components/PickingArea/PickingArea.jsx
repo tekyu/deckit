@@ -1,13 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { selectUserId } from "store/selectors";
-import {
-  selectGameStage,
-  selectHinter,
-  selectPickedCard,
-  selectPickedCardsToHint,
-  selectPlayersPickedCard
-} from "store/deckit/selectors";
+import { deckitSelectors, userSelectors } from "store/selectors";
 import Card from "../Card/Card";
 import PickedCards from "../PickedCards/PickedCards";
 import PlaceholderCardsList from "../PlaceholderCardsList/PlaceholderCardsList";
@@ -15,12 +8,16 @@ import RoundSummary from "../RoundSummary/RoundSummary";
 import * as Styled from "./PickingArea.styled";
 
 const PickingArea = () => {
-  const pickedCardsToHint = useSelector(selectPickedCardsToHint);
-  const playersPickedCard = useSelector(selectPlayersPickedCard);
-  const hinter = useSelector(selectHinter);
-  const userId = useSelector(selectUserId);
-  const stage = useSelector(selectGameStage);
-  const pickedCard = useSelector(selectPickedCard);
+  const pickedCardsToHint = useSelector(
+    deckitSelectors.selectPickedCardsToHint
+  );
+  const playersPickedCard = useSelector(
+    deckitSelectors.selectPlayersPickedCard
+  );
+  const hinter = useSelector(deckitSelectors.selectHinter);
+  const stage = useSelector(deckitSelectors.selectGameStage);
+  const pickedCard = useSelector(deckitSelectors.selectPickedCard);
+  const userId = useSelector(userSelectors.selectUserId);
   const getCardState = cardId => {
     if (userId === hinter.id || cardId === pickedCard.id) {
       return null;

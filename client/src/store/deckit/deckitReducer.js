@@ -5,7 +5,7 @@ import {
   UPDATE_GAME_OPTIONS,
   SET_MY_PICKED_CARD,
   SET_MY_CARD,
-  INITIAL_GAMEOPTIONS,
+  INITIAL_GAME_OPTIONS,
   RESET_FOR_NEXT_ROUND
 } from "./deckitActions";
 
@@ -33,7 +33,7 @@ export const deckitReducer = produce(
       case UPDATE_GAME_OPTIONS:
         Object.assign(draft, payload);
         return draft;
-      case INITIAL_GAMEOPTIONS:
+      case INITIAL_GAME_OPTIONS:
         draft = initialState;
         return draft;
       case RESET_FOR_NEXT_ROUND:

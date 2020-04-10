@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import styled from "styled-components";
-import selectUser from "../../../store/selectors/selectUser";
-import selectActiveRoom from "../../../store/selectors/selectActiveRoom";
+import { roomSelectors, userSelectors } from "store/selectors";
 import { startGame, updatePlayerInRoom } from "../../../store/room/roomActions";
 
 const StyledButton = styled(Button)`
@@ -35,9 +34,9 @@ const StyledButton = styled(Button)`
 `;
 
 const ActionButton = () => {
-  const { id: userId, state: userState } = useSelector(selectUser);
+  const { id: userId, state: userState } = useSelector(userSelectors.user);
   const { id: activeRoomId, admin: adminId, players } = useSelector(
-    selectActiveRoom
+    roomSelectors.activeRoom
   );
   const dispatch = useDispatch();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -83,7 +82,7 @@ const ActionButton = () => {
       <StyledButton
         variant="contained"
         color="primary"
-        isReady={hasNotReadyPlayers || players.length < 2 ? false : true}
+        isReady={!(hasNotReadyPlayers || players.length < 2)}
         isdisabled={(hasNotReadyPlayers || players.length < 2).toString()}
         onClick={startGameHandler}
       >

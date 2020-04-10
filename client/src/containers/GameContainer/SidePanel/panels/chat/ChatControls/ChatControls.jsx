@@ -1,14 +1,16 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { emitter } from "store/actions";
-import selectActiveRoomId from "store/selectors/selectActiveRoomId";
+import { socketActions } from "store/actions";
+import { roomSelectors } from "store/selectors";
 import * as Styled from "./ChatControls.styled";
 
 const ChatControls = () => {
-  const activeRoomId = useSelector(selectActiveRoomId);
+  const activeRoomId = useSelector(roomSelectors.activeRoomId);
   const dispatch = useDispatch();
   const sendMessageHandler = message => {
-    dispatch(emitter(`sendingMessage`, { activeRoomId, message }));
+    dispatch(
+      socketActions.emitter(`sendingMessage`, { activeRoomId, message })
+    );
   };
 
   return (

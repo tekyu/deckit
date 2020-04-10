@@ -1,23 +1,26 @@
 import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect, useDispatch } from "react-redux";
-import { checkAuth, emitter, listener, removeListener } from "store/actions";
+import { socketActions } from "store/actions";
 import dynamicSort from "utils/dynamicSort";
 import RoomCard from "./RoomCard/RoomCard";
 import Sort from "./Sort/Sort";
 import RoomJoining from "./RoomJoining/RoomJoining";
 import * as Styled from "./Browse.styled";
 
-const Browse = ({ auth, checkAuth, emitter, rooms }) => {
+const Browse = ({ auth }) => {
   const [parsedRooms, setParsedRooms] = useState([]);
   const dispatch = useDispatch();
   const refreshList = useCallback(() => {
-    emitter(`getRooms`, null, rooms => {
-      setParsedRooms(rooms);
-    });
-  }, [emitter]);
+    console.log(`refresz`);
+    dispatch(
+      socketActions.emitter(`getRooms`, null, rooms => {
+        setParsedRooms(rooms);
+      })
+    );
+  }, [dispatch]);
   useEffect(() => {
-    // checkAuth();
+    // userActions.checkAuth();
     refreshList();
   }, [refreshList]);
   const selectHandler = useCallback(() => {}, []);
@@ -63,13 +66,19 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
   };
 
   useEffect(() => {
-    dispatch(listener(`updateListOfRooms`, updateListOfRooms));
-    dispatch(listener(`addRoomToList`, updateListOfRooms));
-    dispatch(listener(`removeRoomFromList`, removeRoomFromList));
+    dispatch(socketActions.listener(`updateListOfRooms`, updateListOfRooms));
+    dispatch(socketActions.listener(`addRoomToList`, updateListOfRooms));
+    dispatch(socketActions.listener(`removeRoomFromList`, removeRoomFromList));
     return () => {
-      dispatch(removeListener(`updateListOfRooms`, updateListOfRooms));
-      dispatch(removeListener(`addRoomToList`, updateListOfRooms));
-      dispatch(removeListener(`removeRoomFromList`, removeRoomFromList));
+      dispatch(
+        socketActions.removeListener(`updateListOfRooms`, updateListOfRooms)
+      );
+      dispatch(
+        socketActions.removeListener(`addRoomToList`, updateListOfRooms)
+      );
+      dispatch(
+        socketActions.removeListener(`removeRoomFromList`, removeRoomFromList)
+      );
     };
   }, [dispatch]);
   const roomCards = parsedRooms
@@ -94,9 +103,7 @@ const Browse = ({ auth, checkAuth, emitter, rooms }) => {
 };
 
 Browse.propTypes = {
-  auth: PropTypes.bool,
-  checkAuth: PropTypes.func.isRequired,
-  emitter: PropTypes.func.isRequired
+  auth: PropTypes.bool
 };
 
 const mapStateToProps = ({ auth, room, user }) => {
@@ -107,12 +114,4 @@ const mapStateToProps = ({ auth, room, user }) => {
   };
 };
 
-const mapDispatchToProps = {
-  checkAuth,
-  emitter
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Browse);
+export default connect(mapStateToProps)(Browse);

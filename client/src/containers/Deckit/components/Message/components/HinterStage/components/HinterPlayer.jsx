@@ -1,12 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import selectActiveRoom from "../../../../../../../store/selectors/selectActiveRoom";
-import selectPlayers from "../../../../../../../store/selectors/selectPlayers";
+import { roomSelectors } from "store/selectors";
 import PlayerBubble from "../../../../../../../components/Generic/PlayerBubble/PlayerBubble";
 
 const HinterPlayer = ({ hinterId }) => {
-  const { players = [] } = useSelector(selectActiveRoom);
+  const { players = [] } = useSelector(roomSelectors.activeRoom);
   const { avatar, color, username } =
     players.find(({ id }) => hinterId === id) || {};
 

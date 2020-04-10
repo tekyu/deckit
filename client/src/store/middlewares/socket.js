@@ -24,10 +24,10 @@ export default function socketMiddleware() {
         socket.removeListener(event);
         break;
       case SOCKET_EMIT:
-        // console.log(`%c SOCKET EMIT`, `background:#90D6E8`, event, {
-        //   ...payload,
-        //   ...rest
-        // });
+        console.log(`%c SOCKET EMIT`, `background:#90D6E8`, event, {
+          ...payload,
+          ...rest
+        });
         if (handler) {
           socket.emit(event, { ...payload, ...rest }, handler);
         } else {

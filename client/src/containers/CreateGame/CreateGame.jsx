@@ -5,14 +5,8 @@ import { Formik, ErrorMessage } from "formik";
 import sillyname from "sillyname";
 import Checkbox from "@material-ui/core/Checkbox";
 import Typography from "@material-ui/core/Typography";
-
-import {
-  emitter,
-  CREATE_ROOM,
-  UPDATE_ANON_USER,
-  updatedUser
-} from "store/actions";
-import selectUser from "store/selectors/selectUser";
+import { roomActions, socketActions, userActions } from "store/actions";
+import { userSelectors } from "store/selectors";
 import { gameMapping } from "utils";
 import * as Styled from "./CreateGame.styled";
 /**
@@ -40,27 +34,35 @@ const validate = ({ isPrivate, username, name }) => {
 };
 
 const CreateGame = () => {
-  const userData = useSelector(selectUser);
+  const userData = useSelector(userSelectors.user);
   const dispatch = useDispatch();
   const history = useHistory();
   const updateUser = username => {
     return new Promise((resolve, reject) => {
       dispatch(
-        emitter(UPDATE_ANON_USER, { username }, userData => {
-          dispatch(updatedUser(userData));
-          resolve(userData);
-        })
+        socketActions.emitter(
+          userActions.UPDATE_ANON_USER,
+          { username },
+          userData => {
+            dispatch(userActions.updatedUser(userData));
+            resolve(userData);
+          }
+        )
       );
     });
   };
 
   const createRoom = (roomOptions, id) => {
     dispatch(
-      emitter(CREATE_ROOM, { roomOptions, id }, ({ error, roomId }) => {
-        if (!error) {
-          history.push(`/game/${roomId}`);
+      socketActions.emitter(
+        roomActions.CREATE_ROOM,
+        { roomOptions, id },
+        ({ error, roomId }) => {
+          if (!error) {
+            history.push(`/game/${roomId}`);
+          }
         }
-      })
+      )
     );
   };
   const submitCreateGameHandler = ({

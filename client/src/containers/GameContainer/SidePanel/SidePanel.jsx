@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { listener } from "store/actions";
+import { socketActions } from "store/actions";
 import ScorePanel from "./panels/score/ScorePanel";
 import ChatPanel from "./panels/chat/ChatPanel";
 import OptionsPanel from "./panels/options/OptionsPanel";
 import Bubbles from "./Bubbles/Bubbles";
-import selectGameCode from "../../../store/selectors/selectGameCode";
+import { roomSelectors } from "store/selectors";
 import { gameMapping } from "../../../utils/gameMapping";
 
 /**
@@ -35,7 +35,7 @@ const Panel = styled.div`
 `;
 
 const SidePanel = () => {
-  const gameCode = useSelector(selectGameCode);
+  const gameCode = useSelector(roomSelectors.gameCode);
   const [panels, setPanels] = useState({});
   const [openedPanel, setOpenedPanel] = useState(Object.keys(panels)[0]); // Object.keys(panels)[0]
   const [updatedPanels, setUpdatedPanels] = useState([]);
@@ -47,7 +47,7 @@ const SidePanel = () => {
   };
 
   useEffect(() => {
-    console.log("useEffect", gameCode);
+    console.log(`useEffect`, gameCode);
     if (gameCode) {
       setPanels(gameMapping[gameCode].panels);
       setOpenedPanel(Object.keys(gameMapping[gameCode].panels)[0]);
@@ -57,7 +57,7 @@ const SidePanel = () => {
   const addPanelListeners = useCallback(() => {
     Object.keys(panels).forEach(panel => {
       dispatch(
-        listener(panels[panel].listener, newData => {
+        socketActions.listener(panels[panel].listener, newData => {
           setUpdatedPanels(oldPanels => {
             if (oldPanels.indexOf(panel) === -1) {
               return [...oldPanels, panel];
@@ -67,21 +67,24 @@ const SidePanel = () => {
         })
       );
     });
-  }, []);
+  }, [dispatch, panels]);
 
   useEffect(() => {
     addPanelListeners();
-  }, []);
+  }, [addPanelListeners]);
 
-  const changePanel = useCallback(({ target }) => {
-    const panelName = target.getAttribute(`name`);
-    setOpenedPanel(panelName);
-    if (updatedPanels.indexOf(panelName) !== -1) {
-      setUpdatedPanels(oldPanels => {
-        return oldPanels.filter(panel => panel !== panelName);
-      });
-    }
-  });
+  const changePanel = useCallback(
+    ({ target }) => {
+      const panelName = target.getAttribute(`name`);
+      setOpenedPanel(panelName);
+      if (updatedPanels.indexOf(panelName) !== -1) {
+        setUpdatedPanels(oldPanels => {
+          return oldPanels.filter(panel => panel !== panelName);
+        });
+      }
+    },
+    [updatedPanels]
+  );
 
   const getPanel = () => {
     return panelMapping[openedPanel];

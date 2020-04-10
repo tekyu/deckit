@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { listener, emitter } from "store/actions";
+import { socketActions } from "store/actions";
 import ChatControls from "./ChatControls/ChatControls";
 import ChatList from "./ChatList/ChatList";
 /**
@@ -17,21 +17,24 @@ const Container = styled.div`
   flex: 1 1 1px;
 `;
 
-const ChatPanel = ({ activeRoomId, emitter, listener }) => {
+const ChatPanel = ({ activeRoomId }) => {
   const [messages, setMessages] = useState([]);
   const messageList = useCallback(() => {
-    emitter(`getChatHistory`, { activeRoomId }, messages => {
+    socketActions.emitter(`getChatHistory`, { activeRoomId }, messages => {
       setMessages(messages);
     });
-  }, [activeRoomId, emitter]);
+  }, [activeRoomId]);
   useEffect(() => {
-    listener(`incomingChatMessage`, ({ data: { ...newMessage } }) => {
-      setMessages(messages => [...messages, newMessage]);
-    });
+    socketActions.listener(
+      `incomingChatMessage`,
+      ({ data: { ...newMessage } }) => {
+        setMessages(messages => [...messages, newMessage]);
+      }
+    );
   }, []);
   useEffect(() => {
     messageList();
-  }, []);
+  }, [messageList]);
 
   return (
     <Container>
@@ -48,8 +51,4 @@ const mapStateToProps = ({ user: { user }, room: { activeRoomId } }) => {
   };
 };
 
-const mapDispatchToProps = { emitter, listener };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ChatPanel);
+export default connect(mapStateToProps)(ChatPanel);

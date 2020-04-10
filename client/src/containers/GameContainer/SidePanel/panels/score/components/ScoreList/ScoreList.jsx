@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { Flipper, Flipped } from "react-flip-toolkit";
+import { deckitSelectors, roomSelectors } from "store/selectors";
 import ScoreElement from "../ScoreElement";
-import selectActiveRoom from "../../../../../../../store/selectors/selectActiveRoom";
-import selectMaxScore from "../../../../../../../store/deckit/selectors/selectMaxScore";
 
 const StyledContainer = styled.div`
   flex: 1 1 1px;
@@ -12,8 +11,9 @@ const StyledContainer = styled.div`
 `;
 
 const ScoreList = () => {
-  const { players, scoreboard } = useSelector(selectActiveRoom);
-  const maxScore = useSelector(selectMaxScore);
+  const maxScore = useSelector(deckitSelectors.maxScore);
+  const { players, scoreboard } = useSelector(roomSelectors.activeRoom);
+
   const [playersList, setPlayersList] = useState([]);
   useEffect(() => {
     setPlayersList(() => {

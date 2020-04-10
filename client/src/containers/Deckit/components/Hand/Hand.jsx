@@ -4,10 +4,7 @@ import styled from "styled-components";
 import "swiper/swiper.scss";
 import Swiper from "react-id-swiper";
 import Card from "../Card/Card";
-import selectUser from "../../../../store/selectors/selectUser";
-import selectMyCards from "../../../../store/deckit/selectors/selectMyCards";
-import selectGameStage from "../../../../store/deckit/selectors/selectGameStage";
-import selectHinter from "../../../../store/deckit/selectors/selectHinter";
+import { deckitSelectors, userSelectors } from "store/selectors";
 
 const StyledContainer = styled.div`
   position: relative;
@@ -35,10 +32,10 @@ const getState = (hinterId, stage, userId) => {
 };
 
 const Hand = () => {
-  const cards = useSelector(selectMyCards);
-  const hinter = useSelector(selectHinter);
-  const stage = useSelector(selectGameStage);
-  const user = useSelector(selectUser); // select cards from user
+  const cards = useSelector(deckitSelectors.myCards);
+  const hinter = useSelector(deckitSelectors.hinter);
+  const stage = useSelector(deckitSelectors.gameStage);
+  const user = useSelector(userSelectors.user); // select cards from user
   const params = {
     effect: "coverflow",
     grabCursor: true,

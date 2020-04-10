@@ -142,7 +142,7 @@ export const GameEvents = (socket: any, io: any) => {
     }
   });
 
-  socket.on('CHOOSED_CARD_TO_MATCH_HINT', ({ activeRoomId, card }) => {
+  socket.on('CHOSEN_CARD_TO_MATCH_HINT', ({ activeRoomId, card }) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     let { gameOptions } = room;
     let { players, scoreboard } = room;

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { loginUser, closeModal } from "store/actions";
+import { appActions, userActions } from "store/actions";
 import { connect } from "react-redux";
 import * as styles from "./LoginModal.module.scss";
 
@@ -25,24 +25,23 @@ class LoginModal extends Component {
 
   submitLoginHandler = event => {
     event.preventDefault();
-    const { loginUser } = this.props;
     const [username, password] = [this.state.username, this.state.password];
     if (!username || !password) {
       this.setState((state, props) => {
         return {
           formError:
-            state.errors.empty + (!username ? " username" : " password")
+            state.errors.empty + (!username ? ` username` : ` password`)
         };
       });
       return false;
     }
-    loginUser(username, password);
+    userActions.loginUser(username, password);
   };
 
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
     if (this.props.auth !== prevProps.auth) {
-      this.props.closeModal();
+      appActions.closeModal();
     }
   }
 
@@ -106,12 +105,4 @@ const mapStateToProps = ({ auth }) => {
   };
 };
 
-const mapDispatchToProps = {
-  loginUser,
-  closeModal
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LoginModal);
+export default connect(mapStateToProps)(LoginModal);

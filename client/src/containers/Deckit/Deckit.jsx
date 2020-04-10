@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
+import { deckitActions } from "store/actions";
+import { deckitSelectors, roomSelectors, userSelectors } from "store/selectors";
 import SidePanel from "../GameContainer/SidePanel/SidePanel";
-import selectActiveRoom from "../../store/selectors/selectActiveRoom";
-import selectHinter from "../../store/deckit/selectors/selectHinter";
-import selectHint from "../../store/deckit/selectors/selectHint";
 import Hand from "./components/Hand/Hand";
-import selectUserId from "../../store/selectors/selectUserId";
-import { resetOptionsForNextRound } from "../../store/deckit/deckitActions";
 import PickingArea from "./components/PickingArea/PickingArea";
 import Message from "./components/Message/Message";
-import selectMyCard from "../../store/deckit/selectors/selectMyCard";
 import HintInput from "../../components/HintInput/HintInput";
-import selectGameStage from "../../store/deckit/selectors/selectGameStage";
 import { gameMapping } from "../../utils/gameMapping";
 
 /**
@@ -44,12 +39,12 @@ const StyledGame = styled.div`
 `;
 
 const Deckit = () => {
-  const activeRoom = useSelector(selectActiveRoom);
-  const userId = useSelector(selectUserId);
-  const hinter = useSelector(selectHinter);
-  const hint = useSelector(selectHint);
-  const hintCard = useSelector(selectMyCard);
-  const stage = useSelector(selectGameStage);
+  const activeRoom = useSelector(roomSelectors.activeRoom);
+  const userId = useSelector(userSelectors.userId);
+  const hinter = useSelector(deckitSelectors.hinter);
+  const hint = useSelector(deckitSelectors.hint);
+  const hintCard = useSelector(deckitSelectors.myCard);
+  const stage = useSelector(deckitSelectors.gameStage);
   const dispatch = useDispatch();
   const [panels, setPanels] = useState({});
 
@@ -62,9 +57,9 @@ const Deckit = () => {
 
   useEffect(() => {
     if (stage === 5) {
-      dispatch(resetOptionsForNextRound());
+      dispatch(deckitActions.resetOptionsForNextRound());
     }
-  }, [stage]);
+  }, [dispatch, stage]);
   return (
     <StyledTableContainer>
       <StyledTable>

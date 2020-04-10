@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { openModal } from "store/actions";
+import { appActions } from "store/actions";
 import * as styles from "./AccountBox.module.scss";
 import Icon from "../../../Generic/Icon/Icon";
 
@@ -147,7 +147,7 @@ const mapStateToProps = ({ auth, user }) => {
 };
 
 const mapDispatchToProps = {
-  openModal
+  openModal: appActions.openModal
 };
 export default connect(
   mapStateToProps,

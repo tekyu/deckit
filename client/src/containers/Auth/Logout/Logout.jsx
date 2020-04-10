@@ -1,17 +1,17 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { logoutUser } from "store/actions";
+import { userActions } from "store/actions";
 
 const Logout = auth => {
   const [redirect, setRedirect] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
   if (!auth) {
-    history.push("/");
+    history.push(`/`);
   }
   const logoutUserHandler = useCallback(() => {
-    dispatch(logoutUser());
+    dispatch(userActions.logoutUser());
   }, [dispatch]);
 
   useEffect(() => {

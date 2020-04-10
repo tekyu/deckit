@@ -1,25 +1,25 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import selectUser from "store/selectors/selectUser";
-import { updateUser } from "../../store/user/userActions";
+import { userActions } from "store/actions";
+import { userSelectors } from "store/selectors";
 
 const Profile = auth => {
-  const profileData = useSelector(selectUser);
-  const [username, setUsername] = useState("");
+  const profileData = useSelector(userSelectors.user);
+  const [username, setUsername] = useState(``);
   const [ranking, setRanking] = useState(0);
   const [friends, setFriends] = useState([]);
   const [achievements, setAchievements] = useState([]);
-  const [createdAt, setCreatedAt] = useState("");
+  const [createdAt, setCreatedAt] = useState(``);
   const dispatch = useDispatch();
   const history = useHistory();
   if (!auth) {
-    history.push("/");
+    history.push(`/`);
   }
 
   const sendUpdatedUserHandler = useCallback(() => {
     const data = { ranking: 1300 };
-    dispatch(updateUser(data));
+    dispatch(userActions.updateUser(data));
   }, [dispatch]);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const Profile = auth => {
       <div>Username: {username}</div>
       <div>Ranking: {ranking}</div>
       <div>
-        Friends:{" "}
+        Friends:{` `}
         {friends.map(({ nickname, id, status, ranking, avatar }) => (
           <li key={id}>
             {nickname} {id} {status} {ranking} {avatar}
@@ -44,11 +44,11 @@ const Profile = auth => {
       </div>
       <div>Achievements: {achievements}</div>
       <div>
-        Created:{" "}
-        {new Date(createdAt).toLocaleDateString("en-GB", {
-          year: "numeric",
-          month: "long",
-          day: "numeric"
+        Created:{` `}
+        {new Date(createdAt).toLocaleDateString(`en-GB`, {
+          year: `numeric`,
+          month: `long`,
+          day: `numeric`
         })}
       </div>
       <button onClick={sendUpdatedUserHandler}>Change</button>

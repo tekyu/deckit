@@ -1,10 +1,5 @@
 import React, { Component } from "react";
-import {
-  updatedUser,
-  closeModal,
-  emitter,
-  UPDATE_ANON_USER
-} from "store/actions";
+import { appActions, socketActions, userActions } from "store/actions";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 
@@ -64,10 +59,14 @@ class AnonymousLoginModal extends Component {
     event.preventDefault();
     const { emitter, updatedUser } = this.props;
     const { username } = this.state;
-    emitter(UPDATE_ANON_USER, { username }, userData => {
-      // update user on this side
-      updatedUser(userData);
-    });
+    socketActions.emitter(
+      userActions.UPDATE_ANON_USER,
+      { username },
+      userData => {
+        // update user on this side
+        userActions.updatedUser(userData);
+      }
+    );
   };
 
   render() {
@@ -76,7 +75,7 @@ class AnonymousLoginModal extends Component {
         <div className={styles.modal_header}>
           <i className={styles.ikontest} />
           <h2>Choose your username</h2>
-          <p>{"Let's have fun!"}</p>
+          <p>{`Let's have fun!`}</p>
         </div>
         <div className={styles.modal_body}>
           <form onSubmit={this.submitHandler}>
@@ -115,9 +114,9 @@ const mapStateToProps = ({ user: { user } }) => {
 };
 
 const mapDispatchToProps = {
-  closeModal,
-  emitter,
-  updatedUser
+  closeModal: appActions.closeModal,
+  emitter: socketActions.emitter,
+  updatedUser: userActions.updatedUser
 };
 
 export default connect(

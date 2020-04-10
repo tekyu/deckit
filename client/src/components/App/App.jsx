@@ -1,20 +1,19 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { StylesProvider, ThemeProvider } from "@material-ui/core/styles";
-// import { ThemeProvider } from "styled-components";
 import { connect } from "react-redux";
 import ModalContainer from "modals/ModalContainer";
 import Error from "components/Generic/Error/Error";
 import { ToastContainer } from "react-toastify";
-import { checkAuth } from "store/user/userActions";
+import { userActions } from "store/actions";
 import Header from "./Header/Header";
 import Content from "./Content/Content";
 import Theme from "../../Theme/Theme";
 
-const App = ({ auth, checkAuth, modalType, error }) => {
+const App = ({ auth, modalType, error }) => {
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    userActions.checkAuth();
+  }, []);
 
   return (
     <>
@@ -34,8 +33,8 @@ const App = ({ auth, checkAuth, modalType, error }) => {
 App.propTypes = {
   auth: PropTypes.bool.isRequired,
   checkAuth: PropTypes.func,
-  modalType: PropTypes.string.isRequired,
-  error: PropTypes.string.isRequired
+  modalType: PropTypes.string,
+  error: PropTypes.string
 };
 
 const mapStateToProps = state => {
@@ -50,11 +49,4 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = {
-  checkAuth
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App);
+export default connect(mapStateToProps)(App);

@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { closeModal } from "store/actions";
+import { appActions } from "store/actions";
 import { useHistory } from "react-router-dom";
 import modals from "./modals";
 import * as Styled from "./ModalContainer.styled";
@@ -39,7 +39,7 @@ ModalContainer.propTypes = {
 };
 
 const mapDispatchToProps = {
-  closeModal
+  closeModal: appActions.closeModal
 };
 
 export default memo(

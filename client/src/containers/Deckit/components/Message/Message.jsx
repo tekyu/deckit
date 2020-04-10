@@ -1,10 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import selectGameStage from "../../../../store/deckit/selectors/selectGameStage";
-import selectHinter from "../../../../store/deckit/selectors/selectHinter";
-import selectHint from "../../../../store/deckit/selectors/selectHint";
-import selectUserId from "../../../../store/selectors/selectUserId";
+import { deckitSelectors, userSelectors } from "store/selectors";
 import HinterStage from "./components/HinterStage/HinterStage";
 import HintMessage from "./components/HintMessage";
 
@@ -41,10 +38,10 @@ const GetMessage = ({ stage, hinter, userId, hint }) => {
 };
 
 const Message = () => {
-  const stage = useSelector(selectGameStage);
-  const hinter = useSelector(selectHinter);
-  const hint = useSelector(selectHint);
-  const userId = useSelector(selectUserId);
+  const stage = useSelector(deckitSelectors.gameStage);
+  const hinter = useSelector(deckitSelectors.hinter);
+  const hint = useSelector(deckitSelectors.hint);
+  const userId = useSelector(userSelectors.userId);
 
   return (
     <StyledContainer>

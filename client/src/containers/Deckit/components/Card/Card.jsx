@@ -2,14 +2,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "@material-ui/core/Button";
-import selectActiveRoomId from "../../../../store/selectors/selectActiveRoomId";
-import {
-  pickMyCard,
-  sendHintCard,
-  chooseHinterCard
-} from "../../../../store/deckit/deckitActions";
+import { deckitActions } from "store/actions";
+import { deckitSelectors, roomSelectors } from "store/selectors";
 import PickedBy from "./components/PickedBy";
-import selectPickedCard from "../../../../store/deckit/selectors/selectPickedCard";
 
 const StyledContainer = styled.div`
   width: 270px;
@@ -48,27 +43,27 @@ const StyledButton = styled(Button)`
 const Card = ({ card = {}, state = null, owner, pickedBy } = {}, props) => {
   const dispatch = useDispatch();
   const [showButton, setShowButton] = useState(false);
-  const { id = 123, title = "placeholder", url = "" } = card;
-  const activeRoomId = useSelector(selectActiveRoomId);
-  const pickedCard = useSelector(selectPickedCard);
+  const { id = 123, title = `placeholder`, url = `` } = card;
+  const activeRoomId = useSelector(roomSelectors.activeRoomId);
+  const pickedCard = useSelector(deckitSelectors.pickedCard);
   const showButtonHandler = () => {
     setShowButton(lastState =>
-      (state === "picker" && pickedCard) ||
-      (state === "chooser" && pickedCard && pickedCard.id === id)
+      (state === `picker` && pickedCard) ||
+      (state === `chooser` && pickedCard && pickedCard.id === id)
         ? false
         : !lastState
     );
   };
   const pickCardHandler = () => {
     switch (state) {
-      case "hinter":
-        dispatch(sendHintCard({ activeRoomId, card }));
+      case `hinter`:
+        dispatch(deckitActions.sendHintCard({ activeRoomId, card }));
         break;
-      case "picker":
-        dispatch(pickMyCard({ activeRoomId, card }));
+      case `picker`:
+        dispatch(deckitActions.pickMyCard({ activeRoomId, card }));
         break;
-      case "chooser":
-        dispatch(chooseHinterCard({ activeRoomId, card }));
+      case `chooser`:
+        dispatch(deckitActions.chooseHinterCard({ activeRoomId, card }));
         break;
       default:
         break;

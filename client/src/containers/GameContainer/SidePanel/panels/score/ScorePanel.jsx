@@ -1,7 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import selectPlayers from "../../../../../store/selectors/selectPlayers";
 import ScoreList from "./components/ScoreList/ScoreList";
 /**
  * TODO:

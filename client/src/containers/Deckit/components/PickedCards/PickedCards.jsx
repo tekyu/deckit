@@ -4,9 +4,7 @@ import { useSelector } from "react-redux";
 import "swiper/swiper.scss";
 import Swiper from "react-id-swiper";
 import Card from "../Card/Card";
-import selectHinter from "../../../../store/deckit/selectors/selectHinter";
-import selectUserId from "../../../../store/selectors/selectUserId";
-import selectPickedCard from "../../../../store/deckit/selectors/selectPickedCard";
+import { deckitSelectors, userSelectors } from "store/selectors";
 
 const StyledContainer = styled.div`
   position: relative;
@@ -25,9 +23,9 @@ const getCardState = (cardId, hinter, pickedCard, userId) => {
 };
 
 const PickedCards = ({ cards = [] }) => {
-  const hinter = useSelector(selectHinter);
-  const userId = useSelector(selectUserId);
-  const pickedCard = useSelector(selectPickedCard);
+  const hinter = useSelector(deckitSelectors.hinter);
+  const pickedCard = useSelector(deckitSelectors.pickedCard);
+  const userId = useSelector(userSelectors.userId);
 
   const params = {
     slidesPerView: 3,

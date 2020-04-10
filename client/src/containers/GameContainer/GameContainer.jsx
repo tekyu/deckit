@@ -4,24 +4,15 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { gameMapping, getGame } from "utils";
 import {
-  JOIN_ROOM,
-  emitter,
-  listener,
-  removeListener,
-  openModal,
-  setActiveRoom,
-  setActiveRoomId
+  appActions,
+  deckitActions,
+  roomActions,
+  socketActions
 } from "store/actions";
-import selectUser from "store/selectors/selectUser";
+import { roomSelectors, userSelectors } from "store/selectors";
 import { toast } from "react-toastify";
-import { leaveRoom, updateActiveRoom } from "../../store/room/roomActions";
 import WaitingScreen from "../../components/WaitingScreen/WaitingScreen";
-import selectActiveRoom from "../../store/selectors/selectActiveRoom";
-import {
-  updateMyCardsListener,
-  removeUpdateMyCardsListener,
-  updateGameOptionsListener
-} from "../../store/deckit/deckitActions";
+
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
@@ -48,40 +39,44 @@ const GameContainer = () => {
   } = useRouteMatch();
   const dispatch = useDispatch();
   const history = useHistory();
-  const userData = useSelector(selectUser);
-  const activeRoom = useSelector(selectActiveRoom);
+  const userData = useSelector(userSelectors.user);
+  const activeRoom = useSelector(roomSelectors.activeRoom);
   const [roomInfo, setRoomInfo] = useState(null);
   const [GameComponent, setGameComponent] = useState(null);
   // const [panels, setPanels] = useState({});
 
   useEffect(() => {
-    dispatch(updateMyCardsListener());
-    dispatch(updateGameOptionsListener());
+    dispatch(deckitActions.updateMyCardsListener());
+    dispatch(deckitActions.updateGameOptionsListener());
     return () => {
-      dispatch(removeUpdateMyCardsListener());
+      dispatch(deckitActions.removeUpdateMyCardsListener());
     };
-  }, []);
+  }, [dispatch]);
 
   const getRoomInfo = useCallback(
     id => {
       dispatch(
-        emitter(JOIN_ROOM, { roomId: id, userData }, roomData => {
-          if (roomData.error) {
-            history.replace("/");
-            toast.error(roomData.error, {
-              position: toast.POSITION.BOTTOM_RIGHT
-            });
+        socketActions.emitter(
+          socketActions.JOIN_ROOM,
+          { roomId: id, userData },
+          roomData => {
+            if (roomData.error) {
+              history.replace(`/`);
+              toast.error(roomData.error, {
+                position: toast.POSITION.BOTTOM_RIGHT
+              });
+            }
+            dispatch(roomActions.updateActiveRoom(roomData));
           }
-          dispatch(updateActiveRoom(roomData));
-        })
+        )
       );
     },
-    [dispatch, userData]
+    [dispatch, history, userData]
   );
 
   const updateActiveRoomHandler = useCallback(
     ({ data }) => {
-      dispatch(updateActiveRoom(data));
+      dispatch(roomActions.updateActiveRoom(data));
     },
     [dispatch]
   );
@@ -96,26 +91,28 @@ const GameContainer = () => {
 
   useEffect(() => {
     if (activeRoom) {
-      dispatch(listener(`ROOM_UPDATED`, updateActiveRoomHandler));
+      dispatch(socketActions.listener(`ROOM_UPDATED`, updateActiveRoomHandler));
     }
 
     return () => {
-      dispatch(removeListener(`ROOM_UPDATED`, updateActiveRoomHandler));
+      dispatch(
+        socketActions.removeListener(`ROOM_UPDATED`, updateActiveRoomHandler)
+      );
     };
   }, [dispatch, activeRoom, updateActiveRoomHandler]);
 
   useEffect(() => {
-    dispatch(setActiveRoomId(id));
+    dispatch(roomActions.setActiveRoomId(id));
     return () => {
-      dispatch(leaveRoom(id));
-      dispatch(setActiveRoomId());
-      dispatch(setActiveRoom());
+      dispatch(roomActions.leaveRoom(id));
+      dispatch(roomActions.setActiveRoomId());
+      dispatch(roomActions.setActiveRoom());
     };
   }, [dispatch, id]);
 
   useEffect(() => {
     if (!userData) {
-      dispatch(openModal(`anonymous`));
+      dispatch(appActions.openModal(`anonymous`));
     } else {
       getRoomInfo(id);
     }

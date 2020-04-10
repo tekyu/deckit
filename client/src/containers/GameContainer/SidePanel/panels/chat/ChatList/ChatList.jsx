@@ -1,12 +1,12 @@
 import React, { memo, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import selectUserId from "store/selectors/selectUserId";
+import { userSelectors } from "store/selectors";
 import { Element, scroller } from "react-scroll";
 import ChatElement from "../ChatElement/ChatElement";
 import * as Styled from "./ChatList.styled";
 
 const ChatList = ({ messages }) => {
-  const userId = useSelector(selectUserId);
+  const userId = useSelector(userSelectors.userId);
   const [messageList, setMessageList] = useState([]);
 
   const scrollToBottom = () => {

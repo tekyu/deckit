@@ -1,12 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
 import "swiper/swiper.scss";
 import Swiper from "react-id-swiper";
 import Card from "../Card/Card";
-import selectHinter from "../../../../store/deckit/selectors/selectHinter";
-import selectUserId from "../../../../store/selectors/selectUserId";
-import selectPickedCard from "../../../../store/deckit/selectors/selectPickedCard";
 
 const StyledContainer = styled.div`
   width: 100%;

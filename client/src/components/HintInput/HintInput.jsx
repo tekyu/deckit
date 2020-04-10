@@ -1,13 +1,13 @@
 import React from "react";
 import { Formik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { selectActiveRoomId } from "store/selectors";
-import { sendHint } from "store/deckit/deckitActions";
+import { deckitActions } from "store/actions";
+import { deckitSelectors } from "store/selectors";
 import * as Styled from "./HintInput.styled";
 
 const HintInput = () => {
   const dispatch = useDispatch();
-  const activeRoomId = useSelector(selectActiveRoomId);
+  const activeRoomId = useSelector(deckitSelectors.selectActiveRoomId);
 
   return (
     <Formik
@@ -15,7 +15,7 @@ const HintInput = () => {
         hint: ``
       }}
       onSubmit={({ hint }) => {
-        dispatch(sendHint({ activeRoomId, hint }));
+        dispatch(deckitActions.sendHint({ activeRoomId, hint }));
       }}
     >
       {() => {

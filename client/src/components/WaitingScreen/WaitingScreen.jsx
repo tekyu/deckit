@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { changeRoomMode, listener } from "store/actions";
+import { roomActions, socketActions } from "store/actions";
 import Switch from "@material-ui/core/Switch";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 import { toast } from "react-toastify";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import selectActiveRoom from "store/selectors/selectActiveRoom";
-import selectUserId from "store/selectors/selectUserId";
+import { roomSelectors, userSelectors } from "store/selectors";
 import Icon from "components/Generic/Icon/Icon";
 import PlayersList from "./PlayersList/PlayersList";
 import ActionButton from "./ActionButton/ActionButton";
@@ -21,8 +20,8 @@ import * as Styled from "./WaitingScreen.styled";
 const WaitingScreen = () => {
   const [hideMessage, setHideMessage] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const room = useSelector(selectActiveRoom);
-  const myId = useSelector(selectUserId);
+  const room = useSelector(roomSelectors.activeRoom);
+  const myId = useSelector(userSelectors.userId);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -34,7 +33,7 @@ const WaitingScreen = () => {
 
   useEffect(() => {
     dispatch(
-      listener(`KICKED`, () => {
+      socketActions.listener(`KICKED`, () => {
         history.replace(`/`);
         toast.error(`You have been kicked from the room`, {
           position: toast.POSITION.BOTTOM_RIGHT
@@ -48,7 +47,7 @@ const WaitingScreen = () => {
   };
 
   const changeRoomModeHandler = () => {
-    dispatch(changeRoomMode(room.id));
+    dispatch(roomActions.changeRoomMode(room.id));
     toast.warning(`Room mode has been changed`, {
       position: toast.POSITION.BOTTOM_RIGHT
     });
@@ -114,7 +113,7 @@ const WaitingScreen = () => {
                   <Switch
                     color="primary"
                     checked={room.mode === `private`}
-                    onChange={changeRoomModeHandler}
+                    onChange={roomActions.changeRoomModeHandler}
                   />
                 }
               />
