@@ -33,7 +33,6 @@ const Panel = styled.div`
   box-shadow: -10px 5px 15px rgba(207, 119, 243, 0.1),
     5px 5px 15px rgba(0, 155, 255, 0.1), -10px 5px 15px rgba(42, 201, 219, 0.1);
 `;
-
 const SidePanel = () => {
   const gameCode = useSelector(roomSelectors.gameCode);
   const [panels, setPanels] = useState({});
@@ -73,18 +72,15 @@ const SidePanel = () => {
     addPanelListeners();
   }, [addPanelListeners]);
 
-  const changePanel = useCallback(
-    ({ target }) => {
-      const panelName = target.getAttribute(`name`);
-      setOpenedPanel(panelName);
-      if (updatedPanels.indexOf(panelName) !== -1) {
-        setUpdatedPanels(oldPanels => {
-          return oldPanels.filter(panel => panel !== panelName);
-        });
-      }
-    },
-    [updatedPanels]
-  );
+  const changePanel = useCallback(({ target }) => {
+    const panelName = target.getAttribute(`name`);
+    setOpenedPanel(panelName);
+    if (updatedPanels.indexOf(panelName) !== -1) {
+      setUpdatedPanels(oldPanels => {
+        return oldPanels.filter(panel => panel !== panelName);
+      });
+    }
+  });
 
   const getPanel = () => {
     return panelMapping[openedPanel];

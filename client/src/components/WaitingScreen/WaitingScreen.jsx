@@ -14,8 +14,6 @@ import { Button } from "components/Generic";
 import PlayersList from "./PlayersList/PlayersList";
 import ActionButton from "./ActionButton/ActionButton";
 import PlayerCounterWithIcon from "../Generic/PlayerCounterWithIcon/PlayerCounterWithIcon";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import * as Styled from "./WaitingScreen.styled";
 
 const WaitingScreen = () => {

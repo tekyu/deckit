@@ -1,23 +1,34 @@
 import React from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import ScoreIcon from "../../../../components/Generic/Icons/ScoreIcon";
+import ChatIcon from "../../../../components/Generic/Icons/ChatIcon";
 
 const Container = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 100%;
-  background: greenyellow;
   margin: 4px;
   cursor: pointer;
   box-sizing: border-box;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
   &:first-of-type {
     margin-left: 0;
   }
   ${({ opened }) =>
     opened &&
     `
-    border: 3px solid magenta;
+    background-image: linear-gradient(
+    40deg,
+    #2ac9db -30%,
+    #009bff 47%,
+    #cf77f3 150%
+    );
+    color: #fff;
   `}
   ${({ updated }) =>
     updated &&
@@ -34,11 +45,21 @@ const Container = styled.div`
     }
   `}
 `;
-const Bubble = ({ handler, opened, updated, name, icon }) => {
-  console.log("Bubble", opened, updated, name, icon);
+const Bubble = ({ handler, opened, updated, name, icon, children }) => {
+  const getBubbleIcon = name => {
+    console.log("b", name);
+    switch (name) {
+      case "score":
+        return <ScoreIcon name={name} onClick={handler} />;
+      case "chat":
+        return <ChatIcon name={name} onClick={handler} />;
+      default:
+        return null;
+    }
+  };
   return (
     <Container name={name} opened={opened} updated={updated} onClick={handler}>
-      {icon}
+      {getBubbleIcon(name)}
     </Container>
   );
 };

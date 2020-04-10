@@ -6,8 +6,8 @@ const mocks = [
     mode: 'public',
     gameCode: 'd',
     gameOptions: {
-      decks: ['standard']
-    }
+      decks: ['default'],
+    },
   },
   {
     name: 'BBB Room created first',
@@ -15,8 +15,8 @@ const mocks = [
     mode: 'public',
     gameCode: 'd',
     gameOptions: {
-      decks: ['wholesome', 'countries']
-    }
+      decks: ['default'],
+    },
   },
   {
     name: 'CCC Room created second',
@@ -24,8 +24,8 @@ const mocks = [
     mode: 'public',
     gameCode: 'd',
     gameOptions: {
-      decks: ['wholesome', 'countries']
-    }
+      decks: ['default'],
+    },
   },
   {
     name: 'mock room from server',
@@ -33,9 +33,9 @@ const mocks = [
     mode: 'public',
     gameCode: 'd',
     gameOptions: {
-      decks: ['wholesome', 'countries']
-    }
-  }
+      decks: ['default'],
+    },
+  },
 ];
 
 // const mockRooms = mocks.map((data, i) => {

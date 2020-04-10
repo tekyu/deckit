@@ -1,13 +1,9 @@
 // @ts-nocheck
 import { gameOptions } from './../utils/gameMapping';
-import shortId from 'shortid';
 import IRoom from '../interfaces/IRoom';
 import { getGameOptions } from '../utils/gameMapping';
-import mockRooms from '../mocks/Rooms';
 import hri from 'human-readable-ids';
 import cloneDeep from 'clone-deep';
-
-const mockChat = [];
 
 interface CreateRoomOptions {
   mode: string;
@@ -50,10 +46,7 @@ export default class Room implements IRoom {
     this.playersMax = playersMax || 10; // check for max players per game (adjustable in gameMapping)
     this.name = name;
     this.gameCode = gameCode;
-    this.id = hri.hri
-      .random()
-      .split('-')
-      .join('');
+    this.id = hri.hri.random().split('-').join('');
     this.owner = socketId;
     this.admin = socketId;
     this.state = 0;
@@ -83,7 +76,7 @@ export default class Room implements IRoom {
       scoreboard,
       players,
       winners,
-      createdAt
+      createdAt,
     } = this;
     return {
       mode,
@@ -97,7 +90,7 @@ export default class Room implements IRoom {
       scoreboard,
       players,
       winners,
-      createdAt
+      createdAt,
     };
   }
 
@@ -110,7 +103,7 @@ export default class Room implements IRoom {
       name,
       id,
       owner,
-      state
+      state,
     };
   }
 

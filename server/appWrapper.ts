@@ -9,6 +9,7 @@ import morgan from 'morgan';
 import chalk from 'chalk';
 import Passport from './src/api/Passport';
 import { User } from './src/schemas/User';
+import path from 'path';
 
 const appWrapper = (IncomingPort = 3011) => {
   const app = express();
@@ -25,12 +26,14 @@ const appWrapper = (IncomingPort = 3011) => {
   //   })
   // );
 
+  app.use('/card', express.static(path.join(__dirname, 'card')));
+
   app.options(
     '*',
     cors({
       credentials: true,
       origin: process.env.DEV_ADDRESS,
-      optionsSuccessStatus: 200
+      optionsSuccessStatus: 200,
     })
   );
   app.post(
@@ -38,7 +41,7 @@ const appWrapper = (IncomingPort = 3011) => {
     cors({
       credentials: true,
       origin: process.env.DEV_ADDRESS,
-      optionsSuccessStatus: 200
+      optionsSuccessStatus: 200,
     })
   );
   app.get(
@@ -46,7 +49,7 @@ const appWrapper = (IncomingPort = 3011) => {
     cors({
       credentials: true,
       origin: process.env.DEV_ADDRESS,
-      optionsSuccessStatus: 200
+      optionsSuccessStatus: 200,
     })
   );
   app.use(helmet());
@@ -59,8 +62,8 @@ const appWrapper = (IncomingPort = 3011) => {
       saveUninitialized: false, //required
       cookie: {
         expires: 1000 * 60 * 60 * 24 * 3,
-        rolling: true
-      }
+        rolling: true,
+      },
     })
   );
   app.use(Passport.initialize());
@@ -69,10 +72,10 @@ const appWrapper = (IncomingPort = 3011) => {
   app.listen(port, () =>
     console.log(chalk.black.bgGreen(`Server listening on port ${port}`))
   );
-  app.get('/', function(req, res) {
+  app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
   });
-  app.get('/showusers', function(req, res) {
+  app.get('/showusers', function (req, res) {
     User.find({}, (err, users) => {
       res.render('ShowUsers.ejs', { users });
     });

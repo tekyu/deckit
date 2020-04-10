@@ -55,7 +55,7 @@ const Hand = () => {
   return (
     <StyledContainer>
       <div style={{ height: "100%" }}>
-        <Swiper {...params} activeSlideKey={cards[2].id}>
+        <Swiper {...params} activeSlideKey={cards[2].id} shouldSwiperUpdate>
           {cards.map(card => {
             return (
               <div key={card.id}>
@@ -67,54 +67,6 @@ const Hand = () => {
       </div>
     </StyledContainer>
   );
-
-  // const settings = {
-  //   infinite: true,
-  //   slidesToShow: 3,
-  //   slidesToScroll: 3,
-  //   variableWidth: true,
-  //   speed: 500,
-  //   responsive: [
-  //     {
-  //       breakpoint: 1350, // width to change options
-  //       settings: {
-  //         slidesToShow: 3,
-  //         slidesToScroll: 1,
-  //         infinite: true,
-  //         dots: true,
-  //         centerMode: true,
-  //         className: "center",
-  //         centerPadding: "20px"
-  //       }
-  //     },
-  //     {
-  //       breakpoint: 600,
-  //       settings: {
-  //         centerMode: true,
-  //         className: "center",
-  //         centerPadding: "20px",
-  //         slidesToShow: 2,
-  //         slidesToScroll: 1,
-  //         initialSlide: 2
-  //       }
-  //     }
-  //   ]
-  // };
-  // return (
-  //   <StyledContainer>
-  //     <Slider {...settings}>
-  //       {cards.map(card => {
-  //         return (
-  //           <Card
-  //             card={card}
-  //             key={card.id}
-  //             state={getState(hinter.id, stage, user.id)}
-  //           />
-  //         );
-  //       })}
-  //     </Slider>
-  //   </StyledContainer>
-  // );
 };
 
 export default Hand;

@@ -8,13 +8,12 @@ const StyledContainer = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  /* margin-top: auto; */
   margin-bottom: auto;
 `;
 const PlaceholderCardsList = ({ cards }) => {
   return (
     <StyledContainer>
-      {cards && cards.map(card => <PlaceholderCard key={card} />)}
+      <PlaceholderCard amount={cards.length} />
     </StyledContainer>
   );
 };

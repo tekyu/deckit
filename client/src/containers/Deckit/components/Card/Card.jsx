@@ -10,11 +10,12 @@ const StyledContainer = styled.div`
   width: 270px;
   height: 400px;
   background-color: yellow;
+  border: 2px solid rgba(0,0,0, 0.2);
   ${({ url }) =>
     url && `background-image: url(${url}); background-size: cover;`}
   ${({ clicked }) =>
     clicked &&
-    `box-shadow: 0px 0px 7px 3px #fded81
+    `box-shadow: 0px 0px 7px 3px #cf77f3
 `}
   ${({ clicked }) =>
     !clicked &&
@@ -24,7 +25,6 @@ const StyledContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  /* margin: 0 4px; */
 `;
 
 const Card = ({ card = {}, state = null, owner, pickedBy } = {}, props) => {

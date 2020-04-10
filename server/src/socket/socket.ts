@@ -1,7 +1,6 @@
 import http from 'http';
 import socketIo from 'socket.io';
 import chalk from 'chalk';
-import mockRooms from '../mocks/Rooms';
 import { RoomEvents, GameEvents, UserEvents, ChatEvents } from './events';
 import getRoomObjectForUpdate from '../utils/getRoomObjectForUpdate';
 import getRoom from '../utils/getRoom';
@@ -16,7 +15,7 @@ const ioEvents = (io: any) => {
     socket.pswOptions = {
       rooms: [],
       socketId: socket.id,
-      state: 0 // 0 - waiting | 1 - ready | 3 - paused | 4 - disconnected
+      state: 0, // 0 - waiting | 1 - ready | 3 - paused | 4 - disconnected
     };
     socket.on('getRooms', (data: any, callback: any) => {
       socket.join(WAITING_ROOM);
@@ -60,10 +59,14 @@ const SocketIo = (App: any) => {
   const port = process.env.SOCKET_PORT || 3012;
   const server = http.createServer();
   const io = socketIo(server);
-  // io.eio.pingTimeout = 300000; // 5 minutes
 
   // @ts-ignore
-  io.gameRooms = { public: { ...mockRooms }, private: {}, fast: {} };
+  io.eio.pingTimeout = 300000; // 5 minutes
+  // @ts-ignore
+  io.eio.pingInterval = 5000; // 5 seconds
+
+  // @ts-ignore
+  io.gameRooms = { public: {}, private: {}, fast: {} };
 
   ioEvents(io);
   server.listen(port, () =>

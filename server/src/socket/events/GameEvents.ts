@@ -23,14 +23,13 @@ export const GameEvents = (socket: any, io: any) => {
     await axios
       .get(`/cards`, {
         params: {
-          decks
-        }
+          decks,
+        },
       })
       .then(({ data }) => {
-        console.log('axios', data);
         room.gameOptions.remainingCards = data;
       })
-      .catch(res => console.log('AXIOS catch', res.statusCode));
+      .catch((res) => console.log('AXIOS catch', res.statusCode));
 
     const players = distributeRandomCardsToPlayers(
       room.players,
@@ -44,7 +43,7 @@ export const GameEvents = (socket: any, io: any) => {
     gameOptions.stage = 2;
     gameOptions.hinter = {
       username: room.players[0].username,
-      id: room.players[0].id
+      id: room.players[0].id,
     };
     room.scoreboard = players.reduce((newScoreboard, { id }) => {
       newScoreboard[id] = 0;
@@ -53,14 +52,14 @@ export const GameEvents = (socket: any, io: any) => {
     io.in(activeRoomId).emit('ROOM_UPDATED', {
       state: room.state,
       players,
-      scoreboard: room.scoreboard
+      scoreboard: room.scoreboard,
     });
     io.in(activeRoomId).emit('GAME_UPDATED', {
       remainingCards: room.gameOptions.remainingCards.length,
       round: gameOptions.round,
       stage: gameOptions.stage,
       hinter: gameOptions.hinter,
-      maxScore: gameOptions.maxScore
+      maxScore: gameOptions.maxScore,
     });
 
     // distribute cards here
@@ -80,9 +79,9 @@ export const GameEvents = (socket: any, io: any) => {
         owner: {
           id: socket.pswOptions.id,
           color: socket.pswOptions.color,
-          username: socket.pswOptions.username
+          username: socket.pswOptions.username,
         },
-        pickedBy: []
+        pickedBy: [],
       });
     }
   });
@@ -90,10 +89,10 @@ export const GameEvents = (socket: any, io: any) => {
   socket.on('SENT_HINT', ({ activeRoomId, hint }) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     const {
-      gameOptions: { hintCard, playersPickedCard }
+      gameOptions: { hintCard, playersPickedCard },
     } = room;
     let {
-      gameOptions: { stage }
+      gameOptions: { stage },
     } = room;
     room.gameOptions.hint = hint;
     if (playersPickedCard.indexOf(socket.pswOptions.id) === -1) {
@@ -105,7 +104,7 @@ export const GameEvents = (socket: any, io: any) => {
         stage,
         hint,
         hintCard,
-        playersPickedCard
+        playersPickedCard,
       });
     }
   });
@@ -114,19 +113,19 @@ export const GameEvents = (socket: any, io: any) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     const {
       gameOptions: { pickedCardsToHint, playersPickedCard },
-      players
+      players,
     } = room;
     let {
-      gameOptions: { stage }
+      gameOptions: { stage },
     } = room;
     pickedCardsToHint.push({
       card: card,
       owner: {
         id: socket.pswOptions.id,
         color: socket.pswOptions.color,
-        username: socket.pswOptions.username
+        username: socket.pswOptions.username,
       },
-      pickedBy: []
+      pickedBy: [],
     });
     if (playersPickedCard.indexOf(socket.pswOptions.id) === -1) {
       playersPickedCard.push(socket.pswOptions.id);
@@ -137,7 +136,7 @@ export const GameEvents = (socket: any, io: any) => {
       const shuffledPickedCardsToHint = shuffle(pickedCardsToHint);
       io.in(activeRoomId).emit('GAME_UPDATED', {
         stage,
-        pickedCardsToHint: shuffledPickedCardsToHint
+        pickedCardsToHint: shuffledPickedCardsToHint,
       });
     }
   });
@@ -151,7 +150,7 @@ export const GameEvents = (socket: any, io: any) => {
       choosedCardsToMatchHint,
       playersChoosedCard,
       remainingCards,
-      maxScore
+      maxScore,
     } = gameOptions;
     let { stage, round } = gameOptions;
 
@@ -162,12 +161,12 @@ export const GameEvents = (socket: any, io: any) => {
       choosedCardsToMatchHint.push({
         card: card,
         chooser: socket.pswOptions.id,
-        owner: pickedCard.owner
+        owner: pickedCard.owner,
       });
       pickedCard.pickedBy.push({
         id: socket.pswOptions.id,
         username: socket.pswOptions.username,
-        color: socket.pswOptions.color
+        color: socket.pswOptions.color,
       });
       pickedCardsToHint;
 
@@ -187,14 +186,14 @@ export const GameEvents = (socket: any, io: any) => {
         io.in(activeRoomId).emit('ROOM_UPDATED', {
           winners: room.winners,
           state: room.state,
-          scoreboard: room.scoreboard
+          scoreboard: room.scoreboard,
         });
         return;
       }
       room.gameOptions.stage = 5;
       io.in(activeRoomId).emit('GAME_UPDATED', {
         stage: room.gameOptions.stage,
-        pickedCardsToHint
+        pickedCardsToHint,
       });
       io.in(activeRoomId).emit('ROOM_UPDATED', { scoreboard: room.scoreboard });
       // award points
@@ -219,10 +218,10 @@ export const GameEvents = (socket: any, io: any) => {
       const interval = setTimeout(() => {
         io.in(activeRoomId).emit('GAME_UPDATED', {
           ...room.gameOptions,
-          remainingCards: remainingCards.length
+          remainingCards: remainingCards.length,
         });
         io.in(activeRoomId).emit('ROOM_UPDATED', {
-          players: room.players
+          players: room.players,
         });
       }, 5000);
     }
