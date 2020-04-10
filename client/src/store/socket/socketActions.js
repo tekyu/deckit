@@ -15,7 +15,6 @@ export const initializeSocket = socket => {
 };
 
 export const emitter = (event, data, handler) => {
-  console.log(`emiter?`);
   return {
     type: SOCKET_EMIT,
     payload: data,

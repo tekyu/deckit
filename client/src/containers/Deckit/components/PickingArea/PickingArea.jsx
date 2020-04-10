@@ -8,16 +8,12 @@ import RoundSummary from "../RoundSummary/RoundSummary";
 import * as Styled from "./PickingArea.styled";
 
 const PickingArea = () => {
-  const pickedCardsToHint = useSelector(
-    deckitSelectors.selectPickedCardsToHint
-  );
-  const playersPickedCard = useSelector(
-    deckitSelectors.selectPlayersPickedCard
-  );
-  const hinter = useSelector(deckitSelectors.selectHinter);
-  const stage = useSelector(deckitSelectors.selectGameStage);
-  const pickedCard = useSelector(deckitSelectors.selectPickedCard);
-  const userId = useSelector(userSelectors.selectUserId);
+  const pickedCardsToHint = useSelector(deckitSelectors.pickedCardsToHint);
+  const playersPickedCard = useSelector(deckitSelectors.playersPickedCard);
+  const hinter = useSelector(deckitSelectors.hinter);
+  const stage = useSelector(deckitSelectors.gameStage);
+  const pickedCard = useSelector(deckitSelectors.pickedCard);
+  const userId = useSelector(userSelectors.userId);
   const getCardState = cardId => {
     if (userId === hinter.id || cardId === pickedCard.id) {
       return null;

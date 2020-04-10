@@ -12,7 +12,6 @@ const Browse = ({ auth }) => {
   const [parsedRooms, setParsedRooms] = useState([]);
   const dispatch = useDispatch();
   const refreshList = useCallback(() => {
-    console.log(`refresz`);
     dispatch(
       socketActions.emitter(`getRooms`, null, rooms => {
         setParsedRooms(rooms);
