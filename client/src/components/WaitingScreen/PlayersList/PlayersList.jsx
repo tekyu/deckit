@@ -4,8 +4,6 @@ import { useDispatch } from "react-redux";
 import { addSeat } from "store/room/roomActions";
 import { getGameMapping } from "../../../utils/gameMapping";
 import Player from "./Player/Player";
-import Icon from "../../Generic/Icon/Icon";
-import Loader from "../../Generic/Loader/Loader";
 import EmptySeat from "./EmptySeat/EmptySeat";
 import AddSeat from "./AddSeat/AddSeat";
 

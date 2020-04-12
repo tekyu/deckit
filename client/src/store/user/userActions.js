@@ -1,7 +1,5 @@
 import axios from "utils/axios";
-
-import { closeModal, showError } from "store/app/appActions";
-import { CLOSE_MODAL } from "../app/appActions";
+import { appActions, socketActions } from "store/actions";
 
 export const CHECK_USER = `CHECK_USER`;
 export const AUTH_USER = `AUTH_USER`;
@@ -10,7 +8,7 @@ export const UPDATE_ANON_USER = `UPDATE_ANON_USER`;
 
 export const updateUser = data => {
   return dispatch => {
-    return axios.post("/api/user/update", data).then(data => {
+    return axios.post(`/api/user/update`, data).then(data => {
       dispatch({
         type: UPDATED_USER,
         data
@@ -19,13 +17,13 @@ export const updateUser = data => {
   };
 };
 
-export const updatedUser = data => {
-  return dispatch => {
-    dispatch({
-      type: UPDATED_USER,
-      user: data
-    });
-  };
+export const updatedUser = (username, handler = () => {}) => dispatch => {
+  return dispatch(
+    socketActions.emitter(UPDATE_ANON_USER, { username }, userData => {
+      dispatch({ type: UPDATED_USER, user: userData });
+      handler(userData);
+    })
+  );
 };
 
 // TODO:
@@ -44,7 +42,7 @@ export const loginUser = (username, password) => {
             type: AUTH_USER,
             auth: true
           });
-          dispatch(closeModal());
+          dispatch(appActions.closeModal());
         }
       })
       .catch(error => {
@@ -66,9 +64,7 @@ export const registerUser = (username, password) => {
           type: AUTH_USER,
           auth: true
         });
-        dispatch({
-          type: CLOSE_MODAL
-        });
+        dispatch(appActions.closeModal());
       })
       .catch(error => {
         throw error;
@@ -100,7 +96,7 @@ export const checkAuth = () => {
 
 export const logoutUser = () => {
   return dispatch => {
-    return axios.post("/api/logout").then(() => {
+    return axios.post(`/api/logout`).then(() => {
       dispatch({
         type: AUTH_USER,
         auth: false

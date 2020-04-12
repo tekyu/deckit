@@ -37,20 +37,6 @@ const CreateGame = () => {
   const userData = useSelector(userSelectors.user);
   const dispatch = useDispatch();
   const history = useHistory();
-  const updateUser = username => {
-    return new Promise((resolve, reject) => {
-      dispatch(
-        socketActions.emitter(
-          userActions.UPDATE_ANON_USER,
-          { username },
-          userData => {
-            dispatch(userActions.updatedUser(userData));
-            resolve(userData);
-          }
-        )
-      );
-    });
-  };
 
   const createRoom = (roomOptions, id) => {
     dispatch(
@@ -86,9 +72,11 @@ const CreateGame = () => {
     if (userData) {
       createRoom(roomOptions, userData.id);
     } else {
-      updateUser(username).then(({ id }) => {
-        createRoom(roomOptions, id);
-      });
+      dispatch(
+        userActions.updatedUser(username, ({ id }) =>
+          createRoom(roomOptions, id)
+        )
+      );
     }
   };
   return (

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Icon from "../../../Generic/Icon/Icon";
+import Icon from "components/Generic/Icon/Icon";
 
 const StyledContainer = styled.div`
   margin: 0 10px 10px 10px;

@@ -2,9 +2,14 @@ import React, { memo } from "react";
 import PropTypes from "prop-types";
 import * as Styled from "./Button.styled";
 
-const Button = ({ children, onClick, styles, type }) => {
+const Button = ({ children, className, onClick, styles, type }) => {
   return (
-    <Styled.DUIButton onClick={onClick} styles={styles} type={type}>
+    <Styled.DUIButton
+      className={className}
+      onClick={onClick}
+      styles={styles}
+      type={type}
+    >
       {children}
     </Styled.DUIButton>
   );
@@ -17,6 +22,7 @@ Button.defaultProps = {
 
 Button.propTypes = {
   children: PropTypes.node.isRequired,
+  className: PropTypes.string.isRequired,
   onClick: PropTypes.func,
   styles: PropTypes.arrayOf(PropTypes.string),
   type: PropTypes.oneOf([`button`, `submit`, `reset`])

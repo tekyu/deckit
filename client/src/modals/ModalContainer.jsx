@@ -20,10 +20,18 @@ const ModalContainer = ({ modalType }) => {
   const modal = useMemo(() => modals[modalType], [modalType]);
   return modalType ? (
     <Styled.Backdrop>
-      <Styled.Container>
+      <Styled.Body>
         <Styled.ExitButton onClick={onClose}>X</Styled.ExitButton>
-        {modal}
-      </Styled.Container>
+        <Styled.Container>
+          <Styled.Header>
+            <Styled.Icon />
+            <p>{`Let's have fun!`}</p>
+            <h2>{modal.title}</h2>
+          </Styled.Header>
+          {modal.component}
+        </Styled.Container>
+        {` `}
+      </Styled.Body>
     </Styled.Backdrop>
   ) : null;
 };
