@@ -2,11 +2,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { socketActions } from "store/actions";
+import { roomSelectors } from "store/selectors";
 import ScorePanel from "./panels/score/ScorePanel";
 import ChatPanel from "./panels/chat/ChatPanel";
 import OptionsPanel from "./panels/options/OptionsPanel";
 import Bubbles from "./Bubbles/Bubbles";
-import { roomSelectors } from "store/selectors";
 import { gameMapping } from "../../../utils/gameMapping";
 
 /**
