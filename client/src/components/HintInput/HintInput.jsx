@@ -2,12 +2,12 @@ import React from "react";
 import { Formik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { deckitActions } from "store/actions";
-import { deckitSelectors } from "store/selectors";
+import { roomSelectors } from "store/selectors";
 import * as Styled from "./HintInput.styled";
 
 const HintInput = () => {
   const dispatch = useDispatch();
-  const activeRoomId = useSelector(deckitSelectors.selectActiveRoomId);
+  const activeRoomId = useSelector(roomSelectors.activeRoomId);
 
   return (
     <Formik
