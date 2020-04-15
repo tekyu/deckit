@@ -9,7 +9,6 @@ import PickedBy from "./components/PickedBy";
 const StyledContainer = styled.div`
   width: 270px;
   height: 400px;
-  background-color: yellow;
   border: 2px solid rgba(0,0,0, 0.2);
   ${({ url }) =>
     url && `background-image: url(${url}); background-size: cover;`}

@@ -12,7 +12,9 @@ const StyledContainer = styled.div`
 
 const ScoreList = () => {
   const maxScore = useSelector(deckitSelectors.maxScore);
-  const { players, scoreboard } = useSelector(roomSelectors.activeRoom);
+  // const { players, scoreboard } = useSelector(roomSelectors.activeRoom);
+  const players = useSelector(roomSelectors.players);
+  const scoreboard = useSelector(roomSelectors.scoreboard);
 
   const [playersList, setPlayersList] = useState([]);
   useEffect(() => {
@@ -22,6 +24,13 @@ const ScoreList = () => {
       });
 
       return sortedPlayers.map(player => {
+        console.log(
+          "player",
+          player,
+          scoreboard,
+          maxScore,
+          scoreboard[player.id]
+        );
         return (
           <Flipped key={player.id} flipId={player.id}>
             <ScoreElement

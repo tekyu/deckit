@@ -46,7 +46,7 @@ const PickedCards = ({ cards = [] }) => {
       <Swiper {...params}>
         {cards.map(({ card }) => {
           return (
-            <div>
+            <div key={card.id}>
               <Card
                 card={card}
                 key={card.id}
@@ -58,45 +58,6 @@ const PickedCards = ({ cards = [] }) => {
       </Swiper>
     </StyledContainer>
   );
-  // const settings = {
-  //   infinite: false,
-  //   slidesToShow: 3,
-  //   slidesToScroll: 3,
-  //   variableWidth: true,
-  //   speed: 500,
-  //   responsive: [
-  //     {
-  //       breakpoint: 1350, // width to change options
-  //       settings: {
-  //         infinite: false,
-  //         variableWidth: true,
-  //         centerMode: true,
-  //         className: "center",
-  //         centerPadding: "0px",
-  //         slidesToShow: 2,
-  //         slidesToScroll: 1,
-  //         initialSlide: 1
-  //       }
-  //     }
-  //   ]
-  // };
-
-  // const cards1 = [{ id: 1 }, { id: 2 }, { id: 3 }];
-  // return (
-  //   <StyledContainer>
-  //     <Slider {...settings}>
-  //       {cards1.map(card => {
-  //         return (
-  //           <Card
-  //             // card={card}
-  //             key={card.id}
-  //             // state={getCardState(card.id, hinter, pickedCard, userId)}
-  //           />
-  //         );
-  //       })}
-  //     </Slider>
-  //   </StyledContainer>
-  // );
 };
 
 export default PickedCards;

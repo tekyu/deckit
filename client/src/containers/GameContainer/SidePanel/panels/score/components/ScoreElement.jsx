@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
     ${({ progress }) =>
       progress &&
       `
-    width: ${progress}%`}
+    width: ${progress}%;`}
 
     background-image: linear-gradient(
       35deg,
@@ -65,16 +65,6 @@ const ScoreElement = ({
           <StyledScore>{score}</StyledScore>
         </StyledInfo>
       </StyledInfoContainer>
-      {/* 
-      <StyledInfo className={styles.info}>
-        <label>{username}</label>
-        <StyledProgressContainer className={styles.progressContainer}>
-          <StyledPoints>{score}</StyledPoints>
-          <StyledProgressBarContainer>
-            <StyledProgressBar progress={progress} />
-          </StyledProgressBarContainer>
-        </StyledProgressContainer>
-      </StyledInfo> */}
     </StyledContainer>
   );
 };

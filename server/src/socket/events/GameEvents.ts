@@ -153,7 +153,7 @@ export const GameEvents = (socket: any, io: any) => {
       maxScore,
     } = gameOptions;
     let { stage, round } = gameOptions;
-
+    console.log('chosencardtomachthint', activeRoomId, card);
     const pickedCard = pickedCardsToHint.find(({ card: { id } }) => {
       return id === card.id;
     });

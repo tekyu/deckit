@@ -38,7 +38,7 @@ const JOIN_ROOM = 'JOIN_ROOM';
 const WAITING_ROOM = 'WAITING_ROOM';
 
 //TODO: Change types
-export const RoomEvents = function(socket: any, io: any) {
+export const RoomEvents = function (socket: any, io: any) {
   this.socket = socket;
   this.io = io;
 
@@ -68,7 +68,7 @@ export const RoomEvents = function(socket: any, io: any) {
       score: { listener: `scoreUpdate` },
       chat: { listener: `incomingChatMessage` },
       log: { listener: `incomingLog` },
-      settings: { listener: `roomSettings` }
+      settings: { listener: `roomSettings` },
     };
 
     socket.pswOptions.color = randomColor(0.3, 0.99).hexString();
@@ -85,7 +85,7 @@ export const RoomEvents = function(socket: any, io: any) {
       .connectPlayer(socket.pswOptions)
       .then(({ players }: any) => {
         const updatedRoomObject = [
-          getRoomObjectForUpdate(room, players > 0 ? 'update' : 'add')
+          getRoomObjectForUpdate(room, players > 0 ? 'update' : 'add'),
         ];
         //@ts-ignore
         callback(room.roomOptions);
@@ -99,7 +99,7 @@ export const RoomEvents = function(socket: any, io: any) {
       })
       .catch((error: any) => {
         callback({
-          error: `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`
+          error: `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`,
         });
         Error(
           `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`
@@ -128,7 +128,7 @@ export const RoomEvents = function(socket: any, io: any) {
         getRoomObjectForUpdate(
           room,
           players && players.length > 0 ? 'update' : 'remove'
-        )
+        ),
       ];
       io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
     }
@@ -177,7 +177,7 @@ export const RoomEvents = function(socket: any, io: any) {
       //@ts-ignore
       players: room.players,
       //@ts-ignore
-      state: room.state
+      state: room.state,
     });
   });
 
@@ -190,7 +190,7 @@ export const RoomEvents = function(socket: any, io: any) {
     //@ts-ignore
     io.to(player.socketId).emit('KICKED', { activeRoomId });
     io.in(WAITING_ROOM).emit('updateListOfRooms', [
-      getRoomObjectForUpdate(room, 'update')
+      getRoomObjectForUpdate(room, 'update'),
     ]);
   });
 
@@ -206,7 +206,10 @@ export const RoomEvents = function(socket: any, io: any) {
     }
     io.in(activeRoomId).emit('ROOM_UPDATED', { mode: room.mode });
     io.in(WAITING_ROOM).emit('updateListOfRooms', [
-      getRoomObjectForUpdate(room, room.mode === 'public' ? 'update' : 'remove')
+      getRoomObjectForUpdate(
+        room,
+        room.mode === 'public' ? 'update' : 'remove'
+      ),
     ]);
   });
 
@@ -216,7 +219,7 @@ export const RoomEvents = function(socket: any, io: any) {
     room.playersMax += 1;
     io.in(activeRoomId).emit('ROOM_UPDATED', { playersMax: room.playersMax });
     io.in(WAITING_ROOM).emit('updateListOfRooms', [
-      getRoomObjectForUpdate(room, 'update')
+      getRoomObjectForUpdate(room, 'update'),
     ]);
   });
 
@@ -226,7 +229,7 @@ export const RoomEvents = function(socket: any, io: any) {
     room.playersMax -= 1;
     io.in(activeRoomId).emit('ROOM_UPDATED', { playersMax: room.playersMax });
     io.in(WAITING_ROOM).emit('updateListOfRooms', [
-      getRoomObjectForUpdate(room, 'update')
+      getRoomObjectForUpdate(room, 'update'),
     ]);
   });
 };

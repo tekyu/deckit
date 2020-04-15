@@ -23,3 +23,10 @@ export const players = createSelector(
     return players;
   }
 );
+
+export const scoreboard = createSelector(
+  [activeRoom],
+  ({ scoreboard }) => {
+    return scoreboard;
+  }
+);
