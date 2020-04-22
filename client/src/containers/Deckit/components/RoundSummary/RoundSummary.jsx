@@ -34,6 +34,18 @@ const StyledCardContainer = styled.div`
   } */
 `;
 
+const StyledHintMessage = styled.div`
+  padding: 7px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.28);
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+`;
+
 const RoundSummary = ({ cards = [], hintCard = {} }) => {
   return (
     <StyledContainer>
@@ -42,15 +54,15 @@ const RoundSummary = ({ cards = [], hintCard = {} }) => {
           if (pickedBy.length > 0 || card.id === hintCard.id) {
             return (
               <StyledCardContainer key={card.id}>
-                {card.id === hintCard.id && <p>Hint card</p>}
+                {card.id === hintCard.id && (
+                  <StyledHintMessage>Hint card</StyledHintMessage>
+                )}
                 <Card
                   card={card}
                   owner={owner}
                   pickedBy={pickedBy}
                   key={owner.id}
-                >
-                  {card.id === hintCard.id && <p>Hint card</p>}
-                </Card>
+                ></Card>
               </StyledCardContainer>
             );
           }
