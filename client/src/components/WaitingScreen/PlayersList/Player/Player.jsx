@@ -1,12 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import Loader from "../../../Generic/Loader/Loader";
 import Icon from "../../../Generic/Icon/Icon";
-import {
-  updatePlayerInRoom,
-  kickPlayer
-} from "../../../../store/room/roomActions";
+import { kickPlayer } from "../../../../store/room/roomActions";
 
 const StyledContainer = styled.div`
   display: flex;

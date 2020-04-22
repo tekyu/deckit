@@ -2,9 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect, useDispatch } from "react-redux";
 import { socketActions } from "store/actions";
-import dynamicSort from "utils/dynamicSort";
 import RoomCard from "./RoomCard/RoomCard";
-import Sort from "./Sort/Sort";
 import RoomJoining from "./RoomJoining/RoomJoining";
 import * as Styled from "./Browse.styled";
 

@@ -45,13 +45,6 @@ const WaitingScreen = () => {
     setHideMessage(hide => !hide);
   };
 
-  const changeRoomModeHandler = () => {
-    dispatch(roomActions.changeRoomMode(room.id));
-    toast.warning(`Room mode has been changed`, {
-      position: toast.POSITION.BOTTOM_RIGHT
-    });
-  };
-
   return (
     <>
       {room && (

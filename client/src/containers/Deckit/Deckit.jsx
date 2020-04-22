@@ -50,7 +50,7 @@ const Deckit = () => {
 
   useEffect(() => {
     if (activeRoom && activeRoom.state >= 2) {
-      const { gameCode, id } = activeRoom;
+      const { gameCode } = activeRoom;
       setPanels(gameMapping[gameCode].panels);
     }
   }, [activeRoom]);

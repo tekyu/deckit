@@ -1,27 +1,12 @@
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import PlayCircleFilledWhiteIcon from "@material-ui/icons/PlayCircleFilledWhite";
 import PropTypes from "prop-types";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import Fab from "@material-ui/core/Fab";
 import { Button } from "@material-ui/core";
 import * as styles from "./RoomCard.module.scss";
-import $Button from "../../../../Generic/Button/Button.styled";
 import Icon from "../../../../Generic/Icon/Icon";
 import PlayerCounterWithIcon from "../../../../Generic/PlayerCounterWithIcon/PlayerCounterWithIcon";
 
-const PlayIcon = styled(PlayCircleFilledWhiteIcon)`
-  fill: red;
-  width: 100px;
-  height: 100px;
-  color: #3c3c3c;
-  box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.28);
-  &:hover,
-  &:focus {
-    /* color: linear-gradient(40deg, #16bffd 0%, #cb3066 100%); */
-  }
-`;
 const PlayButton = styled(Button)`
   padding: 16px 32px;
   border-radius: 3px;
@@ -40,18 +25,7 @@ const PlayButton = styled(Button)`
 `;
 
 const RoomCard = ({ handler, options, isAnonymous }) => {
-  const {
-    id,
-    name,
-    createdBy,
-    createdById,
-    createdAt,
-    playersMax,
-    mode,
-    gameCode,
-    gameOptions,
-    players
-  } = options;
+  const { id, name, createdBy, playersMax, mode, gameCode, players } = options;
   // const deckList = gameOptions.decks.map(deck => (
   //   <span className={styles.deckName}>{deck}</span>
   // ));

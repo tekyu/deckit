@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import * as styles from "./ScoreElement.module.scss";
 import PlayerBubble from "../../../../../../components/Generic/PlayerBubble/PlayerBubble";
 
 const StyledContainer = styled.div`

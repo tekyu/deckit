@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import "swiper/swiper.scss";
-import Swiper from "react-id-swiper";
 import Card from "../Card/Card";
 
 const StyledContainer = styled.div`
@@ -34,13 +33,6 @@ const StyledCardContainer = styled.div`
     }
   } */
 `;
-
-const getCardState = (cardId, hinter, pickedCard, userId) => {
-  if (userId === hinter.id || cardId === pickedCard.id) {
-    return null;
-  }
-  return "chooser";
-};
 
 const RoundSummary = ({ cards = [], hintCard = {} }) => {
   return (

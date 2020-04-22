@@ -2,7 +2,7 @@ import React, { Suspense, useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouteMatch, useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { gameMapping, getGame } from "utils";
+import { getGame } from "utils";
 import {
   appActions,
   deckitActions,
@@ -12,7 +12,7 @@ import {
 import { roomSelectors, userSelectors } from "store/selectors";
 import { toast } from "react-toastify";
 import WaitingScreen from "../../components/WaitingScreen/WaitingScreen";
-
+import FullScreenLoader from "../../components/FullScreenLoader/FullScreenLoader";
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
@@ -120,7 +120,7 @@ const GameContainer = () => {
 
   return (
     <Container>
-      <Suspense fallback={<div>LOADING GAME</div>}>
+      <Suspense fallback={<FullScreenLoader />}>
         {activeRoom && activeRoom.state < 2 && (
           <WaitingScreenContainer>
             <WaitingScreen />

@@ -34,7 +34,7 @@ const StyledButton = styled(Button)`
 `;
 
 const ActionButton = () => {
-  const { id: userId, state: userState } = useSelector(userSelectors.user);
+  const { id: userId } = useSelector(userSelectors.user);
   const { id: activeRoomId, admin: adminId, players } = useSelector(
     roomSelectors.activeRoom
   );

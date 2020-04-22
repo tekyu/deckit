@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import axios from "utils/axios";
 import { connect } from "react-redux";
 import * as styles from "./RegisterModal.module.scss";
 import { registerUser } from "../../store/user/userActions";

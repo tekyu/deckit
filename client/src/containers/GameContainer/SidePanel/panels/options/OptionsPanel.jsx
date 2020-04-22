@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { socketActions } from "store/actions";
-// import * as styles from "./Deckit.module.scss";
+
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame

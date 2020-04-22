@@ -47,16 +47,6 @@ const AvatarContainer = styled.div`
   }
 `;
 
-const ColorIndicator = styled.span`
-  position: absolute;
-  display: block;
-  width: 12px;
-  height: 12px;
-  bottom: 0px;
-  right: 6px;
-  border-radius: 50%;
-`;
-
 const Info = styled.div`
   display: flex;
   flex-direction: column;

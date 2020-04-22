@@ -2,9 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import "swiper/swiper.scss";
-import Swiper from "react-id-swiper";
-import Card from "../Card/Card";
 import { deckitSelectors, userSelectors } from "store/selectors";
+import Card from "../Card/Card";
 import Blocker from "../../../../components/Generic/Blocker/Blocker";
 
 const StyledContainer = styled.div`
