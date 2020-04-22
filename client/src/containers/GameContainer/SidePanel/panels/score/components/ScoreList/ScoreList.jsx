@@ -8,6 +8,7 @@ import ScoreElement from "../ScoreElement";
 const StyledContainer = styled.div`
   flex: 1 1 1px;
   overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const ScoreList = () => {

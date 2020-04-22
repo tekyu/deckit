@@ -13,7 +13,7 @@ import Routes from './routes';
 const App = appWrapper(process.env.APP_PORT);
 
 SocketIo(App);
-Api(App, Passport);
+// Api(App, Passport);
 Routes(App);
 
 Mongoose(App);

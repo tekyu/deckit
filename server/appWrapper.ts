@@ -66,8 +66,8 @@ const appWrapper = (IncomingPort = 3011) => {
       },
     })
   );
-  app.use(Passport.initialize());
-  app.use(Passport.session());
+  // app.use(Passport.initialize());
+  // app.use(Passport.session());
   app.set('view engine', 'ejs');
   app.listen(port, () =>
     console.log(chalk.black.bgGreen(`Server listening on port ${port}`))

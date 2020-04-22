@@ -93,6 +93,12 @@ const Browse = ({ auth }) => {
       <RoomJoining />
       {/* <Sort sortHandler={sortHandler} /> */}
       <Styled.Separator>Browse rooms</Styled.Separator>
+      {(!roomCards || roomCards.length === 0) && (
+        <Styled.CardsPlaceholder>
+          <p>Sadly there are no public rooms available</p>
+          <p>But you can create one!</p>
+        </Styled.CardsPlaceholder>
+      )}
       {roomCards && <Styled.CardContainer>{roomCards}</Styled.CardContainer>}
       <Styled.AboutLink to="/about" />
     </>

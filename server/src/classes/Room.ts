@@ -37,6 +37,7 @@ export default class Room implements IRoom {
   gameOptions: Object;
   chat: Array<Object>;
   scoreboard: Object;
+  pingInterval: Function;
 
   constructor(
     { mode, playersMax, gameCode, gameOptions, name = '' }: CreateRoomOptions,
@@ -58,6 +59,7 @@ export default class Room implements IRoom {
       ? Object.assign(cloneDeep(getGameOptions(gameCode)), gameOptions)
       : cloneDeep(getGameOptions(gameCode));
     this.chat = [];
+    // this.pingInterval = () => {};
   }
 
   get instance() {
@@ -108,12 +110,16 @@ export default class Room implements IRoom {
   }
 
   setWinners() {
-    this.winners = Object.entries(this.scoreboard).filter(([id, score]) => {
-      if (score >= this.gameOptions.maxScore) {
-        return id;
-      }
-    });
-    return this.winners.length;
+    this.winners = Object.entries(this.scoreboard).reduce(
+      (winners, [id, score]) => {
+        if (score >= this.gameOptions.maxScore) {
+          winners.push(id);
+        }
+        return winners;
+      },
+      []
+    );
+    return this.winners;
   }
 
   setCards(cards) {

@@ -24,6 +24,10 @@ const WaitingScreen = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
+  const changeRoomModeHandler = () => {
+    dispatch(roomActions.changeRoomMode(room.id));
+  };
+
   useEffect(() => {
     if (room) {
       setIsAdmin(myId === room.admin);
@@ -107,7 +111,7 @@ const WaitingScreen = () => {
                   <Switch
                     color="primary"
                     checked={room.mode === `private`}
-                    onChange={roomActions.changeRoomModeHandler}
+                    onChange={changeRoomModeHandler}
                   />
                 }
               />

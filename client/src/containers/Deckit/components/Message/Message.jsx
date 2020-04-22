@@ -8,7 +8,7 @@ import HintMessage from "./components/HintMessage";
 const StyledContainer = styled.div`
   margin: 10px 20px;
   width: auto;
-  padding: 20px;
+  padding: 10px 20px;
   border-radius: 6px;
   text-align: center;
   background: #fff;

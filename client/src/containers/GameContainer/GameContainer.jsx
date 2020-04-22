@@ -23,7 +23,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  height: calc(100vh - 70px - 40px);
+  height: calc(100vh - 50px - 20px);
 `;
 
 const WaitingScreenContainer = styled.div`

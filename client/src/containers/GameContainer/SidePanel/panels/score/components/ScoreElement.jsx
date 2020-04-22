@@ -6,7 +6,14 @@ const StyledContainer = styled.div`
   display: flex;
   align-items: center;
   padding: 12px 12px;
+  margin: 4px 0;
   position: relative;
+  &:first-of-type {
+    margin-top: 0;
+  }
+  &:last-of-type {
+    margin-bottom: 0;
+  }
   &:before {
     position: absolute;
     content: "";
@@ -36,18 +43,23 @@ const StyledInfoContainer = styled.div`
 
 const StyledInfo = styled.div`
   width: 100%;
-  margin-left: 6px;
+  margin-left: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  overflow: hidden;
 `;
 
 const StyledUsername = styled.div`
   font-size: 14px;
+  text-overflow: elipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-right: 20px;
 `;
 
 const StyledScore = styled.div`
-  font-size: 14px;
+  font-size: 20px;
 `;
 
 const ScoreElement = ({

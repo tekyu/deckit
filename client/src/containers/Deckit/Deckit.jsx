@@ -9,6 +9,7 @@ import PickingArea from "./components/PickingArea/PickingArea";
 import Message from "./components/Message/Message";
 import HintInput from "../../components/HintInput/HintInput";
 import { gameMapping } from "../../utils/gameMapping";
+import Winners from "./components/Winners/Winners";
 
 /**
  * TODO:
@@ -40,6 +41,7 @@ const StyledGame = styled.div`
 
 const Deckit = () => {
   const activeRoom = useSelector(roomSelectors.activeRoom);
+  const winners = useSelector(roomSelectors.winners);
   const userId = useSelector(userSelectors.userId);
   const hinter = useSelector(deckitSelectors.hinter);
   const hint = useSelector(deckitSelectors.hint);
@@ -62,6 +64,7 @@ const Deckit = () => {
   }, [dispatch, stage]);
   return (
     <StyledTableContainer>
+      {winners && winners.length > 0 && <Winners />}
       <StyledTable>
         <StyledGame>
           <Message />

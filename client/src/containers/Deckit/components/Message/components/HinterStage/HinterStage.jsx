@@ -1,11 +1,23 @@
 import React from "react";
+import styled from "styled-components";
 import HinterPlayer from "./components/HinterPlayer";
 
+const StyledMessage = styled.p`
+  padding: 10px;
+`;
 const HinterStage = ({ hinter: { id } = {}, userId }) => {
   if (id === userId) {
-    return `You are choosing the hint. Field will apear after you choose a card`;
+    return (
+      <StyledMessage>
+        You are choosing the hint. Field will apear after you choose a card
+      </StyledMessage>
+    );
   }
-  return <HinterPlayer hinterId={id} />;
+  return (
+    <StyledMessage>
+      <HinterPlayer hinterId={id} />
+    </StyledMessage>
+  );
 };
 
 export default HinterStage;

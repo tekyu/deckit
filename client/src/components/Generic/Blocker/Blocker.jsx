@@ -1,8 +1,12 @@
 import React from "react";
-import { StyledContainer } from "./Blocker.styled";
+import { StyledContainer, StyledMessage } from "./Blocker.styled";
 
 const Blocker = () => {
-  return <StyledContainer>You already picked a card</StyledContainer>;
+  return (
+    <StyledContainer>
+      <StyledMessage>You already picked a card</StyledMessage>
+    </StyledContainer>
+  );
 };
 
 export default Blocker;

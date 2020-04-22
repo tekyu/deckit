@@ -52,11 +52,11 @@ export const RoomEvents = function (socket: any, io: any) {
     );
     io.gameRooms[mode][roomId] = room;
     // const pingInterval = setInterval(() => {
-    //   socket
-    //     .to(roomId)
+    //   console.log('pingInterval', roomId);
+    //   io.in(roomId)
     //     // @ts-ignore
     //     .emit('PING_ROOM');
-    // }, 60000);
+    // }, 55000);
     // // @ts-ignore
     // room.pingInterval = pingInterval;
     callback({ created: true, roomId });

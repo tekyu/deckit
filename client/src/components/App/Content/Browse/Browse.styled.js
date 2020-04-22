@@ -20,3 +20,13 @@ export const CardContainer = styled.div`
   text-align: center;
   margin-top: 40px;
 `;
+
+export const CardsPlaceholder = styled.div`
+  text-align: center;
+  padding: 60px;
+  font-size: 1.4rem;
+  color: rgba(0, 0, 0, 0.3);
+  p {
+    margin-bottom: 30px;
+  }
+`;

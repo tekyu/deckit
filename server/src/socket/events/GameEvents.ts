@@ -16,7 +16,6 @@ export const GameEvents = (socket: any, io: any) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;
     const { players } = room;
-    console.log('players', !players.length > 1);
     if (players.length <= 1) {
       return null;
     }
@@ -171,7 +170,6 @@ export const GameEvents = (socket: any, io: any) => {
       hintCard,
     } = gameOptions;
     let { stage, round } = gameOptions;
-    console.log('chosencardtomachthint', activeRoomId, card);
     const pickedCard = pickedCardsToHint.find(({ card: { id } }) => {
       return id === card.id;
     });

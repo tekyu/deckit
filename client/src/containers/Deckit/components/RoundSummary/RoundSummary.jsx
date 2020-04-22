@@ -17,6 +17,8 @@ const StyledHand = styled.div`
 
 const StyledCardContainer = styled.div`
   transition: all 0.3s ease-in-out;
+  position: relative;
+  margin: 0 2px;
   /* &:not(:first-of-type) {
     margin-left: -160px;
   } */

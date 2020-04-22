@@ -14,3 +14,9 @@ export const StyledContainer = styled.div`
   color: #000;
   z-index: 1000;
 `;
+
+export const StyledMessage = styled.div`
+  background: rgba(255, 255, 255, 0.9);
+  padding: 12px;
+  border-radius: 6px;
+`;

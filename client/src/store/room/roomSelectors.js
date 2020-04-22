@@ -30,3 +30,10 @@ export const scoreboard = createSelector(
     return scoreboard;
   }
 );
+
+export const winners = createSelector(
+  [activeRoom],
+  ({ winners }) => {
+    return winners;
+  }
+);
