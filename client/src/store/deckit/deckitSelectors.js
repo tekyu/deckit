@@ -59,3 +59,28 @@ export const playersPickedCard = createSelector(
   state => state.deckit,
   ({ playersPickedCard = [] }) => playersPickedCard
 );
+
+export const playersChoosedCard = createSelector(
+  state => state.deckit,
+  ({ playersChoosedCard = [] }) => playersChoosedCard
+);
+
+export const blockHand = createSelector(
+  state => state.deckit,
+  ({ blockHand = false }) => blockHand
+);
+
+export const blockPickingArea = createSelector(
+  state => state.deckit,
+  ({ blockPickingArea = false }) => blockPickingArea
+);
+
+export const round = createSelector(
+  state => state.deckit,
+  ({ round = 1 }) => round
+);
+
+export const remainingCards = createSelector(
+  state => state.deckit,
+  ({ remainingCards = 0 }) => remainingCards
+);

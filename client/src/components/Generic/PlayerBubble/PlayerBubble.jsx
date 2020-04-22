@@ -9,7 +9,7 @@ const StyledContainer = styled.div`
   min-width: 30px;
   border-radius: 100%;
   background: black;
-  /* margin-right: 12px; */
+  transition: all 0.3s ease-in-out;
   ${({ avatar }) =>
     avatar &&
     `
@@ -21,10 +21,15 @@ const StyledContainer = styled.div`
     box-shadow: 0px 0px 10px 0px ${color};
     background-color: ${color};
   `}
+  ${({ didPick }) =>
+    didPick &&
+    `
+    box-shadow: 0px 0px 12px 4px rgba(237,227,83,1);
+  `}
 `;
 
-const PlayerBubble = ({ avatar, color }) => {
-  return <StyledContainer avatar={avatar} color={color} />;
+const PlayerBubble = ({ avatar, color, didPick }) => {
+  return <StyledContainer avatar={avatar} color={color} didPick={didPick} />;
 };
 
 export default PlayerBubble;

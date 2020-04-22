@@ -10,6 +10,7 @@ const Container = styled.div`
     isMine &&
     `
     text-align:right;
+    justify-content: flex-end;
   `}
 `;
 
@@ -59,7 +60,7 @@ const ColorIndicator = styled.span`
 const Info = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: ${({ isMine }) => (isMine ? `flex-end` : `flex-start`)}
+  align-items: ${({ isMine }) => (isMine ? `flex-end` : `flex-start`)};
   width: 100%;
 `;
 

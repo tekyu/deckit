@@ -15,6 +15,17 @@ export const GameEvents = (socket: any, io: any) => {
   socket.on('START_GAME', async ({ activeRoomId }: any) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;
+    const { players } = room;
+    console.log('players', !players.length > 1);
+    if (players.length <= 1) {
+      return null;
+    }
+
+    const arePlayersNotReady = players.some(({ state }) => state < 1);
+    if (arePlayersNotReady) {
+      return null;
+    }
+
     let { gameOptions } = room;
     const { decks } = gameOptions;
     // move this to roomEvents
@@ -71,7 +82,7 @@ export const GameEvents = (socket: any, io: any) => {
     room.gameOptions.hintCard = card;
     if (
       !room.gameOptions.pickedCardsToHint.some(
-        ({ owner }) => socket.pswOptions.id === owner
+        ({ owner: { id } }) => socket.pswOptions.id === id
       )
     ) {
       room.gameOptions.pickedCardsToHint.push({
@@ -89,7 +100,7 @@ export const GameEvents = (socket: any, io: any) => {
   socket.on('SENT_HINT', ({ activeRoomId, hint }) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     const {
-      gameOptions: { hintCard, playersPickedCard },
+      gameOptions: { hintCard, playersPickedCard, playersChoosedCard },
     } = room;
     let {
       gameOptions: { stage },
@@ -98,6 +109,10 @@ export const GameEvents = (socket: any, io: any) => {
     if (playersPickedCard.indexOf(socket.pswOptions.id) === -1) {
       playersPickedCard.push(socket.pswOptions.id);
     }
+    if (playersChoosedCard.indexOf(socket.pswOptions.id) === -1) {
+      playersChoosedCard.push(socket.pswOptions.id);
+    }
+    // TODO: TUTAJ WYRZUCIC KARTE Z DECKU ROOM.PLAYERS
     if (room.gameOptions.hintCard) {
       stage = 3;
       io.in(activeRoomId).emit('GAME_UPDATED', {
@@ -112,7 +127,7 @@ export const GameEvents = (socket: any, io: any) => {
   socket.on('PICKED_CARD_TO_HINT', ({ activeRoomId, card }) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     const {
-      gameOptions: { pickedCardsToHint, playersPickedCard },
+      gameOptions: { pickedCardsToHint, playersPickedCard, playersChoosedCard },
       players,
     } = room;
     let {
@@ -130,6 +145,7 @@ export const GameEvents = (socket: any, io: any) => {
     if (playersPickedCard.indexOf(socket.pswOptions.id) === -1) {
       playersPickedCard.push(socket.pswOptions.id);
     }
+    // TODO: TUTAJ WYRZUCIC KARTE Z DECKU ROOM.PLAYERS
     io.in(activeRoomId).emit('GAME_UPDATED', { playersPickedCard });
     if (playersPickedCard.length === players.length) {
       stage = 4;
@@ -137,6 +153,7 @@ export const GameEvents = (socket: any, io: any) => {
       io.in(activeRoomId).emit('GAME_UPDATED', {
         stage,
         pickedCardsToHint: shuffledPickedCardsToHint,
+        playersChoosedCard,
       });
     }
   });
@@ -151,6 +168,7 @@ export const GameEvents = (socket: any, io: any) => {
       playersChoosedCard,
       remainingCards,
       maxScore,
+      hintCard,
     } = gameOptions;
     let { stage, round } = gameOptions;
     console.log('chosencardtomachthint', activeRoomId, card);
@@ -168,7 +186,6 @@ export const GameEvents = (socket: any, io: any) => {
         username: socket.pswOptions.username,
         color: socket.pswOptions.color,
       });
-      pickedCardsToHint;
 
       socket.pswOptions.choosedCard = card;
 
@@ -194,6 +211,7 @@ export const GameEvents = (socket: any, io: any) => {
       io.in(activeRoomId).emit('GAME_UPDATED', {
         stage: room.gameOptions.stage,
         pickedCardsToHint,
+        hintCard,
       });
       io.in(activeRoomId).emit('ROOM_UPDATED', { scoreboard: room.scoreboard });
       // award points
@@ -205,9 +223,13 @@ export const GameEvents = (socket: any, io: any) => {
       // const scoreData = players.map(({ id, gameOptions: { score } }) => {
       //   return { id, score };
       // });
-      players = distributeRandomCardsToPlayers(players, remainingCards);
+      // players = distributeRandomCardsToPlayers(players, remainingCards);
       players.forEach(({ id, cards }) => {
-        io.to(id).emit('UPDATE_MY_CARDS', cards);
+        const randomCard = distributeRandomCard({ cards }, remainingCards);
+        if (randomCard) {
+          cards.push(randomCard);
+        }
+        io.to(id).emit('UPDATE_MY_CARDS', [randomCard]);
       });
 
       room.gameOptions = prepareRoomForNextRound(room);
@@ -223,7 +245,7 @@ export const GameEvents = (socket: any, io: any) => {
         io.in(activeRoomId).emit('ROOM_UPDATED', {
           players: room.players,
         });
-      }, 5000);
+      }, 15000);
     }
   });
 };

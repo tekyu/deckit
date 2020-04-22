@@ -52,7 +52,7 @@ const PlayersList = ({ players, room, isAdmin, myId }) => {
     });
     const waitingList = [...players, ...emptySeats];
     if (room.admin === myId && waitingList.length < allowedPlayers) {
-      waitingList.push(<AddSeat handler={addSeatHandler} />);
+      waitingList.push(<AddSeat key="addseat" handler={addSeatHandler} />);
     }
     return waitingList;
   };

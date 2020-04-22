@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import ScoreList from "./components/ScoreList/ScoreList";
+import ScoreInfo from "./components/ScoreInfo/ScoreInfo";
+import PlayersInfo from "./components/PlayersInfo/PlayersInfo";
+
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
@@ -17,7 +20,9 @@ const StyledContainer = styled.div`
 const ScorePanel = () => {
   return (
     <StyledContainer>
+      <ScoreInfo />
       <ScoreList />
+      <PlayersInfo />
     </StyledContainer>
   );
 };

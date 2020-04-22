@@ -5,6 +5,7 @@ import "swiper/swiper.scss";
 import Swiper from "react-id-swiper";
 import Card from "../Card/Card";
 import { deckitSelectors, userSelectors } from "store/selectors";
+import Blocker from "../../../../components/Generic/Blocker/Blocker";
 
 const StyledContainer = styled.div`
   position: relative;
@@ -13,6 +14,31 @@ const StyledContainer = styled.div`
   transition: height 0.4s ease-in-out;
   margin-top: auto;
   overflow: hidden;
+`;
+
+const StyledHand = styled.div`
+  padding: 0 40px;
+  display: flex;
+  justify-content: center;
+`;
+
+const StyledCardContainer = styled.div`
+  transition: all 0.3s ease-in-out;
+  &:not(:first-of-type) {
+    margin-left: -160px;
+  }
+  &:hover {
+    padding-left: 16px;
+    padding-right: 16px;
+    &:not(:first-of-type) {
+      margin-left: 0;
+    }
+  }
+  &:hover + div {
+    &:not(:first-of-type) {
+      margin-left: 0;
+    }
+  }
 `;
 
 const getCardState = (cardId, hinter, pickedCard, userId) => {
@@ -26,36 +52,24 @@ const PickedCards = ({ cards = [] }) => {
   const hinter = useSelector(deckitSelectors.hinter);
   const pickedCard = useSelector(deckitSelectors.pickedCard);
   const userId = useSelector(userSelectors.userId);
-
-  const params = {
-    slidesPerView: 3,
-    spaceBetween: 30,
-    freeMode: true,
-    scrollbar: {
-      el: ".swiper-scrollbar",
-      hide: false
-    },
-    navigation: {
-      nextEl: ".swiper-button-next",
-      prevEl: ".swiper-button-prev"
-    }
-  };
+  const blockPickingArea = useSelector(deckitSelectors.blockPickingArea);
 
   return (
     <StyledContainer>
-      <Swiper {...params}>
+      {blockPickingArea && <Blocker />}
+      <StyledHand>
         {cards.map(({ card }) => {
           return (
-            <div key={card.id}>
+            <StyledCardContainer key={card.id}>
               <Card
                 card={card}
                 key={card.id}
                 state={getCardState(card.id, hinter, pickedCard, userId)}
               />
-            </div>
+            </StyledCardContainer>
           );
         })}
-      </Swiper>
+      </StyledHand>
     </StyledContainer>
   );
 };

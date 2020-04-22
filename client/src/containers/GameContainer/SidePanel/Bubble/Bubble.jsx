@@ -45,9 +45,8 @@ const Container = styled.div`
     }
   `}
 `;
-const Bubble = ({ handler, opened, updated, name, icon, children }) => {
+const Bubble = ({ handler, opened, updated, name }) => {
   const getBubbleIcon = name => {
-    console.log("b", name);
     switch (name) {
       case "score":
         return <ScoreIcon name={name} onClick={handler} />;

@@ -51,6 +51,14 @@ export const RoomEvents = function (socket: any, io: any) {
       room
     );
     io.gameRooms[mode][roomId] = room;
+    // const pingInterval = setInterval(() => {
+    //   socket
+    //     .to(roomId)
+    //     // @ts-ignore
+    //     .emit('PING_ROOM');
+    // }, 60000);
+    // // @ts-ignore
+    // room.pingInterval = pingInterval;
     callback({ created: true, roomId });
   });
 
@@ -120,6 +128,8 @@ export const RoomEvents = function (socket: any, io: any) {
     const { players } = room;
     if (!players || !players.length) {
       const namespace = getRoomNamespaceFromList(roomId, io.gameRooms);
+      //@ts-ignore
+      // clearInterval(room.pingInterval);
       delete io.gameRooms[namespace][roomId];
     }
     socket.pswOptions.rooms.push(WAITING_ROOM);

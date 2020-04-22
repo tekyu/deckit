@@ -7,20 +7,13 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Typography from "@material-ui/core/Typography";
 import { roomActions, socketActions, userActions } from "store/actions";
 import { userSelectors } from "store/selectors";
-import { gameMapping } from "utils";
 import * as Styled from "./CreateGame.styled";
+
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
  * should be in the main game/room creation topic
  */
-
-const getOptions = () =>
-  Object.keys(gameMapping).map(gameCode => (
-    <option key={gameCode} value={gameCode}>
-      {gameMapping[gameCode].name}
-    </option>
-  ));
 
 const validate = ({ isPrivate, username, name }) => {
   const errors = {};
@@ -145,6 +138,20 @@ const CreateGame = () => {
                 valueLabelDisplay="on"
                 onChange={(event, value) => {
                   return setFieldValue(`playersMax`, value);
+                }}
+              />
+            </Styled.SliderLabel>
+            <Styled.SliderLabel htmlFor="maxScore">
+              Maximum points
+              <Styled.Slider
+                name="maxScore"
+                defaultValue={maxScore}
+                min={8}
+                max={60}
+                step={1}
+                valueLabelDisplay="on"
+                onChange={(event, value) => {
+                  return setFieldValue(`maxScore`, value);
                 }}
               />
             </Styled.SliderLabel>

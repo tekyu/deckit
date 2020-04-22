@@ -10,6 +10,7 @@ import * as Styled from "./PickingArea.styled";
 const PickingArea = () => {
   const pickedCardsToHint = useSelector(deckitSelectors.pickedCardsToHint);
   const playersPickedCard = useSelector(deckitSelectors.playersPickedCard);
+  const hintCard = useSelector(deckitSelectors.hintCard);
   const hinter = useSelector(deckitSelectors.hinter);
   const stage = useSelector(deckitSelectors.gameStage);
   const pickedCard = useSelector(deckitSelectors.pickedCard);
@@ -34,7 +35,9 @@ const PickingArea = () => {
       {stage === 3 && <PlaceholderCardsList cards={playersPickedCard} />}
       {stage === 4 && <PickedCards cards={pickedCardsToHint} />}
       {/* {stage === 5 && getRoundSummary(pickedCardsToHint)} */}
-      {stage === 5 && <RoundSummary cards={pickedCardsToHint} />}
+      {stage === 5 && (
+        <RoundSummary hintCard={hintCard} cards={pickedCardsToHint} />
+      )}
     </Styled.Container>
   );
 };

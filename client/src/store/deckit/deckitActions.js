@@ -12,6 +12,43 @@ export const SET_MY_PICKED_CARD = `SET_MY_PICKED_CARD`;
 export const SET_MY_CARD = `SET_MY_CARD`;
 export const INITIAL_GAME_OPTIONS = `INITIAL_GAME_OPTIONS`;
 export const RESET_FOR_NEXT_ROUND = `RESET_FOR_NEXT_ROUND`;
+export const UNBLOCK_HAND = `UNBLOCK_HAND`;
+export const BLOCK_HAND = `BLOCK_HAND`;
+export const UNBLOCK_PICKINGAREA = `UNBLOCK_PICKINGAREA`;
+export const BLOCK_PICKINGAREA = `BLOCK_PICKINGAREA`;
+export const REMOVE_FROM_HAND = `REMOVE_FROM_HAND`;
+
+export const blockHand = () => {
+  return dispatch => {
+    dispatch({
+      type: BLOCK_HAND
+    });
+  };
+};
+
+export const unblockHand = () => {
+  return dispatch => {
+    dispatch({
+      type: UNBLOCK_HAND
+    });
+  };
+};
+
+export const blockPickingArea = () => {
+  return dispatch => {
+    dispatch({
+      type: BLOCK_PICKINGAREA
+    });
+  };
+};
+
+export const unblockPickingArea = () => {
+  return dispatch => {
+    dispatch({
+      type: UNBLOCK_PICKINGAREA
+    });
+  };
+};
 
 export const pickMyCard = ({ activeRoomId, card }) => {
   return dispatch => {
@@ -20,6 +57,11 @@ export const pickMyCard = ({ activeRoomId, card }) => {
       type: SET_MY_PICKED_CARD,
       payload: card
     });
+    dispatch({
+      type: REMOVE_FROM_HAND,
+      payload: card
+    });
+    dispatch(blockHand());
   };
 };
 
@@ -30,6 +72,11 @@ export const sendHintCard = ({ activeRoomId, card }) => {
       type: SET_MY_CARD,
       payload: card
     });
+    dispatch({
+      type: REMOVE_FROM_HAND,
+      payload: card
+    });
+    dispatch(blockHand());
   };
 };
 
@@ -42,6 +89,7 @@ export const sendHint = ({ activeRoomId, hint }) => {
 export const chooseHinterCard = ({ activeRoomId, card }) => {
   return dispatch => {
     dispatch(emitter(CHOSEN_CARD_TO_MATCH_HINT, { activeRoomId, card }));
+    dispatch(blockPickingArea());
   };
 };
 
@@ -96,5 +144,7 @@ export const resetOptionsForNextRound = () => {
     dispatch({
       type: RESET_FOR_NEXT_ROUND
     });
+    dispatch(unblockHand());
+    dispatch(unblockPickingArea());
   };
 };

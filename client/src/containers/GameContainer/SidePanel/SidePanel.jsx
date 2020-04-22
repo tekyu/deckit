@@ -46,7 +46,6 @@ const SidePanel = () => {
   };
 
   useEffect(() => {
-    console.log(`useEffect`, gameCode);
     if (gameCode) {
       setPanels(gameMapping[gameCode].panels);
       setOpenedPanel(Object.keys(gameMapping[gameCode].panels)[0]);

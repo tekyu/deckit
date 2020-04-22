@@ -74,7 +74,9 @@ const WaitingScreen = () => {
             {!hideMessage && (
               <h3>
                 <p>This is your room id</p>
-                <p> Share it to friends or click on it to copy</p>
+                <p style={{ marginBottom: "6px" }}>
+                  Share it to friends or click on it to copy
+                </p>
                 <CopyToClipboard text={room.id}>
                   <Button variant="contained" color="primary">
                     {room.id}

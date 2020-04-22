@@ -21,10 +21,12 @@ const ChatPanel = ({ activeRoomId }) => {
   const dispatch = useDispatch();
   const [messages, setMessages] = useState([]);
   const messageList = useCallback(() => {
-    socketActions.emitter(`getChatHistory`, { activeRoomId }, messages => {
-      setMessages(messages);
-    });
-  }, [activeRoomId]);
+    dispatch(
+      socketActions.emitter(`getChatHistory`, { activeRoomId }, messages => {
+        setMessages(messages);
+      })
+    );
+  }, [activeRoomId, dispatch]);
   useEffect(() => {
     dispatch(
       socketActions.listener(

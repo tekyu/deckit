@@ -56,7 +56,7 @@ const Deckit = () => {
   }, [activeRoom]);
 
   useEffect(() => {
-    if (stage === 5) {
+    if (stage === 2) {
       dispatch(deckitActions.resetOptionsForNextRound());
     }
   }, [dispatch, stage]);

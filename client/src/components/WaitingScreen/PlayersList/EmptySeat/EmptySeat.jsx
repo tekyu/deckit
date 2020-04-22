@@ -44,13 +44,13 @@ const StyledRemoveIcon = styled(DeleteIcon)`
   }
 `;
 
-const EmptySeat = ({ key, isAdmin, roomId }) => {
+const EmptySeat = ({ isAdmin, roomId }) => {
   const dispatch = useDispatch();
   const removeEmptySeatHandler = () => {
     dispatch(removeSeat(roomId));
   };
   return (
-    <StyledContainer key={key}>
+    <StyledContainer>
       <StyledIconContainer>
         {isAdmin && <StyledRemoveIcon onClick={removeEmptySeatHandler} />}
         <StyledIcon icon="user" size={100} />

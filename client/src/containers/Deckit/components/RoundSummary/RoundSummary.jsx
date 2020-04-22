@@ -10,19 +10,30 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-const params = {
-  slidesPerView: 3,
-  spaceBetween: 30,
-  freeMode: true,
-  scrollbar: {
-    el: ".swiper-scrollbar",
-    hide: false
-  },
-  navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev"
-  }
-};
+const StyledHand = styled.div`
+  padding: 0 40px;
+  display: flex;
+  justify-content: center;
+`;
+
+const StyledCardContainer = styled.div`
+  transition: all 0.3s ease-in-out;
+  /* &:not(:first-of-type) {
+    margin-left: -160px;
+  } */
+  /* &:hover {
+    padding-left: 16px;
+    padding-right: 16px;
+    &:not(:first-of-type) {
+      margin-left: 0;
+    }
+  } */
+  /* &:hover + div {
+    &:not(:first-of-type) {
+      margin-left: 0;
+    }
+  } */
+`;
 
 const getCardState = (cardId, hinter, pickedCard, userId) => {
   if (userId === hinter.id || cardId === pickedCard.id) {
@@ -34,20 +45,25 @@ const getCardState = (cardId, hinter, pickedCard, userId) => {
 const RoundSummary = ({ cards = [], hintCard = {} }) => {
   return (
     <StyledContainer>
-      <Swiper {...params}>
-        {cards.map(({ card, owner, pickedBy }) => {
-          return (
-            <div>
-              <Card
-                card={card}
-                owner={owner}
-                pickedBy={pickedBy}
-                key={owner.id}
-              />
-            </div>
-          );
+      <StyledHand>
+        {cards.map(({ card, owner, pickedBy = [] }) => {
+          if (pickedBy.length > 0 || card.id === hintCard.id) {
+            return (
+              <StyledCardContainer key={card.id}>
+                {card.id === hintCard.id && <p>Hint card</p>}
+                <Card
+                  card={card}
+                  owner={owner}
+                  pickedBy={pickedBy}
+                  key={owner.id}
+                >
+                  {card.id === hintCard.id && <p>Hint card</p>}
+                </Card>
+              </StyledCardContainer>
+            );
+          }
         })}
-      </Swiper>
+      </StyledHand>
     </StyledContainer>
   );
 };

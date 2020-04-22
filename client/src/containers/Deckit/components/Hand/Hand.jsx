@@ -3,8 +3,9 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import "swiper/swiper.scss";
 import Swiper from "react-id-swiper";
-import Card from "../Card/Card";
 import { deckitSelectors, userSelectors } from "store/selectors";
+import Card from "../Card/Card";
+import Blocker from "../../../../components/Generic/Blocker/Blocker";
 
 const StyledContainer = styled.div`
   position: relative;
@@ -18,6 +19,31 @@ const StyledContainer = styled.div`
   }
   &:hover {
     height: 400px;
+  }
+`;
+
+const StyledHand = styled.div`
+  padding: 0 40px;
+  display: flex;
+  justify-content: center;
+`;
+
+const StyledCardContainer = styled.div`
+  transition: all 0.3s ease-in-out;
+  &:not(:first-of-type) {
+    margin-left: -50px;
+  }
+  &:hover {
+    padding-left: 16px;
+    padding-right: 16px;
+    &:not(:first-of-type) {
+      margin-left: 0;
+    }
+  }
+  &:hover + div {
+    &:not(:first-of-type) {
+      margin-left: 0;
+    }
   }
 `;
 
@@ -36,34 +62,20 @@ const Hand = () => {
   const hinter = useSelector(deckitSelectors.hinter);
   const stage = useSelector(deckitSelectors.gameStage);
   const user = useSelector(userSelectors.user); // select cards from user
-  const params = {
-    effect: "coverflow",
-    grabCursor: true,
-    centeredSlides: true,
-    slidesPerView: 6,
-    coverflowEffect: {
-      rotate: 10,
-      stretch: 0,
-      depth: 100,
-      modifier: 1,
-      slideShadows: true
-    },
-    pagination: {
-      el: ".swiper-pagination"
-    }
-  };
+  const blockHand = useSelector(deckitSelectors.blockHand);
   return (
     <StyledContainer>
+      {blockHand && <Blocker />}
       <div style={{ height: "100%" }}>
-        <Swiper {...params} activeSlideKey={cards[2].id} shouldSwiperUpdate>
+        <StyledHand>
           {cards.map(card => {
             return (
-              <div key={card.id}>
+              <StyledCardContainer key={card.id}>
                 <Card card={card} state={getState(hinter.id, stage, user.id)} />
-              </div>
+              </StyledCardContainer>
             );
           })}
-        </Swiper>
+        </StyledHand>
       </div>
     </StyledContainer>
   );

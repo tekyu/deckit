@@ -54,12 +54,13 @@ const StyledScore = styled.div`
 const ScoreElement = ({
   player: { id, avatar, username, color },
   score = 0,
-  progress = 0
+  progress = 0,
+  didPick = false
 }) => {
   return (
-    <StyledContainer id={id} progress={progress}>
+    <StyledContainer id={id} progress={progress} didNotPick={!didPick}>
       <StyledInfoContainer>
-        <PlayerBubble avatar={avatar} color={color} />
+        <PlayerBubble avatar={avatar} color={color} didPick={didPick} />
         <StyledInfo>
           <StyledUsername>{username}</StyledUsername>
           <StyledScore>{score}</StyledScore>

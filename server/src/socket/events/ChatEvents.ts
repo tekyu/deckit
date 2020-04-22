@@ -5,10 +5,10 @@ import getRoom from '../../utils/getRoom';
 //TODO:
 const chatListeners = {
   onmessage: 'sendingMessage',
-  getHistory: 'getChatHistory'
+  getHistory: 'getChatHistory',
 };
 const chatEmitters = {
-  broadcastMessage: 'incomingChatMessage'
+  broadcastMessage: 'incomingChatMessage',
 };
 
 export const ChatEvents = (socket: any, io: any) => {
@@ -16,6 +16,7 @@ export const ChatEvents = (socket: any, io: any) => {
     chatListeners.getHistory,
     ({ activeRoomId }: any, callback: Function) => {
       const room = getRoom(activeRoomId, io.gameRooms);
+      console.log('room.chat', room.chat);
       callback(room.chat);
     }
   );
@@ -30,11 +31,12 @@ export const ChatEvents = (socket: any, io: any) => {
       ownerId: player.id,
       ownerName: player.username,
       color: player.color,
-      avatar: player.avatar
+      avatar: player.avatar,
     };
     console.log(`${chatListeners.onmessage} newMessage`, newMessage);
     // TODO: push chat in room class, based on activeRoomId eg. pushMessageToHistory(activeRoomId)
     room.chat.push(newMessage);
+    console.log('room.chat.onmessage', room.chat);
     io.in(activeRoomId).emit(chatEmitters.broadcastMessage, newMessage);
   });
 };

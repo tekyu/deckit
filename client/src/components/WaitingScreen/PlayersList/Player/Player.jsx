@@ -26,8 +26,8 @@ const StyledUserIcon = styled.div`
   position: relative;
   margin-top: 20px;
   transition: box-shadow 0.1s ease-in-out;
-  ${({ isReady }) =>
-    isReady &&
+  ${({ isPlayerReady }) =>
+    isPlayerReady &&
     `
     box-shadow: 0px 0px 60px 5px #68CAA0;
   `}
@@ -110,7 +110,7 @@ const Player = ({
   const canKickPlayer = !itsMe && amIAdmin;
   return (
     <StyledContainer key={id} id={id} itsMe={itsMe} isAdmin={isAdmin}>
-      <StyledUserIcon color={color} isReady={state}>
+      <StyledUserIcon color={color} isPlayerReady={state}>
         {isAdmin && <StyledAdminCrown icon="crown" size={30} />}
         {itsMe && <StyledYou color={color} icon="user" size={30} />}
         {canKickPlayer && (

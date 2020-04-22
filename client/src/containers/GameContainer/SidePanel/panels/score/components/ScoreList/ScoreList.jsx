@@ -12,25 +12,32 @@ const StyledContainer = styled.div`
 
 const ScoreList = () => {
   const maxScore = useSelector(deckitSelectors.maxScore);
-  // const { players, scoreboard } = useSelector(roomSelectors.activeRoom);
+  const playersPickedCard = useSelector(deckitSelectors.playersPickedCard);
+  const playersChoosedCard = useSelector(deckitSelectors.playersChoosedCard);
+  const gameStage = useSelector(deckitSelectors.gameStage);
   const players = useSelector(roomSelectors.players);
   const scoreboard = useSelector(roomSelectors.scoreboard);
 
   const [playersList, setPlayersList] = useState([]);
+
   useEffect(() => {
+    const isPicked = id => {
+      switch (gameStage) {
+        case 3:
+          return playersPickedCard.indexOf(id) !== -1;
+        case 4:
+          return playersChoosedCard.indexOf(id) !== -1;
+        default:
+          return false;
+      }
+    };
+
     setPlayersList(() => {
       const sortedPlayers = [...players].sort((first, second) => {
         return scoreboard[second.id] - scoreboard[first.id];
       });
 
       return sortedPlayers.map(player => {
-        console.log(
-          "player",
-          player,
-          scoreboard,
-          maxScore,
-          scoreboard[player.id]
-        );
         return (
           <Flipped key={player.id} flipId={player.id}>
             <ScoreElement
@@ -38,12 +45,20 @@ const ScoreList = () => {
               player={player}
               score={scoreboard[player.id]}
               progress={(scoreboard[player.id] / maxScore) * 100}
+              didPick={isPicked(player.id)}
             />
           </Flipped>
         );
       });
     });
-  }, [maxScore, players, scoreboard]);
+  }, [
+    maxScore,
+    players,
+    playersPickedCard,
+    scoreboard,
+    gameStage,
+    playersChoosedCard
+  ]);
   return (
     <StyledContainer>
       <Flipper spring="stiff" flipKey={JSON.stringify(scoreboard)}>

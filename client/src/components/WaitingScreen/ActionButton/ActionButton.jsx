@@ -9,8 +9,8 @@ const StyledButton = styled(Button)`
   border: 0;
   background: #cb3066;
   border-radius: 3px;
-  ${({ isReady }) =>
-    isReady &&
+  ${({ isPlayerReady }) =>
+    isPlayerReady &&
     `
     background: transparent;
     background-image: linear-gradient(
@@ -82,7 +82,7 @@ const ActionButton = () => {
       <StyledButton
         variant="contained"
         color="primary"
-        isReady={!(hasNotReadyPlayers || players.length < 2)}
+        isPlayerReady={!(hasNotReadyPlayers || players.length < 2)}
         isdisabled={(hasNotReadyPlayers || players.length < 2).toString()}
         onClick={startGameHandler}
       >
@@ -95,7 +95,7 @@ const ActionButton = () => {
       variant="contained"
       color="primary"
       onClick={readyHandler}
-      isReady={playerState === 0}
+      isPlayerReady={playerState === 0}
     >
       {playerState === 0 ? `Ready` : `Not Ready`}
     </StyledButton>

@@ -14,7 +14,7 @@ const RoomJoining = () => {
     <Styled.Container>
       <div>
         <NavLink to="/create">
-          <Button variant="contained" color="primary">
+          <Button variant="contained" color="primary" className="createbutton">
             Create your game
           </Button>
         </NavLink>
@@ -55,7 +55,12 @@ const RoomJoining = () => {
                 placeholder="Type room ID here"
               />
             </Styled.JoinFieldContainer>
-            <Button variant="contained" color="primary" type="submit">
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              className="joinbutton"
+            >
               Join
             </Button>
           </Styled.JoinContainer>
