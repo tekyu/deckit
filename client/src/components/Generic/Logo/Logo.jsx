@@ -1,14 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import * as styles from "./Logo.module.scss";
+import * as Styled from "./Logo.styled";
 
 const Logo = () => {
   return (
-    <div className={styles.logo}>
-      <Link to="/">
-        <span>Deckit</span>
-      </Link>
-    </div>
+    <Link to="/">
+      <Styled.Container>
+        <Styled.Text>Deckit</Styled.Text>
+      </Styled.Container>
+    </Link>
   );
 };
 

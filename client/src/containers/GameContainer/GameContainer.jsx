@@ -82,6 +82,15 @@ const GameContainer = () => {
   );
 
   useEffect(() => {
+    const pingInterval = setInterval(() => {
+      dispatch(socketActions.emitter(`PING_ROOM`));
+    }, 330000);
+    return () => {
+      clearInterval(pingInterval);
+    };
+  }, []);
+
+  useEffect(() => {
     if (activeRoom && activeRoom.state >= 2) {
       const { gameCode, id } = activeRoom;
       setGameComponent(getGame(gameCode, id));

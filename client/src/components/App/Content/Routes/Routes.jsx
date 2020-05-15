@@ -31,7 +31,7 @@ const Routes = auth => {
         exact
         render={() => <Loadable.CreateGame />}
       />
-      <Route path="/about" exact render={() => <About />} />
+      <Route path="/credits" exact render={() => <About />} />
       <Route path="/" exact render={() => <Loadable.Browse auth={false} />} />
     </Switch>
   );

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Link } from "react-scroll";
+import { Link } from "react-router-dom";
 
 export const Separator = styled.div`
   text-align: center;
@@ -9,8 +9,9 @@ export const Separator = styled.div`
 
 export const AboutLink = styled(Link)`
   position: fixed;
-  bottom: 10px;
-  right: 10px;
+  bottom: 20px;
+  right: 20px;
+  color: rgba(0, 0, 0, 0.58);
 `;
 
 export const CardContainer = styled.div`

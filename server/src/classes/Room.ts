@@ -109,6 +109,10 @@ export default class Room implements IRoom {
     };
   }
 
+  setState(newState) {
+    this.state = newState;
+  }
+
   setWinners() {
     this.winners = Object.entries(this.scoreboard).reduce(
       (winners, [id, score]) => {

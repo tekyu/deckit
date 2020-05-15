@@ -21,9 +21,9 @@ const StyledIcon = styled(Icon)`
   cursor: pointer;
 `;
 
-const AddSeat = ({ key, handler }) => {
+const AddSeat = ({ handler }) => {
   return (
-    <StyledContainer key={key}>
+    <StyledContainer>
       <StyledIconContainer>
         <StyledIcon icon="plus" size={60} onClick={handler} />
       </StyledIconContainer>

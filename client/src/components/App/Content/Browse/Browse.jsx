@@ -100,7 +100,7 @@ const Browse = ({ auth }) => {
         </Styled.CardsPlaceholder>
       )}
       {roomCards && <Styled.CardContainer>{roomCards}</Styled.CardContainer>}
-      <Styled.AboutLink to="/about" />
+      <Styled.AboutLink to="/credits">Credits</Styled.AboutLink>
     </>
   );
 };

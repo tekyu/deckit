@@ -10,6 +10,8 @@ import preparePlayersForNextRound from '../../utils/cards/preparePlayersForNextR
 import prepareSocketForNextRound from '../../utils/cards/prepareSocketForNextRound';
 import shuffle from '../../utils/cards/Shuffle';
 import axios from '../../../axios';
+import getRoomObjectForUpdate from '../../utils/getRoomObjectForUpdate';
+import getRoomNamespaceFromList from '../../utils/getRoomNamespaceFromList';
 
 export const GameEvents = (socket: any, io: any) => {
   socket.on('START_GAME', async ({ activeRoomId }: any) => {
@@ -48,7 +50,8 @@ export const GameEvents = (socket: any, io: any) => {
     players.forEach(({ id, cards }) => {
       io.to(id).emit('UPDATE_MY_CARDS', cards);
     });
-    room.state = 2;
+    // room.players = players;
+    room.setState(2);
     gameOptions.round = 1;
     gameOptions.stage = 2;
     gameOptions.hinter = {
@@ -61,7 +64,7 @@ export const GameEvents = (socket: any, io: any) => {
     }, {});
     io.in(activeRoomId).emit('ROOM_UPDATED', {
       state: room.state,
-      players,
+      // players,
       scoreboard: room.scoreboard,
     });
     io.in(activeRoomId).emit('GAME_UPDATED', {
@@ -75,6 +78,10 @@ export const GameEvents = (socket: any, io: any) => {
     // distribute cards here
     // gameEvent -> cardsEvent
     // RoomCards class?
+    const updatedRoomObject = [getRoomObjectForUpdate(room, 'remove')];
+    if (room.mode === 'public') {
+      io.in('WAITING_ROOM').emit('updateListOfRooms', updatedRoomObject);
+    }
   });
   socket.on('SENT_HINT_CARD', ({ activeRoomId, card }) => {
     const room = getRoom(activeRoomId, io.gameRooms);
@@ -226,8 +233,8 @@ export const GameEvents = (socket: any, io: any) => {
         const randomCard = distributeRandomCard({ cards }, remainingCards);
         if (randomCard) {
           cards.push(randomCard);
+          io.to(id).emit('UPDATE_MY_CARDS', [randomCard]);
         }
-        io.to(id).emit('UPDATE_MY_CARDS', [randomCard]);
       });
 
       room.gameOptions = prepareRoomForNextRound(room);

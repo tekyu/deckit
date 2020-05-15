@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import { RoomEvents, GameEvents, UserEvents, ChatEvents } from './events';
 import getRoomObjectForUpdate from '../utils/getRoomObjectForUpdate';
 import getRoom from '../utils/getRoom';
+import Room from '../classes/Room';
 
 const WAITING_ROOM = 'WAITING_ROOM';
 //TODO: Change types
@@ -20,7 +21,17 @@ const ioEvents = (io: any) => {
     socket.on('getRooms', (data: any, callback: any) => {
       socket.join(WAITING_ROOM);
       socket.pswOptions.rooms.push(WAITING_ROOM);
-      callback(io.gameRooms.public);
+      const filteredRooms = Object.entries(io.gameRooms.public).reduce(
+        (newRooms, [id, room]) => {
+          // @ts-ignore
+          if (room.state < 2) {
+            newRooms[id] = room;
+          }
+          return newRooms;
+        },
+        {}
+      );
+      callback(filteredRooms);
     });
 
     RoomEvents(socket, io);

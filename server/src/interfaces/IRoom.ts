@@ -7,7 +7,7 @@ export default interface IRoom {
   owner?: string;
   admin?: string;
   gameCode?: string;
-  state?: number; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
+  state: number; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
   winners?: Array<String>;
   createdAt?: number;
   gameOptions?: Object;

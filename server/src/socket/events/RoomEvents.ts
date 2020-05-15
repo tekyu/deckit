@@ -7,6 +7,7 @@ import getRoomObjectForUpdate from '../../utils/getRoomObjectForUpdate';
 import getRoomNamespaceFromList from '../../utils/getRoomNamespaceFromList';
 import getRoom from '../../utils/getRoom';
 import { getGameOptions } from '../../utils/gameMapping';
+import getRoomUpdateState from '../../utils/getRoomUpdateState';
 //TODO: Move interfaces to other file
 interface Iparams {
   id: string;
@@ -51,14 +52,6 @@ export const RoomEvents = function (socket: any, io: any) {
       room
     );
     io.gameRooms[mode][roomId] = room;
-    // const pingInterval = setInterval(() => {
-    //   console.log('pingInterval', roomId);
-    //   io.in(roomId)
-    //     // @ts-ignore
-    //     .emit('PING_ROOM');
-    // }, 55000);
-    // // @ts-ignore
-    // room.pingInterval = pingInterval;
     callback({ created: true, roomId });
   });
 
@@ -68,6 +61,14 @@ export const RoomEvents = function (socket: any, io: any) {
 
     if (!room) {
       callback({ error: "Room doesn't exist" });
+      return;
+    }
+    if (room.state >= 2) {
+      callback({ error: 'Game has already started' });
+      return;
+    }
+    if (room.players.length === room.playersMax) {
+      callback({ error: `Sorry, room ${room.name} is full` });
       return;
     }
     //@ts-ignore
@@ -91,9 +92,12 @@ export const RoomEvents = function (socket: any, io: any) {
     //@ts-ignore
     room
       .connectPlayer(socket.pswOptions)
-      .then(({ players }: any) => {
+      .then((players: any) => {
         const updatedRoomObject = [
-          getRoomObjectForUpdate(room, players > 0 ? 'update' : 'add'),
+          getRoomObjectForUpdate(
+            room,
+            getRoomUpdateState(players.length, room.playersMax, room.state)
+          ),
         ];
         //@ts-ignore
         callback(room.roomOptions);
@@ -115,6 +119,12 @@ export const RoomEvents = function (socket: any, io: any) {
       });
   });
 
+  // socket.on('disconnect', () => {
+  //   socket.pswOptions.rooms.forEach((id) => {
+  //     leaveRoom(id);
+  //   })
+  // })
+
   socket.on('LEAVE_ROOM', ({ roomId }: any) => {
     socket.pswOptions.rooms = socket.pswOptions.rooms.filter(
       (id: String) => id !== roomId
@@ -124,28 +134,74 @@ export const RoomEvents = function (socket: any, io: any) {
       console.log(chalk.bgRedBright(`Cannot fetch room of id ${roomId}`));
       return;
     }
-    room.disconnectPlayer(socket.pswOptions.id);
     const { players } = room;
+    room.disconnectPlayer(socket.pswOptions.id);
     if (!players || !players.length) {
       const namespace = getRoomNamespaceFromList(roomId, io.gameRooms);
       //@ts-ignore
-      // clearInterval(room.pingInterval);
       delete io.gameRooms[namespace][roomId];
     }
     socket.pswOptions.rooms.push(WAITING_ROOM);
-    if (room.mode === 'public') {
+    if (room.state < 2 && room.mode === 'public') {
       const updatedRoomObject = [
         getRoomObjectForUpdate(
           room,
-          players && players.length > 0 ? 'update' : 'remove'
+          getRoomUpdateState(players.length, room.playersMax, room.state)
         ),
       ];
       io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
     }
+
+    console.log('LEAVE ROOM', room, 'SOCKET', socket.pswOptions);
+
+    // flushRoomAfterLeave(room);
+    // // // room
+    // if (room.owner === socket.pswOptions.id) {
+    //   const newOwner = room.players[0];
+    //   // @ts-ignore
+    //   room.owner = newOwner.id;
+    // }
+
+    // if (room.admin === socket.pswOptions.id) {
+    //   const newOwner = room.players[0];
+    //   // @ts-ignore
+    //   room.owner = newOwner.id;
+    //   // @ts-ignore
+    //   room.admin = newOwner.id;
+    // }
+
+    // // @ts-ignore
+    // if (room.gameOptions.hinter.id === socket.pswOptions.id) {
+    //   // @ts-ignore
+    //   room.gameOptions.hinter =
+    //     // @ts-ignore
+    //     players[room.gameOptions.round % room.players.length];
+    //   // @ts-ignore
+    //   room.gameOptions.stage = 3;
+    // }
+
+    // players.forEach(({id, cards}) => {
+    //   if (cards.length >= 6) {
+    //     return;
+    //   }
+    //   const randomCard = distributeRandomCard({ cards }, room.gameOptions.remainingCards);
+    //   if (randomCard) {
+    //     io.to(id).emit('UPDATE_MY_CARDS', [randomCard]);
+    //   }
+    // });
+    io.in(roomId).emit('ROOM_UPDATED', {
+      players: room.players,
+      // owner: room.owner,
+      // admin: room.admin,
+    });
+    // @ts-ignore
+    // io.in(roomId).emit('GAME_UPDATED', {
+    //   hinter: room.gameOptions.hinter,
+    //   stage: room.gameOptions.stage,
+    // });
+
     socket.emit('UPDATE_PLAYER', { rooms: socket.pswOptions.rooms });
     socket.join(WAITING_ROOM);
-
-    io.in(roomId).emit('ROOM_UPDATED', { players: room.players });
   });
 
   socket.on('CHECK_FOR_ROOM', ({ id }: any, callback: Function) => {
@@ -182,7 +238,7 @@ export const RoomEvents = function (socket: any, io: any) {
     //@ts-ignore
     const arePlayersReady = room.players.some(({ state }) => state === 1);
     //@ts-ignore
-    room.state = arePlayersReady ? 1 : 0;
+    room.setState(arePlayersReady ? 1 : 0);
     io.in(activeRoomId).emit('ROOM_UPDATED', {
       //@ts-ignore
       players: room.players,

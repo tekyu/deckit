@@ -1,10 +1,15 @@
 import React from "react";
+import {
+  StyledContainer,
+  StyledHeader,
+  StyledThanksContainer
+} from "./About.styled";
 
 const About = () => {
   return (
-    <div>
-      <h1>{`This project wouldn't be possible without:`}</h1>
-      <div>
+    <StyledContainer>
+      <StyledHeader>{`This project wouldn't be possible without:`}</StyledHeader>
+      <StyledThanksContainer>
         <a href="https://www.flaticon.com/authors/freepik" title="Freepik">
           Freepik
         </a>
@@ -13,8 +18,8 @@ const About = () => {
         <a href="https://www.flaticon.com/" title="Flaticon">
           www.flaticon.com
         </a>
-      </div>
-    </div>
+      </StyledThanksContainer>
+    </StyledContainer>
   );
 };
 
