@@ -34,7 +34,7 @@ export default class Room implements IRoom {
   players: Array<Object>;
   winners: Array<String>;
   createdAt: number;
-  gameOptions: Object;
+  gameOptions: any;
   chat: Array<Object>;
   scoreboard: Object;
   pingInterval: Function;
@@ -42,6 +42,7 @@ export default class Room implements IRoom {
   constructor(
     { mode, playersMax, gameCode, gameOptions, name = '' }: CreateRoomOptions,
     socketId: any
+    // io: any
   ) {
     this.mode = mode;
     this.playersMax = playersMax || 10; // check for max players per game (adjustable in gameMapping)
@@ -55,17 +56,18 @@ export default class Room implements IRoom {
     this.winners = [];
     this.createdAt = Date.now();
     this.scoreboard = {};
-    this.gameOptions = gameOptions
-      ? Object.assign(cloneDeep(getGameOptions(gameCode)), gameOptions)
-      : cloneDeep(getGameOptions(gameCode));
+    this.gameOptions = getGameOptions(gameCode, gameOptions);
     this.chat = [];
     // this.pingInterval = () => {};
+    console.log('[Room] constructor');
   }
 
   get instance() {
+    console.log('[Room] get instance');
     return this;
   }
   get roomOptions() {
+    console.log('[Room] get roomOptions');
     const {
       mode,
       playersMax,
@@ -97,6 +99,7 @@ export default class Room implements IRoom {
   }
 
   get roomView() {
+    console.log('[Room] get roomView');
     const { mode, playersMax, gameCode, name, id, owner, state } = this;
     return {
       mode,
@@ -110,10 +113,12 @@ export default class Room implements IRoom {
   }
 
   setState(newState) {
+    console.log('[Room] setState');
     this.state = newState;
   }
 
   setWinners() {
+    console.log('[Room] setWinners');
     this.winners = Object.entries(this.scoreboard).reduce(
       (winners, [id, score]) => {
         if (score >= this.gameOptions.maxScore) {
@@ -127,10 +132,12 @@ export default class Room implements IRoom {
   }
 
   setCards(cards) {
+    console.log('[Room] setCards');
     this.gameOptions.remainingCards = cards;
   }
 
   async connectPlayer(playerData: Object) {
+    console.log('[Room] connectPlayer');
     const newPlayerData = { ...playerData };
     if (this.owner === playerData.id) {
       newPlayerData.state = 1;
@@ -140,6 +147,7 @@ export default class Room implements IRoom {
   }
 
   disconnectPlayer(id: string) {
+    console.log('[Room] disconnectPlayer');
     return (this.players = this.players.filter((player: any) => {
       return player.id !== id;
     }));

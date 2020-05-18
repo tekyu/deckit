@@ -15,6 +15,7 @@ import getRoomNamespaceFromList from '../../utils/getRoomNamespaceFromList';
 
 export const GameEvents = (socket: any, io: any) => {
   socket.on('START_GAME', async ({ activeRoomId }: any) => {
+    console.log('[GameEvents] START_GAME');
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;
     const { players } = room;
@@ -48,7 +49,8 @@ export const GameEvents = (socket: any, io: any) => {
       room.gameOptions.remainingCards
     );
     players.forEach(({ id, cards }) => {
-      io.to(id).emit('UPDATE_MY_CARDS', cards);
+      gameOptions.updateCardTracker(id, cards, 'add');
+      gameOptions.emitUpdatedCards(id, cards, io);
     });
     // room.players = players;
     room.setState(2);
@@ -84,6 +86,7 @@ export const GameEvents = (socket: any, io: any) => {
     }
   });
   socket.on('SENT_HINT_CARD', ({ activeRoomId, card }) => {
+    console.log('[GameEvents] SENT_HINT_CARD');
     const room = getRoom(activeRoomId, io.gameRooms);
     room.gameOptions.hintCard = card;
     if (
@@ -104,12 +107,10 @@ export const GameEvents = (socket: any, io: any) => {
   });
 
   socket.on('SENT_HINT', ({ activeRoomId, hint }) => {
+    console.log('[GameEvents] SENT_HINT');
     const room = getRoom(activeRoomId, io.gameRooms);
     const {
       gameOptions: { hintCard, playersPickedCard, playersChoosedCard },
-    } = room;
-    let {
-      gameOptions: { stage },
     } = room;
     room.gameOptions.hint = hint;
     if (playersPickedCard.indexOf(socket.pswOptions.id) === -1) {
@@ -120,9 +121,14 @@ export const GameEvents = (socket: any, io: any) => {
     }
     // TODO: TUTAJ WYRZUCIC KARTE Z DECKU ROOM.PLAYERS
     if (room.gameOptions.hintCard) {
-      stage = 3;
+      room.gameOptions.stage = 3;
+      room.gameOptions.updateCardTracker(
+        socket.pswOptions.id,
+        [room.gameOptions.hintCard],
+        'remove'
+      );
       io.in(activeRoomId).emit('GAME_UPDATED', {
-        stage,
+        stage: room.gameOptions.stage,
         hint,
         hintCard,
         playersPickedCard,
@@ -131,13 +137,11 @@ export const GameEvents = (socket: any, io: any) => {
   });
 
   socket.on('PICKED_CARD_TO_HINT', ({ activeRoomId, card }) => {
+    console.log('[GameEvents] PICKED_CARD_TO_HINT');
     const room = getRoom(activeRoomId, io.gameRooms);
     const {
       gameOptions: { pickedCardsToHint, playersPickedCard, playersChoosedCard },
       players,
-    } = room;
-    let {
-      gameOptions: { stage },
     } = room;
     pickedCardsToHint.push({
       card: card,
@@ -152,12 +156,13 @@ export const GameEvents = (socket: any, io: any) => {
       playersPickedCard.push(socket.pswOptions.id);
     }
     // TODO: TUTAJ WYRZUCIC KARTE Z DECKU ROOM.PLAYERS
+    room.gameOptions.updateCardTracker(socket.pswOptions.id, [card], 'remove');
     io.in(activeRoomId).emit('GAME_UPDATED', { playersPickedCard });
     if (playersPickedCard.length === players.length) {
-      stage = 4;
+      room.gameOptions.stage = 4;
       const shuffledPickedCardsToHint = shuffle(pickedCardsToHint);
       io.in(activeRoomId).emit('GAME_UPDATED', {
-        stage,
+        stage: room.gameOptions.stage,
         pickedCardsToHint: shuffledPickedCardsToHint,
         playersChoosedCard,
       });
@@ -165,6 +170,7 @@ export const GameEvents = (socket: any, io: any) => {
   });
 
   socket.on('CHOSEN_CARD_TO_MATCH_HINT', ({ activeRoomId, card }) => {
+    console.log('[GameEvents] CHOSEN_CARD_TO_MATCH_HINT');
     const room = getRoom(activeRoomId, io.gameRooms);
     let { gameOptions } = room;
     let { players, scoreboard } = room;
@@ -229,15 +235,15 @@ export const GameEvents = (socket: any, io: any) => {
       //   return { id, score };
       // });
       // players = distributeRandomCardsToPlayers(players, remainingCards);
-      players.forEach(({ id, cards }) => {
-        const randomCard = distributeRandomCard({ cards }, remainingCards);
-        if (randomCard) {
-          cards.push(randomCard);
-          io.to(id).emit('UPDATE_MY_CARDS', [randomCard]);
-        }
+      players.forEach(({ id }) => {
+        room.gameOptions.updateSingleCard(id, io);
+        // if (card) {
+        // console.log('[GameEvents] emitUpdatedCards', playerId, cards);
+        // this.io.to(playerId).emit('UPDATE_MY_CARDS', cards);
+        // }
       });
 
-      room.gameOptions = prepareRoomForNextRound(room);
+      room.gameOptions.prepareRoomForNextRound(room.players);
       room.players = preparePlayersForNextRound(room.players);
       socket.pswOptions = prepareSocketForNextRound(socket.pswOptions);
 

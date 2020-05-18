@@ -10,7 +10,7 @@ export default interface IRoom {
   state: number; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
   winners?: Array<String>;
   createdAt?: number;
-  gameOptions?: Object;
+  gameOptions: any;
   chat?: Array<Object>;
   players: Array<Object>;
   scoreboard: Object;

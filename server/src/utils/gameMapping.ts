@@ -1,8 +1,9 @@
 import cloneDeep from 'clone-deep';
+import DeckitOptions from '../classes/DeckitOptions';
 
 export const gameMapping = {
   d: 'Deckit',
-  k: 'Państwa Miasta'
+  k: 'Państwa Miasta',
 };
 
 export const gameOptions = {
@@ -20,14 +21,15 @@ export const gameOptions = {
     playersPickedCard: [],
     playersChoosedCard: [],
     scoreboard: {},
+    cardTracker: {},
     playerModel: {
       id: null,
       nickname: '',
       ranking: 1200,
       avatar: null,
       cards: [],
-      score: 0
-    }
+      score: 0,
+    },
   },
   k: {
     fields: [],
@@ -35,8 +37,8 @@ export const gameOptions = {
     round: 0,
     letter: '',
     maxTime: 120,
-    maxScore: 50
-  }
+    maxScore: 50,
+  },
 };
 
 export const listGameMapping = (index: any) => {
@@ -54,9 +56,15 @@ export const getGameMapping = (gameCode: string) => {
   return gameMapping[gameCode];
 };
 
-export const getGameOptions = (gameCode: string) => {
-  if (!gameOptions[gameCode]) {
-    throw Error(`Game ${gameCode} is not defined within mapping`);
+export const getGameOptions = (
+  gameCode: string,
+  gameOptions: Object,
+  io: any
+) => {
+  switch (gameCode) {
+    case 'd':
+      return new DeckitOptions(gameOptions, io);
+    default:
+      throw Error(`Gamecode of ${gameCode} not recognized`);
   }
-  return cloneDeep(gameOptions[gameCode]);
 };

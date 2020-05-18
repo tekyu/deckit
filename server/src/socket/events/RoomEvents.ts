@@ -44,8 +44,11 @@ export const RoomEvents = function (socket: any, io: any) {
   this.io = io;
 
   socket.on(CREATE_ROOM, (params: any, callback: Function) => {
+    console.log('[RoomEvents] CREATE_ROOM');
     const { roomOptions, id } = params;
-    const room = new Room(roomOptions, id);
+    console.log('new room 0');
+    const room = new Room(roomOptions, id, io);
+    console.log('new room 1');
     const { id: roomId, mode } = room;
     console.log(
       chalk.bgYellow.black(`[Room] Room ${room.id} created with options `),
@@ -56,6 +59,7 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on(JOIN_ROOM, (params: Object, callback: Function) => {
+    console.log('[RoomEvents] JOIN_ROOM');
     const { roomId, userData }: any = params;
     const room = getRoom(roomId, io.gameRooms);
 
@@ -72,7 +76,7 @@ export const RoomEvents = function (socket: any, io: any) {
       return;
     }
     //@ts-ignore
-    const gameOptions = getGameOptions(room.gameCode).playerModel;
+    // const gameOptions = getGameOptions(room.gameCode).playerModel;
     const panels = {
       score: { listener: `scoreUpdate` },
       chat: { listener: `incomingChatMessage` },
@@ -81,7 +85,11 @@ export const RoomEvents = function (socket: any, io: any) {
     };
 
     socket.pswOptions.color = randomColor(0.3, 0.99).hexString();
-    socket.pswOptions = { ...gameOptions, ...socket.pswOptions, ...userData };
+    socket.pswOptions = {
+      ...room.gameOptions.player,
+      ...socket.pswOptions,
+      ...userData,
+    };
     socket.pswOptions.rooms = socket.pswOptions.rooms.filter(
       (id: string) => id !== WAITING_ROOM
     );
@@ -119,13 +127,40 @@ export const RoomEvents = function (socket: any, io: any) {
       });
   });
 
-  // socket.on('disconnect', () => {
-  //   socket.pswOptions.rooms.forEach((id) => {
-  //     leaveRoom(id);
-  //   })
-  // })
+  socket.on('disconnect', () => {
+    console.log('[RoomEvents] disconnect');
+    socket.pswOptions.rooms.forEach((roomId: string) => {
+      const room = getRoom(roomId, io.gameRooms);
+      if (!room) {
+        console.log(chalk.bgRedBright(`Cannot fetch room of id ${roomId}`));
+        return;
+      }
+      const { players } = room;
+      room.disconnectPlayer(socket.pswOptions.id);
+      if (!players || !players.length) {
+        const namespace = getRoomNamespaceFromList(roomId, io.gameRooms);
+        //@ts-ignore
+        delete io.gameRooms[namespace][roomId];
+      }
+      if (room.state < 2 && room.mode === 'public') {
+        const updatedRoomObject = [
+          getRoomObjectForUpdate(
+            room,
+            getRoomUpdateState(players.length, room.playersMax, room.state)
+          ),
+        ];
+        io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
+      }
+
+      if (room.state >= 2) {
+        room.gameOptions.updateCards(io);
+        room.gameOptions.prepareRoomForNextRound(room.players);
+      }
+    });
+  });
 
   socket.on('LEAVE_ROOM', ({ roomId }: any) => {
+    console.log('[RoomEvents] LEAVE_ROOM');
     socket.pswOptions.rooms = socket.pswOptions.rooms.filter(
       (id: String) => id !== roomId
     );
@@ -152,10 +187,11 @@ export const RoomEvents = function (socket: any, io: any) {
       io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
     }
 
-    console.log('LEAVE ROOM', room, 'SOCKET', socket.pswOptions);
+    if (room.state >= 2) {
+      room.gameOptions.updateCards(io);
+      room.gameOptions.prepareRoomForNextRound(room.players);
+    }
 
-    // flushRoomAfterLeave(room);
-    // // // room
     // if (room.owner === socket.pswOptions.id) {
     //   const newOwner = room.players[0];
     //   // @ts-ignore
@@ -168,16 +204,6 @@ export const RoomEvents = function (socket: any, io: any) {
     //   room.owner = newOwner.id;
     //   // @ts-ignore
     //   room.admin = newOwner.id;
-    // }
-
-    // // @ts-ignore
-    // if (room.gameOptions.hinter.id === socket.pswOptions.id) {
-    //   // @ts-ignore
-    //   room.gameOptions.hinter =
-    //     // @ts-ignore
-    //     players[room.gameOptions.round % room.players.length];
-    //   // @ts-ignore
-    //   room.gameOptions.stage = 3;
     // }
 
     // players.forEach(({id, cards}) => {
@@ -205,12 +231,14 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on('CHECK_FOR_ROOM', ({ id }: any, callback: Function) => {
+    console.log('[RoomEvents] CHECK_FOR_ROOM');
     const room = getRoom(id, io.gameRooms);
 
     callback(room ? true : false);
   });
 
   socket.on('GET_ROOM_INFO', (params: any, callback: Function) => {
+    console.log('[RoomEvents] GET_ROOM_INFO');
     const room = getRoom(params.id, io.gameRooms);
     if (!room) {
       callback({});
@@ -221,11 +249,13 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on('getScoreData', ({ activeRoomId }: any, callback: Function) => {
+    console.log('[RoomEvents] getScoreData');
     const room = getRoom(activeRoomId, io.gameRooms);
     callback((room && room.scoreboard) || {});
   });
 
   socket.on('UPDATE_PLAYER', ({ data, activeRoomId, playerId }: any) => {
+    console.log('[RoomEvents] UPDATE_PLAYER');
     const room = getRoom(activeRoomId, io.gameRooms);
     //@ts-ignore
     room.players = room.players.map((player: any) => {
@@ -248,6 +278,7 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on('KICK_PLAYER', ({ userId, activeRoomId, adminId }: any) => {
+    console.log('[RoomEvents] KICK_PLAYER');
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;
     const player = room.players.find(({ id }: any) => id === userId);
@@ -261,6 +292,7 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on('CHANGE_ROOM_MODE', ({ activeRoomId }: any) => {
+    console.log('[RoomEvents] CHANGE_ROOM_MODE');
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) {
       return null;
@@ -280,6 +312,7 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on('ADD_SEAT', ({ activeRoomId }: any) => {
+    console.log('[RoomEvents] ADD_SEAT');
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;
     room.playersMax += 1;
@@ -290,6 +323,7 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on('REMOVE_SEAT', ({ activeRoomId }: any) => {
+    console.log('[RoomEvents] REMOVE_SEAT');
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;
     room.playersMax -= 1;
