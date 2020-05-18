@@ -56,14 +56,10 @@ export const getGameMapping = (gameCode: string) => {
   return gameMapping[gameCode];
 };
 
-export const getGameOptions = (
-  gameCode: string,
-  gameOptions: Object,
-  io: any
-) => {
+export const getGameOptions = (gameCode: string, gameOptions: Object) => {
   switch (gameCode) {
     case 'd':
-      return new DeckitOptions(gameOptions, io);
+      return new DeckitOptions(gameOptions);
     default:
       throw Error(`Gamecode of ${gameCode} not recognized`);
   }

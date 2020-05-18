@@ -42,7 +42,6 @@ export default class Room implements IRoom {
   constructor(
     { mode, playersMax, gameCode, gameOptions, name = '' }: CreateRoomOptions,
     socketId: any
-    // io: any
   ) {
     this.mode = mode;
     this.playersMax = playersMax || 10; // check for max players per game (adjustable in gameMapping)

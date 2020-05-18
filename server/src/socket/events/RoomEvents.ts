@@ -46,9 +46,7 @@ export const RoomEvents = function (socket: any, io: any) {
   socket.on(CREATE_ROOM, (params: any, callback: Function) => {
     console.log('[RoomEvents] CREATE_ROOM');
     const { roomOptions, id } = params;
-    console.log('new room 0');
-    const room = new Room(roomOptions, id, io);
-    console.log('new room 1');
+    const room = new Room(roomOptions, id);
     const { id: roomId, mode } = room;
     console.log(
       chalk.bgYellow.black(`[Room] Room ${room.id} created with options `),
@@ -192,33 +190,43 @@ export const RoomEvents = function (socket: any, io: any) {
       room.gameOptions.prepareRoomForNextRound(room.players);
     }
 
-    // if (room.owner === socket.pswOptions.id) {
-    //   const newOwner = room.players[0];
-    //   // @ts-ignore
-    //   room.owner = newOwner.id;
-    // }
+    if (room.owner === socket.pswOptions.id) {
+      const newOwner = room.players[0];
+      // @ts-ignore
+      room.owner = newOwner.id;
+    }
 
-    // if (room.admin === socket.pswOptions.id) {
-    //   const newOwner = room.players[0];
-    //   // @ts-ignore
-    //   room.owner = newOwner.id;
-    //   // @ts-ignore
-    //   room.admin = newOwner.id;
-    // }
+    if (room.admin === socket.pswOptions.id) {
+      const newOwner = room.players[0];
+      // @ts-ignore
+      room.owner = newOwner.id;
+      // @ts-ignore
+      room.admin = newOwner.id;
+    }
 
-    // players.forEach(({id, cards}) => {
-    //   if (cards.length >= 6) {
-    //     return;
-    //   }
-    //   const randomCard = distributeRandomCard({ cards }, room.gameOptions.remainingCards);
-    //   if (randomCard) {
-    //     io.to(id).emit('UPDATE_MY_CARDS', [randomCard]);
-    //   }
-    // });
     io.in(roomId).emit('ROOM_UPDATED', {
       players: room.players,
-      // owner: room.owner,
-      // admin: room.admin,
+      owner: room.owner,
+      admin: room.admin,
+    });
+
+    const {
+      hinter,
+      hint,
+      remainingCards,
+      playersPickedCard,
+      playersChoosedCard,
+      round,
+      stage,
+    } = room.gameOptions;
+    io.in(roomId).emit('GAME_UPDATED', {
+      hinter,
+      hint,
+      playersPickedCard,
+      playersChoosedCard,
+      round,
+      stage,
+      remainingCards: remainingCards.length,
     });
     // @ts-ignore
     // io.in(roomId).emit('GAME_UPDATED', {

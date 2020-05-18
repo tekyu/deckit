@@ -237,10 +237,6 @@ export const GameEvents = (socket: any, io: any) => {
       // players = distributeRandomCardsToPlayers(players, remainingCards);
       players.forEach(({ id }) => {
         room.gameOptions.updateSingleCard(id, io);
-        // if (card) {
-        // console.log('[GameEvents] emitUpdatedCards', playerId, cards);
-        // this.io.to(playerId).emit('UPDATE_MY_CARDS', cards);
-        // }
       });
 
       room.gameOptions.prepareRoomForNextRound(room.players);

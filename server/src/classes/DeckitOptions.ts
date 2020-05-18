@@ -162,7 +162,12 @@ export default class DeckitOptions {
   }
 
   emitUpdatedCards(playerId, cards, io) {
-    console.log('[DeckitOptions] emitUpdatedCards', playerId, cards);
+    console.log(
+      '[DeckitOptions] emitUpdatedCards',
+      playerId,
+      cards.length,
+      cards
+    );
     io.to(playerId).emit('UPDATE_MY_CARDS', cards);
   }
 
@@ -192,7 +197,6 @@ export default class DeckitOptions {
   prepareRoomForNextRound(players) {
     console.log('[DeckitOptions] prepareRoomForNextRound');
     this.hinter = players[this.round % players.length];
-    this.hint = null;
     this.hint = null;
     this.hintCard = null;
     this.choosedCardsToMatchHint = [];
