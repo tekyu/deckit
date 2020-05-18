@@ -116,6 +116,7 @@ const GameContainer = () => {
       dispatch(roomActions.leaveRoom(id));
       dispatch(roomActions.setActiveRoomId());
       dispatch(roomActions.setActiveRoom());
+      dispatch(deckitActions.setInitialGameOptions());
     };
   }, [dispatch, id]);
 
