@@ -190,13 +190,13 @@ export const RoomEvents = function (socket: any, io: any) {
       room.gameOptions.prepareRoomForNextRound(room.players);
     }
 
-    if (room.owner === socket.pswOptions.id) {
+    if (room.owner === socket.pswOptions.id && room.players.length > 1) {
       const newOwner = room.players[0];
       // @ts-ignore
       room.owner = newOwner.id;
     }
 
-    if (room.admin === socket.pswOptions.id) {
+    if (room.admin === socket.pswOptions.id && room.players.length > 1) {
       const newOwner = room.players[0];
       // @ts-ignore
       room.owner = newOwner.id;
