@@ -5,9 +5,10 @@
   "[javascript]": {
     "editor.formatOnSave": false
   },
-  "prettier.disableLanguages": ["js"],
+  "prettier.disableLanguages": [
+    "js"
+  ],
   "editor.formatOnSave": true,
-  "eslint.autoFixOnSave": true,
   "cSpell.words": [
     "deckit",
     "formik",
@@ -16,5 +17,11 @@
   ],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/package-lock.json": true
   }
 }
