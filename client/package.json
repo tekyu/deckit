@@ -1,6 +1,8 @@
 {
   "name": "deckit-client-hygge",
   "version": "2.0.0",
+  "author": "Patryk Rosiak",
+  "license": "ISC",
   "private": true,
   "scripts": {
     "start": "cross-env NODE_PATH=src/ react-app-rewired start",
@@ -85,5 +87,6 @@
     "node-sass": "^4.12.0",
     "react-app-rewired": "^2.1.5",
     "stylelint": "^11.1.1"
-  }
+  },
+  "description": "Frontend for game inspired by dixit"
 }
