@@ -27,21 +27,21 @@ const RoomJoining = () => {
           }
         }}
         initialValues={{
-          id: ``
+          id: ``,
         }}
         onSubmit={({ id }, actions) => {
           // check for room
           // if cannot join get error
           dispatch(
-            emitter(`CHECK_FOR_ROOM`, { id }, roomFound => {
+            emitter(`CHECK_FOR_ROOM`, { id }, (roomFound) => {
               if (roomFound) {
                 history.push(`/game/${id}`);
               } else {
                 actions.setErrors({
-                  id: `Game doesn't exist or has already started`
+                  id: `Game doesn't exist or has already started`,
                 });
               }
-            })
+            }),
           );
           // if can join push to history
         }}

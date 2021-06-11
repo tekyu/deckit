@@ -1,14 +1,17 @@
-import Room from '../../classes/Room';
 // @ts-ignore
 import randomColor from 'random-color';
 import chalk from 'chalk';
+import logger from '../../loaders/logger';
+import Room from '../../classes/Room';
 import { User } from '../../schemas/User';
 import getRoomObjectForUpdate from '../../utils/getRoomObjectForUpdate';
 import getRoomNamespaceFromList from '../../utils/getRoomNamespaceFromList';
 import getRoom from '../../utils/getRoom';
 import { getGameOptions } from '../../utils/gameMapping';
 import getRoomUpdateState from '../../utils/getRoomUpdateState';
-//TODO: Move interfaces to other file
+import ICreateRoomParams from './interfaces/ICreateRoom';
+import IJoinRoomParams from './interfaces/IJoinRoom';
+// TODO: Move interfaces to other file
 interface Iparams {
   id: string;
   username?: string;
@@ -38,26 +41,23 @@ const CREATE_ROOM = 'CREATE_ROOM';
 const JOIN_ROOM = 'JOIN_ROOM';
 const WAITING_ROOM = 'WAITING_ROOM';
 
-//TODO: Change types
+// TODO: Change types
 export const RoomEvents = function (socket: any, io: any) {
   this.socket = socket;
   this.io = io;
 
-  socket.on(CREATE_ROOM, (params: any, callback: Function) => {
+  socket.on(CREATE_ROOM, (params: ICreateRoomParams, callback: Function) => {
     console.log('[RoomEvents] CREATE_ROOM');
     const { roomOptions, id } = params;
     const room = new Room(roomOptions, id);
     const { id: roomId, mode } = room;
-    console.log(
-      chalk.bgYellow.black(`[Room] Room ${room.id} created with options `),
-      room
-    );
+    logger.info(`Room ${room.id} created with options`, room);
     io.gameRooms[mode][roomId] = room;
     callback({ created: true, roomId });
   });
 
-  socket.on(JOIN_ROOM, (params: Object, callback: Function) => {
-    console.log('[RoomEvents] JOIN_ROOM');
+  socket.on(JOIN_ROOM, (params: IJoinRoomParams, callback: Function) => {
+    console.log('[RoomEvents] JOIN_ROOM', params);
     const { roomId, userData }: any = params;
     const room = getRoom(roomId, io.gameRooms);
 
@@ -73,13 +73,13 @@ export const RoomEvents = function (socket: any, io: any) {
       callback({ error: `Sorry, room ${room.name} is full` });
       return;
     }
-    //@ts-ignore
+    // @ts-ignore
     // const gameOptions = getGameOptions(room.gameCode).playerModel;
     const panels = {
-      score: { listener: `scoreUpdate` },
-      chat: { listener: `incomingChatMessage` },
-      log: { listener: `incomingLog` },
-      settings: { listener: `roomSettings` },
+      score: { listener: 'scoreUpdate' },
+      chat: { listener: 'incomingChatMessage' },
+      log: { listener: 'incomingLog' },
+      settings: { listener: 'roomSettings' },
     };
 
     socket.pswOptions.color = randomColor(0.3, 0.99).hexString();
@@ -89,27 +89,27 @@ export const RoomEvents = function (socket: any, io: any) {
       ...userData,
     };
     socket.pswOptions.rooms = socket.pswOptions.rooms.filter(
-      (id: string) => id !== WAITING_ROOM
+      (id: string) => id !== WAITING_ROOM,
     );
     socket.leave(WAITING_ROOM);
     socket.pswOptions.rooms.push(roomId);
     socket.join(roomId);
     socket.emit('UPDATE_PLAYER', { rooms: socket.pswOptions.rooms });
-    //@ts-ignore
+    // @ts-ignore
     room
       .connectPlayer(socket.pswOptions)
       .then((players: any) => {
         const updatedRoomObject = [
           getRoomObjectForUpdate(
             room,
-            getRoomUpdateState(players.length, room.playersMax, room.state)
+            getRoomUpdateState(players.length, room.playersMax, room.state),
           ),
         ];
-        //@ts-ignore
+        // @ts-ignore
         callback(room.roomOptions);
         socket
           .to(roomId)
-          //@ts-ignore
+          // @ts-ignore
           .emit('ROOM_UPDATED', { players: room.roomOptions.players });
         if (room.mode === 'public') {
           io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
@@ -120,7 +120,7 @@ export const RoomEvents = function (socket: any, io: any) {
           error: `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`,
         });
         Error(
-          `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`
+          `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`,
         );
       });
   });
@@ -137,14 +137,14 @@ export const RoomEvents = function (socket: any, io: any) {
       room.disconnectPlayer(socket.pswOptions.id);
       if (!players || !players.length) {
         const namespace = getRoomNamespaceFromList(roomId, io.gameRooms);
-        //@ts-ignore
+        // @ts-ignore
         delete io.gameRooms[namespace][roomId];
       }
       if (room.state < 2 && room.mode === 'public') {
         const updatedRoomObject = [
           getRoomObjectForUpdate(
             room,
-            getRoomUpdateState(players.length, room.playersMax, room.state)
+            getRoomUpdateState(players.length, room.playersMax, room.state),
           ),
         ];
         io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
@@ -157,10 +157,10 @@ export const RoomEvents = function (socket: any, io: any) {
     });
   });
 
-  socket.on('LEAVE_ROOM', ({ roomId }: any) => {
+  socket.on('LEAVE_ROOM', ({ roomId }: { roomId: string }) => {
     console.log('[RoomEvents] LEAVE_ROOM');
     socket.pswOptions.rooms = socket.pswOptions.rooms.filter(
-      (id: String) => id !== roomId
+      (id: String) => id !== roomId,
     );
     const room = getRoom(roomId, io.gameRooms);
     if (!room) {
@@ -171,7 +171,7 @@ export const RoomEvents = function (socket: any, io: any) {
     room.disconnectPlayer(socket.pswOptions.id);
     if (!players || !players.length) {
       const namespace = getRoomNamespaceFromList(roomId, io.gameRooms);
-      //@ts-ignore
+      // @ts-ignore
       delete io.gameRooms[namespace][roomId];
     }
     socket.pswOptions.rooms.push(WAITING_ROOM);
@@ -179,7 +179,7 @@ export const RoomEvents = function (socket: any, io: any) {
       const updatedRoomObject = [
         getRoomObjectForUpdate(
           room,
-          getRoomUpdateState(players.length, room.playersMax, room.state)
+          getRoomUpdateState(players.length, room.playersMax, room.state),
         ),
       ];
       io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
@@ -238,15 +238,15 @@ export const RoomEvents = function (socket: any, io: any) {
     socket.join(WAITING_ROOM);
   });
 
-  socket.on('CHECK_FOR_ROOM', ({ id }: any, callback: Function) => {
+  socket.on('CHECK_FOR_ROOM', ({ id }: { id: string }, callback: Function) => {
     console.log('[RoomEvents] CHECK_FOR_ROOM');
     const room = getRoom(id, io.gameRooms);
 
-    callback(room ? true : false);
+    callback(!!room);
   });
 
+  // deprecated
   socket.on('GET_ROOM_INFO', (params: any, callback: Function) => {
-    console.log('[RoomEvents] GET_ROOM_INFO');
     const room = getRoom(params.id, io.gameRooms);
     if (!room) {
       callback({});
@@ -256,16 +256,14 @@ export const RoomEvents = function (socket: any, io: any) {
     callback(roomInfo);
   });
 
-  socket.on('getScoreData', ({ activeRoomId }: any, callback: Function) => {
-    console.log('[RoomEvents] getScoreData');
+  socket.on('getScoreData', ({ activeRoomId }: { activeRoomId: string }, callback: Function) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     callback((room && room.scoreboard) || {});
   });
 
-  socket.on('UPDATE_PLAYER', ({ data, activeRoomId, playerId }: any) => {
-    console.log('[RoomEvents] UPDATE_PLAYER');
+  socket.on('UPDATE_PLAYER', ({ data, activeRoomId, playerId }: { data: Object, activeRoomId: string, playerId: string }) => {
     const room = getRoom(activeRoomId, io.gameRooms);
-    //@ts-ignore
+    // @ts-ignore
     room.players = room.players.map((player: any) => {
       if (player.id === playerId) {
         return { ...player, ...data };
@@ -273,34 +271,32 @@ export const RoomEvents = function (socket: any, io: any) {
       return { ...player };
     });
 
-    //@ts-ignore
+    // @ts-ignore
     const arePlayersReady = room.players.some(({ state }) => state === 1);
-    //@ts-ignore
+    // @ts-ignore
     room.setState(arePlayersReady ? 1 : 0);
     io.in(activeRoomId).emit('ROOM_UPDATED', {
-      //@ts-ignore
+      // @ts-ignore
       players: room.players,
-      //@ts-ignore
+      // @ts-ignore
       state: room.state,
     });
   });
 
-  socket.on('KICK_PLAYER', ({ userId, activeRoomId, adminId }: any) => {
-    console.log('[RoomEvents] KICK_PLAYER');
+  socket.on('KICK_PLAYER', ({ userId, activeRoomId }: { userId: string, activeRoomId: string }) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;
     const player = room.players.find(({ id }: any) => id === userId);
     room.players = room.players.filter(({ id }: any) => id !== userId);
     io.in(activeRoomId).emit('ROOM_UPDATED', { players: room.players });
-    //@ts-ignore
+    // @ts-ignore
     io.to(player.socketId).emit('KICKED', { activeRoomId });
     io.in(WAITING_ROOM).emit('updateListOfRooms', [
       getRoomObjectForUpdate(room, 'update'),
     ]);
   });
 
-  socket.on('CHANGE_ROOM_MODE', ({ activeRoomId }: any) => {
-    console.log('[RoomEvents] CHANGE_ROOM_MODE');
+  socket.on('CHANGE_ROOM_MODE', ({ activeRoomId }: { activeRoomId: string }) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) {
       return null;
@@ -314,12 +310,12 @@ export const RoomEvents = function (socket: any, io: any) {
     io.in(WAITING_ROOM).emit('updateListOfRooms', [
       getRoomObjectForUpdate(
         room,
-        room.mode === 'public' ? 'update' : 'remove'
+        room.mode === 'public' ? 'update' : 'remove',
       ),
     ]);
   });
 
-  socket.on('ADD_SEAT', ({ activeRoomId }: any) => {
+  socket.on('ADD_SEAT', ({ activeRoomId }: { activeRoomId: string }) => {
     console.log('[RoomEvents] ADD_SEAT');
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;
@@ -330,7 +326,7 @@ export const RoomEvents = function (socket: any, io: any) {
     ]);
   });
 
-  socket.on('REMOVE_SEAT', ({ activeRoomId }: any) => {
+  socket.on('REMOVE_SEAT', ({ activeRoomId }: { activeRoomId: string }) => {
     console.log('[RoomEvents] REMOVE_SEAT');
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;

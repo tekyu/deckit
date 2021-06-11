@@ -11,28 +11,20 @@ const Browse = ({ auth }) => {
   const dispatch = useDispatch();
   const refreshList = useCallback(() => {
     dispatch(
-      socketActions.emitter(`getRooms`, null, rooms => {
+      socketActions.emitter(`getRooms`, null, (rooms) => {
         setParsedRooms(rooms);
-      })
+      }),
     );
   }, [dispatch]);
+
   useEffect(() => {
-    // userActions.checkAuth();
     refreshList();
   }, [refreshList]);
-  const selectHandler = useCallback(() => {}, []);
-  // const sortHandler = useCallback(
-  //   options => {
-  //     const { searchPhrase, sortBy } = options;
-  //     const newRooms = Object.values(rooms).filter(room => {
-  //       return room[sortBy].toString().includes(searchPhrase);
-  //     });
-  //     setParsedRooms(newRooms.sort(dynamicSort(sortBy)));
-  //   },
-  //   [rooms]
-  // );
-  const updateListOfRooms = ({ socketId, data }) => {
-    setParsedRooms(oldRooms => {
+
+  const selectHandler = useCallback(() => { }, []);
+
+  const updateListOfRooms = ({ data }) => {
+    setParsedRooms((oldRooms) => {
       const newRooms = { ...oldRooms };
       data.forEach(({ id, action, room }) => {
         switch (action) {
@@ -47,15 +39,16 @@ const Browse = ({ auth }) => {
             break;
           default:
             throw Error(
-              `Action of ${action} isn't one of known actions for rooms [add/update/remove]`
+              `Action of ${action} isn't one of known actions for rooms [add/update/remove]`,
             );
         }
       });
       return newRooms;
     });
   };
+
   const removeRoomFromList = ({ roomId }) => {
-    setParsedRooms(oldRooms => {
+    setParsedRooms((oldRooms) => {
       const newRooms = { ...oldRooms };
       delete newRooms[roomId];
       return newRooms;
@@ -68,30 +61,31 @@ const Browse = ({ auth }) => {
     dispatch(socketActions.listener(`removeRoomFromList`, removeRoomFromList));
     return () => {
       dispatch(
-        socketActions.removeListener(`updateListOfRooms`, updateListOfRooms)
+        socketActions.removeListener(`updateListOfRooms`, updateListOfRooms),
       );
       dispatch(
-        socketActions.removeListener(`addRoomToList`, updateListOfRooms)
+        socketActions.removeListener(`addRoomToList`, updateListOfRooms),
       );
       dispatch(
-        socketActions.removeListener(`removeRoomFromList`, removeRoomFromList)
+        socketActions.removeListener(`removeRoomFromList`, removeRoomFromList),
       );
     };
   }, [dispatch]);
+
   const roomCards = parsedRooms
-    ? Object.values(parsedRooms).map(room => (
-        <RoomCard
-          key={room.id}
-          options={room}
-          handler={selectHandler}
-          isAnonymous={!auth}
-        />
-      ))
+    ? Object.values(parsedRooms).map((room) => (
+      <RoomCard
+        key={room.id}
+        options={room}
+        handler={selectHandler}
+        isAnonymous={!auth}
+      />
+    ))
     : null;
+
   return (
     <>
       <RoomJoining />
-      {/* <Sort sortHandler={sortHandler} /> */}
       <Styled.Separator>Browse rooms</Styled.Separator>
       {(!roomCards || roomCards.length === 0) && (
         <Styled.CardsPlaceholder>
@@ -105,16 +99,18 @@ const Browse = ({ auth }) => {
   );
 };
 
-Browse.propTypes = {
-  auth: PropTypes.bool
+Browse.defaultProps = {
+  auth: false,
 };
 
-const mapStateToProps = ({ auth, room, user }) => {
-  return {
-    auth,
-    rooms: room.rooms,
-    user
-  };
+Browse.propTypes = {
+  auth: PropTypes.bool,
 };
+
+const mapStateToProps = ({ auth, room, user }) => ({
+  auth,
+  rooms: room.rooms,
+  user,
+});
 
 export default connect(mapStateToProps)(Browse);

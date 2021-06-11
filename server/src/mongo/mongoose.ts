@@ -2,26 +2,22 @@
 import mongoose from 'mongoose';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
-import chalk from 'chalk';
+import logger from '../loaders/logger';
 
 const MongoStoreSession = MongoStore(session);
-const Mongoose = app => {
+const Mongoose = (app) => {
   // Create the database connection
-  mongoose.connect(process.env.DEVDB_CONN, { useNewUrlParser: true });
+  mongoose.connect(process.env.DEVDB_CONN, { useNewUrlParser: true, useUnifiedTopology: true });
   app.use(
     session({
-      store: new MongoStoreSession({ mongooseConnection: mongoose.connection })
-    })
+      store: new MongoStoreSession({ mongooseConnection: mongoose.connection }),
+    }),
   );
 
   // CONNECTION EVENTS
   // When successfully connected
-  mongoose.connection.on('connected', function() {
-    console.log(
-      chalk.black.bgMagenta(
-        `Mongoose default connection open to ${process.env.DB_ADDRESS}`
-      )
-    );
+  mongoose.connection.on('connected', () => {
+    logger.info(`Mongoose default connection open to ${process.env.DB_ADDRESS}`);
   });
 };
 

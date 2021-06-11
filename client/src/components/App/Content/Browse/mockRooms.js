@@ -7,12 +7,12 @@ const mockRooms = [
     createdAt: `1541888514200`,
     playersCurrent: `5`,
     playersMax: `10`,
-    mode: "public",
+    mode: `public`,
     gameCode: `u`,
     gameOptions: {
       decks: [`standard`],
-      chat: []
-    }
+      chat: [],
+    },
   },
   {
     id: `12345678`,
@@ -22,12 +22,12 @@ const mockRooms = [
     createdAt: `1541888514000`,
     playersCurrent: `3`,
     playersMax: `10`,
-    mode: "public",
+    mode: `public`,
     gameCode: `h`,
     gameOptions: {
       decks: [`wholesome`, `countries`],
-      chat: []
-    }
+      chat: [],
+    },
   },
   {
     id: `12345`,
@@ -37,13 +37,13 @@ const mockRooms = [
     createdAt: `1541888514100`,
     playersCurrent: `7`,
     playersMax: `10`,
-    mode: "public",
+    mode: `public`,
     gameCode: `j`,
     gameOptions: {
       decks: [`wholesome`, `countries`],
-      chat: []
-    }
-  }
+      chat: [],
+    },
+  },
 ];
 
 export default mockRooms;

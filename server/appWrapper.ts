@@ -6,10 +6,10 @@ import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import expressSession from 'express-session';
 import morgan from 'morgan';
-import chalk from 'chalk';
+import path from 'path';
+import logger from './src/loaders/logger';
 import Passport from './src/api/Passport';
 import { User } from './src/schemas/User';
-import path from 'path';
 
 const appWrapper = (IncomingPort = 3011) => {
   const app = express();
@@ -34,7 +34,7 @@ const appWrapper = (IncomingPort = 3011) => {
       credentials: true,
       origin: process.env.DEV_ADDRESS,
       optionsSuccessStatus: 200,
-    })
+    }),
   );
   app.post(
     '*',
@@ -42,7 +42,7 @@ const appWrapper = (IncomingPort = 3011) => {
       credentials: true,
       origin: process.env.DEV_ADDRESS,
       optionsSuccessStatus: 200,
-    })
+    }),
   );
   app.get(
     '*',
@@ -50,7 +50,7 @@ const appWrapper = (IncomingPort = 3011) => {
       credentials: true,
       origin: process.env.DEV_ADDRESS,
       optionsSuccessStatus: 200,
-    })
+    }),
   );
   app.use(helmet());
   app.use(morgan('tiny'));
@@ -58,24 +58,23 @@ const appWrapper = (IncomingPort = 3011) => {
   app.use(
     expressSession({
       secret: process.env.COOKIE_KEY,
-      resave: false, //required
-      saveUninitialized: false, //required
+      resave: false, // required
+      saveUninitialized: false, // required
       cookie: {
         expires: 1000 * 60 * 60 * 24 * 3,
         rolling: true,
       },
-    })
+    }),
   );
   // app.use(Passport.initialize());
   // app.use(Passport.session());
   app.set('view engine', 'ejs');
-  app.listen(port, () =>
-    console.log(chalk.black.bgGreen(`Server listening on port ${port}`))
-  );
-  app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+
+  app.listen(port, () => logger.info(`✌️ Server listening on port ${port}`));
+  app.get('/', (req, res) => {
+    res.sendFile(`${__dirname}/index.html`);
   });
-  app.get('/showusers', function (req, res) {
+  app.get('/showusers', (req, res) => {
     User.find({}, (err, users) => {
       res.render('ShowUsers.ejs', { users });
     });

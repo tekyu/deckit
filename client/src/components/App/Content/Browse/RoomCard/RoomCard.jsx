@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { Button } from "@material-ui/core";
+import Icon from "components/Generic/Icon/Icon";
+import PlayerCounterWithIcon from "components/Generic/PlayerCounterWithIcon/PlayerCounterWithIcon";
 import * as styles from "./RoomCard.module.scss";
-import Icon from "../../../../Generic/Icon/Icon";
-import PlayerCounterWithIcon from "../../../../Generic/PlayerCounterWithIcon/PlayerCounterWithIcon";
 
 const PlayButton = styled(Button)`
   padding: 16px 32px;
@@ -17,51 +17,49 @@ const PlayButton = styled(Button)`
     #cf77f3 150%
   );
   box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.28);
-  /* &:hover,
-  &:focus {
-    box-shadow: 5px 5px 15px rgba(207, 119, 243, 0.5),
-      5px 5px 15px rgba(0, 155, 255, 0.5), -5px 5px 15px rgba(42, 201, 219, 0.5);
-  } */
 `;
 
-const RoomCard = ({ handler, options, isAnonymous }) => {
-  const { id, name, createdBy, playersMax, mode, gameCode, players } = options;
-  // const deckList = gameOptions.decks.map(deck => (
-  //   <span className={styles.deckName}>{deck}</span>
-  // ));
-  return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.logo}>
-          <span>{gameCode.toUpperCase()}</span>
-        </div>
-      </div>
-      <div className={styles.content}>
-        <label className={styles.name}>{name}</label>
-        <p className={styles.owner}>{createdBy}</p>
-        <div className={styles.details}>
-          <PlayerCounterWithIcon
-            playersNow={players.length}
-            playersMax={playersMax}
-          />
-          {mode === "private" && <Icon icon="lock" size={30} />}
-        </div>
-      </div>
-      <div className={styles.footer}>
-        <Link to={`/game/${id}`} value={id}>
-          <PlayButton variant="contained" color="primary" aria-label="join">
-            Join
-          </PlayButton>
-          {/* {isAnonymous ? `Play as anonymous` : `Join`} */}
-        </Link>
+const RoomCard = ({
+  options: {
+    id, name, createdBy, playersMax, mode, gameCode, players,
+  },
+}) => (
+  <div className={styles.container}>
+    <div className={styles.header}>
+      <div className={styles.logo}>
+        <span>{gameCode.toUpperCase()}</span>
       </div>
     </div>
-  );
-};
-
+    <div className={styles.content}>
+      <label className={styles.name}>{name}</label>
+      <p className={styles.owner}>{createdBy}</p>
+      <div className={styles.details}>
+        <PlayerCounterWithIcon
+          playersNow={players.length}
+          playersMax={playersMax}
+        />
+        {mode === `private` && <Icon icon="lock" size={30} />}
+      </div>
+    </div>
+    <div className={styles.footer}>
+      <Link to={`/game/${id}`} value={id}>
+        <PlayButton variant="contained" color="primary" aria-label="join">
+          Join
+        </PlayButton>
+      </Link>
+    </div>
+  </div>
+);
 RoomCard.propTypes = {
-  handler: PropTypes.func.isRequired,
-  isAnonymous: PropTypes.bool
+  options: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+    createdBy: PropTypes.string,
+    playersMax: PropTypes.number,
+    mode: PropTypes.string,
+    gameCode: PropTypes.string,
+    players: PropTypes.array,
+  }),
 };
 
 export default memo(RoomCard);

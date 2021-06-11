@@ -14,11 +14,9 @@ const RoomCard = ({ handler, options, isAnonymous }) => {
     playersMax,
     isPublic,
     gameCode,
-    gameOptions
+    gameOptions,
   } = options;
-  const deckList = gameOptions.decks.map(deck => {
-    return <span className={styles.deckName}>{deck}</span>;
-  });
+  const deckList = gameOptions.decks.map((deck) => <span className={styles.deckName}>{deck}</span>);
 
   return (
     <div className={styles.container}>
@@ -35,7 +33,7 @@ const RoomCard = ({ handler, options, isAnonymous }) => {
             <span>{playersCurrent}</span>
             <span>{playersMax}</span>
           </div>
-          <div className={styles.mode}>{isPublic ? "Public" : "Private"}</div>
+          <div className={styles.mode}>{isPublic ? `Public` : `Private`}</div>
         </div>
       </div>
       <div className={styles.footer}>
@@ -45,7 +43,7 @@ const RoomCard = ({ handler, options, isAnonymous }) => {
           to={`/game/${id}`}
           value={id}
         >
-          {isAnonymous ? "Play as anonymous" : "Join"}
+          {isAnonymous ? `Play as anonymous` : `Join`}
         </Link>
       </div>
     </div>

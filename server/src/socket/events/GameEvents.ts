@@ -28,13 +28,13 @@ export const GameEvents = (socket: any, io: any) => {
       return null;
     }
 
-    let { gameOptions } = room;
+    const { gameOptions } = room;
     const { decks } = gameOptions;
     // move this to roomEvents
     // create prepareRoom func
     // put this call there
     await axios
-      .get(`/cards`, {
+      .get('/cards', {
         params: {
           decks,
         },
@@ -46,7 +46,7 @@ export const GameEvents = (socket: any, io: any) => {
 
     const players = distributeRandomCardsToPlayers(
       room.players,
-      room.gameOptions.remainingCards
+      room.gameOptions.remainingCards,
     );
     players.forEach(({ id, cards }) => {
       gameOptions.updateCardTracker(id, cards, 'add');
@@ -91,11 +91,11 @@ export const GameEvents = (socket: any, io: any) => {
     room.gameOptions.hintCard = card;
     if (
       !room.gameOptions.pickedCardsToHint.some(
-        ({ owner: { id } }) => socket.pswOptions.id === id
+        ({ owner: { id } }) => socket.pswOptions.id === id,
       )
     ) {
       room.gameOptions.pickedCardsToHint.push({
-        card: card,
+        card,
         owner: {
           id: socket.pswOptions.id,
           color: socket.pswOptions.color,
@@ -125,7 +125,7 @@ export const GameEvents = (socket: any, io: any) => {
       room.gameOptions.updateCardTracker(
         socket.pswOptions.id,
         [room.gameOptions.hintCard],
-        'remove'
+        'remove',
       );
       io.in(activeRoomId).emit('GAME_UPDATED', {
         stage: room.gameOptions.stage,
@@ -144,7 +144,7 @@ export const GameEvents = (socket: any, io: any) => {
       players,
     } = room;
     pickedCardsToHint.push({
-      card: card,
+      card,
       owner: {
         id: socket.pswOptions.id,
         color: socket.pswOptions.color,
@@ -172,8 +172,8 @@ export const GameEvents = (socket: any, io: any) => {
   socket.on('CHOSEN_CARD_TO_MATCH_HINT', ({ activeRoomId, card }) => {
     console.log('[GameEvents] CHOSEN_CARD_TO_MATCH_HINT');
     const room = getRoom(activeRoomId, io.gameRooms);
-    let { gameOptions } = room;
-    let { players, scoreboard } = room;
+    const { gameOptions } = room;
+    const { players, scoreboard } = room;
     const {
       pickedCardsToHint,
       choosedCardsToMatchHint,
@@ -182,13 +182,11 @@ export const GameEvents = (socket: any, io: any) => {
       maxScore,
       hintCard,
     } = gameOptions;
-    let { stage, round } = gameOptions;
-    const pickedCard = pickedCardsToHint.find(({ card: { id } }) => {
-      return id === card.id;
-    });
+    const { stage, round } = gameOptions;
+    const pickedCard = pickedCardsToHint.find(({ card: { id } }) => id === card.id);
     if (playersChoosedCard.indexOf(socket.pswOptions.id) === -1) {
       choosedCardsToMatchHint.push({
-        card: card,
+        card,
         chooser: socket.pswOptions.id,
         owner: pickedCard.owner,
       });

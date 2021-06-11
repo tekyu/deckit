@@ -1,18 +1,17 @@
 import http from 'http';
 import socketIo from 'socket.io';
-import chalk from 'chalk';
-import { RoomEvents, GameEvents, UserEvents, ChatEvents } from './events';
+import {
+  RoomEvents, GameEvents, UserEvents, ChatEvents,
+} from './events';
 import getRoomObjectForUpdate from '../utils/getRoomObjectForUpdate';
 import getRoom from '../utils/getRoom';
-import Room from '../classes/Room';
+import logger from '../loaders/logger';
 
 const WAITING_ROOM = 'WAITING_ROOM';
-//TODO: Change types
+// TODO: Change types
 const ioEvents = (io: any) => {
   io.on('connection', (socket: any) => {
-    console.log(
-      chalk.black.bgBlue(`Connection with socket established for ${socket.id}`)
-    );
+    logger.info(`Connection with socket established for ${socket.id}`);
     socket.pswOptions = {
       rooms: [],
       socketId: socket.id,
@@ -29,7 +28,7 @@ const ioEvents = (io: any) => {
           }
           return newRooms;
         },
-        {}
+        {},
       );
       callback(filteredRooms);
     });
@@ -40,15 +39,10 @@ const ioEvents = (io: any) => {
     ChatEvents(socket, io);
 
     socket.on('disconnect', () => {
-      console.log(
-        chalk.black.red(
-          `${socket.id} disconnected from the server`,
-          JSON.stringify(socket.pswOptions.rooms)
-        )
-      );
+      logger.info(`${socket.id} disconnected from the server`);
       socket.leave(WAITING_ROOM);
       socket.pswOptions.rooms = socket.pswOptions.rooms.filter(
-        (id: String) => id !== WAITING_ROOM
+        (id: String) => id !== WAITING_ROOM,
       );
       const updatedRooms = socket.pswOptions.rooms.map((id: String) => {
         const room = getRoom(id, io.gameRooms);
@@ -80,9 +74,7 @@ const SocketIo = (App: any) => {
   io.gameRooms = { public: {}, private: {}, fast: {} };
 
   ioEvents(io);
-  server.listen(port, () =>
-    console.log(chalk.black.bgGreen(`Socket server listening on port ${port}`))
-  );
+  server.listen(port, () => logger.info(`Socket server listening on port ${port}`));
 };
 
 export default SocketIo;

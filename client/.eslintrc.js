@@ -17,7 +17,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-    'react',
+    'react', "react-hooks"
   ],
   rules: {
     quotes: [2, "backtick"],
@@ -43,7 +43,8 @@ module.exports = {
     "no-param-reassign": [
       "error",
       { props: true, ignorePropertyModificationsFor: ["draft"] }
-    ]
+    ],
+    "import/named": 0
   },
   settings: {
     "import/resolver": {
