@@ -1,7 +1,8 @@
 import React from "react";
-import { SvgIcon } from "@material-ui/core";
+import PropTypes from "prop-types";
 import styled from "styled-components";
-import { ReactComponent as ScoreIconSvg } from "../../../assets/icons/freepick/score.svg";
+import { SvgIcon } from "@material-ui/core";
+import { ReactComponent as ScoreIconSvg } from "assets/icons/freepick/score.svg";
 
 const StyledContainer = styled.div`
   position: relative;
@@ -16,16 +17,24 @@ const StyledContainer = styled.div`
   }
 `;
 
-const ScoreIcon = props => {
-  return (
-    <StyledContainer onClick={props.handler} name={props.name}>
-      <SvgIcon
-        {...props}
-        component={ScoreIconSvg}
-        viewBox="0 -51 512.00202 512"
-      />
-    </StyledContainer>
-  );
+const ScoreIcon = ({ handler, name, ...rest }) => (
+  <StyledContainer onClick={handler} name={name}>
+    <SvgIcon
+      {...rest}
+      component={ScoreIconSvg}
+      viewBox="0 -51 512.00202 512"
+    />
+  </StyledContainer>
+);
+
+ScoreIcon.defaultProps = {
+  handler: () => { },
+  name: `Score Icon`,
+};
+
+ScoreIcon.propTypes = {
+  handler: PropTypes.func,
+  name: PropTypes.string,
 };
 
 export default ScoreIcon;

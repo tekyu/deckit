@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { socketActions } from "store/actions";
+import { selectAuth } from 'store/user/userSelectors';
 import RoomCard from "./RoomCard/RoomCard";
 import RoomJoining from "./RoomJoining/RoomJoining";
 import * as Styled from "./Browse.styled";
 
-const Browse = ({ auth }) => {
+const Browse = () => {
   const [parsedRooms, setParsedRooms] = useState([]);
+  const auth = useSelector(selectAuth);
   const dispatch = useDispatch();
   const refreshList = useCallback(() => {
     dispatch(
@@ -99,18 +100,4 @@ const Browse = ({ auth }) => {
   );
 };
 
-Browse.defaultProps = {
-  auth: false,
-};
-
-Browse.propTypes = {
-  auth: PropTypes.bool,
-};
-
-const mapStateToProps = ({ auth, room, user }) => ({
-  auth,
-  rooms: room.rooms,
-  user,
-});
-
-export default connect(mapStateToProps)(Browse);
+export default Browse;

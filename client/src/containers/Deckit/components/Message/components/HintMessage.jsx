@@ -1,39 +1,28 @@
 import React from "react";
-import styled from "styled-components";
+import PropTypes from "prop-types";
 import StageMessage from "./StageMessage";
+import * as Styled from './HintMessage.styled';
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+const HintMessage = ({ hint, stage, isHinter }) => (
+  <Styled.Container>
+    <Styled.HintContainer>
+      <Styled.HintLabel>Your hint is</Styled.HintLabel>
+      <Styled.Hint>{hint}</Styled.Hint>
+    </Styled.HintContainer>
+    <StageMessage stage={stage} isHinter={isHinter} />
+  </Styled.Container>
+);
 
-const StyledHintContainer = styled.div`
-  margin-bottom: 10px;
-  span {
-    display: block;
-  }
-`;
+HintMessage.defaultProps = {
+  hint: `Default hint`,
+  stage: 1,
+  isHinter: false,
+};
 
-const StyledHintLabel = styled.span`
-  font-size: 14px;
-  color: rgba(0, 0, 0, 0.78);
-`;
-
-const StyledHint = styled.span`
-  font-size: 24px;
-  margin-top: 4px;
-`;
-
-const HintMessage = ({ hint, stage, isHinter }) => {
-  return (
-    <StyledContainer>
-      <StyledHintContainer>
-        <StyledHintLabel>Your hint is</StyledHintLabel>
-        <StyledHint>{hint}</StyledHint>
-      </StyledHintContainer>
-      <StageMessage stage={stage} isHinter={isHinter} />
-    </StyledContainer>
-  );
+HintMessage.propTypes = {
+  hint: PropTypes.string,
+  stage: PropTypes.number,
+  isHinter: PropTypes.bool,
 };
 
 export default HintMessage;

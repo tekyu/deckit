@@ -1,7 +1,8 @@
 import React from "react";
-import { SvgIcon } from "@material-ui/core";
+import PropTypes from "prop-types";
 import styled from "styled-components";
-import { ReactComponent as ChatIconSvg } from "../../../assets/icons/freepick/chat.svg";
+import { SvgIcon } from "@material-ui/core";
+import { ReactComponent as ChatIconSvg } from "assets/icons/freepick/chat.svg";
 
 const StyledContainer = styled.div`
   position: relative;
@@ -16,12 +17,20 @@ const StyledContainer = styled.div`
   }
 `;
 
-const ChatIcon = props => {
-  return (
-    <StyledContainer onClick={props.handler} name={props.name}>
-      <SvgIcon {...props} component={ChatIconSvg} viewBox="0 0 512 512" />
-    </StyledContainer>
-  );
+const ChatIcon = ({ handler, name, ...rest }) => (
+  <StyledContainer onClick={handler} name={name}>
+    <SvgIcon {...rest} component={ChatIconSvg} viewBox="0 0 512 512" />
+  </StyledContainer>
+);
+
+ChatIcon.defaultProps = {
+  handler: () => { },
+  name: `Chat Icon`,
+};
+
+ChatIcon.propTypes = {
+  handler: PropTypes.func,
+  name: PropTypes.string,
 };
 
 export default ChatIcon;

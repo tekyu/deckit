@@ -10,12 +10,11 @@ const StyledContainer = styled.div`
   align-items: center;
   margin-bottom: auto;
 `;
-const PlaceholderCardsList = ({ cards }) => {
-  return (
-    <StyledContainer>
-      <PlaceholderCard amount={cards.length} />
-    </StyledContainer>
-  );
-};
+
+const PlaceholderCardsList = ({ cards }) => (
+  <StyledContainer>
+    <PlaceholderCard amount={cards.length} />
+  </StyledContainer>
+);
 
 export default PlaceholderCardsList;

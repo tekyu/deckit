@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import LaurelIcon from "../../../../components/Generic/Icons/LaurelIcon";
+import LaurelIcon from "components/Generic/Icons/LaurelIcon";
 
-export const StyledContainer = styled.div`
+export const Container = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -19,7 +19,7 @@ export const StyledContainer = styled.div`
   background: #fff;
 `;
 
-export const StyledHeader = styled.div`
+export const Header = styled.div`
   padding: 20px;
   padding-top: 0;
   text-align: center;
@@ -27,29 +27,29 @@ export const StyledHeader = styled.div`
   margin-top: auto;
 `;
 
-export const StyledAnnouncement = styled.h3`
+export const Announcement = styled.h3`
   font-size: 18px;
   margin-bottom: 20px;
 `;
 
-export const StyledLaurel = styled(LaurelIcon)`
+export const Laurel = styled(LaurelIcon)`
   font-size: 8rem;
   margin-bottom: 10px;
 `;
 
-export const StyledName = styled.h4`
+export const Name = styled.h4`
   font-size: 46px;
   margin-bottom: 20px;
 `;
 
-export const StyledRunnersupHeader = styled.h4`
+export const RunnersupHeader = styled.h4`
   font-size: 24px;
   text-align: center;
   margin-bottom: 20px;
   margin-top: auto;
 `;
 
-export const StyledRunnersup = styled.div`
+export const Runnersup = styled.div`
   margin-bottom: auto;
   overflow-y: auto;
   width: 80%;
@@ -57,15 +57,15 @@ export const StyledRunnersup = styled.div`
   max-height: 50vh;
 `;
 
-export const StyledScoreElement = styled.div`
+export const ScoreElement = styled.div`
   margin: 10px 0;
 `;
 
-export const StyledLink = styled(Link)`
+export const ReturnLink = styled(Link)`
   margin: 40px;
 `;
 
-export const StyledReturnButton = styled(Button)`
+export const ReturnButton = styled(Button)`
   padding: 16px 32px;
   border-radius: 3px;
   background-image: linear-gradient(

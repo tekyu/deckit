@@ -1,44 +1,25 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "components/Generic";
 import { deckitActions } from "store/actions";
 import { deckitSelectors, roomSelectors } from "store/selectors";
 import PickedBy from "./components/PickedBy";
+import * as Styled from './Card.styled';
 
-const StyledContainer = styled.div`
-  width: 270px;
-  height: 400px;
-  border: 2px solid rgba(0,0,0, 0.2);
-  ${({ url }) =>
-    url && `background-image: url(${url}); background-size: cover;`}
-  ${({ clicked }) =>
-    clicked &&
-    `box-shadow: 0px 0px 7px 3px #cf77f3
-`}
-  ${({ clicked }) =>
-    !clicked &&
-    `cursor: pointer;
-`}
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Card = ({ card = {}, state = null, owner, pickedBy } = {}, props) => {
+const Card = ({
+  card = {}, state = null, pickedBy,
+} = {}) => {
   const dispatch = useDispatch();
   const [showButton, setShowButton] = useState(false);
-  const { id = 123, title = `placeholder`, url = `` } = card;
+  const { id = 123, url = `` } = card;
   const activeRoomId = useSelector(roomSelectors.activeRoomId);
   const pickedCard = useSelector(deckitSelectors.pickedCard);
   const showButtonHandler = () => {
-    setShowButton(lastState =>
-      (state === `picker` && pickedCard) ||
-      (state === `chooser` && pickedCard && pickedCard.id === id)
-        ? false
-        : !lastState
-    );
+    setShowButton((lastState) => ((state === `picker` && pickedCard)
+      || (state === `chooser` && pickedCard && pickedCard.id === id)
+      ? false
+      : !lastState));
   };
   const pickCardHandler = () => {
     switch (state) {
@@ -57,7 +38,7 @@ const Card = ({ card = {}, state = null, owner, pickedBy } = {}, props) => {
   };
 
   return (
-    <StyledContainer
+    <Styled.Container
       clicked={showButton}
       id={id}
       key={id}
@@ -70,8 +51,30 @@ const Card = ({ card = {}, state = null, owner, pickedBy } = {}, props) => {
         </Button>
       )}
       {pickedBy && pickedBy.length > 0 && <PickedBy pickedBy={pickedBy} />}
-    </StyledContainer>
+    </Styled.Container>
   );
+};
+
+Card.defaultProps = {
+  state: `picker`,
+  pickedBy: [],
+  card: {
+    id: `Default id`,
+    url: ``,
+  },
+};
+
+Card.propTypes = {
+  state: PropTypes.string,
+  pickedBy: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string,
+    avatar: PropTypes.string,
+    color: PropTypes.string,
+  })),
+  card: PropTypes.shape({
+    id: PropTypes.string,
+    url: PropTypes.string,
+  }),
 };
 
 export default Card;

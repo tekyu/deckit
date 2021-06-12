@@ -30,10 +30,10 @@ const StageMessage = ({ stage, isHinter }) => {
         );
       }
       return (
-        <StyledMessage>{`Choose the card you think is hinter's`}</StyledMessage>
+        <StyledMessage>Choose the card you think is hinter's</StyledMessage>
       );
     case 5:
-      return <StyledMessage>{`Next round will start shortly`}</StyledMessage>;
+      return <StyledMessage>Next round will start shortly</StyledMessage>;
     default:
       return (
         <StyledMessage>{`You shouldn't be able to see this. Stage: ${stage}`}</StyledMessage>
@@ -42,8 +42,8 @@ const StageMessage = ({ stage, isHinter }) => {
 };
 
 StageMessage.propTypes = {
-  stage: PropTypes.number,
-  isHinter: PropTypes.bool
+  stage: PropTypes.number.isRequired,
+  isHinter: PropTypes.bool.isRequired,
 };
 
 export default StageMessage;

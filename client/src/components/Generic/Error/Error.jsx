@@ -1,13 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
-import * as styles from "./Error.module.scss";
+import * as Styled from "./Error.styled";
 
-const Error = ({ message }) => {
-  return <div className={styles.container}>{message}</div>;
-};
+const Error = ({ message }) => <Styled.Container>{message}</Styled.Container>;
 
 Error.propTypes = {
-  message: PropTypes.string.isRequired
+  message: PropTypes.string.isRequired,
 };
 
 export default Error;

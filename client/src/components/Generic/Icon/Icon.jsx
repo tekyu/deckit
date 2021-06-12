@@ -1,17 +1,14 @@
 import React from "react";
-import styled from "styled-components";
+import PropTypes from "prop-types";
 import iconMap from "./iconMap.json";
+import * as Styled from "./Icon.styled";
 
-const StyledIcon = styled.img`
-  width: ${({ size }) => `${size}px`};
-  height: ${({ size }) => `${size}px`};
-  min-width: ${({ size }) => `${size}px`};
-  min-height: ${({ size }) => `${size}px`};
-`;
-const Icon = ({ icon, size = 50, className, ...rest }) => {
-  const importSize = size > 50 ? "100" : "50";
+const Icon = ({
+  icon, size = 50, className, ...rest
+}) => {
+  const importSize = size > 50 ? `100` : `50`;
   return (
-    <StyledIcon
+    <Styled.Icon
       {...rest}
       className={className}
       src={`/assets/icons/Favorites/icons8-${iconMap[icon]}-${importSize}.png`}
@@ -19,6 +16,17 @@ const Icon = ({ icon, size = 50, className, ...rest }) => {
       size={size}
     />
   );
+};
+
+Icon.defaultProps = {
+  size: 50,
+  className: ``,
+};
+
+Icon.propTypes = {
+  icon: PropTypes.string.isRequired,
+  size: PropTypes.number,
+  className: PropTypes.string,
 };
 
 export default Icon;

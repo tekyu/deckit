@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import background from "../../../assets/images/trianglify.svg";
+import background from "assets/images/trianglify.svg";
 
 export const Container = styled.div`
   user-select: none;

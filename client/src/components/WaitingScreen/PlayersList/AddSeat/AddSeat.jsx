@@ -1,34 +1,21 @@
 import React from "react";
-import styled from "styled-components";
-import Icon from "components/Generic/Icon/Icon";
+import PropTypes from "prop-types";
+import * as Styled from './AddSeat.styled';
 
-const StyledContainer = styled.div`
-  margin: 0 10px 10px 10px;
-  height: 200px;
-  width: 140px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-const StyledIconContainer = styled.div`
-  margin-top: 40px;
-  width: 60px;
-  height: 60px;
-  border-radius: 100%;
-  position: relative;
-`;
-const StyledIcon = styled(Icon)`
-  cursor: pointer;
-`;
+const AddSeat = ({ handler }) => (
+  <Styled.Container>
+    <Styled.IconContainer>
+      <Styled.ActionIcon icon="plus" size={60} onClick={handler} />
+    </Styled.IconContainer>
+  </Styled.Container>
+);
 
-const AddSeat = ({ handler }) => {
-  return (
-    <StyledContainer>
-      <StyledIconContainer>
-        <StyledIcon icon="plus" size={60} onClick={handler} />
-      </StyledIconContainer>
-    </StyledContainer>
-  );
+AddSeat.defaultProps = {
+  handler: () => { },
+};
+
+AddSeat.propTypes = {
+  handler: PropTypes.func,
 };
 
 export default AddSeat;

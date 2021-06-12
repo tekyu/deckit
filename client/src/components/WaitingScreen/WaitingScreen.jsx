@@ -11,9 +11,9 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { roomSelectors, userSelectors } from "store/selectors";
 import Icon from "components/Generic/Icon/Icon";
 import { Button } from "components/Generic";
+import PlayerCounterWithIcon from "components/Generic/PlayerCounterWithIcon/PlayerCounterWithIcon";
 import PlayersList from "./PlayersList/PlayersList";
 import ActionButton from "./ActionButton/ActionButton";
-import PlayerCounterWithIcon from "../Generic/PlayerCounterWithIcon/PlayerCounterWithIcon";
 import * as Styled from "./WaitingScreen.styled";
 
 const WaitingScreen = () => {
@@ -39,14 +39,14 @@ const WaitingScreen = () => {
       socketActions.listener(`KICKED`, () => {
         history.replace(`/`);
         toast.error(`You have been kicked from the room`, {
-          position: toast.POSITION.BOTTOM_RIGHT
+          position: toast.POSITION.BOTTOM_RIGHT,
         });
-      })
+      }),
     );
   }, [dispatch, history]);
 
   const hideMessageHandler = () => {
-    setHideMessage(hide => !hide);
+    setHideMessage((hide) => !hide);
   };
 
   return (
@@ -71,7 +71,7 @@ const WaitingScreen = () => {
             {!hideMessage && (
               <h3>
                 <p>This is your room id</p>
-                <p style={{ marginBottom: "6px" }}>
+                <p style={{ marginBottom: `6px` }}>
                   Share it to friends or click on it to copy
                 </p>
                 <CopyToClipboard text={room.id}>
@@ -85,13 +85,13 @@ const WaitingScreen = () => {
               label={
                 hideMessage ? `Show id to share room` : `Hide this message`
               }
-              control={
+              control={(
                 <Checkbox
                   color="primary"
                   defaultChecked
                   onChange={hideMessageHandler}
                 />
-              }
+              )}
             />
           </Styled.ShowIdContainer>
           {room && room.id && (
@@ -107,13 +107,13 @@ const WaitingScreen = () => {
               <h4>Options</h4>
               <FormControlLabel
                 label="Private room"
-                control={
+                control={(
                   <Switch
                     color="primary"
                     checked={room.mode === `private`}
                     onChange={changeRoomModeHandler}
                   />
-                }
+                )}
               />
             </div>
           )}

@@ -9,7 +9,7 @@ const Timer = ({ time }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimeElapsed(time => time - 1000);
+      setTimeElapsed((time) => time - 1000);
     }, 1000);
 
     return () => {
@@ -26,11 +26,11 @@ const Timer = ({ time }) => {
 };
 
 Timer.defaultProps = {
-  time: 3
+  time: 3,
 };
 
 Timer.propTypes = {
-  time: PropTypes.number.isRequired
+  time: PropTypes.number,
 };
 
 export default Timer;

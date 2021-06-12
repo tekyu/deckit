@@ -1,7 +1,7 @@
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
 import styled from "styled-components";
-import { ReactComponent as LaurelIconSvg } from "../../../assets/icons/freepick/laurel.svg";
+import { ReactComponent as LaurelIconSvg } from "assets/icons/freepick/laurel.svg";
 
 const StyledContainer = styled.div`
   position: relative;
@@ -19,16 +19,14 @@ const StyledContainer = styled.div`
   }
 `;
 
-const LaurelIcon = props => {
-  return (
-    <StyledContainer {...props}>
-      <SvgIcon
-        {...props}
-        component={LaurelIconSvg}
-        viewBox="0 -51 512.00202 512"
-      />
-    </StyledContainer>
-  );
-};
+const LaurelIcon = (props) => (
+  <StyledContainer {...props}>
+    <SvgIcon
+      {...props}
+      component={LaurelIconSvg}
+      viewBox="0 -51 512.00202 512"
+    />
+  </StyledContainer>
+);
 
 export default LaurelIcon;

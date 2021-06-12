@@ -1,42 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Button from "@material-ui/core/Button";
-import styled from "styled-components";
+
 import { roomActions } from "store/actions";
 import { roomSelectors, userSelectors } from "store/selectors";
-
-const StyledButton = styled(Button)`
-  border: 0;
-  background: #cb3066;
-  border-radius: 3px;
-  ${({ isPlayerReady }) =>
-    isPlayerReady &&
-    `
-    background: transparent;
-    background-image: linear-gradient(
-    35deg,
-    #2ac9db -10%, #009bff 47%,
-    #cf77f3 130%
-  );
-    `}
-  font-size: 14px;
-  padding: 16px 32px;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: all 0.3s ease-out;
-  box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.28);
-  &:focus,
-  &:hover,
-  &:active {
-    box-shadow: 0px 2px 14px 0px rgba(0, 0, 0, 0.28);
-  }
-`;
+import * as Styled from './ActionButton.styled';
 
 const ActionButton = () => {
   const { id: userId } = useSelector(userSelectors.user);
   const { id: activeRoomId, admin: adminId, players } = useSelector(
-    roomSelectors.activeRoom
+    roomSelectors.activeRoom,
   );
   const dispatch = useDispatch();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -46,8 +18,7 @@ const ActionButton = () => {
   };
 
   useEffect(() => {
-    const { state: playerState = 0 } =
-      players.filter(({ id }) => id === userId)[0] || [];
+    const { state: playerState = 0 } = players.filter(({ id }) => id === userId)[0] || [];
     setPlayerState(playerState);
   }, [players, userId]);
 
@@ -57,8 +28,8 @@ const ActionButton = () => {
       roomActions.updatePlayerInRoom({
         activeRoomId,
         playerId: userId,
-        data: { state: playerState === 0 ? 1 : 0 }
-      })
+        data: { state: playerState === 0 ? 1 : 0 },
+      }),
     );
   };
 
@@ -79,7 +50,7 @@ const ActionButton = () => {
     const hasNotReadyPlayers = players.filter(({ state }) => state === 0)
       .length;
     return (
-      <StyledButton
+      <Styled.ActionButton
         variant="contained"
         color="primary"
         isPlayerReady={!(hasNotReadyPlayers || players.length < 2)}
@@ -87,18 +58,18 @@ const ActionButton = () => {
         onClick={startGameHandler}
       >
         {getButtonText(players, hasNotReadyPlayers)}
-      </StyledButton>
+      </Styled.ActionButton>
     );
   }
   return (
-    <StyledButton
+    <Styled.ActionButton
       variant="contained"
       color="primary"
       onClick={readyHandler}
       isPlayerReady={playerState === 0}
     >
       {playerState === 0 ? `Ready` : `Not Ready`}
-    </StyledButton>
+    </Styled.ActionButton>
   );
 };
 

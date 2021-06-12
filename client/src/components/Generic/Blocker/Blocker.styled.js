@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const StyledContainer = styled.div`
+export const Container = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -15,7 +15,7 @@ export const StyledContainer = styled.div`
   z-index: 1000;
 `;
 
-export const StyledMessage = styled.div`
+export const Message = styled.div`
   background: rgba(255, 255, 255, 0.9);
   padding: 12px;
   border-radius: 6px;

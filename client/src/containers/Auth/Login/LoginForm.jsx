@@ -9,66 +9,58 @@ class LoginForm extends Component {
     formError: null,
     errors: {
       empty: `It seems like you forgot to fill your`,
-      "401": `Oops! It looks like you misspelled your username or password`
-    }
+      401: `Oops! It looks like you misspelled your username or password`,
+    },
   };
 
-  inputOnChangeHandler = event => {
+  inputOnChangeHandler = (event) => {
     const change = {
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     };
-    this.setState(() => {
-      return change;
-    });
+    this.setState(() => change);
   };
 
-  submitLoginHandler = event => {
+  submitLoginHandler = (event) => {
     event.preventDefault();
     const [username, password] = [this.state.username, this.state.password];
     if (!username || !password) {
-      this.setState(state => {
-        return {
-          formError:
-            state.errors.empty + (!username ? ` username` : ` password`)
-        };
-      });
+      this.setState((state) => ({
+        formError:
+          state.errors.empty + (!username ? ` username` : ` password`),
+      }));
       return false;
     }
     axios
       .post(`/api/login`, {
         username,
-        password
+        password,
       })
-      .then(() => {})
-      .catch(error => {
-        this.setState(state => {
-          return {
-            formError: state.errors[error.response.status]
-          };
-        });
+      .then(() => { })
+      .catch((error) => {
+        this.setState((state) => ({
+          formError: state.errors[error.response.status],
+        }));
       });
     return false;
   };
 
-  submitRegisterHandler = event => {
+  submitRegisterHandler = (event) => {
     event.preventDefault();
     const [username, password] = [this.state.username, this.state.password];
     if (!username || !password) {
-      this.setState(state => {
-        return {
-          formError:
-            state.errors.empty + (!username ? ` username` : ` password`)
-        };
-      });
+      this.setState((state) => ({
+        formError:
+          state.errors.empty + (!username ? ` username` : ` password`),
+      }));
       return false;
     }
     axios
       .post(`/register`, {
         username,
-        password
+        password,
       })
-      .then(() => {})
-      .catch(() => {});
+      .then(() => { })
+      .catch(() => { });
     return false;
   };
 
@@ -114,14 +106,16 @@ class LoginForm extends Component {
 
               <button type="submit">Login</button>
               <span className={styles.password_recovery}>
-                Can&apos;t remember your password?{` `}
+                Can&apos;t remember your password?
+                {` `}
                 <a href="/forgot">Click here!</a>
               </span>
             </form>
           </div>
           <div className={styles.modal_footer}>
             <span className={styles.create_account}>
-              You don&apos;t have an account yet?{` `}
+              You don&apos;t have an account yet?
+              {` `}
               <a href="/create">Create one here!</a>
             </span>
           </div>

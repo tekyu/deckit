@@ -7,7 +7,7 @@ class Select extends PureComponent {
     super(props);
     this.state = {
       show: false,
-      wrapperRef: null
+      wrapperRef: null,
     };
   }
 
@@ -19,49 +19,45 @@ class Select extends PureComponent {
     document.removeEventListener(`mousedown`, this.handleClickOutside);
   }
 
-  setWrapperRef = node => {
-    this.setState(() => {
-      return {
-        wrapperRef: node
-      };
-    });
+  setWrapperRef = (node) => {
+    this.setState(() => ({
+      wrapperRef: node,
+    }));
   };
 
-  handleClickOutside = event => {
-    if (!this.state.wrapperRef.contains(event.target)) {
-      this.setState(() => {
-        return {
-          show: false
-        };
-      });
+  handleClickOutside = ({ target }) => {
+    const { state: { wrapperRef } } = this;
+    if (!wrapperRef.contains(target)) {
+      this.setState(() => ({
+        show: false,
+      }));
     }
   };
 
   hideShowDropdown = () => {
-    this.setState(state => {
-      return {
-        show: !state.show
-      };
-    });
+    this.setState((state) => ({
+      show: !state.show,
+    }));
   };
 
-  changeSelection = key => {
+  changeSelection = (key) => {
+    const { props: { handler } } = this;
     this.hideShowDropdown();
-    this.props.handler(key);
+    handler(key);
   };
 
   render() {
-    const { options, selectedOption } = this.props;
+    const { props: { options, selectedOption }, changeSelection, state: { show } } = this;
     const dropdown = (
       <div className={styles.dropdown}>
         <ul>
-          {options.map(option => {
+          {options.map((option) => {
             const { key, name } = option;
-            if (key !== this.props.selectedOption) {
+            if (key !== selectedOption) {
               return (
                 <li
                   onClick={() => {
-                    this.changeSelection(key);
+                    changeSelection(key);
                   }}
                   key={key}
                   name={name}
@@ -80,7 +76,7 @@ class Select extends PureComponent {
         <div className={styles.display} onClick={this.hideShowDropdown}>
           {selectedOption}
         </div>
-        {this.state.show ? dropdown : null}
+        {show ? dropdown : null}
       </div>
     );
   }
@@ -89,7 +85,7 @@ class Select extends PureComponent {
 Select.propTypes = {
   handler: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired,
-  selectedOption: PropTypes.string.isRequired
+  selectedOption: PropTypes.string.isRequired,
 };
 
 export default Select;

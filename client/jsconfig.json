@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "assets": [
+        "./assets"
+      ],
+      "store": [
+        "./store"
+      ],
+      "components": [
+        "./components"
+      ],
+      "containers": [
+        "./containers"
+      ],
+      "utils": [
+        "./utils"
+      ],
+      "theme": [
+        "./theme"
+      ],
+      "i18n": [
+        "./i18n"
+      ],
+      "mocks": [
+        "./mocks"
+      ],
+      "modals": [
+        "./modals"
+      ]
+    }
+  }
+}

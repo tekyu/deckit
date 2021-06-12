@@ -3,11 +3,6 @@
 .container {
 	position: relative;
 	z-index:1;
-	// &:hover {
-	// 	.dropdown {
-	// 		max-height: 400px;
-	// 	}
-	// }
 }
 .display {
 	height: 100%;
@@ -24,7 +19,6 @@
 .dropdown {
 	background: map-get($map: $color-map, $key: "hygge");
 	overflow: hidden;
-	// max-height: 0;
 	position: absolute;
 	display: flex;
 	flex-direction: column;

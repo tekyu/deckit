@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 
 const StyledContainer = styled.div`
@@ -19,8 +20,15 @@ const StyledContainer = styled.div`
   color: #fff;
   font-size: 60px;
 `;
-const PlaceholderCard = ({ amount }) => {
-  return <StyledContainer>{amount}</StyledContainer>;
+
+const PlaceholderCard = ({ amount }) => <StyledContainer>{amount}</StyledContainer>;
+
+PlaceholderCard.defaultProps = {
+  amount: 1,
+};
+
+PlaceholderCard.propTypes = {
+  amount: PropTypes.number,
 };
 
 export default PlaceholderCard;

@@ -15,7 +15,7 @@ import * as Styled from "./CreateGame.styled";
  * should be in the main game/room creation topic
  */
 
-const validate = ({ isPrivate, username, name }) => {
+const validate = ({ username, name }) => {
   const errors = {};
   if (!username.trim()) {
     errors.username = `You need to specify your name or login in order to create game`;
@@ -40,8 +40,8 @@ const CreateGame = () => {
           if (!error) {
             history.push(`/game/${roomId}`);
           }
-        }
-      )
+        },
+      ),
     );
   };
   const submitCreateGameHandler = ({
@@ -51,7 +51,7 @@ const CreateGame = () => {
     maxScore,
     password,
     gameCode,
-    username
+    username,
   }) => {
     const roomOptions = {
       mode: isPrivate ? `private` : `public`,
@@ -60,15 +60,13 @@ const CreateGame = () => {
       password,
       gameCode,
       username,
-      gameOptions: { maxScore: +maxScore }
+      gameOptions: { maxScore: +maxScore },
     };
     if (userData) {
       createRoom(roomOptions, userData.id);
     } else {
       dispatch(
-        userActions.updatedUser(username, ({ id }) =>
-          createRoom(roomOptions, id)
-        )
+        userActions.updatedUser(username, ({ id }) => createRoom(roomOptions, id)),
       );
     }
   };
@@ -83,7 +81,7 @@ const CreateGame = () => {
         maxScore: 30,
         playersMax: 4,
         isPrivate: true,
-        username: sillyname()
+        username: sillyname(),
       }}
       onSubmit={(values, { setSubmitting }) => {
         submitCreateGameHandler(values);
@@ -96,88 +94,82 @@ const CreateGame = () => {
         handleChange,
         handleBlur,
         setFieldValue,
-        initialValues: { playersMax, maxScore }
-      }) => {
-        return (
-          <Styled.CreateForm>
-            <Styled.Header>Create new game</Styled.Header>
-            {!userData && (
-              <>
-                <Styled.TextField
-                  label="Your nickname"
-                  name="username"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={username}
-                />
-                <Typography color="error">
-                  <ErrorMessage name="username" />
-                </Typography>
-              </>
-            )}
+        initialValues: { playersMax, maxScore },
+      }) => (
+        <Styled.CreateForm>
+          <Styled.Header>Create new game</Styled.Header>
+          {!userData && (
             <>
               <Styled.TextField
-                label="Room name"
-                name="name"
+                label="Your nickname"
+                name="username"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                value={name}
+                value={username}
               />
               <Typography color="error">
-                <ErrorMessage name="name" />
+                <ErrorMessage name="username" />
               </Typography>
             </>
-            <Styled.SliderLabel htmlFor="playersMax">
-              Maximum players in room
-              <Styled.Slider
-                name="playersMax"
-                defaultValue={playersMax}
-                min={2}
-                max={10}
-                step={1}
-                valueLabelDisplay="on"
-                onChange={(event, value) => {
-                  return setFieldValue(`playersMax`, value);
-                }}
-              />
-            </Styled.SliderLabel>
-            <Styled.SliderLabel htmlFor="maxScore">
-              Maximum points
-              <Styled.Slider
-                name="maxScore"
-                defaultValue={maxScore}
-                min={8}
-                max={60}
-                step={1}
-                valueLabelDisplay="on"
-                onChange={(event, value) => {
-                  return setFieldValue(`maxScore`, value);
-                }}
-              />
-            </Styled.SliderLabel>
-            <Styled.ControlLabel
-              label="Private game"
-              control={
-                <Checkbox
-                  color="primary"
-                  checked={isPrivate}
-                  name="isPrivate"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-              }
+          )}
+          <>
+            <Styled.TextField
+              label="Room name"
+              name="name"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={name}
             />
-            <Styled.CreateButton
-              variant="contained"
-              color="primary"
-              type="submit"
-              disabled={isSubmitting}
-            >
-              Create
-            </Styled.CreateButton>
-          </Styled.CreateForm>
-        );
-      }}
+            <Typography color="error">
+              <ErrorMessage name="name" />
+            </Typography>
+          </>
+          <Styled.SliderLabel htmlFor="playersMax">
+            Maximum players in room
+            <Styled.Slider
+              name="playersMax"
+              defaultValue={playersMax}
+              min={2}
+              max={10}
+              step={1}
+              valueLabelDisplay="on"
+              onChange={(event, value) => setFieldValue(`playersMax`, value)}
+            />
+          </Styled.SliderLabel>
+          <Styled.SliderLabel htmlFor="maxScore">
+            Maximum points
+            <Styled.Slider
+              name="maxScore"
+              defaultValue={maxScore}
+              min={8}
+              max={60}
+              step={1}
+              valueLabelDisplay="on"
+              onChange={(event, value) => setFieldValue(`maxScore`, value)}
+            />
+          </Styled.SliderLabel>
+          <Styled.ControlLabel
+            label="Private game"
+            control={(
+              <Checkbox
+                color="primary"
+                checked={isPrivate}
+                name="isPrivate"
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            )}
+          />
+          <Styled.CreateButton
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            Create
+          </Styled.CreateButton>
+        </Styled.CreateForm>
+      )}
     </Formik>
   );
 };

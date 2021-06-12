@@ -1,95 +1,23 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
-import styled from "styled-components";
-import Loader from "../../../Generic/Loader/Loader";
-import Icon from "../../../Generic/Icon/Icon";
-import { kickPlayer } from "../../../../store/room/roomActions";
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  width: 140px;
-  height: 200px;
-  margin: 0 10px 10px 10px;
-`;
-
-const StyledUserIcon = styled.div`
-  background: ${({ color }) => color};
-  width: 100px;
-  height: 100px;
-  border-radius: 50px;
-  position: relative;
-  margin-top: 20px;
-  transition: box-shadow 0.1s ease-in-out;
-  ${({ isPlayerReady }) =>
-    isPlayerReady &&
-    `
-    box-shadow: 0px 0px 60px 5px #68CAA0;
-  `}
-`;
-
-const StyledRemoveIcon = styled(Icon)`
-  background: #cb3066;
-  color: #fff;
-  border-radius: 100%;
-  position: absolute;
-  padding: 2px;
-  top: 5px;
-  left: 5px;
-  cursor: pointer;
-  transition: box-shadow 0.3s ease-in;
-  &:focus,
-  &:hover {
-    box-shadow: 0px 0px 7px 0px rgba(80, 19, 40, 0.28);
-  }
-`;
-
-const StyledUsername = styled.h3`
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: "Catamaran";
-  margin-bottom: 20px;
-  position: absolute;
-  bottom: 0px;
-  left: 50%;
-  transform: translateX(-50%);
-`;
-
-const StyledAdminCrown = styled(Icon)`
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-`;
-
-const StyledYou = styled(Icon)`
-  background: ${({ color }) => color};
-  border-radius: 50px;
-  position: absolute;
-  padding: 2px;
-  top: 5px;
-  left: 5px;
-`;
+import Loader from "components/Generic/Loader/Loader";
+import Icon from "components/Generic/Icon/Icon";
+import { kickPlayer } from "store/room/roomActions";
+import * as Styled from './Player.styled';
 
 const Player = ({
   id,
   state,
   username,
   color,
-  admin,
   isAdmin,
   isAnon,
-  isOwner,
   avatar,
   roomId,
   myId,
   itsMe,
-  amIAdmin
+  amIAdmin,
 }) => {
   const dispatch = useDispatch();
 
@@ -106,12 +34,12 @@ const Player = ({
 
   const canKickPlayer = !itsMe && amIAdmin;
   return (
-    <StyledContainer key={id} id={id} itsMe={itsMe} isAdmin={isAdmin}>
-      <StyledUserIcon color={color} isPlayerReady={state}>
-        {isAdmin && <StyledAdminCrown icon="crown" size={30} />}
-        {itsMe && <StyledYou color={color} icon="user" size={30} />}
+    <Styled.Container key={id} id={id} itsMe={itsMe} isAdmin={isAdmin}>
+      <Styled.UserIcon color={color} isPlayerReady={state}>
+        {isAdmin && <Styled.AdminCrown icon="crown" size={30} />}
+        {itsMe && <Styled.You color={color} icon="user" size={30} />}
         {canKickPlayer && (
-          <StyledRemoveIcon
+          <Styled.RemoveIcon
             onClick={kickPlayerHandler}
             icon="cancel"
             size={30}
@@ -122,11 +50,39 @@ const Player = ({
         ) : (
           <img src={avatar} alt={`${username}'s avatar`} />
         )}
-      </StyledUserIcon>
-      <StyledUsername>{username}</StyledUsername>
+      </Styled.UserIcon>
+      <Styled.Username>{username}</Styled.Username>
       {getPlayerState()}
-    </StyledContainer>
+    </Styled.Container>
   );
+};
+
+Player.defaultProps = {
+  id: ``,
+  state: 0,
+  username: ``,
+  color: ``,
+  isAdmin: false,
+  isAnon: true,
+  avatar: ``,
+  roomId: ``,
+  myId: ``,
+  itsMe: false,
+  amIAdmin: false,
+};
+
+Player.propTypes = {
+  id: PropTypes.string,
+  state: PropTypes.number,
+  username: PropTypes.string,
+  color: PropTypes.string,
+  isAdmin: PropTypes.bool,
+  isAnon: PropTypes.bool,
+  avatar: PropTypes.string,
+  roomId: PropTypes.string,
+  myId: PropTypes.string,
+  itsMe: PropTypes.bool,
+  amIAdmin: PropTypes.bool,
 };
 
 export default Player;

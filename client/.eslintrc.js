@@ -9,6 +9,7 @@ module.exports = {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
+  parser: 'babel-eslint',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -44,7 +45,8 @@ module.exports = {
       "error",
       { props: true, ignorePropertyModificationsFor: ["draft"] }
     ],
-    "import/named": 0
+    "import/named": 0,
+    "react/jsx-props-no-spreading": 0
   },
   settings: {
     "import/resolver": {
@@ -59,6 +61,7 @@ module.exports = {
           ["theme", "../src/theme"],
           ["i18n", "./src/i18n"],
           ["mocks", "./src/mocks"]
+          ["modals", "./src/modals"]
         ],
         extensions: [".ts", ".js", ".jsx", ".json"]
       }

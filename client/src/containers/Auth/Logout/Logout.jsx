@@ -3,7 +3,7 @@ import { Redirect, useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { userActions } from "store/actions";
 
-const Logout = auth => {
+const Logout = (auth) => {
   const [redirect, setRedirect] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();

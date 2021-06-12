@@ -12,34 +12,32 @@ const HintInput = () => {
   return (
     <Formik
       initialValues={{
-        hint: ``
+        hint: ``,
       }}
       onSubmit={({ hint }) => {
         dispatch(deckitActions.sendHint({ activeRoomId, hint }));
       }}
     >
-      {() => {
-        return (
-          <Styled.HintForm>
-            <Styled.Container>
-              <Styled.ButtonContainer>
-                <Styled.HintField
-                  name="hint"
-                  type="text"
-                  placeholder="Place your hint in here"
-                />
-              </Styled.ButtonContainer>
-              <Styled.HintButton
-                variant="contained"
-                color="primary"
-                type="submit"
-              >
-                Post hint
-              </Styled.HintButton>
-            </Styled.Container>
-          </Styled.HintForm>
-        );
-      }}
+      {() => (
+        <Styled.HintForm>
+          <Styled.Container>
+            <Styled.ButtonContainer>
+              <Styled.HintField
+                name="hint"
+                type="text"
+                placeholder="Place your hint in here"
+              />
+            </Styled.ButtonContainer>
+            <Styled.HintButton
+              variant="contained"
+              color="primary"
+              type="submit"
+            >
+              Post hint
+            </Styled.HintButton>
+          </Styled.Container>
+        </Styled.HintForm>
+      )}
     </Formik>
   );
 };

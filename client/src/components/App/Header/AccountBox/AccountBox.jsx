@@ -10,11 +10,11 @@ class AccountBox extends Component {
     userData: {
       _id: `ewrewr34w4532324e3wed23321432erw`,
       avatar: `https://via.placeholder.com/200x150`,
-      name: `Annabel Maverick`
-    }
+      name: `Annabel Maverick`,
+    },
   };
 
-  openModalHandler = ev => {
+  openModalHandler = (ev) => {
     const formName = ev.currentTarget.name;
     this.props.openModal(formName);
   };
@@ -96,7 +96,7 @@ class AccountBox extends Component {
 
   renderDropdown() {
     const {
-      user: { auth }
+      user: { auth },
     } = this.props;
     if (auth) {
       return this.getRegisteredUserDropdown();
@@ -139,17 +139,15 @@ class AccountBox extends Component {
   }
 }
 
-const mapStateToProps = ({ auth, user }) => {
-  return {
-    auth,
-    user
-  };
-};
+const mapStateToProps = ({ auth, user }) => ({
+  auth,
+  user,
+});
 
 const mapDispatchToProps = {
-  openModal: appActions.openModal
+  openModal: appActions.openModal,
 };
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(AccountBox);

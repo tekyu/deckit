@@ -6,7 +6,9 @@ const themes = {
     font: `#3c3c3c`,
     fontSecondary: `#ffffff`,
     white: `#ffffff`,
-
+    error: {
+      main: `#cd5360`,
+    },
   },
   opacity: {
     darkDivider: 0.12,

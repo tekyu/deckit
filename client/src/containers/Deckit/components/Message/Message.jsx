@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { deckitSelectors, userSelectors } from "store/selectors";
 import HinterStage from "./components/HinterStage/HinterStage";
@@ -16,7 +17,10 @@ const StyledContainer = styled.div`
     0px 5px 15px rgba(0, 155, 255, 0.2), -5px 5px 15px rgba(42, 201, 219, 0.2);
 `;
 
-const GetMessage = ({ stage, hinter, userId, hint }) => {
+const GetMessage = ({
+  stage, hinter, userId, hint,
+}) => {
+  const { id } = hinter;
   switch (stage) {
     case 2:
       return <HinterStage hinter={hinter} userId={userId} />;
@@ -27,7 +31,7 @@ const GetMessage = ({ stage, hinter, userId, hint }) => {
         <HintMessage
           hint={hint}
           stage={stage}
-          isHinter={hinter.id === userId}
+          isHinter={id === userId}
         />
       );
     case 8:
@@ -35,6 +39,15 @@ const GetMessage = ({ stage, hinter, userId, hint }) => {
     default:
       return <p>{`You shouldn't be able to see this. Stage: ${stage}`}</p>;
   }
+};
+
+GetMessage.propTypes = {
+  stage: PropTypes.string.isRequired,
+  hinter: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+  }).isRequired,
+  userId: PropTypes.string.isRequired,
+  hint: PropTypes.string.isRequired,
 };
 
 const Message = () => {
