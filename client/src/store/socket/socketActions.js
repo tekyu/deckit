@@ -7,26 +7,26 @@ export const SAVE_DATA = `SAVE_DATA`;
 export const GET_ROOM_INFO = `GET_ROOM_INFO`;
 export const JOIN_ROOM = `JOIN_ROOM`;
 
-export const initializeSocket = socket => ({
+export const initializeSocket = (socket) => ({
   type: OPEN_SOCKET,
-  payload: { socket }
+  payload: { socket },
 });
 
 export const emitter = (event, data, handler) => ({
   type: SOCKET_EMIT,
   payload: data,
   event,
-  handler
+  handler,
 });
 
 export const listener = (event, handler) => ({
   type: SOCKET_LISTENER,
   handler,
-  event
+  event,
 });
 
 export const removeListener = (event, handler) => ({
   type: SOCKET_REMOVE_LISTENER,
   handler,
-  event
+  event,
 });

@@ -2,7 +2,7 @@ import { CLOSE_MODAL, OPEN_MODAL, SHOW_ERROR } from "./appActions";
 
 export const initialState = {
   error: null,
-  modalType: null
+  modalType: null,
 };
 
 export const appReducer = (state = initialState, action) => {
@@ -10,17 +10,17 @@ export const appReducer = (state = initialState, action) => {
     case CLOSE_MODAL:
       return {
         ...state,
-        modalType: null
+        modalType: null,
       };
     case OPEN_MODAL:
       return {
         ...state,
-        modalType: action.modalType
+        modalType: action.modalType,
       };
     case SHOW_ERROR:
       return {
         ...state,
-        error: action.payload
+        error: action.payload,
       };
     default:
       return state;

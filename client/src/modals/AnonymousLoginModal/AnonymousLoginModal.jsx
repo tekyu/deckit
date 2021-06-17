@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
-import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import sillyname from "sillyname";
 import { appActions, userActions } from "store/actions";
+import { userSelectors } from "store/selectors";
 import * as Styled from "./AnonymousLoginModal.styled";
 
-const AnonymousLoginModal = ({ user }) => {
+const AnonymousLoginModal = () => {
+  const user = useSelector(userSelectors.user);
   const dispatch = useDispatch();
   const [username, setUsername] = useState(sillyname());
 
@@ -17,11 +18,11 @@ const AnonymousLoginModal = ({ user }) => {
   }, [dispatch, user]);
 
   const submitHandler = useCallback(
-    event => {
+    (event) => {
       event.preventDefault();
       dispatch(userActions.updatedUser(username));
     },
-    [dispatch, username]
+    [dispatch, username],
   );
 
   return (
@@ -32,7 +33,7 @@ const AnonymousLoginModal = ({ user }) => {
           label="Nickname"
           placeholder="Type your nickname here"
           value={username}
-          onChange={e => setUsername(e.target.value)}
+          onChange={(e) => setUsername(e.target.value)}
         />
       </Styled.InputGroup>
       <Styled.SubmitButton variant="contained" color="primary" type="submit">
@@ -42,14 +43,4 @@ const AnonymousLoginModal = ({ user }) => {
   );
 };
 
-AnonymousLoginModal.propTypes = {
-  user: PropTypes.object
-};
-
-const mapStateToProps = ({ user: { user } }) => {
-  return {
-    user
-  };
-};
-
-export default connect(mapStateToProps)(AnonymousLoginModal);
+export default AnonymousLoginModal;

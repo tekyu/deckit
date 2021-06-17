@@ -42,7 +42,7 @@ const GetMessage = ({
 };
 
 GetMessage.propTypes = {
-  stage: PropTypes.string.isRequired,
+  stage: PropTypes.number.isRequired,
   hinter: PropTypes.shape({
     id: PropTypes.string.isRequired,
   }).isRequired,

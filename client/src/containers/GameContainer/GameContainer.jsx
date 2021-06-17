@@ -1,4 +1,6 @@
-import React, { Suspense, useState, useEffect, useCallback } from "react";
+import React, {
+  Suspense, useState, useEffect, useCallback,
+} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouteMatch, useHistory } from "react-router-dom";
 import styled from "styled-components";
@@ -7,12 +9,12 @@ import {
   appActions,
   deckitActions,
   roomActions,
-  socketActions
+  socketActions,
 } from "store/actions";
 import { roomSelectors, userSelectors } from "store/selectors";
 import { toast } from "react-toastify";
-import WaitingScreen from "../../components/WaitingScreen/WaitingScreen";
-import FullScreenLoader from "../../components/FullScreenLoader/FullScreenLoader";
+import WaitingScreen from "components/WaitingScreen/WaitingScreen";
+import FullScreenLoader from "components/FullScreenLoader/FullScreenLoader";
 /**
  * TODO:
  * Change the store/actions/socket to topic wise, createGame
@@ -35,15 +37,13 @@ const WaitingScreenContainer = styled.div`
 
 const GameContainer = () => {
   const {
-    params: { id }
+    params: { id },
   } = useRouteMatch();
   const dispatch = useDispatch();
   const history = useHistory();
   const userData = useSelector(userSelectors.user);
   const activeRoom = useSelector(roomSelectors.activeRoom);
-  const [roomInfo, setRoomInfo] = useState(null);
   const [GameComponent, setGameComponent] = useState(null);
-  // const [panels, setPanels] = useState({});
 
   useEffect(() => {
     dispatch(deckitActions.updateMyCardsListener());
@@ -54,31 +54,31 @@ const GameContainer = () => {
   }, [dispatch]);
 
   const getRoomInfo = useCallback(
-    id => {
+    (id) => {
       dispatch(
         socketActions.emitter(
           socketActions.JOIN_ROOM,
           { roomId: id, userData },
-          roomData => {
+          (roomData) => {
             if (roomData.error) {
               history.replace(`/`);
               toast.error(roomData.error, {
-                position: toast.POSITION.BOTTOM_RIGHT
+                position: toast.POSITION.BOTTOM_RIGHT,
               });
             }
             dispatch(roomActions.updateActiveRoom(roomData));
-          }
-        )
+          },
+        ),
       );
     },
-    [dispatch, history, userData]
+    [dispatch, history, userData],
   );
 
   const updateActiveRoomHandler = useCallback(
     ({ data }) => {
       dispatch(roomActions.updateActiveRoom(data));
     },
-    [dispatch]
+    [dispatch],
   );
 
   useEffect(() => {
@@ -94,7 +94,6 @@ const GameContainer = () => {
     if (activeRoom && activeRoom.state >= 2) {
       const { gameCode, id } = activeRoom;
       setGameComponent(getGame(gameCode, id));
-      // setPanels(gameMapping[gameCode].panels);
     }
   }, [activeRoom]);
 
@@ -105,7 +104,7 @@ const GameContainer = () => {
 
     return () => {
       dispatch(
-        socketActions.removeListener(`ROOM_UPDATED`, updateActiveRoomHandler)
+        socketActions.removeListener(`ROOM_UPDATED`, updateActiveRoomHandler),
       );
     };
   }, [dispatch, activeRoom, updateActiveRoomHandler]);
@@ -136,7 +135,7 @@ const GameContainer = () => {
             <WaitingScreen />
           </WaitingScreenContainer>
         )}
-        {GameComponent && <GameComponent options={roomInfo} />}
+        {GameComponent && <GameComponent />}
       </Suspense>
     </Container>
   );

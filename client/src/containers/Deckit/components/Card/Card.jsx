@@ -59,7 +59,7 @@ Card.defaultProps = {
   state: `picker`,
   pickedBy: [],
   card: {
-    id: `Default id`,
+    id: 123,
     url: ``,
   },
 };
@@ -72,7 +72,7 @@ Card.propTypes = {
     color: PropTypes.string,
   })),
   card: PropTypes.shape({
-    id: PropTypes.string,
+    id: PropTypes.number,
     url: PropTypes.string,
   }),
 };

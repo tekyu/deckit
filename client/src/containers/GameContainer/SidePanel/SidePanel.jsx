@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
-import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { socketActions } from "store/actions";
 import { roomSelectors } from "store/selectors";
+import { gameMapping } from "utils/gameMapping";
 import ScorePanel from "./panels/score/ScorePanel";
 import ChatPanel from "./panels/chat/ChatPanel";
 import OptionsPanel from "./panels/options/OptionsPanel";
 import Bubbles from "./Bubbles/Bubbles";
-import { gameMapping } from "../../../utils/gameMapping";
+import * as Styled from './SidePanel.styled';
 
 /**
  * TODO:
@@ -15,24 +15,6 @@ import { gameMapping } from "../../../utils/gameMapping";
  * should be in the main game/room creation topic
  */
 
-const Container = styled.div`
-  min-width: 320px;
-  width: 320px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-`;
-
-const Panel = styled.div`
-  background: white;
-  border-radius: 6px;
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-  padding: 12px;
-  box-shadow: -10px 5px 15px rgba(207, 119, 243, 0.1),
-    5px 5px 15px rgba(0, 155, 255, 0.1), -10px 5px 15px rgba(42, 201, 219, 0.1);
-`;
 const SidePanel = () => {
   const gameCode = useSelector(roomSelectors.gameCode);
   const [panels, setPanels] = useState({});
@@ -42,7 +24,7 @@ const SidePanel = () => {
   const panelMapping = {
     score: <ScorePanel />,
     chat: <ChatPanel />,
-    options: <OptionsPanel />
+    options: <OptionsPanel />,
   };
 
   useEffect(() => {
@@ -53,16 +35,16 @@ const SidePanel = () => {
   }, [gameCode]);
 
   const addPanelListeners = useCallback(() => {
-    Object.keys(panels).forEach(panel => {
+    Object.keys(panels).forEach((panel) => {
       dispatch(
-        socketActions.listener(panels[panel].listener, newData => {
-          setUpdatedPanels(oldPanels => {
+        socketActions.listener(panels[panel].listener, () => {
+          setUpdatedPanels((oldPanels) => {
             if (oldPanels.indexOf(panel) === -1) {
               return [...oldPanels, panel];
             }
             return oldPanels;
           });
-        })
+        }),
       );
     });
   }, [dispatch, panels]);
@@ -75,26 +57,22 @@ const SidePanel = () => {
     const panelName = target.getAttribute(`name`);
     setOpenedPanel(panelName);
     if (updatedPanels.indexOf(panelName) !== -1) {
-      setUpdatedPanels(oldPanels => {
-        return oldPanels.filter(panel => panel !== panelName);
-      });
+      setUpdatedPanels((oldPanels) => oldPanels.filter((panel) => panel !== panelName));
     }
-  });
+  }, [updatedPanels]);
 
-  const getPanel = () => {
-    return panelMapping[openedPanel];
-  };
+  const getPanel = () => panelMapping[openedPanel];
 
   return (
-    <Container>
+    <Styled.Container>
       <Bubbles
         panels={panels}
         openedPanel={openedPanel}
         updatedPanels={updatedPanels}
         handler={changePanel}
       />
-      <Panel>{getPanel()}</Panel>
-    </Container>
+      <Styled.Panel>{getPanel()}</Styled.Panel>
+    </Styled.Container>
   );
 };
 

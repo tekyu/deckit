@@ -10,10 +10,10 @@ const GenericInputHooks = ({
   ...rest
 }) => {
   const [input, setInput] = useState(initialValue);
-  const inputOnChangeHandler = e => {
+  const inputOnChangeHandler = (e) => {
     setInput(e.target.value);
   };
-  const inputOnKeypressHandler = e => {
+  const inputOnKeypressHandler = (e) => {
     if (e.keyCode === 13 && input.length > 0) {
       handler(input);
       if (resetValueAfterSending) {
@@ -22,6 +22,7 @@ const GenericInputHooks = ({
     }
   };
   return (
+    // eslint-disable-next-line react/jsx-filename-extension
     <input
       name={name}
       type={type}
@@ -38,14 +39,13 @@ GenericInputHooks.propTypes = {
   type: PropTypes.string,
   name: PropTypes.string,
   resetValueAfterSending: PropTypes.bool,
-  initialValue: PropTypes.string
+  initialValue: PropTypes.string,
 };
 
 GenericInputHooks.defaultProps = {
-  handler: () => {},
-  type: "text",
-  name: "input",
-  initialValue: "",
-  resetValueAfterSending: true
+  type: `text`,
+  name: `input`,
+  initialValue: ``,
+  resetValueAfterSending: true,
 };
 export default GenericInputHooks;

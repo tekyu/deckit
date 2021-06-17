@@ -13,7 +13,7 @@ export function inputOnChangeHandler(options, event) {
   }
   this.setState(() => change);
   if (options.keys.indexOf(event.key.toLowerCase()) !== -1) {
-    change[event.target.name] = "";
+    change[event.target.name] = ``;
     this.setState(() => change);
     options.handler();
   }

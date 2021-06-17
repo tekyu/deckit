@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { userActions } from "store/actions";
 import { userSelectors } from "store/selectors";
 
-const Profile = auth => {
+const Profile = (auth) => {
   const profileData = useSelector(userSelectors.user);
   const [username, setUsername] = useState(``);
   const [ranking, setRanking] = useState(0);
@@ -32,26 +32,50 @@ const Profile = auth => {
 
   return (
     <div>
-      <div>Username: {username}</div>
-      <div>Ranking: {ranking}</div>
       <div>
-        Friends:{` `}
-        {friends.map(({ nickname, id, status, ranking, avatar }) => (
+        Username:
+        {` `}
+        {username}
+      </div>
+      <div>
+        Ranking:
+        {` `}
+        {ranking}
+      </div>
+      <div>
+        Friends:
+        {` `}
+        {friends.map(({
+          nickname, id, status, ranking, avatar,
+        }) => (
           <li key={id}>
-            {nickname} {id} {status} {ranking} {avatar}
+            {nickname}
+            {` `}
+            {id}
+            {` `}
+            {status}
+            {` `}
+            {ranking}
+            {` `}
+            {avatar}
           </li>
         ))}
       </div>
-      <div>Achievements: {achievements}</div>
       <div>
-        Created:{` `}
+        Achievements:
+        {` `}
+        {achievements}
+      </div>
+      <div>
+        Created:
+        {` `}
         {new Date(createdAt).toLocaleDateString(`en-GB`, {
           year: `numeric`,
           month: `long`,
-          day: `numeric`
+          day: `numeric`,
         })}
       </div>
-      <button onClick={sendUpdatedUserHandler}>Change</button>
+      <button type="button" onClick={sendUpdatedUserHandler}>Change</button>
     </div>
   );
 };

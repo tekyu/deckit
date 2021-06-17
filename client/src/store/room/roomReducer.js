@@ -6,13 +6,13 @@ import {
   SET_ACTIVE_ROOM_ID,
   SET_ACTIVE_ROOM,
   UPDATE_ACTIVE_ROOM,
-  UPDATE_ROOMS
+  UPDATE_ROOMS,
 } from "./roomActions";
 
 export const initialState = {
   activeRoomId: null,
   rooms: [],
-  activeRoom: null
+  activeRoom: null,
 };
 
 export const roomReducer = produce((draft = initialState, action) => {
@@ -31,15 +31,6 @@ export const roomReducer = produce((draft = initialState, action) => {
       draft.activeRoom = draft.activeRoom || {};
       Object.assign(draft.activeRoom, action.payload);
       return draft;
-    // case SCORE_UPDATED:
-    //   action.payload.forEach(({ id, score }) => {
-    //     draft.activeRoom.players[
-    //       draft.activeRoom.players.findIndex(
-    //         ({ id: playerId }) => playerId === id
-    //       )
-    //     ].score = score;
-    //   });
-    // return draft;
     default:
       return draft;
   }

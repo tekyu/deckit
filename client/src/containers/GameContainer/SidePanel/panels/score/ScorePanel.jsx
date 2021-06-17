@@ -17,14 +17,12 @@ const StyledContainer = styled.div`
   flex: 1 1 1px;
 `;
 
-const ScorePanel = () => {
-  return (
-    <StyledContainer>
-      <ScoreInfo />
-      <ScoreList />
-      <PlayersInfo />
-    </StyledContainer>
-  );
-};
+const ScorePanel = () => (
+  <StyledContainer>
+    <ScoreInfo />
+    <ScoreList />
+    <PlayersInfo />
+  </StyledContainer>
+);
 
 export default ScorePanel;

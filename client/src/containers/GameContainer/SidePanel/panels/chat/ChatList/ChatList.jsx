@@ -1,4 +1,5 @@
 import React, { memo, useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { userSelectors } from "store/selectors";
 import { Element, scroller } from "react-scroll";
@@ -14,24 +15,20 @@ const ChatList = ({ messages }) => {
       duration: 400,
       delay: 0,
       smooth: `easeInOutQuart`,
-      container: `scroll-chat-container`
+      container: `scroll-chat-container`,
     });
   };
 
   useEffect(() => {
-    setMessageList(() =>
-      messages.map(({ id, ownerId, ...message }) => {
-        return (
-          <ChatElement
-            id={id}
-            ownerId={ownerId}
-            isMine={userId === ownerId}
-            {...message}
-            key={id}
-          />
-        );
-      })
-    );
+    setMessageList(() => messages.map(({ id, ownerId, ...message }) => (
+      <ChatElement
+        id={id}
+        ownerId={ownerId}
+        isMine={userId === ownerId}
+        {...message}
+        key={id}
+      />
+    )));
   }, [messages, userId]);
 
   useEffect(() => {
@@ -41,9 +38,24 @@ const ChatList = ({ messages }) => {
   return (
     <Styled.Container id="scroll-chat-container">
       {messageList}
-      <Element name="scroll-to-bottom"></Element>
+      <Element name="scroll-to-bottom" />
     </Styled.Container>
   );
+};
+
+ChatList.defaultProps = {
+  messages: [],
+};
+
+ChatList.propTypes = {
+  messages: PropTypes.arrayOf(PropTypes.shape({
+    avatar: PropTypes.string,
+    color: PropTypes.string,
+    id: PropTypes.string,
+    message: PropTypes.string,
+    ownerId: PropTypes.string,
+    timestamp: PropTypes.number,
+  })),
 };
 
 export default memo(ChatList);

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { socketActions } from "store/actions";
+import { activeRoomId } from "store/room/roomSelectors";
 import ChatControls from "./ChatControls/ChatControls";
 import ChatList from "./ChatList/ChatList";
 /**
@@ -17,26 +18,30 @@ const Container = styled.div`
   flex: 1 1 1px;
 `;
 
-const ChatPanel = ({ activeRoomId }) => {
+const ChatPanel = () => {
+  const roomId = useSelector(activeRoomId);
   const dispatch = useDispatch();
   const [messages, setMessages] = useState([]);
+
   const messageList = useCallback(() => {
     dispatch(
-      socketActions.emitter(`getChatHistory`, { activeRoomId }, messages => {
+      socketActions.emitter(`getChatHistory`, { roomId }, (messages) => {
         setMessages(messages);
-      })
+      }),
     );
-  }, [activeRoomId, dispatch]);
+  }, [roomId, dispatch]);
+
   useEffect(() => {
     dispatch(
       socketActions.listener(
         `incomingChatMessage`,
         ({ data: { ...newMessage } }) => {
-          setMessages(messages => [...messages, newMessage]);
-        }
-      )
+          setMessages((messages) => [...messages, newMessage]);
+        },
+      ),
     );
   }, [dispatch]);
+
   useEffect(() => {
     messageList();
   }, [messageList]);
@@ -49,11 +54,4 @@ const ChatPanel = ({ activeRoomId }) => {
   );
 };
 
-const mapStateToProps = ({ user: { user }, room: { activeRoomId } }) => {
-  return {
-    user,
-    activeRoomId
-  };
-};
-
-export default connect(mapStateToProps)(ChatPanel);
+export default ChatPanel;

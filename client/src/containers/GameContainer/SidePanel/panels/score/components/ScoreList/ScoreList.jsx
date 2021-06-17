@@ -22,7 +22,7 @@ const ScoreList = () => {
   const [playersList, setPlayersList] = useState([]);
 
   useEffect(() => {
-    const isPicked = id => {
+    const isPicked = (id) => {
       switch (gameStage) {
         case 3:
           return playersPickedCard.indexOf(id) !== -1;
@@ -34,23 +34,19 @@ const ScoreList = () => {
     };
 
     setPlayersList(() => {
-      const sortedPlayers = [...players].sort((first, second) => {
-        return scoreboard[second.id] - scoreboard[first.id];
-      });
+      const sortedPlayers = [...players].sort((first, second) => scoreboard[second.id] - scoreboard[first.id]);
 
-      return sortedPlayers.map(player => {
-        return (
-          <Flipped key={player.id} flipId={player.id}>
-            <ScoreElement
-              key={player.id}
-              player={player}
-              score={scoreboard[player.id]}
-              progress={(scoreboard[player.id] / maxScore) * 100}
-              didPick={isPicked(player.id)}
-            />
-          </Flipped>
-        );
-      });
+      return sortedPlayers.map((player) => (
+        <Flipped key={player.id} flipId={player.id}>
+          <ScoreElement
+            key={player.id}
+            player={player}
+            score={scoreboard[player.id]}
+            progress={(scoreboard[player.id] / maxScore) * 100}
+            didPick={isPicked(player.id)}
+          />
+        </Flipped>
+      ));
     });
   }, [
     maxScore,
@@ -58,7 +54,7 @@ const ScoreList = () => {
     playersPickedCard,
     scoreboard,
     gameStage,
-    playersChoosedCard
+    playersChoosedCard,
   ]);
   return (
     <StyledContainer>

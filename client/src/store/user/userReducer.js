@@ -2,7 +2,7 @@ import { AUTH_USER, UPDATED_USER } from "./userActions";
 
 export const initialState = {
   auth: false,
-  user: null
+  user: null,
 };
 
 export const userReducer = (state = initialState, action) => {
@@ -11,12 +11,12 @@ export const userReducer = (state = initialState, action) => {
     case AUTH_USER:
       return {
         ...state,
-        auth: action.auth
+        auth: action.auth,
       };
     case UPDATED_USER:
       return {
         ...state,
-        user: { ...state.user, ...action.user }
+        user: { ...state.user, ...action.user },
       };
     default:
       return state;

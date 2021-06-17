@@ -7,7 +7,11 @@ import logger from '../loaders/logger';
 const MongoStoreSession = MongoStore(session);
 const Mongoose = (app) => {
   // Create the database connection
-  mongoose.connect(process.env.DEVDB_CONN, { useNewUrlParser: true, useUnifiedTopology: true });
+  mongoose.connect(process.env.DEVDB_CONN, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  });
   app.use(
     session({
       store: new MongoStoreSession({ mongooseConnection: mongoose.connection }),

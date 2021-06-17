@@ -7,9 +7,9 @@ import * as Styled from "./ChatControls.styled";
 const ChatControls = () => {
   const activeRoomId = useSelector(roomSelectors.activeRoomId);
   const dispatch = useDispatch();
-  const sendMessageHandler = message => {
+  const sendMessageHandler = (message) => {
     dispatch(
-      socketActions.emitter(`sendingMessage`, { activeRoomId, message })
+      socketActions.emitter(`sendingMessage`, { activeRoomId, message }),
     );
   };
 

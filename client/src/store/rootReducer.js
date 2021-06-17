@@ -10,5 +10,5 @@ export default combineReducers({
   room: roomReducer,
   socket: socketReducer,
   user: userReducer,
-  deckit: deckitReducer
+  deckit: deckitReducer,
 });

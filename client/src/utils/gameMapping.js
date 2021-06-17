@@ -6,40 +6,37 @@ export const gameMapping = {
   d: {
     name: `Deckit`,
     panels: {
+      // eslint-disable-next-line react/jsx-filename-extension
       score: { listener: `scoreUpdate`, data: [], icon: <ScoreIcon /> },
-      chat: { listener: `incomingChatMessage`, data: [], icon: <ChatIcon /> }
+      chat: { listener: `incomingChatMessage`, data: [], icon: <ChatIcon /> },
       // log: { listener: `incomingLog`, data: [] },
       // settings: { listener: `roomSettings`, data: [] }
     },
-    allowedPlayers: 10
+    allowedPlayers: 10,
   },
   k: {
     name: `Karcianka`,
     panels: {
       score: {},
       chat: {},
-      log: {}
+      log: {},
     },
-    allowedPlayers: 10
-  }
+    allowedPlayers: 10,
+  },
 };
 
-export const listGameMapping = index => {
-  return index;
-};
+export const listGameMapping = (index) => index;
 
-export const getGames = index => {
-  return index ? Object.keys(gameMapping)[index] : Object.values(gameMapping);
-};
+export const getGames = (index) => (index ? Object.keys(gameMapping)[index] : Object.values(gameMapping));
 
-export const getGameMapping = game => {
+export const getGameMapping = (game) => {
   if (!gameMapping[game]) {
     throw Error(`Game ${game} is not defined within mapping`);
   }
   return gameMapping[game];
 };
 
-export const getGame = gameCode => {
+export const getGame = (gameCode) => {
   switch (gameCode) {
     case `d`:
       return lazy(() => import(`../containers/Deckit/Deckit`));

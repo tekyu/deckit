@@ -1,7 +1,7 @@
 import { OPEN_SOCKET, SAVE_DATA } from "./socketActions";
 
 export const initialState = {
-  socket: null
+  socket: null,
 };
 
 export const socketReducer = (state = initialState, action) => {

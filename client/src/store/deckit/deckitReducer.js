@@ -11,7 +11,7 @@ import {
   UNBLOCK_HAND,
   BLOCK_PICKINGAREA,
   UNBLOCK_PICKINGAREA,
-  REMOVE_FROM_HAND
+  REMOVE_FROM_HAND,
 } from "./deckitActions";
 
 export const initialState = {
@@ -22,7 +22,7 @@ export const initialState = {
   hinter: {},
   gameOptions: {},
   blockHand: false,
-  blockPickingArea: false
+  blockPickingArea: false,
 };
 
 export const deckitReducer = produce(
@@ -61,14 +61,12 @@ export const deckitReducer = produce(
         draft.blockPickingArea = false;
         return draft;
       case REMOVE_FROM_HAND:
-        draft.cards = draft.cards.filter(card => {
-          return card.id !== payload.id;
-        });
+        draft.cards = draft.cards.filter((card) => card.id !== payload.id);
         return draft;
       default:
         return draft;
     }
-  }
+  },
 );
 
 export default deckitReducer;

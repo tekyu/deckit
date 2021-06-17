@@ -1,35 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { roomSelectors, deckitSelectors } from "store/selectors";
-import styled from "styled-components";
-import CardsIcon from "../../../../../../../components/Generic/Icons/CardsIcon";
-
-const StyledContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const StyledCardsPicked = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  span {
-    font-size: 12px;
-    &:last-of-type {
-      margin-left: 6px;
-    }
-  }
-`;
-
-const StyledRemainingCards = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  span {
-    margin-right: 6px;
-  }
-`;
+import CardsIcon from "components/Generic/Icons/CardsIcon";
+import * as Styled from './PlayersInfo.styled';
 
 const PlayersInfo = () => {
   const playersPickedCard = useSelector(deckitSelectors.playersPickedCard);
@@ -53,15 +26,17 @@ const PlayersInfo = () => {
   }, [playersPickedCard, playersChoosedCard, gameStage]);
 
   return (
-    <StyledContainer>
-      <StyledCardsPicked>
+    <Styled.Container>
+      <Styled.CardsPicked>
         <span>Cards picked</span>
         <span>{`${picked} / ${players.length}`}</span>
-      </StyledCardsPicked>
-      <StyledRemainingCards>
-        <span>{remainingCards}</span> <CardsIcon />
-      </StyledRemainingCards>
-    </StyledContainer>
+      </Styled.CardsPicked>
+      <Styled.RemainingCards>
+        <span>{remainingCards}</span>
+        {` `}
+        <CardsIcon />
+      </Styled.RemainingCards>
+    </Styled.Container>
   );
 };
 

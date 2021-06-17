@@ -3,17 +3,19 @@ import {
   SOCKET_LEAVE,
   SOCKET_EMIT,
   SOCKET_LISTENER,
-  SOCKET_REMOVE_LISTENER
+  SOCKET_REMOVE_LISTENER,
 } from "store/socket/socketActions";
 
 export default function socketMiddleware() {
   const socket = io(process.env.REACT_APP_SOCKET_ADDRESS);
 
-  return ({ dispatch }) => next => action => {
+  return ({ dispatch }) => (next) => (action) => {
     if (typeof action === `function`) {
       return next(action);
     }
-    const { event, type, handler, payload, ...rest } = action;
+    const {
+      event, type, handler, payload, ...rest
+    } = action;
 
     if (!event) {
       return next(action);
@@ -35,7 +37,7 @@ export default function socketMiddleware() {
         }
         break;
       case SOCKET_LISTENER:
-        socket.on(event, data => {
+        socket.on(event, (data) => {
           if (data.error) {
             dispatch({ type: `ERROR`, payload: data.error });
             return;
