@@ -12,40 +12,33 @@ class RegisterModal extends Component {
     formError: null,
     errors: {
       empty: `It seems like you forgot to fill your`,
-      "401": `Oops! It looks like you misspelled your username or password`,
-      misspelledPass: `Passwords are not the same`
-    }
+      401: `Oops! It looks like you misspelled your username or password`,
+      misspelledPass: `Passwords are not the same`,
+    },
   };
 
-  inputOnChangeHandler = event => {
+  inputOnChangeHandler = (event) => {
     const change = {
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     };
-    this.setState(() => {
-      return change;
-    });
+    this.setState(() => change);
   };
 
-  submitRegisterHandler = event => {
+  submitRegisterHandler = (event) => {
     event.preventDefault();
     const { username, password, confirmPassword } = this.state;
     const { registerUser } = this.props;
     if (!username || !password) {
-      this.setState(state => {
-        return {
-          formError: `${state.errors.empty} ${
-            !username ? ` username` : ` password`
-          }`
-        };
-      });
+      this.setState((state) => ({
+        formError: `${state.errors.empty} ${!username ? ` username` : ` password`
+          }`,
+      }));
       return false;
     }
     if (password !== confirmPassword) {
-      this.setState(state => {
-        return {
-          formError: state.errors.misspelledPass
-        };
-      });
+      this.setState((state) => ({
+        formError: state.errors.misspelledPass,
+      }));
       return false;
     }
     registerUser(username, password);
@@ -65,9 +58,9 @@ class RegisterModal extends Component {
         <div className={styles.modal_body}>
           <form onSubmit={this.submitRegisterHandler}>
             <div className={styles.input_group}>
-              <label className={styles.input_label} htmlFor="username">
+              <div className={styles.input_label} htmlFor="username">
                 Username
-              </label>
+              </div>
               <input
                 className={styles.input_input}
                 type="text"
@@ -77,9 +70,9 @@ class RegisterModal extends Component {
               />
             </div>
             <div className={styles.input_group}>
-              <label className={styles.input_label} htmlFor="password">
+              <div className={styles.input_label} htmlFor="password">
                 Password
-              </label>
+              </div>
               <input
                 className={styles.input_input}
                 type="password"
@@ -89,9 +82,9 @@ class RegisterModal extends Component {
               />
             </div>
             <div className={styles.input_group}>
-              <label className={styles.input_label} htmlFor="confirmPassword">
+              <div className={styles.input_label} htmlFor="confirmPassword">
                 Confirm your password
-              </label>
+              </div>
               <input
                 className={styles.input_input}
                 type="password"
@@ -106,15 +99,19 @@ class RegisterModal extends Component {
             ) : null}
 
             <button type="submit">Register</button>
-            <label className={styles.password_recovery}>
-              Can&apos;t remember your password? <a href="#">Click here!</a>
-            </label>
+            <div className={styles.password_recovery}>
+              Can&apos;t remember your password?
+              {` `}
+              {/* <a href="#">Click here!</a> */}
+            </div>
           </form>
         </div>
         <div className={styles.modal_footer}>
-          <label className={styles.create_account}>
-            Already have an account? <a href="#">Create one here!</a>
-          </label>
+          <div className={styles.create_account}>
+            Already have an account?
+            {` `}
+            {/* <a href="#">Create one here!</a> */}
+          </div>
         </div>
       </div>
       // </div>
@@ -124,10 +121,10 @@ class RegisterModal extends Component {
 
 const mapDispatchToProps = {
   registerUser,
-  closeModal
+  closeModal,
 };
 
 export default connect(
   null,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(RegisterModal);

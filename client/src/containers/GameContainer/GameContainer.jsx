@@ -88,7 +88,7 @@ const GameContainer = () => {
     return () => {
       clearInterval(pingInterval);
     };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (activeRoom && activeRoom.state >= 2) {
