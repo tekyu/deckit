@@ -87,7 +87,11 @@ const Browse = () => {
   return (
     <>
       <RoomJoining />
-      <Styled.Separator>Browse rooms</Styled.Separator>
+      {
+        roomCards && roomCards.length > 0 && (
+          <Styled.Separator>Browse rooms</Styled.Separator>
+        )
+      }
       {(!roomCards || roomCards.length === 0) && (
         <Styled.CardsPlaceholder>
           <p>Sadly there are no public rooms available</p>

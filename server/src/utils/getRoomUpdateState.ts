@@ -1,4 +1,13 @@
-export default function (players: number, playersMax: number, state: number) {
+export default function ({
+  players,
+  playersMax,
+  state,
+  force,
+}: { players: number, playersMax: number, state: number, force: string }) {
+  if (force) {
+    return force;
+  }
+
   if (state >= 2) {
     return 'remove';
   }

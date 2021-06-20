@@ -1,21 +1,15 @@
 // @ts-nocheck
 import getRoom from '../../utils/getRoom';
-import distributeRandomCard from '../../utils/cards/distributeRandomCard';
 import distributeRandomCardsToPlayers from '../../utils/cards/distributeRandomCardsToPlayers';
-import Room from '../../classes/Room';
-import { gameOptions } from '../../utils/gameMapping';
 import { calculateRoundPoints } from '../../utils/Deckit/calculateRoundPoints';
-import prepareRoomForNextRound from '../../utils/cards/prepareRoomForNextRound';
 import preparePlayersForNextRound from '../../utils/cards/preparePlayersForNextRound';
 import prepareSocketForNextRound from '../../utils/cards/prepareSocketForNextRound';
 import shuffle from '../../utils/cards/Shuffle';
 import axios from '../../../axios';
 import getRoomObjectForUpdate from '../../utils/getRoomObjectForUpdate';
-import getRoomNamespaceFromList from '../../utils/getRoomNamespaceFromList';
 
 export const GameEvents = (socket: any, io: any) => {
   socket.on('START_GAME', async ({ activeRoomId }: any) => {
-    console.log('[GameEvents] START_GAME');
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;
     const { players } = room;
@@ -66,7 +60,6 @@ export const GameEvents = (socket: any, io: any) => {
     }, {});
     io.in(activeRoomId).emit('ROOM_UPDATED', {
       state: room.state,
-      // players,
       scoreboard: room.scoreboard,
     });
     io.in(activeRoomId).emit('GAME_UPDATED', {
@@ -77,16 +70,12 @@ export const GameEvents = (socket: any, io: any) => {
       maxScore: gameOptions.maxScore,
     });
 
-    // distribute cards here
-    // gameEvent -> cardsEvent
-    // RoomCards class?
     const updatedRoomObject = [getRoomObjectForUpdate(room, 'remove')];
     if (room.mode === 'public') {
       io.in('WAITING_ROOM').emit('updateListOfRooms', updatedRoomObject);
     }
   });
   socket.on('SENT_HINT_CARD', ({ activeRoomId, card }) => {
-    console.log('[GameEvents] SENT_HINT_CARD');
     const room = getRoom(activeRoomId, io.gameRooms);
     room.gameOptions.hintCard = card;
     if (
@@ -107,7 +96,6 @@ export const GameEvents = (socket: any, io: any) => {
   });
 
   socket.on('SENT_HINT', ({ activeRoomId, hint }) => {
-    console.log('[GameEvents] SENT_HINT');
     const room = getRoom(activeRoomId, io.gameRooms);
     const {
       gameOptions: { hintCard, playersPickedCard, playersChoosedCard },
@@ -137,7 +125,6 @@ export const GameEvents = (socket: any, io: any) => {
   });
 
   socket.on('PICKED_CARD_TO_HINT', ({ activeRoomId, card }) => {
-    console.log('[GameEvents] PICKED_CARD_TO_HINT');
     const room = getRoom(activeRoomId, io.gameRooms);
     const {
       gameOptions: { pickedCardsToHint, playersPickedCard, playersChoosedCard },
@@ -170,7 +157,6 @@ export const GameEvents = (socket: any, io: any) => {
   });
 
   socket.on('CHOSEN_CARD_TO_MATCH_HINT', ({ activeRoomId, card }) => {
-    console.log('[GameEvents] CHOSEN_CARD_TO_MATCH_HINT');
     const room = getRoom(activeRoomId, io.gameRooms);
     const { gameOptions } = room;
     const { players, scoreboard } = room;
@@ -178,11 +164,8 @@ export const GameEvents = (socket: any, io: any) => {
       pickedCardsToHint,
       choosedCardsToMatchHint,
       playersChoosedCard,
-      remainingCards,
-      maxScore,
       hintCard,
     } = gameOptions;
-    const { stage, round } = gameOptions;
     const pickedCard = pickedCardsToHint.find(({ card: { id } }) => id === card.id);
     if (playersChoosedCard.indexOf(socket.pswOptions.id) === -1) {
       choosedCardsToMatchHint.push({
@@ -223,16 +206,6 @@ export const GameEvents = (socket: any, io: any) => {
         hintCard,
       });
       io.in(activeRoomId).emit('ROOM_UPDATED', { scoreboard: room.scoreboard });
-      // award points
-      // show point changes
-      // show animations
-      // show correct card
-      // show timer for next round
-      // set timer here with timestamp
-      // const scoreData = players.map(({ id, gameOptions: { score } }) => {
-      //   return { id, score };
-      // });
-      // players = distributeRandomCardsToPlayers(players, remainingCards);
       players.forEach(({ id }) => {
         room.gameOptions.updateSingleCard(id, io);
       });
@@ -240,17 +213,6 @@ export const GameEvents = (socket: any, io: any) => {
       room.gameOptions.prepareRoomForNextRound(room.players);
       room.players = preparePlayersForNextRound(room.players);
       socket.pswOptions = prepareSocketForNextRound(socket.pswOptions);
-
-      // TODO: FRONT TESTING FOR STAGE
-      const interval = setTimeout(() => {
-        io.in(activeRoomId).emit('GAME_UPDATED', {
-          ...room.gameOptions,
-          remainingCards: remainingCards.length,
-        });
-        io.in(activeRoomId).emit('ROOM_UPDATED', {
-          players: room.players,
-        });
-      }, 15000);
     }
   });
 };

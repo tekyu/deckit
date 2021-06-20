@@ -47,7 +47,6 @@ export const RoomEvents = function (socket: any, io: any) {
   this.io = io;
 
   socket.on(CREATE_ROOM, (params: ICreateRoomParams, callback: Function) => {
-    console.log('[RoomEvents] CREATE_ROOM');
     const { roomOptions, id } = params;
     const room = new Room(roomOptions, id);
     const { id: roomId, mode } = room;
@@ -57,7 +56,6 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on(JOIN_ROOM, (params: IJoinRoomParams, callback: Function) => {
-    console.log('[RoomEvents] JOIN_ROOM', params);
     const { roomId, userData }: any = params;
     const room = getRoom(roomId, io.gameRooms);
 
@@ -102,7 +100,7 @@ export const RoomEvents = function (socket: any, io: any) {
         const updatedRoomObject = [
           getRoomObjectForUpdate(
             room,
-            getRoomUpdateState(players.length, room.playersMax, room.state),
+            getRoomUpdateState({ players: players.length, playersMax: room.playersMax, state: room.state }),
           ),
         ];
         // @ts-ignore
@@ -126,7 +124,6 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on('disconnect', () => {
-    console.log('[RoomEvents] disconnect');
     socket.pswOptions.rooms.forEach((roomId: string) => {
       const room = getRoom(roomId, io.gameRooms);
       if (!room) {
@@ -144,7 +141,9 @@ export const RoomEvents = function (socket: any, io: any) {
         const updatedRoomObject = [
           getRoomObjectForUpdate(
             room,
-            getRoomUpdateState(players.length, room.playersMax, room.state),
+            getRoomUpdateState({
+              players: players.length, playersMax: room.playersMax, state: room.state, force: players.length === 0 ? 'remove' : '',
+            }),
           ),
         ];
         io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
@@ -158,7 +157,6 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on('LEAVE_ROOM', ({ roomId }: { roomId: string }) => {
-    console.log('[RoomEvents] LEAVE_ROOM');
     socket.pswOptions.rooms = socket.pswOptions.rooms.filter(
       (id: String) => id !== roomId,
     );
@@ -167,8 +165,8 @@ export const RoomEvents = function (socket: any, io: any) {
       console.log(chalk.bgRedBright(`Cannot fetch room of id ${roomId}`));
       return;
     }
-    const { players } = room;
     room.disconnectPlayer(socket.pswOptions.id);
+    const { players } = room;
     if (!players || !players.length) {
       const namespace = getRoomNamespaceFromList(roomId, io.gameRooms);
       // @ts-ignore
@@ -179,7 +177,9 @@ export const RoomEvents = function (socket: any, io: any) {
       const updatedRoomObject = [
         getRoomObjectForUpdate(
           room,
-          getRoomUpdateState(players.length, room.playersMax, room.state),
+          getRoomUpdateState({
+            players: players.length, playersMax: room.playersMax, state: room.state, force: players.length === 0 ? 'remove' : '',
+          }),
         ),
       ];
       io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
@@ -239,9 +239,7 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on('CHECK_FOR_ROOM', ({ id }: { id: string }, callback: Function) => {
-    console.log('[RoomEvents] CHECK_FOR_ROOM');
     const room = getRoom(id, io.gameRooms);
-
     callback(!!room);
   });
 
@@ -316,7 +314,6 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on('ADD_SEAT', ({ activeRoomId }: { activeRoomId: string }) => {
-    console.log('[RoomEvents] ADD_SEAT');
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;
     room.playersMax += 1;
@@ -327,7 +324,6 @@ export const RoomEvents = function (socket: any, io: any) {
   });
 
   socket.on('REMOVE_SEAT', ({ activeRoomId }: { activeRoomId: string }) => {
-    console.log('[RoomEvents] REMOVE_SEAT');
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;
     room.playersMax -= 1;
