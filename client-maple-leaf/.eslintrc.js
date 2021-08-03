@@ -57,6 +57,7 @@ module.exports = {
           ['theme', '../src/theme'],
           ['i18n', './src/i18n'],
           ['mocks', './src/mocks'],
+          ['modals', './src/modals'],
         ],
         extensions: ['.ts', '.js', '.tsx', '.jsx', '.json'],
       },
