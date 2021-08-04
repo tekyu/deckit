@@ -1,0 +1,39 @@
+$color-map: (
+	"terracotta": #945d60,
+	"herb": #626e60,
+	"chilli": #af473c,
+	"charcoal": #3c3c3c,
+	"lavender": #6c606e,
+	"flushed-aqua": #5d9491,
+	"aqua": #3ca3af,
+	"hygge": #f6f6f6,
+	"white": #fff,
+	"black": #000,
+	"grey": #ececec,
+	"light-grey": #f4f4f4,
+	//main colors
+		"sandstone": #f4cc70,
+	"burnt-orange": #de7a22,
+	"sea": #20948b,
+	"lagoon": #6ab187,
+	"summer-sky": #286da8,
+	"warm-peach": #cd5360,
+	"field": #b37d4e,
+	"breeze": #438496
+);
+
+$opacity-map: (
+	"dark-divider": 0.12,
+	"dark-disabled": 0.38,
+	"dark-low": 0.54,
+	"dark-high": 0.87,
+	"light-divider": 0.12,
+	"light-disabled": 0.3,
+	"light-low": 0.7,
+	"light-high": 1
+);
+
+$sandstone-hsl: hsl(42, 86%, 70%);
+$sandstone-hsl: hsl(28, 74%, 50%);
+$sandstone-hsl: hsl(175, 64%, 35%);
+$sandstone-hsl: hsl(145, 31%, 55%);
