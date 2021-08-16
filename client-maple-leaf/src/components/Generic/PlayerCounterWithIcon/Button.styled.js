@@ -9,5 +9,4 @@ export const Button = styled.button`
   font-size: 14px;
   letter-spacing: 0.1em;
   padding: 7px 21px;
-  ${(props) => props.styles}
 `;

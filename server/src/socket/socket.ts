@@ -30,6 +30,10 @@ const ioEvents = (io: any) => {
         },
         {},
       );
+      // TODO: REFACTOR THIS ON BACKEND, SENDING TOO MUCH INFO
+      // CREATE A FUNCTION WHICH RETURNS ROOM OBJECT THAT
+      // SHOULD BE VISIBLE FOR PUBLIC EYES
+      // WITHOUT BACKEND SPECIFIC PROPS
       callback(filteredRooms);
     });
 

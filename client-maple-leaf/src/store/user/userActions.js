@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
 import axios from 'utils/axios';
-import { appActions, socketActions } from 'store/actions';
+import { emitter } from 'store/socket/socketActions';
+import { closeModal } from 'store/app/appActions';
 
 export const CHECK_USER = 'CHECK_USER';
 export const AUTH_USER = 'AUTH_USER';
@@ -15,12 +16,15 @@ export const updateUser = (data) => (dispatch) => axios.post('/api/user/update',
 });
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export const updatedUser = (username, handler = () => { }) => (dispatch) => dispatch(
-  socketActions.emitter(UPDATE_ANON_USER, { username }, (userData) => {
-    dispatch({ type: UPDATED_USER, user: userData });
-    handler(userData);
-  }),
-);
+export const updatedUser = (username, handler = () => { }) => {
+  console.trace('handler', handler);
+  return (dispatch) => dispatch(
+    emitter(UPDATE_ANON_USER, { username }, (userData) => {
+      dispatch({ type: UPDATED_USER, user: userData });
+      handler(userData);
+    }),
+  );
+};
 
 // TODO:
 // make it as a promise cos you cant send formError here
@@ -37,7 +41,7 @@ export const loginUser = (username, password) => (dispatch) => {
           type: AUTH_USER,
           auth: true,
         });
-        dispatch(appActions.closeModal());
+        dispatch(closeModal());
       }
     })
     .catch((error) => {
@@ -57,7 +61,7 @@ export const registerUser = (username, password) => (dispatch) => {
         type: AUTH_USER,
         auth: true,
       });
-      dispatch(appActions.closeModal());
+      dispatch(closeModal());
     })
     .catch((error) => {
       throw error;

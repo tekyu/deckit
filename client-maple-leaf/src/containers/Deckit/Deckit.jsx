@@ -17,6 +17,7 @@ import * as Styled from './Deckit.styled';
  * should be in the main game/room creation topic
  */
 
+// TODO: change to tsx
 const Deckit = () => {
   const activeRoom = useSelector(roomSelectors.activeRoom);
   const winners = useSelector(roomSelectors.winners);

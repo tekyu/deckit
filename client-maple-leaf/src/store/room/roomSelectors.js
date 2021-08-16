@@ -29,3 +29,8 @@ export const winners = createSelector(
   [activeRoom],
   ({ winners }) => winners,
 );
+
+export const selectActiveRoomId = createSelector(
+  (state) => state.room,
+  ({ activeRoomId }) => activeRoomId,
+);

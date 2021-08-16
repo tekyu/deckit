@@ -12,7 +12,12 @@ const Browse = () => {
   const dispatch = useDispatch();
   const refreshList = useCallback(() => {
     dispatch(
+      // TODO: REFACTOR THIS ON BACKEND, SENDING TOO MUCH INFO
+      // CREATE A FUNCTION WHICH RETURNS ROOM OBJECT THAT
+      // SHOULD BE VISIBLE FOR PUBLIC EYES
+      // WITHOUT BACKEND SPECIFIC PROPS
       socketActions.emitter('getRooms', null, (rooms) => {
+        console.log('getRooms', rooms);
         setParsedRooms(rooms);
       }),
     );
@@ -23,9 +28,12 @@ const Browse = () => {
   }, [refreshList]);
 
   const updateListOfRooms = ({ data }) => {
+    console.log('updateListOfRooms', data);
     setParsedRooms((oldRooms) => {
+      console.log('setParsedRooms', oldRooms);
       const newRooms = { ...oldRooms };
       data.forEach(({ id, action, room }) => {
+        console.log('data.forEach', id, action, room);
         switch (action) {
           case 'add':
             newRooms[id] = room;
@@ -70,12 +78,20 @@ const Browse = () => {
       );
     };
   }, [dispatch]);
-
+  console.log('roomCards', Object.values(parsedRooms));
   const roomCards = parsedRooms
-    ? Object.values(parsedRooms).map((room) => (
+    ? Object.values(parsedRooms).map(({
+      id, name, createdBy, playersMax, mode, gameCode, players,
+    }) => (
       <RoomCard
-        key={room.id}
-        options={room}
+        key={id}
+        id={id}
+        name={name}
+        createdBy={createdBy}
+        playersMax={playersMax}
+        mode={mode}
+        gameCode={gameCode}
+        players={players}
         isAnonymous={!auth}
       />
     ))
