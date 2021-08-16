@@ -47,23 +47,14 @@ module.exports = {
     // 'react-hooks/rules-of-hooks': 'error',
     // 'react-hooks/exhaustive-deps': 'warn',
     'react/prop-types': 'off',
+    '@typescript-eslint/ban-ts-comment': 'warn',
+    'react/require-default-props': 'off',
   },
   settings: {
     'import/resolver': {
       typescript: {},
-      alias: {
-        map: [
-          ['root', './src'],
-          ['assets', './src/assets'],
-          ['store', './src/store'],
-          ['components', './src/components'],
-          ['containers', './src/containers'],
-          ['utils', './src/utils'],
-          ['theme', '../src/theme'],
-          ['i18n', './src/i18n'],
-          ['mocks', './src/mocks'],
-          ['modals', './src/modals'],
-        ],
+      node: {
+        moduleDirectory: ['node_modules', 'src/'],
         extensions: ['.ts', '.js', '.tsx', '.jsx', '.json'],
       },
     },
