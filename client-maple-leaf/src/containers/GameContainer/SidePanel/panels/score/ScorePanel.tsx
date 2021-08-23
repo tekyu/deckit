@@ -17,7 +17,7 @@ const StyledContainer = styled.div`
   flex: 1 1 1px;
 `;
 
-const ScorePanel = () => (
+const ScorePanel = (): JSX.Element => (
   <StyledContainer>
     <ScoreInfo />
     <ScoreList />

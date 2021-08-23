@@ -4,7 +4,7 @@ import { roomSelectors, deckitSelectors } from 'store/selectors';
 import CardsIcon from 'components/Generic/Icons/CardsIcon';
 import * as Styled from './PlayersInfo.styled';
 
-const PlayersInfo = () => {
+const PlayersInfo = (): JSX.Element => {
   const playersPickedCard = useSelector(deckitSelectors.playersPickedCard);
   const playersChoosedCard = useSelector(deckitSelectors.playersChoosedCard);
   const players = useSelector(roomSelectors.players);

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { deckitSelectors } from 'store/selectors';
 import * as Styled from './ScoreInfo.styled';
 
-const ScoreInfo = () => {
+const ScoreInfo = (): JSX.Element => {
   const round = useSelector(deckitSelectors.round);
   const maxScore = useSelector(deckitSelectors.maxScore);
 

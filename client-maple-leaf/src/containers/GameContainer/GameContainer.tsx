@@ -35,15 +35,16 @@ const WaitingScreenContainer = styled.div`
   }
 `;
 
-const GameContainer = () => {
+const GameContainer = (): JSX.Element => {
   const {
+    // @ts-ignore
     params: { id },
   } = useRouteMatch();
   const dispatch = useDispatch();
   const history = useHistory();
   const userData = useSelector(userSelectors.user);
   const activeRoom = useSelector(roomSelectors.activeRoom);
-  const [GameComponent, setGameComponent] = useState(null);
+  const [GameComponent, setGameComponent] = useState<React.ReactNode | null>(null);
 
   useEffect(() => {
     dispatch(deckitActions.updateMyCardsListener());
@@ -59,6 +60,7 @@ const GameContainer = () => {
         socketActions.emitter(
           socketActions.JOIN_ROOM,
           { roomId: id, userData },
+          // @ts-ignore
           (roomData) => {
             if (roomData.error) {
               history.replace('/');
@@ -92,8 +94,8 @@ const GameContainer = () => {
 
   useEffect(() => {
     if (activeRoom && activeRoom.state >= 2) {
-      const { gameCode, id } = activeRoom;
-      setGameComponent(getGame(gameCode, id));
+      const { gameCode } = activeRoom;
+      setGameComponent(getGame(gameCode));
     }
   }, [activeRoom]);
 
@@ -135,6 +137,7 @@ const GameContainer = () => {
             <WaitingScreen />
           </WaitingScreenContainer>
         )}
+        { /* @ts-ignore */}
         {GameComponent && <GameComponent />}
       </Suspense>
     </Container>

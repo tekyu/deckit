@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { userActions } from 'store/actions';
 import { userSelectors } from 'store/selectors';
 
-const Profile = (auth) => {
+const Profile = (auth: boolean): JSX.Element => {
   const profileData = useSelector(userSelectors.user);
   const [username, setUsername] = useState('');
   const [ranking, setRanking] = useState(0);

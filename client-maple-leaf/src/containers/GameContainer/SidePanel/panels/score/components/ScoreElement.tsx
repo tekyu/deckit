@@ -1,7 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import PlayerBubble from 'components/Generic/PlayerBubble/PlayerBubble';
 import * as Styled from './ScoreElement.styled';
+
+interface IPlayer {
+  id: string;
+  avatar: string;
+  username: string;
+  color: string;
+}
+
+interface IScoreElement {
+  player: IPlayer;
+  score: number;
+  progress: number;
+  didPick?: boolean
+}
 
 const ScoreElement = ({
   player: {
@@ -10,7 +23,7 @@ const ScoreElement = ({
   score = 0,
   progress = 0,
   didPick = false,
-}) => (
+}: IScoreElement): JSX.Element => (
   <Styled.Container id={id} progress={progress} didNotPick={!didPick}>
     <Styled.InfoContainer>
       <PlayerBubble avatar={avatar} color={color} didPick={didPick} />
@@ -21,17 +34,5 @@ const ScoreElement = ({
     </Styled.InfoContainer>
   </Styled.Container>
 );
-
-ScoreElement.propTypes = {
-  player: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    avatar: PropTypes.string,
-    username: PropTypes.string.isRequired,
-    color: PropTypes.string.isRequired,
-  }).isRequired,
-  score: PropTypes.number.isRequired,
-  progress: PropTypes.number.isRequired,
-  didPick: PropTypes.bool.isRequired,
-};
 
 export default ScoreElement;

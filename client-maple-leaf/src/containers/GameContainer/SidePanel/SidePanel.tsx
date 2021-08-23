@@ -15,13 +15,20 @@ import * as Styled from './SidePanel.styled';
  * should be in the main game/room creation topic
  */
 
-const SidePanel = () => {
+const SidePanel = (): JSX.Element => {
   const gameCode = useSelector(roomSelectors.gameCode);
-  const [panels, setPanels] = useState({});
-  const [openedPanel, setOpenedPanel] = useState(Object.keys(panels)[0]); // Object.keys(panels)[0]
-  const [updatedPanels, setUpdatedPanels] = useState([]);
+  const [panels, setPanels] = useState<any>({});
+  const [
+    openedPanel, setOpenedPanel,
+  ] = useState<string>(Object.keys(panels)[0]); // Object.keys(panels)[0]
+  const [updatedPanels, setUpdatedPanels] = useState<string[]>([]);
   const dispatch = useDispatch();
-  const panelMapping = {
+
+  interface IPanelMapping {
+    [key: string]: React.ReactNode
+  }
+
+  const panelMapping: IPanelMapping = {
     score: <ScorePanel />,
     chat: <ChatPanel />,
     options: <OptionsPanel />,
@@ -29,7 +36,9 @@ const SidePanel = () => {
 
   useEffect(() => {
     if (gameCode) {
+      // @ts-ignore
       setPanels(gameMapping[gameCode].panels);
+      // @ts-ignore
       setOpenedPanel(Object.keys(gameMapping[gameCode].panels)[0]);
     }
   }, [gameCode]);
@@ -61,7 +70,7 @@ const SidePanel = () => {
     }
   }, [updatedPanels]);
 
-  const getPanel = () => panelMapping[openedPanel];
+  const getPanel = (): React.ReactNode => panelMapping[openedPanel];
 
   return (
     <Styled.Container>
@@ -69,6 +78,7 @@ const SidePanel = () => {
         panels={panels}
         openedPanel={openedPanel}
         updatedPanels={updatedPanels}
+        // @ts-ignore
         handler={changePanel}
       />
       <Styled.Panel>{getPanel()}</Styled.Panel>

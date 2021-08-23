@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Container = styled.div`
+export const Container = styled.div<{ progress: number; didNotPick: boolean }>`
   display: flex;
   align-items: center;
   padding: 12px 12px;

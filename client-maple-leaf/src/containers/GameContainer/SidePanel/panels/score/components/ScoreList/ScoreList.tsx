@@ -11,7 +11,7 @@ const StyledContainer = styled.div`
   overflow-x: hidden;
 `;
 
-const ScoreList = () => {
+const ScoreList = (): JSX.Element => {
   const maxScore = useSelector(deckitSelectors.maxScore);
   const playersPickedCard = useSelector(deckitSelectors.playersPickedCard);
   const playersChoosedCard = useSelector(deckitSelectors.playersChoosedCard);
@@ -19,10 +19,10 @@ const ScoreList = () => {
   const players = useSelector(roomSelectors.players);
   const scoreboard = useSelector(roomSelectors.scoreboard);
 
-  const [playersList, setPlayersList] = useState([]);
+  const [playersList, setPlayersList] = useState<React.ReactNode[]>([]);
 
   useEffect(() => {
-    const isPicked = (id) => {
+    const isPicked = (id: string) => {
       switch (gameStage) {
         case 3:
           return playersPickedCard.indexOf(id) !== -1;
