@@ -6,7 +6,11 @@ import { useHistory } from 'react-router-dom';
 import modals from './modals';
 import * as Styled from './ModalContainer.styled';
 
-const ModalContainer = ({ modalType }) => {
+interface IModalContainer {
+  modalType: string;
+}
+
+const ModalContainer = ({ modalType }: IModalContainer): JSX.Element | null => {
   const dispatch = useDispatch();
   const history = useHistory();
   const onClose = useCallback(
@@ -21,6 +25,7 @@ const ModalContainer = ({ modalType }) => {
   return modalType ? (
     <Styled.Backdrop>
       <Styled.Body>
+        { /* @ts-ignore */}
         <Styled.ExitButton onClick={onClose}>X</Styled.ExitButton>
         <Styled.Container>
           <Styled.Header>

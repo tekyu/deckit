@@ -6,7 +6,7 @@ import { appActions, userActions } from 'store/actions';
 import { userSelectors } from 'store/selectors';
 import * as Styled from './AnonymousLoginModal.styled';
 
-const AnonymousLoginModal = () => {
+const AnonymousLoginModal = (): JSX.Element => {
   const user = useSelector(userSelectors.user);
   const dispatch = useDispatch();
   const [username, setUsername] = useState(sillyname());
@@ -36,7 +36,7 @@ const AnonymousLoginModal = () => {
           onChange={(e) => setUsername(e.target.value)}
         />
       </Styled.InputGroup>
-      <Styled.SubmitButton variant="contained" color="primary" type="submit">
+      <Styled.SubmitButton type="submit">
         Choose
       </Styled.SubmitButton>
     </form>

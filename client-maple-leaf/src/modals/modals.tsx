@@ -3,7 +3,11 @@ import LoginModal from './LoginModal/LoginModal';
 import RegisterModal from './RegisterModal/RegisterModal';
 import AnonymousLoginModal from './AnonymousLoginModal/AnonymousLoginModal';
 
-const modals = {
+interface IModals {
+  [key: string]: any;
+}
+
+const modals: IModals = {
   login: { component: <LoginModal />, title: 'Login' },
   register: { component: <RegisterModal />, title: 'Register' },
   anonymous: {
