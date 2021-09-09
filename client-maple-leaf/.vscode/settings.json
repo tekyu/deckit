@@ -1,0 +1,29 @@
+{
+  "css.validate": true,
+  "scss.validate": true,
+  "less.validate": true,
+  "[javascript]": {
+    "editor.formatOnSave": false
+  },
+  "prettier.disableLanguages": [
+    "js"
+  ],
+  "editor.formatOnSave": true,
+  "cSpell.words": [
+    "deckit",
+    "formik",
+    "hygge",
+    "scroller"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/build": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/package-lock.json": true,
+    "**/package.json": true
+  }
+}

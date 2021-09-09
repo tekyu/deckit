@@ -17,4 +17,5 @@ export default interface IRoom {
   roomOptions: Function;
   connectPlayer: Function;
   disconnectPlayer: Function;
-}
+  roomView: Function;
+};

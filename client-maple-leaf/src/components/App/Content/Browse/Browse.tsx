@@ -1,23 +1,52 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { socketActions } from 'store/actions';
-import { selectAuth } from 'store/user/userSelectors';
+import { cloneDeep } from 'lodash';
 import RoomCard from './RoomCard/RoomCard';
 import RoomJoining from './RoomJoining/RoomJoining';
 import * as Styled from './Browse.styled';
 
-const Browse = () => {
-  const [parsedRooms, setParsedRooms] = useState([]);
-  const auth = useSelector(selectAuth);
+interface IGameOptions {
+  hint: string;
+  hintCard: any;
+  hinter: any;
+  initialCards: any[];
+  maxScore: number;
+  pickedCardsToHint: any[];
+  playersChoosedCard: any[];
+  playersPickedCard: any[];
+  remainingCards: any[];
+}
+
+interface IRoom {
+  admin: string;
+  chat: any[];
+  createdAt: number;
+  gameCode: string;
+  gameOptions: IGameOptions;
+  id: string;
+  mode: string;
+  name: string;
+  owner: string;
+  players: any;
+  playersMax: number;
+  scoreboard: any;
+  state: number;
+  winners: string[];
+}
+
+interface IUpdateRoom {
+  id: string;
+  room: IRoom;
+  action: string;
+}
+
+const Browse = (): JSX.Element => {
+  const [parsedRooms, setParsedRooms] = useState<{ [key: string]: IRoom }>({});
   const dispatch = useDispatch();
   const refreshList = useCallback(() => {
     dispatch(
-      // TODO: REFACTOR THIS ON BACKEND, SENDING TOO MUCH INFO
-      // CREATE A FUNCTION WHICH RETURNS ROOM OBJECT THAT
-      // SHOULD BE VISIBLE FOR PUBLIC EYES
-      // WITHOUT BACKEND SPECIFIC PROPS
-      socketActions.emitter('getRooms', null, (rooms) => {
-        console.log('getRooms', rooms);
+      socketActions.emitter('getRooms', null, (rooms: { [key: string]: IRoom }) => {
         setParsedRooms(rooms);
       }),
     );
@@ -27,22 +56,21 @@ const Browse = () => {
     refreshList();
   }, [refreshList]);
 
-  const updateListOfRooms = ({ data }) => {
-    console.log('updateListOfRooms', data);
+  const updateListOfRooms = ({ data }: { data: IUpdateRoom[] }) => {
     setParsedRooms((oldRooms) => {
-      console.log('setParsedRooms', oldRooms);
-      const newRooms = { ...oldRooms };
+      const newRooms = cloneDeep(oldRooms);
+
       data.forEach(({ id, action, room }) => {
-        console.log('data.forEach', id, action, room);
         switch (action) {
           case 'add':
+
             newRooms[id] = room;
             break;
           case 'remove':
             delete newRooms[id];
             break;
           case 'update':
-            newRooms[id] = { ...room };
+            newRooms[id] = cloneDeep(room);
             break;
           default:
             throw Error(
@@ -54,9 +82,9 @@ const Browse = () => {
     });
   };
 
-  const removeRoomFromList = ({ roomId }) => {
+  const removeRoomFromList = ({ roomId }: { roomId: string }) => {
     setParsedRooms((oldRooms) => {
-      const newRooms = { ...oldRooms };
+      const newRooms = cloneDeep(oldRooms);
       delete newRooms[roomId];
       return newRooms;
     });
@@ -78,21 +106,19 @@ const Browse = () => {
       );
     };
   }, [dispatch]);
-  console.log('roomCards', Object.values(parsedRooms));
   const roomCards = parsedRooms
     ? Object.values(parsedRooms).map(({
-      id, name, createdBy, playersMax, mode, gameCode, players,
+      id, name, owner, playersMax, mode, gameCode, players,
     }) => (
       <RoomCard
         key={id}
         id={id}
         name={name}
-        createdBy={createdBy}
+        createdBy={players.find(({ id }: { id: string }) => id === owner)?.username}
         playersMax={playersMax}
         mode={mode}
         gameCode={gameCode}
         players={players}
-        isAnonymous={!auth}
       />
     ))
     : null;

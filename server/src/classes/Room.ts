@@ -1,9 +1,8 @@
 // @ts-nocheck
-import { gameOptions } from './../utils/gameMapping';
-import IRoom from '../interfaces/IRoom';
-import { getGameOptions } from '../utils/gameMapping';
 import hri from 'human-readable-ids';
 import cloneDeep from 'clone-deep';
+import { gameOptions, getGameOptions } from '../utils/gameMapping';
+import IRoom from '../interfaces/IRoom';
 
 interface CreateRoomOptions {
   mode: string;
@@ -24,24 +23,40 @@ interface CreateRoomOptions {
  */
 export default class Room implements IRoom {
   mode: string; // private | public | fast
+
   playersMax: number;
+
   name: string;
+
   id: string;
+
   owner: string;
+
   admin: string;
+
   gameCode: string;
+
   state: number; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
+
   players: Array<Object>;
+
   winners: Array<String>;
+
   createdAt: number;
+
   gameOptions: any;
+
   chat: Array<Object>;
+
   scoreboard: Object;
+
   pingInterval: Function;
 
   constructor(
-    { mode, playersMax, gameCode, gameOptions, name = '' }: CreateRoomOptions,
-    socketId: any
+    {
+      mode, playersMax, gameCode, gameOptions, name = '',
+    }: CreateRoomOptions,
+    socketId: any,
   ) {
     this.mode = mode;
     this.playersMax = playersMax || 10; // check for max players per game (adjustable in gameMapping)
@@ -57,16 +72,13 @@ export default class Room implements IRoom {
     this.scoreboard = {};
     this.gameOptions = getGameOptions(gameCode, gameOptions);
     this.chat = [];
-    // this.pingInterval = () => {};
-    console.log('[Room] constructor');
   }
 
   get instance() {
-    console.log('[Room] get instance');
     return this;
   }
+
   get roomOptions() {
-    console.log('[Room] get roomOptions');
     const {
       mode,
       playersMax,
@@ -98,26 +110,57 @@ export default class Room implements IRoom {
   }
 
   get roomView() {
-    console.log('[Room] get roomView');
-    const { mode, playersMax, gameCode, name, id, owner, state } = this;
-    return {
-      mode,
-      playersMax,
+    const {
+      admin,
+      chat,
+      createdAt,
       gameCode,
-      name,
+      gameOptions,
       id,
+      mode,
+      name,
       owner,
+      players,
+      playersMax,
+      scoreboard,
       state,
+      winners,
+    } = this;
+    return {
+      admin,
+      chat,
+      createdAt,
+      gameCode,
+      gameOptions: {
+        hinter: gameOptions.hinter,
+        hintCard: gameOptions.hintCard,
+        hint: gameOptions.hint,
+        initialCards: gameOptions.initialCards,
+        maxScore: gameOptions.maxScore,
+        pickedCardsToHint: gameOptions.pickedCardsToHint,
+        playersChoosedCard: gameOptions.playersChoosedCard,
+        playersPickedCard: gameOptions.playersPickedCard,
+        remainingCards: gameOptions.remainingCards,
+        round: gameOptions.round,
+        stage: gameOptions.stage,
+      },
+      id,
+      mode,
+      name,
+      owner,
+      players,
+      playersMax,
+      scoreboard,
+      state,
+      winners,
     };
   }
 
   setState(newState) {
-    console.log('[Room] setState');
     this.state = newState;
   }
 
   setWinners() {
-    console.log('[Room] setWinners');
     this.winners = Object.entries(this.scoreboard).reduce(
       (winners, [id, score]) => {
         if (score >= this.gameOptions.maxScore) {
@@ -125,18 +168,16 @@ export default class Room implements IRoom {
         }
         return winners;
       },
-      []
+      [],
     );
     return this.winners;
   }
 
   setCards(cards) {
-    console.log('[Room] setCards');
     this.gameOptions.remainingCards = cards;
   }
 
   async connectPlayer(playerData: Object) {
-    console.log('[Room] connectPlayer');
     const newPlayerData = { ...playerData };
     if (this.owner === playerData.id) {
       newPlayerData.state = 1;
@@ -146,9 +187,6 @@ export default class Room implements IRoom {
   }
 
   disconnectPlayer(id: string) {
-    console.log('[Room] disconnectPlayer');
-    return (this.players = this.players.filter((player: any) => {
-      return player.id !== id;
-    }));
+    return (this.players = this.players.filter((player: any) => player.id !== id));
   }
 }

@@ -24,7 +24,7 @@ const ioEvents = (io: any) => {
         (newRooms, [id, room]) => {
           // @ts-ignore
           if (room.state < 2) {
-            newRooms[id] = room;
+            newRooms[id] = room.roomView;
           }
           return newRooms;
         },
@@ -36,7 +36,6 @@ const ioEvents = (io: any) => {
       // WITHOUT BACKEND SPECIFIC PROPS
       callback(filteredRooms);
     });
-
     RoomEvents(socket, io);
     GameEvents(socket, io);
     UserEvents(socket, io);

@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import { Button } from '@material-ui/core';
 import Icon from 'components/Generic/Icon/Icon';
 import PlayerCounterWithIcon from 'components/Generic/PlayerCounterWithIcon/PlayerCounterWithIcon';
@@ -58,17 +57,5 @@ const RoomCard = ({
     </div>
   </div>
 );
-RoomCard.propTypes = {
-  options: PropTypes.shape({
-    id: PropTypes.string,
-    name: PropTypes.string,
-    createdBy: PropTypes.string,
-    playersMax: PropTypes.number,
-    mode: PropTypes.string,
-    gameCode: PropTypes.string,
-    // eslint-disable-next-line react/forbid-prop-types
-    players: PropTypes.array,
-  }).isRequired,
-};
 
 export default memo(RoomCard);
