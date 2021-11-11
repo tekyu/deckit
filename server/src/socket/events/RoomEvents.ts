@@ -11,6 +11,9 @@ import { getGameOptions } from '../../utils/gameMapping';
 import getRoomUpdateState from '../../utils/getRoomUpdateState';
 import ICreateRoomParams from './interfaces/ICreateRoom';
 import IJoinRoomParams from './interfaces/IJoinRoom';
+import { ExtendedSocket } from './interfaces/IExtendedSocket';
+import { IExtendedSocketServer } from './interfaces/IExtendedSocketServer';
+import { loggers } from '../../loaders/loggers';
 // TODO: Move interfaces to other file
 interface Iparams {
   id: string;
@@ -42,9 +45,126 @@ const JOIN_ROOM = 'JOIN_ROOM';
 const WAITING_ROOM = 'WAITING_ROOM';
 
 // TODO: Change types
-export const RoomEvents = function (socket: any, io: any) {
+export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketServer) {
   this.socket = socket;
   this.io = io;
+
+  const roomTopics = {
+    CREATE_ROOM: 'MOONLIGHT-CREATE_ROOM',
+    JOIN_ROOM: 'MOONLIGHT-JOIN-ROOM',
+    UPDATE_ROOM: 'MOONLIGHT-UPDATE_ROOM',
+    UPDATE_LIST_OF_ROOMS: 'MOONLIGHT-UPDATE_LIST_OF_ROOMS',
+  };
+
+  // 2.0 start
+  interface MOONLIGHTICreateRoomParams {
+    userData: {
+      username: string;
+      id: string;
+      anon: boolean;
+    }
+    mode: string;
+    playersMax: number;
+    name: string;
+    gameCode: string;
+    maxScore: number;
+  }
+
+  socket.on(
+    roomTopics.CREATE_ROOM,
+    async (params: MOONLIGHTICreateRoomParams, callback: Function) => {
+      const {
+        maxScore, ...rest
+      } = params;
+      const roomOptions = {
+        ...rest,
+        gameOptions: {
+          maxScore,
+        },
+      };
+      if (!socket.deckitUser.color) {
+        socket.deckitUser.color = randomColor(0.3, 0.99).hexString();
+      }
+      const room = new Room(roomOptions, socket.deckitUser.id);
+      const { id: roomId, mode } = room;
+      loggers.event.received.verbose(roomTopics.CREATE_ROOM, params);
+      loggers.event.received.verbose('ROOM', room.basicInfo);
+      io.gameRooms[mode][roomId] = room;
+
+      // join player to the room
+      const {
+        newPlayerData: userDetails,
+      } = await room.MOONLIGHTconnectPlayer({ color: socket.deckitUser.color, ...params.userData });
+      // push out roomData
+      callback({
+        roomDetails: room.basicInfo, userDetails,
+      });
+    },
+  );
+
+  interface MOONLIGHTIJoinRoomParams {
+    roomId: string;
+    userData: {
+      username: string;
+      id: string;
+      anon: boolean;
+    }
+  }
+
+  socket.on(roomTopics.JOIN_ROOM, async (params: MOONLIGHTIJoinRoomParams, callback: Function) => {
+    const { roomId, userData }: any = params;
+    const room = getRoom(roomId, io.gameRooms);
+
+    if (!room) {
+      callback({ error: "Room doesn't exist" });
+      return;
+    }
+    if (room.state > 1) {
+      callback({ error: 'Game has already started' });
+      return;
+    }
+    if (room.players.length === room.playersMax) {
+      callback({ error: `Sorry, room ${room.name} is full` });
+      return;
+    }
+
+    if (!socket.deckitUser.color) {
+      socket.deckitUser.color = randomColor(0.3, 0.99).hexString();
+    }
+
+    try {
+      socket.leave(WAITING_ROOM);
+      socket.join(roomId);
+
+      const { newPlayerData, players } = room.MOONLIGHTconnectPlayer(socket.deckitUser);
+      const updatedRoomObject = [
+        getRoomObjectForUpdate(
+          room,
+          getRoomUpdateState({
+            players: players.length,
+            playersMax: room.playersMax,
+            state: room.state,
+          }),
+        ),
+      ];
+
+      // if room is public, push update of the room info to Browse route
+      if (room.mode === 'public') {
+        io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
+      }
+
+      // send basicView of room to sender
+
+      // send updated room to all except sender
+      socket.to(roomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
+    } catch (error) {
+      Error(
+        `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`,
+      );
+    }
+  });
+
+  // 2.0 end
 
   socket.on(CREATE_ROOM, (params: ICreateRoomParams, callback: Function) => {
     const { roomOptions, id } = params;

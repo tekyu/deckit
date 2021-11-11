@@ -1,11 +1,13 @@
 import http from 'http';
 import socketIo from 'socket.io';
+import SocketIO from 'socket.io';
 import {
   RoomEvents, GameEvents, UserEvents, ChatEvents,
 } from './events';
 import getRoomObjectForUpdate from '../utils/getRoomObjectForUpdate';
 import getRoom from '../utils/getRoom';
 import logger from '../loaders/logger';
+import { IExtendedSocketServer } from './events/interfaces/IExtendedSocketServer';
 
 const WAITING_ROOM = 'WAITING_ROOM';
 // TODO: Change types
@@ -66,17 +68,19 @@ const ioEvents = (io: any) => {
 const SocketIo = (App: any) => {
   const port = process.env.SOCKET_PORT || 3012;
   const server = http.createServer();
-  const io = socketIo(server);
+  const io: SocketIO.Server = socketIo(server, {
+    pingTimeout: 300000, // 5 minutes
+    pingInterval: 5000, // 5 seconds
+  });
 
-  // @ts-ignore
-  io.eio.pingTimeout = 300000; // 5 minutes
-  // @ts-ignore
-  io.eio.pingInterval = 5000; // 5 seconds
+  // io.eio.pingTimeout = 300000; // 5 minutes
+  // io.eio.pingInterval = 5000; // 5 seconds
 
+  // move this to mongo
   // @ts-ignore
   io.gameRooms = { public: {}, private: {}, fast: {} };
-
-  ioEvents(io);
+  const extendedIo: IExtendedSocketServer = io;
+  ioEvents(extendedIo);
   server.listen(port, () => logger.info(`Socket server listening on port ${port}`));
 };
 

@@ -56,15 +56,15 @@ export default class Room implements IRoom {
     {
       mode, playersMax, gameCode, gameOptions, name = '',
     }: CreateRoomOptions,
-    socketId: any,
+    ownerId: string,
   ) {
     this.mode = mode;
-    this.playersMax = playersMax || 10; // check for max players per game (adjustable in gameMapping)
+    this.playersMax = playersMax || 10; // check for max players per game(adjustable in gameMapping)
     this.name = name;
     this.gameCode = gameCode;
     this.id = hri.hri.random().split('-').join('');
-    this.owner = socketId;
-    this.admin = socketId;
+    this.owner = ownerId;
+    this.admin = ownerId;
     this.state = 0;
     this.players = [];
     this.winners = [];
@@ -76,6 +76,31 @@ export default class Room implements IRoom {
 
   get instance() {
     return this;
+  }
+
+  get basicInfo() {
+    const {
+      mode,
+      playersMax,
+      gameCode,
+      name,
+      id,
+      owner,
+      admin,
+      players,
+      state,
+    } = this;
+    return {
+      mode,
+      playersMax,
+      gameCode,
+      name,
+      id,
+      owner,
+      admin,
+      players,
+      state,
+    };
   }
 
   get roomOptions() {
@@ -177,7 +202,18 @@ export default class Room implements IRoom {
     this.gameOptions.remainingCards = cards;
   }
 
+  async MOONLIGHTconnectPlayer(playerData: Object) {
+    console.log('connectPlayer', playerData);
+    const newPlayerData = { ...playerData };
+    if (this.owner === playerData.id) {
+      newPlayerData.state = 0; // 0 - waiting 1 - ready
+    }
+    this.players.push(newPlayerData);
+    return { newPlayerData, players: this.players };
+  }
+
   async connectPlayer(playerData: Object) {
+    console.log('connectPlayer', playerData);
     const newPlayerData = { ...playerData };
     if (this.owner === playerData.id) {
       newPlayerData.state = 1;

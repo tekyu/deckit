@@ -18,4 +18,5 @@ export default interface IRoom {
   connectPlayer: Function;
   disconnectPlayer: Function;
   roomView: Function;
-};
+  MOONLIGHTconnectPlayer: (user: any) => void;
+}

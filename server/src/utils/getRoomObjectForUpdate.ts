@@ -7,7 +7,7 @@ export default (room: any = {}, action = '') => {
   }
   return {
     id,
-    room: room.roomView,
+    room: room.basicInfo,
     action,
   };
 };
