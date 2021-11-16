@@ -11,7 +11,7 @@ const PageContainer = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const onUpdateAnonUser = ({ id }: { id: string }) => {
-    dispatch(userActions.initializeUser(id));
+    dispatch(userActions.initializeUser({ id }));
   };
 
   useEffect(() => {

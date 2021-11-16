@@ -10,7 +10,7 @@ export default function socketMiddleware() {
       event, type, handler, payload, ...rest
     } = action;
 
-    if (!event) {
+    if (!event || !type) {
       return next(action);
     }
     switch (type) {
@@ -36,12 +36,12 @@ export default function socketMiddleware() {
             return;
           }
           console.log('%c SOCKET LISTENER', 'background:#C1FFAB', event, data);
-          const readyData = { data, socketId: socket.id };
-          handler(readyData);
+          // const readyData = { data, socketId: socket.id };
+          handler(data);
         });
 
         break;
-      case socketTypes:
+      case socketTypes.removeListener:
         socket.off(event);
         break;
       default:

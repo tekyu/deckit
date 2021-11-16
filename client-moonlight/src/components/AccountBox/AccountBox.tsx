@@ -36,7 +36,7 @@ const AccountBox = (): JSX.Element => {
   };
 
   const validateCustomName = ({ name }: IChangeNameForm) => {
-    const errors: { name?: string } = {};
+    const errors: Partial<IChangeNameForm> = {};
 
     if (!name) {
       errors.name = 'Name cannot be empty';
@@ -58,7 +58,6 @@ const AccountBox = (): JSX.Element => {
         </Styled.Info>
         <BiChevronDown />
       </Styled.Display>
-      {/* {showDropdown && ( */}
       <CSSTransition in={showDropdown} timeout={300} classNames="accountBoxDropdown">
         <Styled.Dropdown>
           <Styled.Item>

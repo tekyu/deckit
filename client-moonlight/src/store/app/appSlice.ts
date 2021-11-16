@@ -9,9 +9,9 @@ export interface IAppState {
 }
 
 const initialState: IAppState = {
-  activeTheme: 'light',
+  activeTheme: 'dark',
   themeLoaded: true,
-  theme: getTheme('light'),
+  theme: getTheme('dark'),
 };
 
 const appSlice = createSlice({

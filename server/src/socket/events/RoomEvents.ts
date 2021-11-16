@@ -51,7 +51,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
 
   const roomTopics = {
     CREATE_ROOM: 'MOONLIGHT-CREATE_ROOM',
-    JOIN_ROOM: 'MOONLIGHT-JOIN-ROOM',
+    JOIN_ROOM: 'MOONLIGHT-JOIN_ROOM',
     UPDATE_ROOM: 'MOONLIGHT-UPDATE_ROOM',
     UPDATE_LIST_OF_ROOMS: 'MOONLIGHT-UPDATE_LIST_OF_ROOMS',
   };
@@ -61,7 +61,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     userData: {
       username: string;
       id: string;
-      anon: boolean;
+      anonymous: boolean;
     }
     mode: string;
     playersMax: number;
@@ -74,7 +74,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     roomTopics.CREATE_ROOM,
     async (params: MOONLIGHTICreateRoomParams, callback: Function) => {
       const {
-        maxScore, ...rest
+        maxScore, userData: { username, anonymous, id: userId }, ...rest
       } = params;
       const roomOptions = {
         ...rest,
@@ -88,13 +88,19 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       const room = new Room(roomOptions, socket.deckitUser.id);
       const { id: roomId, mode } = room;
       loggers.event.received.verbose(roomTopics.CREATE_ROOM, params);
-      loggers.event.received.verbose('ROOM', room.basicInfo);
       io.gameRooms[mode][roomId] = room;
 
+      // leave waiting room to not receive info about newly created rooms
+      socket.leave(WAITING_ROOM);
+
       // join player to the room
+      socket.join(roomId);
+
       const {
         newPlayerData: userDetails,
-      } = await room.MOONLIGHTconnectPlayer({ color: socket.deckitUser.color, ...params.userData });
+      } = await room.MOONLIGHTconnectPlayer({
+        color: socket.deckitUser.color, username, anonymous, id: userId,
+      });
       // push out roomData
       callback({
         roomDetails: room.basicInfo, userDetails,
@@ -102,19 +108,21 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     },
   );
 
+  interface IUserData {
+    username: string;
+    id: string;
+    anonymous: boolean;
+  }
   interface MOONLIGHTIJoinRoomParams {
     roomId: string;
-    userData: {
-      username: string;
-      id: string;
-      anon: boolean;
-    }
+    userData: IUserData;
   }
 
-  socket.on(roomTopics.JOIN_ROOM, async (params: MOONLIGHTIJoinRoomParams, callback: Function) => {
-    const { roomId, userData }: any = params;
+  socket.on(roomTopics.JOIN_ROOM, async ({
+    roomId,
+    userData,
+  }: MOONLIGHTIJoinRoomParams, callback: Function) => {
     const room = getRoom(roomId, io.gameRooms);
-
     if (!room) {
       callback({ error: "Room doesn't exist" });
       return;
@@ -133,10 +141,14 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     }
 
     try {
+      // leave waiting room to not receive info about newly created rooms
       socket.leave(WAITING_ROOM);
+
       socket.join(roomId);
 
-      const { newPlayerData, players } = room.MOONLIGHTconnectPlayer(socket.deckitUser);
+      const { players } = await room.MOONLIGHTconnectPlayer(socket.deckitUser);
+
+      // get list of rooms needed to be updated in waiting room
       const updatedRoomObject = [
         getRoomObjectForUpdate(
           room,
@@ -152,14 +164,16 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       if (room.mode === 'public') {
         io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
       }
+      loggers.event.received.verbose(roomTopics.JOIN_ROOM, room.basicInfo);
 
       // send basicView of room to sender
+      callback(room.basicInfo);
 
       // send updated room to all except sender
       socket.to(roomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
     } catch (error) {
       Error(
-        `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`,
+        `Cannot connect player ${userData.username} of id: ${userData.id} to room ${roomId} with error: ${error}`,
       );
     }
   });

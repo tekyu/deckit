@@ -27,7 +27,7 @@ const userPersistConfig = {
 const appPersistConfig = {
   key: 'app',
   storage,
-  whitelist: ['activeTheme'],
+  whitelist: ['activeTheme', 'theme'],
 };
 
 const rootReducer = combineReducers({

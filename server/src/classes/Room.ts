@@ -1,8 +1,11 @@
 // @ts-nocheck
 import hri from 'human-readable-ids';
 import cloneDeep from 'clone-deep';
+// import { IPlayer } from '../../../client-moonlight/src/store/room/roomSlice';
+
 import { gameOptions, getGameOptions } from '../utils/gameMapping';
 import IRoom from '../interfaces/IRoom';
+import Player, { IPlayerBasicInfo } from './Player';
 
 interface CreateRoomOptions {
   mode: string;
@@ -13,6 +16,17 @@ interface CreateRoomOptions {
   gameOptions?: Object;
 }
 
+interface IConnectPlayer {
+  username: string;
+  id: string;
+  anonymous: boolean;
+  color?: string;
+}
+
+interface IConnectPlayerReturn {
+  players: Player[];
+  newPlayerData: IPlayerBasicInfo;
+}
 /**
  * TODO:
  * DeckitRoom extends Room
@@ -51,6 +65,8 @@ export default class Room implements IRoom {
   scoreboard: Object;
 
   pingInterval: Function;
+
+  // MOONLIGHTconnectPlayer: (userDetails: IConnectPlayer) => IConnectPlayerReturn
 
   constructor(
     {
@@ -202,16 +218,6 @@ export default class Room implements IRoom {
     this.gameOptions.remainingCards = cards;
   }
 
-  async MOONLIGHTconnectPlayer(playerData: Object) {
-    console.log('connectPlayer', playerData);
-    const newPlayerData = { ...playerData };
-    if (this.owner === playerData.id) {
-      newPlayerData.state = 0; // 0 - waiting 1 - ready
-    }
-    this.players.push(newPlayerData);
-    return { newPlayerData, players: this.players };
-  }
-
   async connectPlayer(playerData: Object) {
     console.log('connectPlayer', playerData);
     const newPlayerData = { ...playerData };
@@ -224,5 +230,31 @@ export default class Room implements IRoom {
 
   disconnectPlayer(id: string) {
     return (this.players = this.players.filter((player: any) => player.id !== id));
+  }
+
+  // 2.0
+  //
+  //
+  //
+  //
+  //
+  //
+
+  async MOONLIGHTconnectPlayer({
+    username,
+    id,
+    anonymous,
+    color,
+  }: IConnectPlayer): IConnectPlayerReturn {
+    console.log('connectPlayer', username, id, anonymous, color);
+    try {
+      const newPlayer = new Player({
+        username, id, anonymous, color, state: this.owner === id ? 1 : 0,
+      });
+      this.players.push(newPlayer);
+      return { newPlayerData: newPlayer.basicInfo, players: this.players };
+    } catch (e) {
+      throw Error(e);
+    }
   }
 }

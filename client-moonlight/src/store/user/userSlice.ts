@@ -10,6 +10,10 @@ export interface IUserState {
   initialized: boolean;
 }
 
+interface IInitializeUser {
+  id: string;
+}
+
 const initialState: IUserState = {
   username: sillyname(),
   anonymous: true,
@@ -31,8 +35,8 @@ const userSlice = createSlice({
     setState(state, action) {
       state.state = action.payload;
     },
-    initializeUser(state, action) {
-      state.id = action.payload.id;
+    initializeUser(state: IUserState, { payload }: { payload: IInitializeUser }) {
+      state.id = payload.id;
       state.initialized = true;
     },
   },

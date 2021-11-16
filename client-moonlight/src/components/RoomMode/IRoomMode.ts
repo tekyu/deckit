@@ -1,4 +1,4 @@
-import { modeType } from 'store/room/IRoom';
+import { modeType } from 'store/room/roomInterfaces';
 
 export interface IRoomMode {
   mode: modeType

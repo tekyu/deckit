@@ -27,18 +27,6 @@ const WaitingScreen = (): JSX.Element => {
     dispatch(socketActions.emit(socketTopics.player.kick, { id }));
   };
 
-  const updateRoomHandler = (props: any) => {
-    console.log('updateRoomHandler', props);
-  };
-
-  useEffect(() => {
-    dispatch(socketActions.listener(socketTopics.room.updateRoom, updateRoomHandler));
-
-    return () => {
-      dispatch(socketActions.removeListener(socketTopics.room.updateRoom, updateRoomHandler));
-    };
-  }, []);
-
   return (
     <Styled.WaitingScreen>
       <Panel>
@@ -63,6 +51,7 @@ const WaitingScreen = (): JSX.Element => {
             color, username, id, anonymous, state,
           }) => (
             <PlayerBubble
+              key={`PlayerBubble-${id}`}
               color={color}
               username={username}
               id={id}

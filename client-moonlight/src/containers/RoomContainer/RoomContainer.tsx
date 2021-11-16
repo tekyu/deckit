@@ -1,10 +1,12 @@
 import GameContainer from 'containers/GameContainer/GameContainer';
-import IRoomContainer from 'containers/RoomContainer/IRoomContainer';
 import WaitingScreen from 'containers/WaitingScreen/WaitingScreen';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
-import { roomSelectors } from 'store/room/roomSlice';
+import { IRoomState } from 'store/room/roomInterfaces';
+import {
+  roomActions, roomSelectors,
+} from 'store/room/roomSlice';
 import { socketActions, socketTopics } from 'store/socket/socket';
 import { userSelectors } from 'store/user/userSlice';
 import * as Styled from './RoomContainer.styled';
@@ -12,29 +14,34 @@ import * as Styled from './RoomContainer.styled';
 interface IRoomRouteParams {
   id: string;
 }
-const RoomContainer = ({
-  children = 'Default',
-}: IRoomContainer): JSX.Element => {
+
+const RoomContainer = (): JSX.Element => {
   const {
     params: { id: roomId },
   } = useRouteMatch<IRoomRouteParams>();
   const dispatch = useDispatch();
-  const user = useSelector(userSelectors.user);
+  const {
+    id, username, anonymous, initialized,
+  } = useSelector(userSelectors.user);
   const roomIdFromStore = useSelector(roomSelectors.id);
 
-  const onRoomJoin = (roomData: any) => {
-    console.log('onRoomJoin', roomData);
+  const updateRoomHandler = (props: Partial<IRoomState>) => {
+    dispatch(roomActions.updateRoom(props));
   };
 
   useEffect(() => {
-    if (user.id && user.initialized && !roomIdFromStore) {
-      dispatch(socketActions.emit(
-        socketTopics.room.joinRoom,
-        { roomId, userData: user },
-        onRoomJoin,
-      ));
-    }
+    dispatch(socketActions.listener(socketTopics.room.updateRoom, updateRoomHandler));
+
+    return () => {
+      dispatch(socketActions.removeListener(socketTopics.room.updateRoom, updateRoomHandler));
+    };
   }, []);
+
+  useEffect(() => {
+    if (id && initialized && !roomIdFromStore) {
+      dispatch(roomActions.joinRoom({ roomId, userData: { id, username, anonymous } }));
+    }
+  }, [id, initialized, roomIdFromStore]);
 
   const roomState = useSelector(roomSelectors.state);
 

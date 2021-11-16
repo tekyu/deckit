@@ -1,5 +1,5 @@
 import PageContainer from 'containers/PageContainer/PageContainer';
-import React, {
+import {
   Suspense,
 } from 'react';
 import { useSelector } from 'react-redux';
@@ -10,6 +10,7 @@ import { GlobalStyles } from 'theme/GlobalStyles';
 const App = (): JSX.Element => {
   const themeLoaded = useSelector(appSelectors.themeLoaded);
   const theme = useSelector(appSelectors.theme);
+
   return (
     <>
       {themeLoaded && (

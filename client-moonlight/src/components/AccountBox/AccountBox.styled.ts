@@ -42,7 +42,6 @@ export const Dropdown = styled.div`
   width: auto;
   min-width: 100%;
   position: absolute;
-  display: flex;
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
@@ -54,6 +53,7 @@ export const Dropdown = styled.div`
   border-bottom: 1px solid ${({ theme }) => rgba(theme.palette.primary.light, 0.1)};
   border-right: 1px solid ${({ theme }) => rgba(theme.palette.primary.light, 0.1)};
   transition: opacity 0.2s ease-in-out, top 0.2s ease-in-out;
+  display: flex;
 
   &.accountBoxDropdown-enter {
     opacity: 0;

@@ -10,12 +10,12 @@ import {
 } from 'react-icons/bi';
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage';
 import Label from 'components/Label/Label';
-import { socketActions, socketTopics } from 'store/socket/socket';
 import { useDispatch, useSelector } from 'react-redux';
 import { roomActions, roomSelectors } from 'store/room/roomSlice';
 import { Redirect } from 'react-router';
 import { userSelectors } from 'store/user/userSlice';
-import { IFormValues, IRoomCreateResponse } from 'containers/CreateGame/ICreateGame';
+import { IFormValues } from 'containers/CreateGame/ICreateGame';
+import { ICreateRoom } from 'store/room/roomInterfaces';
 import * as Styled from './CreateGame.styled';
 
 const CreateGame = (): JSX.Element => {
@@ -24,16 +24,11 @@ const CreateGame = (): JSX.Element => {
   const {
     username, id: userId, anonymous,
   } = useSelector(userSelectors.user);
-  const onRoomCreate = ({
-    roomDetails, userDetails,
-  }: IRoomCreateResponse) => {
-    dispatch(roomActions.setInitialRoomDetails({ roomDetails, userState: userDetails.state }));
-  };
 
   const submitGameFormHandler = ({
     name, gameCode, playersMax, maxScore, isPrivate,
   }: IFormValues) => {
-    const createParams = {
+    const createParams: ICreateRoom = {
       userData: {
         username,
         id: userId,
@@ -45,7 +40,7 @@ const CreateGame = (): JSX.Element => {
       maxScore,
       mode: isPrivate ? 'private' : 'public',
     };
-    dispatch(socketActions.emit(socketTopics.room.createRoom, createParams, onRoomCreate));
+    dispatch(roomActions.createRoom(createParams));
   };
 
   const validateGameFormHandler = (values: IFormValues) => {

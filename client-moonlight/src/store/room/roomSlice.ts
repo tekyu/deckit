@@ -1,28 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { modeType } from 'store/room/IRoom';
+import { IRoomState } from 'store/room/roomInterfaces';
 import { roomThunks } from 'store/room/roomThunks';
 import { RootState } from 'store/store';
-
-export interface IPlayer {
-  color: string;
-  username: string;
-  id: string;
-  anonymous: boolean;
-  state: number;
-}
-
-export interface IRoomState {
-  mode: modeType;
-  activeRoomId: string;
-  playersMax: number;
-  gameCode: string;
-  name: string;
-  id: string;
-  owner: string;
-  admin: string;
-  players: IPlayer[];
-  state: number;
-}
 
 const initialState: IRoomState = {
   activeRoomId: '',
@@ -41,23 +20,42 @@ const roomSlice = createSlice({
   name: 'room',
   initialState,
   reducers: {
+    resetRoom() {
+      return initialState;
+    },
     setActiveRoomId(state, action) {
       state.activeRoomId = action.payload;
     },
+    updateRoom(state, { payload }: { payload: Partial<IRoomState> }) {
+      // to not create multiple unnecessary listeners, this action will receive object
+      // of { property: value } where property is one of the keys in the state object
+      // eg. if there will be update of array of players, data will look like { players: array }
+      return {
+        ...state,
+        ...payload,
+      };
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(roomThunks.setInitialRoomDetails.fulfilled, (state, action) => {
-      state.activeRoomId = action.payload.id;
-      state.mode = action.payload.mode;
-      state.playersMax = action.payload.playersMax;
-      state.gameCode = action.payload.gameCode;
-      state.name = action.payload.name;
-      state.id = action.payload.id;
-      state.owner = action.payload.owner;
-      state.admin = action.payload.admin;
-      state.players = action.payload.players;
-      state.state = action.payload.state;
-    });
+    builder.addCase(roomThunks.setInitialRoomDetails.fulfilled,
+      (state, { payload }) => {
+        state.activeRoomId = payload.id;
+        state.mode = payload.mode;
+        state.playersMax = payload.playersMax;
+        state.gameCode = payload.gameCode;
+        state.name = payload.name;
+        state.id = payload.id;
+        state.owner = payload.owner;
+        state.admin = payload.admin;
+        state.players = payload.players;
+        state.state = payload.state;
+      });
+    builder.addCase(roomThunks.createRoom.fulfilled,
+      (state, { payload }) => {
+      });
+    builder.addCase(roomThunks.joinRoom.fulfilled,
+      (state, { payload }) => {
+      });
   },
 });
 
