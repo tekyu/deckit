@@ -1,24 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Button from 'components/Button/Button';
 import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router';
 
 import TextInput from 'components/TextInput/TextInput';
-import { Formik } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { userSelectors } from 'store/user/userSlice';
 import { roomActions, roomSelectors } from 'store/room/roomSlice';
+import { useAppThunkDispatch } from 'store/store';
+import { Action } from 'redux';
+import { toast } from 'react-toastify';
 import * as Styled from './Dashboard.styled';
 
 interface IRoomIdForm {
   roomId: string;
 }
 
+const noRoomToastId = 'noRoomToast';
+
 const Dashboard = (): JSX.Element => {
-  const dispatch = useDispatch();
+  const [redirectToGame, setRedirectToGame] = useState<boolean>(false);
+  const dispatch = useAppThunkDispatch();
   const roomId = useSelector(roomSelectors.activeRoomId);
   const { id, username, anonymous } = useSelector(userSelectors.user);
 
@@ -28,8 +34,25 @@ const Dashboard = (): JSX.Element => {
     }
   }, []);
 
-  const submitRoomIdHandler = ({ roomId }: IRoomIdForm) => {
-    dispatch(roomActions.joinRoom({ roomId, userData: { id, username, anonymous } }));
+  const submitRoomIdHandler = (
+    { roomId }: IRoomIdForm,
+    { setFieldError }: FormikHelpers<IRoomIdForm>,
+  ) => {
+    dispatch(roomActions.joinRoom({ roomId, userData: { id, username, anonymous } }))
+      .then(({ type }: Action) => {
+        if (type.includes('rejected')) {
+          setFieldError('roomId', `Room of id ${roomId} doesn't exist`);
+          toast.error(`Room of id ${roomId} doesn't exist`, {
+            position: 'top-right',
+            toastId: `${noRoomToastId}-${roomId}`,
+
+          });
+        } else {
+          setRedirectToGame(true);
+        }
+      }).catch((error: Action) => {
+        setFieldError('roomId', `Room of id ${roomId} doesn't exist`);
+      });
   };
 
   const validateRoomIdHandler = ({ roomId }: IRoomIdForm) => {
@@ -44,7 +67,7 @@ const Dashboard = (): JSX.Element => {
 
   return (
     <Styled.Dashboard>
-      {roomId ? <Redirect push to={`/game/${roomId}`} /> : null}
+      {roomId && redirectToGame ? <Redirect push to={`/game/${roomId}`} /> : null}
       <Styled.Controls>
         <Link to="/create">
           <Button>Create your room</Button>

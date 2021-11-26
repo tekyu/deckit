@@ -1,5 +1,7 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import {
+  configureStore, EnhancedStore, ThunkDispatch, Action,
+} from '@reduxjs/toolkit';
+import { combineReducers, Middleware } from 'redux';
 import { userReducer } from 'store/user/userSlice';
 import {
   persistStore,
@@ -16,6 +18,7 @@ import socketMiddleware from 'store/middlewares/socket';
 import { roomReducer } from 'store/room/roomSlice';
 import { appReducer } from 'store/app/appSlice';
 import { enhancer as withReduxEnhancer } from 'addon-redux';
+import { useDispatch } from 'react-redux';
 import { socketTypes } from './socket/socket';
 
 const userPersistConfig = {
@@ -36,7 +39,7 @@ const rootReducer = combineReducers({
   app: persistReducer(appPersistConfig, appReducer),
 });
 
-export const store = configureStore({
+export const makeStore = (): EnhancedStore => configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: {
@@ -53,10 +56,25 @@ export const store = configureStore({
         socketTypes.removeListener,
       ],
     },
-  }).concat(socketMiddleware()),
+    //  }).concat(socketMiddleware()),
+  }).prepend(socketMiddleware() as Middleware<
+    (action: Action<'specialAction'>) => number,
+    RootState
+  >),
   enhancers: [withReduxEnhancer],
 });
+
+export const store = makeStore();
 
 export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof rootReducer>
+
+export type AppDispatch = typeof store.dispatch
+
+// Export a hook that can be reused to resolve types
+export const useAppDispatch = (): any => useDispatch<AppDispatch>();
+
+export type ThunkAppDispatch = ThunkDispatch<RootState, void, Action>;
+
+export const useAppThunkDispatch = (): any => useDispatch<ThunkAppDispatch>();

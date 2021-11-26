@@ -21,6 +21,7 @@ const WaitingScreen = (): JSX.Element => {
     state,
     owner,
   } = useSelector(roomSelectors.room);
+  console.log('players', players);
   const userId = useSelector(userSelectors.id);
   const dispatch = useDispatch();
   const kickHandler = (id: string) => {

@@ -61,6 +61,7 @@ export interface IInitialUserDetails {
 export interface IRoomCreateResponse {
   roomDetails: IInitialRoomDetails;
   userDetails: IInitialUserDetails;
+  error?: string;
 }
 
 export interface IUserData {
@@ -81,4 +82,9 @@ export interface ICreateRoom {
 export interface IJoinRoom {
   roomId: string;
   userData: IUserData;
+}
+
+export interface IJoinRoomResponse {
+  roomDetails?: IInitialRoomDetails;
+  error?: string;
 }

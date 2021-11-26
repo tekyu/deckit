@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import sillyname from 'sillyname';
 import TextInput from 'components/TextInput/TextInput';
@@ -16,10 +16,13 @@ import { Redirect } from 'react-router';
 import { userSelectors } from 'store/user/userSlice';
 import { IFormValues } from 'containers/CreateGame/ICreateGame';
 import { ICreateRoom } from 'store/room/roomInterfaces';
+import { useAppDispatch, useAppThunkDispatch } from 'store/store';
 import * as Styled from './CreateGame.styled';
 
 const CreateGame = (): JSX.Element => {
-  const dispatch = useDispatch();
+  const [redirectToGame, setRedirectToGame] = useState<boolean>(false);
+  console.log('CreateGame', redirectToGame);
+  const dispatch = useAppDispatch();
   const roomId = useSelector(roomSelectors.id);
   const {
     username, id: userId, anonymous,
@@ -40,7 +43,11 @@ const CreateGame = (): JSX.Element => {
       maxScore,
       mode: isPrivate ? 'private' : 'public',
     };
-    dispatch(roomActions.createRoom(createParams));
+    dispatch(roomActions.createRoom(createParams)).then(({ payload }: any) => {
+      if (payload?.roomDetails) {
+        setRedirectToGame(true);
+      }
+    });
   };
 
   const validateGameFormHandler = (values: IFormValues) => {
@@ -53,7 +60,7 @@ const CreateGame = (): JSX.Element => {
 
   return (
     <Styled.CreateGame>
-      {roomId ? <Redirect push to={`/game/${roomId}`} /> : null}
+      {redirectToGame && roomId ? <Redirect push to={`/game/${roomId}`} /> : null}
       <Panel>
 
         <Formik

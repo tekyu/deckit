@@ -4,9 +4,10 @@ import * as Styled from './ErrorMessage.styled';
 
 const ErrorMessage = ({
   name,
+  ...rest
 }: IErrorMessage): JSX.Element => (
   <FormikErrorMessage name={name}>
-    {(msg) => <Styled.ErrorMessage>{msg}</Styled.ErrorMessage>}
+    {(msg) => <Styled.ErrorMessage {...rest}>{msg}</Styled.ErrorMessage>}
   </FormikErrorMessage>
 );
 

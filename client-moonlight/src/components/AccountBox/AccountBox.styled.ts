@@ -53,10 +53,12 @@ export const Dropdown = styled.div`
   border-bottom: 1px solid ${({ theme }) => rgba(theme.palette.primary.light, 0.1)};
   border-right: 1px solid ${({ theme }) => rgba(theme.palette.primary.light, 0.1)};
   transition: opacity 0.2s ease-in-out, top 0.2s ease-in-out;
-  display: flex;
+  /* display: flex; */
+  display: none;
 
   &.accountBoxDropdown-enter {
     opacity: 0;
+    display: flex;
   }
   &.accountBoxDropdown-enter-active {
     opacity: 1;
@@ -65,9 +67,11 @@ export const Dropdown = styled.div`
   &.accountBoxDropdown-enter-done {
     opacity: 1;
     top: 100%;
+    display: flex;
   }
   &.accountBoxDropdown-exit {
     opacity: 1;
+    display: flex;
   }
   &.accountBoxDropdown-exit-active {
     opacity: 0;
@@ -77,6 +81,7 @@ export const Dropdown = styled.div`
   &.accountBoxDropdown-exit-done {
     opacity: 0;
     top: 50%;
+    display: none;
   }
   
 `;

@@ -167,7 +167,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       loggers.event.received.verbose(roomTopics.JOIN_ROOM, room.basicInfo);
 
       // send basicView of room to sender
-      callback(room.basicInfo);
+      callback({ roomDetails: room.basicInfo });
 
       // send updated room to all except sender
       socket.to(roomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });

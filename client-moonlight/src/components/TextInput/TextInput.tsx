@@ -12,10 +12,11 @@ const TextInput = ({
   showBorder = false,
   alignCenter = false,
   value = '',
+  ...rest
 }: ITextInput): JSX.Element => (
   <Styled.TextInput showBorder={showBorder}>
     {label && <Label>{label}</Label>}
-    <Styled.Input value={value} type="text" placeholder={placeholder} name={name} id={id} $alignCenter={alignCenter} />
+    <Styled.Input {...rest} value={value} type="text" placeholder={placeholder} name={name} id={id} $alignCenter={alignCenter} />
   </Styled.TextInput>
 );
 

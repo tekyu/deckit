@@ -54,8 +54,9 @@ const roomSlice = createSlice({
       (state, { payload }) => {
       });
     builder.addCase(roomThunks.joinRoom.fulfilled,
-      (state, { payload }) => {
-      });
+      (state, action): any => { });
+    builder.addCase(roomThunks.joinRoom.rejected,
+      (state, action): any => { });
   },
 });
 

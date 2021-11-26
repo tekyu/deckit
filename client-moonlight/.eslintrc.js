@@ -2,15 +2,17 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
+    jest: true,
   },
   extends: [
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
     'airbnb',
   ],
-  // globals: {
-  //   JSX: true,
-  // },
+  globals: {
+    shallow: true,
+    mount: true,
+  },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
