@@ -11,7 +11,7 @@ import { IExtendedSocketServer } from './events/interfaces/IExtendedSocketServer
 
 const WAITING_ROOM = 'WAITING_ROOM';
 // TODO: Change types
-const ioEvents = (io: any) => {
+const ioEvents = (io: IExtendedSocketServer) => {
   io.on('connection', (socket: any) => {
     logger.info(`Connection with socket established for ${socket.id}`);
     socket.pswOptions = {
@@ -73,13 +73,13 @@ const SocketIo = (App: any) => {
     pingInterval: 5000, // 5 seconds
   });
 
-  // io.eio.pingTimeout = 300000; // 5 minutes
-  // io.eio.pingInterval = 5000; // 5 seconds
+  io.eio.pingTimeout = 300000; // 5 minutes
+  io.eio.pingInterval = 5000; // 5 seconds
 
   // move this to mongo
   // @ts-ignore
   io.gameRooms = { public: {}, private: {}, fast: {} };
-  const extendedIo: IExtendedSocketServer = io;
+  const extendedIo: Partial<IExtendedSocketServer> = io;
   ioEvents(extendedIo);
   server.listen(port, () => logger.info(`Socket server listening on port ${port}`));
 };

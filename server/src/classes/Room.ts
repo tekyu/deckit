@@ -21,6 +21,7 @@ interface IConnectPlayer {
   id: string;
   anonymous: boolean;
   color?: string;
+  socketId: string;
 }
 
 interface IConnectPlayerReturn {
@@ -245,16 +246,31 @@ export default class Room implements IRoom {
     id,
     anonymous,
     color,
+    socketId,
   }: IConnectPlayer): IConnectPlayerReturn {
-    console.log('connectPlayer', username, id, anonymous, color);
     try {
       const newPlayer = new Player({
-        username, id, anonymous, color, state: this.owner === id ? 1 : 0,
+        username,
+        id,
+        anonymous,
+        color,
+        state: this.owner === id ? 1 : 0,
+        socketId,
       });
       this.players.push(newPlayer);
       return { newPlayerData: newPlayer.basicInfo, players: this.players };
     } catch (e) {
       throw Error(e);
     }
+  }
+
+  async MOONLIGHTdisconnectPlayer(playerId: string) {
+    const disconnectedPlayer = this.players.find(({ id }) => id === playerId);
+    const newPlayers = this.players.filter(({ id }) => id !== playerId);
+    this.players = newPlayers;
+    return {
+      players: newPlayers,
+      disconnectedPlayer,
+    };
   }
 }

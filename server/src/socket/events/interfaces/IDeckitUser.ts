@@ -3,4 +3,5 @@ export interface IDeckitUser {
   id: string;
   anonymous: boolean;
   color?: string;
+  socketId: string;
 }

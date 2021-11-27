@@ -19,23 +19,6 @@ const setInitialRoomDetails = createAsyncThunk(
   },
 );
 
-// const createRoom = createAsyncThunk(
-//   'room/createRoom',
-//   async (createParams: ICreateRoom, { dispatch }) => {
-//     await dispatch(socketActions.emit(
-//       socketTopics.room.createRoom,
-//       createParams,
-//       ({ roomDetails, userDetails: { state: userState }, error }: IRoomCreateResponse) => {
-//         if (!error) {
-//           dispatch(roomActions.setInitialRoomDetails({ roomDetails, userState }));
-//           return roomDetails;
-//         }
-//         return {};
-//       },
-//     ));
-//   },
-// );
-
 const createRoom = createAsyncThunk(
   'room/createRoom',
   async (createParams: ICreateRoom, { dispatch }): Promise<any> => new Promise((resolve) => {
@@ -59,19 +42,15 @@ const joinRoom = createAsyncThunk(
     roomId,
     userData,
   }: IJoinRoom, { dispatch }): Promise<IJoinRoomResponse> => new Promise((resolve, reject) => {
-    console.log('0');
     dispatch(socketActions.emit(
       socketTopics.room.joinRoom,
       { roomId, userData },
       ({ roomDetails, error }: IJoinRoomResponse) => {
-        console.log('1', roomDetails, error);
         if (roomDetails) {
-          console.log('2');
           dispatch(roomActions.setInitialRoomDetails({ roomDetails, userState: 0 }));
           resolve({ roomDetails, error } as IJoinRoomResponse);
         }
         if (error) {
-          console.log('3');
           reject(new Error(error));
         }
       },
@@ -79,31 +58,13 @@ const joinRoom = createAsyncThunk(
   }),
 );
 
-// const joinRoom = createAsyncThunk(
-//   'room/joinRoom',
-//   async ({
-//     roomId,
-//     userData,
-//   }: IJoinRoom, { dispatch }) => {
-//     console.log('0');
-//     return dispatch(socketActions.emit(
-//       socketTopics.room.joinRoom,
-//       { roomId, userData },
-//       ({ roomDetails, error }: IJoinRoomResponse) => {
-//         console.log('1', roomDetails, error);
-//         if (error) {
-//           console.log('2');
-//           return error;
-//           // resolve({ roomDetails, error } as IJoinRoomResponse);
-//         }
-//         console.log('3');
-//         if (roomDetails) {
-//           dispatch(roomActions.setInitialRoomDetails({ roomDetails, userState: 0 }));
-//         }
-//         return roomDetails;
-//       },
-//     ));
-//   },
-// );
+const kickPlayer = createAsyncThunk(
+  'room/kickPlayer',
+  async (_, { dispatch }) => {
+    dispatch(userActions.setState(0));
+  },
+);
 
-export const roomThunks = { setInitialRoomDetails, createRoom, joinRoom };
+export const roomThunks = {
+  setInitialRoomDetails, createRoom, joinRoom, kickPlayer,
+};

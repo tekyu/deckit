@@ -8,24 +8,32 @@ import { roomSelectors } from 'store/room/roomSlice';
 import { socketActions, socketTopics } from 'store/socket/socket';
 import { userSelectors } from 'store/user/userSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 import * as Styled from './WaitingScreen.styled';
 
 const WaitingScreen = (): JSX.Element => {
   const {
     name,
-    id,
+    id: roomId,
     mode,
     playersMax,
     players,
-    state,
     owner,
   } = useSelector(roomSelectors.room);
-  console.log('players', players);
   const userId = useSelector(userSelectors.id);
   const dispatch = useDispatch();
-  const kickHandler = (id: string) => {
-    dispatch(socketActions.emit(socketTopics.player.kick, { id }));
+  const kickHandler = (playerId: string) => {
+    dispatch(socketActions.emit(socketTopics.player.kick,
+      { playerId, roomId },
+      ({ error }: { error?: string }) => {
+        if (error) {
+          toast.error(error, {
+            position: 'top-right',
+            toastId: `nopermission-${roomId}-${playerId}`,
+
+          });
+        }
+      }));
   };
 
   return (
@@ -43,8 +51,8 @@ const WaitingScreen = (): JSX.Element => {
           <Styled.IdDescription>
             This is the ID you can share to your friends to connect
           </Styled.IdDescription>
-          <CopyToClipboard text={id}>
-            <Button>{id}</Button>
+          <CopyToClipboard text={roomId}>
+            <Button>{roomId}</Button>
           </CopyToClipboard>
         </Styled.RoomIdDisplay>
         <Styled.PlayerList>

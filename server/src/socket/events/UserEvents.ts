@@ -44,6 +44,7 @@ export const UserEvents = (socket: ExtendedSocket, io: any) => {
       username,
       anonymous,
       id: id || socket.id,
+      socketId: socket.id,
     };
 
     loggers.event.received.verbose(topics.UPDATE_ANON_USER, { username, anonymous, id });

@@ -10,6 +10,7 @@ export interface IPlayerBasicInfo {
   id: string;
   color: string;
   state: number;
+  socketId: string;
 }
 
 export default class Player {
@@ -25,12 +26,15 @@ export default class Player {
 
   score: number;
 
+  socketId: string;
+
   constructor({
     username,
     anonymous,
     id,
     color = '#000',
     state = 0,
+    socketId,
   }: ICreatePlayer) {
     this.username = username;
     this.anonymous = anonymous;
@@ -38,6 +42,7 @@ export default class Player {
     this.color = color;
     this.score = 0;
     this.state = state;
+    this.socketId = socketId;
   }
 
   get basicInfo(): IPlayerBasicInfo {
@@ -47,6 +52,7 @@ export default class Player {
       id: this.id,
       color: this.color,
       state: this.state,
+      socketId: this.socketId,
     };
   }
 }

@@ -54,6 +54,8 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     JOIN_ROOM: 'MOONLIGHT-JOIN_ROOM',
     UPDATE_ROOM: 'MOONLIGHT-UPDATE_ROOM',
     UPDATE_LIST_OF_ROOMS: 'MOONLIGHT-UPDATE_LIST_OF_ROOMS',
+    KICK_PLAYER: 'MOONLIGHT-KICK_PLAYER',
+    KICKED_PLAYER: 'MOONLIGHT-KICKED_PLAYER',
   };
 
   // 2.0 start
@@ -99,7 +101,8 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       const {
         newPlayerData: userDetails,
       } = await room.MOONLIGHTconnectPlayer({
-        color: socket.deckitUser.color, username, anonymous, id: userId,
+        // change this to socket.deckitUser
+        color: socket.deckitUser.color, username, anonymous, id: userId, socketId: socket.id,
       });
       // push out roomData
       callback({
@@ -177,6 +180,62 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       );
     }
   });
+
+  interface MOONLIGHTIKickPlayerParams {
+    roomId: string;
+    playerId: string
+  }
+
+  socket.on(roomTopics.KICK_PLAYER,
+    async ({ roomId, playerId }: MOONLIGHTIKickPlayerParams, callback: Function) => {
+      const room = getRoom(roomId, io.gameRooms);
+      if (!room) {
+        callback({ error: "Room doesn't exist" });
+        return;
+      }
+      if (room.state > 1) {
+        callback({ error: 'Game has already started' });
+        return;
+      }
+      if ((room.owner !== socket.id || room.admin !== socket.id)) {
+        callback({ error: 'You are not the owner or admin of the room' });
+      }
+
+      if (!room) {
+        return;
+      }
+
+      const { players, disconnectedPlayer } = await room.MOONLIGHTdisconnectPlayer(playerId);
+
+      // get list of rooms needed to be updated in waiting room
+      const updatedRoomObject = [
+        getRoomObjectForUpdate(
+          room,
+          getRoomUpdateState({
+            players: players.length,
+            playersMax: room.playersMax,
+            state: room.state,
+          }),
+        ),
+      ];
+
+      // send info to kicked player
+      io.to(disconnectedPlayer.socketId).emit(roomTopics.KICKED_PLAYER, { roomId });
+
+      // socket leave from this room
+      const disconnectedSocket = io.sockets.connected[disconnectedPlayer.socketId];
+      disconnectedSocket.leave(roomId);
+
+      // if room is public, push update of the room info to Browse route
+      if (room.mode === 'public') {
+        io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
+      }
+      loggers.info.info(`Player ${disconnectedPlayer.username} with socketId of ${disconnectedPlayer.socketId} kicked from room ${roomId}`);
+
+      // send updated room to all except sender
+      io.in(roomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
+      callback({});
+    });
 
   // 2.0 end
 
