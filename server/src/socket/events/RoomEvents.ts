@@ -11,6 +11,9 @@ import { getGameOptions } from '../../utils/gameMapping';
 import getRoomUpdateState from '../../utils/getRoomUpdateState';
 import ICreateRoomParams from './interfaces/ICreateRoom';
 import IJoinRoomParams from './interfaces/IJoinRoom';
+import { ExtendedSocket } from './interfaces/IExtendedSocket';
+import { IExtendedSocketServer } from './interfaces/IExtendedSocketServer';
+import { loggers } from '../../loaders/loggers';
 // TODO: Move interfaces to other file
 interface Iparams {
   id: string;
@@ -42,9 +45,199 @@ const JOIN_ROOM = 'JOIN_ROOM';
 const WAITING_ROOM = 'WAITING_ROOM';
 
 // TODO: Change types
-export const RoomEvents = function (socket: any, io: any) {
+export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketServer) {
   this.socket = socket;
   this.io = io;
+
+  const roomTopics = {
+    CREATE_ROOM: 'MOONLIGHT-CREATE_ROOM',
+    JOIN_ROOM: 'MOONLIGHT-JOIN_ROOM',
+    UPDATE_ROOM: 'MOONLIGHT-UPDATE_ROOM',
+    UPDATE_LIST_OF_ROOMS: 'MOONLIGHT-UPDATE_LIST_OF_ROOMS',
+    KICK_PLAYER: 'MOONLIGHT-KICK_PLAYER',
+    KICKED_PLAYER: 'MOONLIGHT-KICKED_PLAYER',
+  };
+
+  // 2.0 start
+  interface MOONLIGHTICreateRoomParams {
+    userData: {
+      username: string;
+      id: string;
+      anonymous: boolean;
+    }
+    mode: string;
+    playersMax: number;
+    name: string;
+    gameCode: string;
+    maxScore: number;
+  }
+
+  socket.on(
+    roomTopics.CREATE_ROOM,
+    async (params: MOONLIGHTICreateRoomParams, callback: Function) => {
+      const {
+        maxScore, userData: { username, anonymous, id: userId }, ...rest
+      } = params;
+      const roomOptions = {
+        ...rest,
+        gameOptions: {
+          maxScore,
+        },
+      };
+      if (!socket.deckitUser.color) {
+        socket.deckitUser.color = randomColor(0.3, 0.99).hexString();
+      }
+      const room = new Room(roomOptions, socket.deckitUser.id);
+      const { id: roomId, mode } = room;
+      loggers.event.received.verbose(roomTopics.CREATE_ROOM, params);
+      io.gameRooms[mode][roomId] = room;
+
+      // leave waiting room to not receive info about newly created rooms
+      socket.leave(WAITING_ROOM);
+
+      // join player to the room
+      socket.join(roomId);
+
+      const {
+        newPlayerData: userDetails,
+      } = await room.MOONLIGHTconnectPlayer({
+        // change this to socket.deckitUser
+        color: socket.deckitUser.color, username, anonymous, id: userId, socketId: socket.id,
+      });
+      // push out roomData
+      callback({
+        roomDetails: room.basicInfo, userDetails,
+      });
+    },
+  );
+
+  interface IUserData {
+    username: string;
+    id: string;
+    anonymous: boolean;
+  }
+  interface MOONLIGHTIJoinRoomParams {
+    roomId: string;
+    userData: IUserData;
+  }
+
+  socket.on(roomTopics.JOIN_ROOM, async ({
+    roomId,
+    userData,
+  }: MOONLIGHTIJoinRoomParams, callback: Function) => {
+    const room = getRoom(roomId, io.gameRooms);
+    if (!room) {
+      callback({ error: "Room doesn't exist" });
+      return;
+    }
+    if (room.state > 1) {
+      callback({ error: 'Game has already started' });
+      return;
+    }
+    if (room.players.length === room.playersMax) {
+      callback({ error: `Sorry, room ${room.name} is full` });
+      return;
+    }
+
+    if (!socket.deckitUser.color) {
+      socket.deckitUser.color = randomColor(0.3, 0.99).hexString();
+    }
+
+    try {
+      // leave waiting room to not receive info about newly created rooms
+      socket.leave(WAITING_ROOM);
+
+      socket.join(roomId);
+
+      const { players } = await room.MOONLIGHTconnectPlayer(socket.deckitUser);
+
+      // get list of rooms needed to be updated in waiting room
+      const updatedRoomObject = [
+        getRoomObjectForUpdate(
+          room,
+          getRoomUpdateState({
+            players: players.length,
+            playersMax: room.playersMax,
+            state: room.state,
+          }),
+        ),
+      ];
+
+      // if room is public, push update of the room info to Browse route
+      if (room.mode === 'public') {
+        io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
+      }
+      loggers.event.received.verbose(roomTopics.JOIN_ROOM, room.basicInfo);
+
+      // send basicView of room to sender
+      callback({ roomDetails: room.basicInfo });
+
+      // send updated room to all except sender
+      socket.to(roomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
+    } catch (error) {
+      Error(
+        `Cannot connect player ${userData.username} of id: ${userData.id} to room ${roomId} with error: ${error}`,
+      );
+    }
+  });
+
+  interface MOONLIGHTIKickPlayerParams {
+    roomId: string;
+    playerId: string
+  }
+
+  socket.on(roomTopics.KICK_PLAYER,
+    async ({ roomId, playerId }: MOONLIGHTIKickPlayerParams, callback: Function) => {
+      const room = getRoom(roomId, io.gameRooms);
+      if (!room) {
+        callback({ error: "Room doesn't exist" });
+        return;
+      }
+      if (room.state > 1) {
+        callback({ error: 'Game has already started' });
+        return;
+      }
+      if ((room.owner !== socket.id || room.admin !== socket.id)) {
+        callback({ error: 'You are not the owner or admin of the room' });
+      }
+
+      if (!room) {
+        return;
+      }
+
+      const { players, disconnectedPlayer } = await room.MOONLIGHTdisconnectPlayer(playerId);
+
+      // get list of rooms needed to be updated in waiting room
+      const updatedRoomObject = [
+        getRoomObjectForUpdate(
+          room,
+          getRoomUpdateState({
+            players: players.length,
+            playersMax: room.playersMax,
+            state: room.state,
+          }),
+        ),
+      ];
+
+      // send info to kicked player
+      io.to(disconnectedPlayer.socketId).emit(roomTopics.KICKED_PLAYER, { roomId });
+
+      // socket leave from this room
+      const disconnectedSocket = io.sockets.connected[disconnectedPlayer.socketId];
+      disconnectedSocket.leave(roomId);
+
+      // if room is public, push update of the room info to Browse route
+      if (room.mode === 'public') {
+        io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
+      }
+      loggers.info.info(`Player ${disconnectedPlayer.username} with socketId of ${disconnectedPlayer.socketId} kicked from room ${roomId}`);
+
+      // send updated room to all except sender
+      io.in(roomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
+      callback({});
+    });
+
+  // 2.0 end
 
   socket.on(CREATE_ROOM, (params: ICreateRoomParams, callback: Function) => {
     const { roomOptions, id } = params;

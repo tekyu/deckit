@@ -1,11 +1,11 @@
 import winston from 'winston';
 import config from '../../config';
 
-const transports = [];
+const transports1 = [];
 if (process.env.NODE_ENV !== 'development') {
-  transports.push(new winston.transports.Console());
+  transports1.push(new winston.transports.Console());
 } else {
-  transports.push(
+  transports1.push(
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.cli(),
@@ -28,7 +28,31 @@ const LoggerInstance = winston.createLogger({
     winston.format.splat(),
     winston.format.json(),
   ),
-  transports,
+  transports: transports1,
 });
 
 export default LoggerInstance;
+
+// 2.0
+
+const {
+  format: {
+    combine, timestamp, printf, splat, label,
+  },
+  transports,
+} = winston;
+
+const myFormat = printf(({
+  level, message, label, timestamp,
+}) => `${timestamp} [${label}] ${level}: ${message}`);
+
+export const loggers = {
+  vjson: winston.createLogger({
+    format: combine(
+      label({ label: 'right meow!' }),
+      timestamp(),
+      myFormat,
+    ),
+    transports: [new transports.Console()],
+  }),
+};

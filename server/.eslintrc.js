@@ -18,6 +18,10 @@ module.exports = {
   rules: {
     'import/extensions': 0,
     'import/prefer-default-export': 0,
+    'linebreak-style': 0,
+    'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['socket', 'io'] }],
+    'no-shadow': 'off',
+
   },
   settings: {
     'import/resolver': {

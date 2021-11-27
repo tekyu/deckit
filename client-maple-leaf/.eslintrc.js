@@ -49,6 +49,7 @@ module.exports = {
     'react/prop-types': 'off',
     '@typescript-eslint/ban-ts-comment': 'warn',
     'react/require-default-props': 'off',
+    'linebreak-style': 0,
   },
   settings: {
     'import/resolver': {

@@ -3,7 +3,7 @@ export default function ({
   playersMax,
   state,
   force,
-}: { players: number, playersMax: number, state: number, force: string }) {
+}: { players: number, playersMax: number, state: number, force?: string }) {
   if (force) {
     return force;
   }

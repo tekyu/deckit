@@ -1,8 +1,11 @@
 // @ts-nocheck
 import hri from 'human-readable-ids';
 import cloneDeep from 'clone-deep';
+// import { IPlayer } from '../../../client-moonlight/src/store/room/roomSlice';
+
 import { gameOptions, getGameOptions } from '../utils/gameMapping';
 import IRoom from '../interfaces/IRoom';
+import Player, { IPlayerBasicInfo } from './Player';
 
 interface CreateRoomOptions {
   mode: string;
@@ -13,6 +16,18 @@ interface CreateRoomOptions {
   gameOptions?: Object;
 }
 
+interface IConnectPlayer {
+  username: string;
+  id: string;
+  anonymous: boolean;
+  color?: string;
+  socketId: string;
+}
+
+interface IConnectPlayerReturn {
+  players: Player[];
+  newPlayerData: IPlayerBasicInfo;
+}
 /**
  * TODO:
  * DeckitRoom extends Room
@@ -52,19 +67,21 @@ export default class Room implements IRoom {
 
   pingInterval: Function;
 
+  // MOONLIGHTconnectPlayer: (userDetails: IConnectPlayer) => IConnectPlayerReturn
+
   constructor(
     {
       mode, playersMax, gameCode, gameOptions, name = '',
     }: CreateRoomOptions,
-    socketId: any,
+    ownerId: string,
   ) {
     this.mode = mode;
-    this.playersMax = playersMax || 10; // check for max players per game (adjustable in gameMapping)
+    this.playersMax = playersMax || 10; // check for max players per game(adjustable in gameMapping)
     this.name = name;
     this.gameCode = gameCode;
     this.id = hri.hri.random().split('-').join('');
-    this.owner = socketId;
-    this.admin = socketId;
+    this.owner = ownerId;
+    this.admin = ownerId;
     this.state = 0;
     this.players = [];
     this.winners = [];
@@ -76,6 +93,31 @@ export default class Room implements IRoom {
 
   get instance() {
     return this;
+  }
+
+  get basicInfo() {
+    const {
+      mode,
+      playersMax,
+      gameCode,
+      name,
+      id,
+      owner,
+      admin,
+      players,
+      state,
+    } = this;
+    return {
+      mode,
+      playersMax,
+      gameCode,
+      name,
+      id,
+      owner,
+      admin,
+      players,
+      state,
+    };
   }
 
   get roomOptions() {
@@ -178,6 +220,7 @@ export default class Room implements IRoom {
   }
 
   async connectPlayer(playerData: Object) {
+    console.log('connectPlayer', playerData);
     const newPlayerData = { ...playerData };
     if (this.owner === playerData.id) {
       newPlayerData.state = 1;
@@ -188,5 +231,46 @@ export default class Room implements IRoom {
 
   disconnectPlayer(id: string) {
     return (this.players = this.players.filter((player: any) => player.id !== id));
+  }
+
+  // 2.0
+  //
+  //
+  //
+  //
+  //
+  //
+
+  async MOONLIGHTconnectPlayer({
+    username,
+    id,
+    anonymous,
+    color,
+    socketId,
+  }: IConnectPlayer): IConnectPlayerReturn {
+    try {
+      const newPlayer = new Player({
+        username,
+        id,
+        anonymous,
+        color,
+        state: this.owner === id ? 1 : 0,
+        socketId,
+      });
+      this.players.push(newPlayer);
+      return { newPlayerData: newPlayer.basicInfo, players: this.players };
+    } catch (e) {
+      throw Error(e);
+    }
+  }
+
+  async MOONLIGHTdisconnectPlayer(playerId: string) {
+    const disconnectedPlayer = this.players.find(({ id }) => id === playerId);
+    const newPlayers = this.players.filter(({ id }) => id !== playerId);
+    this.players = newPlayers;
+    return {
+      players: newPlayers,
+      disconnectedPlayer,
+    };
   }
 }
