@@ -2,7 +2,8 @@ import GameContainer from 'containers/GameContainer/GameContainer';
 import WaitingScreen from 'containers/WaitingScreen/WaitingScreen';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useRouteMatch } from 'react-router';
+import { useHistory, useRouteMatch } from 'react-router';
+import { toast } from 'react-toastify';
 import { IRoomState } from 'store/room/roomInterfaces';
 import {
   roomActions, roomSelectors,
@@ -16,6 +17,7 @@ interface IRoomRouteParams {
 }
 
 const RoomContainer = (): JSX.Element => {
+  const history = useHistory();
   const {
     params: { id: roomId },
   } = useRouteMatch<IRoomRouteParams>();
@@ -29,11 +31,22 @@ const RoomContainer = (): JSX.Element => {
     dispatch(roomActions.updateRoom(props));
   };
 
+  const kickedHandler = ({ roomId }: { roomId: string }) => {
+    history.replace({ pathname: '/' });
+    dispatch(roomActions.kickPlayer());
+    toast.error(`You've been kicked from room ${roomId}`, {
+      position: 'top-right',
+      toastId: `kickedFrom-${roomId}`,
+    });
+  };
+
   useEffect(() => {
     dispatch(socketActions.listener(socketTopics.room.updateRoom, updateRoomHandler));
+    dispatch(socketActions.listener(socketTopics.player.kicked, kickedHandler));
 
     return () => {
       dispatch(socketActions.removeListener(socketTopics.room.updateRoom, updateRoomHandler));
+      dispatch(socketActions.removeListener(socketTopics.player.kicked, kickedHandler));
     };
   }, []);
 

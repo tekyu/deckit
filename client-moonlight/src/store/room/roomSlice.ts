@@ -57,6 +57,7 @@ const roomSlice = createSlice({
       (state, action): any => { });
     builder.addCase(roomThunks.joinRoom.rejected,
       (state, action): any => { });
+    builder.addCase(roomThunks.kickPlayer.fulfilled, () => initialState);
   },
 });
 
