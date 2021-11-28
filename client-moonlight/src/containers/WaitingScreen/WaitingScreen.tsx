@@ -9,9 +9,11 @@ import { socketActions, socketTopics } from 'store/socket/socket';
 import { userSelectors } from 'store/user/userSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
+import { IWaitingScreen } from 'containers/WaitingScreen/IWaitingScreen';
+import { BiArrowBack } from 'react-icons/bi';
 import * as Styled from './WaitingScreen.styled';
 
-const WaitingScreen = (): JSX.Element => {
+const WaitingScreen = ({ leaveHandler }: IWaitingScreen): JSX.Element => {
   const {
     name,
     id: roomId,
@@ -72,6 +74,9 @@ const WaitingScreen = (): JSX.Element => {
             />
           ))}
         </Styled.PlayerList>
+        <Styled.Footer>
+          <Styled.GoBack to="/"><BiArrowBack /></Styled.GoBack>
+        </Styled.Footer>
       </Panel>
     </Styled.WaitingScreen>
   );
