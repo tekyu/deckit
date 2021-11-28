@@ -52,6 +52,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
   const roomTopics = {
     CREATE_ROOM: 'MOONLIGHT-CREATE_ROOM',
     JOIN_ROOM: 'MOONLIGHT-JOIN_ROOM',
+    LEAVE_ROOM: 'MOONLIGHT-LEAVE_ROOM',
     UPDATE_ROOM: 'MOONLIGHT-UPDATE_ROOM',
     UPDATE_LIST_OF_ROOMS: 'MOONLIGHT-UPDATE_LIST_OF_ROOMS',
     KICK_PLAYER: 'MOONLIGHT-KICK_PLAYER',
@@ -97,6 +98,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
 
       // join player to the room
       socket.join(roomId);
+      socket.deckitUser.activeRoomId = roomId;
 
       const {
         newPlayerData: userDetails,
@@ -148,6 +150,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       socket.leave(WAITING_ROOM);
 
       socket.join(roomId);
+      socket.deckitUser.activeRoomId = roomId;
 
       const { players } = await room.MOONLIGHTconnectPlayer(socket.deckitUser);
 
@@ -225,6 +228,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       // socket leave from this room
       const disconnectedSocket = io.sockets.connected[disconnectedPlayer.socketId];
       disconnectedSocket.leave(roomId);
+      socket.deckitUser.activeRoomId = undefined;
 
       // if room is public, push update of the room info to Browse route
       if (room.mode === 'public') {
@@ -236,6 +240,70 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       io.in(roomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
       callback({});
     });
+
+  socket.on('disconnect', async () => {
+    loggers.info.info(`Player ${socket.deckitUser.username} disconnected`);
+    const { deckitUser: { activeRoomId } = {} } = socket;
+    socket.leave(WAITING_ROOM);
+    if (!activeRoomId) {
+      return;
+    }
+
+    const room: Room = getRoom(activeRoomId, io.gameRooms);
+    const {
+      players,
+    } = await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
+
+    // get list of rooms needed to be updated in waiting room
+    const updatedRoomObject = [
+      getRoomObjectForUpdate(
+        room,
+        getRoomUpdateState({
+          players: players.length,
+          playersMax: room.playersMax,
+          state: room.state,
+        }),
+      ),
+    ];
+    // if room is public, push update of the room info to Browse route
+    if (room.mode === 'public') {
+      io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
+    }
+    // send updated room to all except sender
+    io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
+  });
+
+  socket.on(roomTopics.LEAVE_ROOM, async () => {
+    loggers.info.info(`Player ${socket.deckitUser.username} disconnected`);
+    const { deckitUser: { activeRoomId } = {} } = socket;
+    socket.leave(WAITING_ROOM);
+    if (!activeRoomId) {
+      return;
+    }
+
+    const room: Room = getRoom(activeRoomId, io.gameRooms);
+    const {
+      players,
+    } = await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
+
+    // get list of rooms needed to be updated in waiting room
+    const updatedRoomObject = [
+      getRoomObjectForUpdate(
+        room,
+        getRoomUpdateState({
+          players: players.length,
+          playersMax: room.playersMax,
+          state: room.state,
+        }),
+      ),
+    ];
+    // if room is public, push update of the room info to Browse route
+    if (room.mode === 'public') {
+      io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
+    }
+    // send updated room to all except sender
+    io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
+  });
 
   // 2.0 end
 
