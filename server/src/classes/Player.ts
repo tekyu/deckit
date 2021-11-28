@@ -55,4 +55,13 @@ export default class Player {
       socketId: this.socketId,
     };
   }
+
+  update(playerData: Partial<typeof Player>): IPlayerBasicInfo {
+    Object.entries(playerData).forEach(([key, value]) => {
+      if (key !== 'socketId') {
+        this[key] = value;
+      }
+    });
+    return this.basicInfo;
+  }
 }
