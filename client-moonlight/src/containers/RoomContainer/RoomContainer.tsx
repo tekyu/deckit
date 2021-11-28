@@ -41,11 +41,6 @@ const RoomContainer = (): JSX.Element => {
     });
   };
 
-  const leaveRoomHandler = () => {
-    history.replace({ pathname: '/' });
-    dispatch(roomActions.kickPlayer());
-  };
-
   useEffect(() => {
     dispatch(socketActions.listener(socketTopics.room.updateRoom, updateRoomHandler));
     dispatch(socketActions.listener(socketTopics.player.kicked, kickedHandler));
@@ -72,7 +67,7 @@ const RoomContainer = (): JSX.Element => {
     <Styled.RoomContainer>
       {hasValidId && hasStarted
         ? <GameContainer />
-        : <WaitingScreen leaveHandler={leaveRoomHandler} />}
+        : <WaitingScreen />}
     </Styled.RoomContainer>
   );
 };
