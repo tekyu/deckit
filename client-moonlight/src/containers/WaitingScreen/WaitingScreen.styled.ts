@@ -1,5 +1,6 @@
 import { Panel } from 'components/Panel/Panel.styled';
 import { rgba } from 'polished';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { mediaQuery } from 'theme/mediaQueries';
 
@@ -62,4 +63,16 @@ export const PlayerList = styled.div`
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+`;
+
+export const Footer = styled.div`
+  display: flex;
+`;
+
+export const GoBack = styled(Link)`
+  color: ${({ theme: { palette } }) => palette.primary.main};
+  align-self: flex-end;
+  font-size: 24px;
+  margin-left: auto;
+  margin-right: 8px;
 `;

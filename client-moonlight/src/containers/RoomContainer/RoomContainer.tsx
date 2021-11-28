@@ -1,6 +1,6 @@
 import GameContainer from 'containers/GameContainer/GameContainer';
 import WaitingScreen from 'containers/WaitingScreen/WaitingScreen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router';
 import { toast } from 'react-toastify';
@@ -17,6 +17,7 @@ interface IRoomRouteParams {
 }
 
 const RoomContainer = (): JSX.Element => {
+  const [hasLeft, setHasLeft] = useState<boolean>(false);
   const history = useHistory();
   const {
     params: { id: roomId },
@@ -38,6 +39,11 @@ const RoomContainer = (): JSX.Element => {
       position: 'top-right',
       toastId: `kickedFrom-${roomId}`,
     });
+  };
+
+  const leaveRoomHandler = () => {
+    history.replace({ pathname: '/' });
+    dispatch(roomActions.kickPlayer());
   };
 
   useEffect(() => {
@@ -64,7 +70,9 @@ const RoomContainer = (): JSX.Element => {
 
   return (
     <Styled.RoomContainer>
-      {hasValidId && hasStarted ? <GameContainer /> : <WaitingScreen />}
+      {hasValidId && hasStarted
+        ? <GameContainer />
+        : <WaitingScreen leaveHandler={leaveRoomHandler} />}
     </Styled.RoomContainer>
   );
 };

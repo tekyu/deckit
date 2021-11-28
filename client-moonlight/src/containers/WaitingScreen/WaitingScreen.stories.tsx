@@ -1,5 +1,6 @@
 import { Story, Meta } from '@storybook/react';
 import { ARG_REDUX_PATH, PARAM_REDUX_MERGE_STATE } from 'addon-redux';
+import { IWaitingScreen } from 'containers/WaitingScreen/IWaitingScreen';
 import WaitingScreenComponent from './WaitingScreen';
 
 const mockStore = {
@@ -86,16 +87,12 @@ export default {
     },
   },
 } as Meta;
-const Template: Story = (args) => (
+const Template: Story<IWaitingScreen> = (args) => (
   <WaitingScreenComponent {...args} />
 );
 
 export const WaitingScreen = Template.bind({});
 
 WaitingScreen.args = {
-  name: mockStore.room.name,
-  mode: mockStore.room.mode,
-  playersMax: mockStore.room.playersMax,
-  state: mockStore.room.state,
-  players: mockStore.room.players,
+  leaveHandler: () => { },
 };
