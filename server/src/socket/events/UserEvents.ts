@@ -1,6 +1,10 @@
+import { activeRoomId } from 'store/room/roomSelectors';
 import chalk from 'chalk';
+import Room from '../../classes/Room';
 import { loggers } from '../../loaders/loggers';
+import getRoom from '../../utils/getRoom';
 import { ExtendedSocket } from './interfaces/IExtendedSocket';
+import { roomTopics } from './RoomEvents';
 
 // 2.0
 export const topics = {
@@ -36,18 +40,35 @@ export const UserEvents = (socket: ExtendedSocket, io: any) => {
     id?: string
   }
 
-  socket.on(topics.UPDATE_ANON_USER, (
+  socket.on(topics.UPDATE_ANON_USER, async (
     { username, anonymous, id }: IUpdateAnonUser,
     callback: Function,
   ) => {
-    socket.deckitUser = {
-      username,
-      anonymous,
-      id: id || socket.id,
-      socketId: socket.id,
-    };
+    const hasNameChanged = !(socket.deckitUser?.username === username);
 
-    loggers.event.received.verbose(topics.UPDATE_ANON_USER, { username, anonymous, id });
+    if (!socket.deckitUser) {
+      socket.deckitUser = {
+        username,
+        anonymous,
+        id: id || socket.id,
+        socketId: socket.id,
+      };
+    }
+    socket.deckitUser.username = username;
+    socket.deckitUser.anonymous = anonymous;
+
+    if (hasNameChanged && socket.deckitUser?.activeRoomId) {
+      const { deckitUser: { activeRoomId } } = socket;
+      const room: Room = getRoom(activeRoomId, io.gameRooms);
+      const players = await room.MOONLIGHTupdatePlayer({
+        playerId: socket.deckitUser.id,
+        playerData: { username, anonymous, id },
+      });
+      // send updated room to all including sender
+      io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players });
+    }
+
+    loggers.event.received.verbose(topics.UPDATE_ANON_USER, socket.deckitUser);
     callback({ id: socket.deckitUser.id });
   });
 };

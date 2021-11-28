@@ -28,6 +28,16 @@ interface IConnectPlayerReturn {
   players: Player[];
   newPlayerData: IPlayerBasicInfo;
 }
+
+interface IDisconnectPlayerReturn {
+  players: Player[];
+  disconnectedPlayer: IPlayerBasicInfo;
+}
+
+interface MOONLIGHTIUpdatePlayer {
+  playerId: string;
+  playerData: Partial<Player>
+}
 /**
  * TODO:
  * DeckitRoom extends Room
@@ -53,7 +63,7 @@ export default class Room implements IRoom {
 
   state: number; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
 
-  players: Array<Object>;
+  players: Player[];
 
   winners: Array<String>;
 
@@ -264,7 +274,7 @@ export default class Room implements IRoom {
     }
   }
 
-  async MOONLIGHTdisconnectPlayer(playerId: string) {
+  async MOONLIGHTdisconnectPlayer(playerId: string): IDisconnectPlayerReturn {
     const disconnectedPlayer = this.players.find(({ id }) => id === playerId);
     const newPlayers = this.players.filter(({ id }) => id !== playerId);
     this.players = newPlayers;
@@ -272,5 +282,17 @@ export default class Room implements IRoom {
       players: newPlayers,
       disconnectedPlayer,
     };
+  }
+
+  async MOONLIGHTupdatePlayer({ playerId, playerData }: MOONLIGHTIUpdatePlayer) {
+    const playerToUpdate = this.players.find(({ id }) => id === playerId);
+    const updatedPlayer = playerToUpdate.update(playerData);
+    this.players.map((player) => {
+      if (player.id === playerId) {
+        return updatedPlayer;
+      }
+      return player;
+    });
+    return this.players;
   }
 }

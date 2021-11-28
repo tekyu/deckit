@@ -1,3 +1,4 @@
+import { activeRoomId } from 'store/room/roomSelectors';
 // @ts-ignore
 import randomColor from 'random-color';
 import chalk from 'chalk';
@@ -44,20 +45,20 @@ const CREATE_ROOM = 'CREATE_ROOM';
 const JOIN_ROOM = 'JOIN_ROOM';
 const WAITING_ROOM = 'WAITING_ROOM';
 
+export const roomTopics = {
+  CREATE_ROOM: 'MOONLIGHT-CREATE_ROOM',
+  JOIN_ROOM: 'MOONLIGHT-JOIN_ROOM',
+  LEAVE_ROOM: 'MOONLIGHT-LEAVE_ROOM',
+  UPDATE_ROOM: 'MOONLIGHT-UPDATE_ROOM',
+  UPDATE_LIST_OF_ROOMS: 'MOONLIGHT-UPDATE_LIST_OF_ROOMS',
+  KICK_PLAYER: 'MOONLIGHT-KICK_PLAYER',
+  KICKED_PLAYER: 'MOONLIGHT-KICKED_PLAYER',
+};
+
 // TODO: Change types
 export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketServer) {
   this.socket = socket;
   this.io = io;
-
-  const roomTopics = {
-    CREATE_ROOM: 'MOONLIGHT-CREATE_ROOM',
-    JOIN_ROOM: 'MOONLIGHT-JOIN_ROOM',
-    LEAVE_ROOM: 'MOONLIGHT-LEAVE_ROOM',
-    UPDATE_ROOM: 'MOONLIGHT-UPDATE_ROOM',
-    UPDATE_LIST_OF_ROOMS: 'MOONLIGHT-UPDATE_LIST_OF_ROOMS',
-    KICK_PLAYER: 'MOONLIGHT-KICK_PLAYER',
-    KICKED_PLAYER: 'MOONLIGHT-KICKED_PLAYER',
-  };
 
   // 2.0 start
   interface MOONLIGHTICreateRoomParams {
@@ -242,12 +243,16 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     });
 
   socket.on('disconnect', async () => {
-    loggers.info.info(`Player ${socket.deckitUser.username} disconnected`);
+    loggers.info.info(`Player ${socket.deckitUser
+      ? socket.deckitUser.username
+      : socket.id} disconnected`);
     const { deckitUser: { activeRoomId } = {} } = socket;
     socket.leave(WAITING_ROOM);
     if (!activeRoomId) {
       return;
     }
+    socket.leave(activeRoomId);
+    socket.deckitUser.activeRoomId = undefined;
 
     const room: Room = getRoom(activeRoomId, io.gameRooms);
     const {
@@ -269,22 +274,26 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     if (room.mode === 'public') {
       io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
     }
-    // send updated room to all except sender
+    // send updated room to all including sender
     io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
   });
 
   socket.on(roomTopics.LEAVE_ROOM, async () => {
-    loggers.info.info(`Player ${socket.deckitUser.username} disconnected`);
+    loggers.info.info(`Player ${socket.deckitUser.username} left the room ${socket.deckitUser.activeRoomId}`);
     const { deckitUser: { activeRoomId } = {} } = socket;
     socket.leave(WAITING_ROOM);
     if (!activeRoomId) {
       return;
     }
 
+    socket.leave(activeRoomId);
+    socket.deckitUser.activeRoomId = undefined;
+
     const room: Room = getRoom(activeRoomId, io.gameRooms);
     const {
       players,
     } = await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
+    socket.deckitUser.activeRoomId = undefined;
 
     // get list of rooms needed to be updated in waiting room
     const updatedRoomObject = [
@@ -306,6 +315,24 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
   });
 
   // 2.0 end
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
 
   socket.on(CREATE_ROOM, (params: ICreateRoomParams, callback: Function) => {
     const { roomOptions, id } = params;
