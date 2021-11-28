@@ -52,6 +52,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
   const roomTopics = {
     CREATE_ROOM: 'MOONLIGHT-CREATE_ROOM',
     JOIN_ROOM: 'MOONLIGHT-JOIN_ROOM',
+    LEAVE_ROOM: 'MOONLIGHT-LEAVE_ROOM',
     UPDATE_ROOM: 'MOONLIGHT-UPDATE_ROOM',
     UPDATE_LIST_OF_ROOMS: 'MOONLIGHT-UPDATE_LIST_OF_ROOMS',
     KICK_PLAYER: 'MOONLIGHT-KICK_PLAYER',
@@ -241,6 +242,38 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     });
 
   socket.on('disconnect', async () => {
+    loggers.info.info(`Player ${socket.deckitUser.username} disconnected`);
+    const { deckitUser: { activeRoomId } = {} } = socket;
+    socket.leave(WAITING_ROOM);
+    if (!activeRoomId) {
+      return;
+    }
+
+    const room: Room = getRoom(activeRoomId, io.gameRooms);
+    const {
+      players,
+    } = await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
+
+    // get list of rooms needed to be updated in waiting room
+    const updatedRoomObject = [
+      getRoomObjectForUpdate(
+        room,
+        getRoomUpdateState({
+          players: players.length,
+          playersMax: room.playersMax,
+          state: room.state,
+        }),
+      ),
+    ];
+    // if room is public, push update of the room info to Browse route
+    if (room.mode === 'public') {
+      io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
+    }
+    // send updated room to all except sender
+    io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
+  });
+
+  socket.on(roomTopics.LEAVE_ROOM, async () => {
     loggers.info.info(`Player ${socket.deckitUser.username} disconnected`);
     const { deckitUser: { activeRoomId } = {} } = socket;
     socket.leave(WAITING_ROOM);

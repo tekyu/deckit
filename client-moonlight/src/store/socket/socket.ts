@@ -13,6 +13,7 @@ export const socketTopics = {
     createRoom: 'MOONLIGHT-CREATE_ROOM',
     joinRoom: 'MOONLIGHT-JOIN_ROOM',
     updateRoom: 'MOONLIGHT-UPDATE_ROOM',
+    leave: 'MOONLIGHT-LEAVE_ROOM',
   },
   player: {
     kick: 'MOONLIGHT-KICK_PLAYER',

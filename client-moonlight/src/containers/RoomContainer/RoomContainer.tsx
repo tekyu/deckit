@@ -47,6 +47,7 @@ const RoomContainer = (): JSX.Element => {
     return () => {
       dispatch(socketActions.removeListener(socketTopics.room.updateRoom, updateRoomHandler));
       dispatch(socketActions.removeListener(socketTopics.player.kicked, kickedHandler));
+      dispatch(socketActions.emit(socketTopics.room.leave));
     };
   }, []);
 
