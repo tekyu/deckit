@@ -48,6 +48,7 @@ export const Name = styled.div<{ hasFullInfoBox: boolean }>`
   overflow: hidden;
   white-space: nowrap;
   margin-right: ${({ hasFullInfoBox }) => (hasFullInfoBox ? '5px' : '40px')};
+  padding-bottom: 4px;
 
   ${mediaQuery.greaterThan('waitingScreen')`
     width: auto;
