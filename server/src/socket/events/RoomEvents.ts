@@ -53,6 +53,7 @@ export const roomTopics = {
   UPDATE_LIST_OF_ROOMS: 'MOONLIGHT-UPDATE_LIST_OF_ROOMS',
   KICK_PLAYER: 'MOONLIGHT-KICK_PLAYER',
   KICKED_PLAYER: 'MOONLIGHT-KICKED_PLAYER',
+  UPDATE_USER_STATE: 'MOONLIGHT-CHANGE-USER-STATE',
 };
 
 // TODO: Change types
@@ -313,6 +314,40 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     // send updated room to all except sender
     io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
   });
+
+  interface IChangeUserState {
+    state: number;
+  }
+  socket.on(
+    roomTopics.UPDATE_USER_STATE,
+    async ({ state }: IChangeUserState, callback: Function) => {
+      loggers.event.received.verbose(roomTopics.UPDATE_USER_STATE, state);
+
+      if (!socket.deckitUser) {
+        callback({ error: 'Something went wrong, sorry!' });
+      }
+      const { deckitUser: { activeRoomId = '', id: playerId } } = socket;
+      if (!activeRoomId) {
+        callback({ error: 'You are not part of any room' });
+        return;
+      }
+
+      const room: Room = getRoom(activeRoomId, io.gameRooms);
+      if (!room) {
+        callback({ error: 'Room does not exist' });
+        return;
+      }
+
+      const updatedPlayers = await room.MOONLIGHTupdatePlayer({
+        playerId, playerData: { state },
+      });
+
+      callback({ players: updatedPlayers });
+
+      // send updated room to all except sender
+      socket.to(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players: updatedPlayers });
+    },
+  );
 
   // 2.0 end
   //

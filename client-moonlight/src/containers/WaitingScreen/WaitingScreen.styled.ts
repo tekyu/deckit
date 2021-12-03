@@ -1,4 +1,5 @@
 import { Panel } from 'components/Panel/Panel.styled';
+import { PlayerCounter } from 'components/PlayerCounter/PlayerCounter.styled';
 import { rgba } from 'polished';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -19,7 +20,10 @@ export const WaitingScreen = styled.div`
         10px 10px 40px ${rgba(palette.primary.main, 0.1)},
         7px -7px 40px ${rgba(palette.secondary.dark, 0.1)};
     `}
-}
+  }
+  ${PlayerCounter} {
+    margin: 10px 0;
+  }
 `;
 
 export const Header = styled.div`
@@ -34,6 +38,7 @@ export const Name = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   padding: 0 10px;
+  margin-right: 26px;
 `;
 
 export const Label = styled.div`
@@ -66,13 +71,15 @@ export const PlayerList = styled.div`
 `;
 
 export const Footer = styled.div`
+  width: 100%;
   display: flex;
+  justify-content: center;
+  margin-top: 30px;
 `;
 
 export const GoBack = styled(Link)`
   color: ${({ theme: { palette } }) => palette.primary.main};
   align-self: flex-end;
   font-size: 24px;
-  margin-left: auto;
   margin-right: 8px;
 `;

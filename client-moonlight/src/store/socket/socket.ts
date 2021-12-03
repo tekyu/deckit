@@ -18,6 +18,7 @@ export const socketTopics = {
   player: {
     kick: 'MOONLIGHT-KICK_PLAYER',
     kicked: 'MOONLIGHT-KICKED_PLAYER',
+    changeState: 'MOONLIGHT-CHANGE-USER-STATE',
   },
 };
 

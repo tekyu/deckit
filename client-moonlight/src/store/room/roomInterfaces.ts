@@ -88,3 +88,12 @@ export interface IJoinRoomResponse {
   roomDetails?: IInitialRoomDetails;
   error?: string;
 }
+
+export interface IChangeState {
+  state: number;
+}
+
+export interface IChangeStateResponse {
+  players: IPlayer[];
+  error?: string;
+}

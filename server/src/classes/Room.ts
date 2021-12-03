@@ -284,7 +284,7 @@ export default class Room implements IRoom {
     };
   }
 
-  async MOONLIGHTupdatePlayer({ playerId, playerData }: MOONLIGHTIUpdatePlayer) {
+  async MOONLIGHTupdatePlayer({ playerId, playerData }: MOONLIGHTIUpdatePlayer): Player[] {
     const playerToUpdate = this.players.find(({ id }) => id === playerId);
     const updatedPlayer = playerToUpdate.update(playerData);
     this.players.map((player) => {
