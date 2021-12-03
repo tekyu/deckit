@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { IRoomState } from 'store/room/roomInterfaces';
+import { createSlice, Action, PayloadAction } from '@reduxjs/toolkit';
+import { IChangeStateResponse, IRoomState } from 'store/room/roomInterfaces';
 import { roomThunks } from 'store/room/roomThunks';
 import { RootState } from 'store/store';
 
@@ -58,7 +58,11 @@ const roomSlice = createSlice({
     builder.addCase(roomThunks.joinRoom.rejected,
       (state, action): any => { });
     builder.addCase(roomThunks.kickPlayer.fulfilled, () => initialState);
-    builder.addCase(roomThunks.changeUserState.fulfilled, () => {});
+    builder.addCase(roomThunks.changeUserState.fulfilled,
+      (state: IRoomState, { payload }: PayloadAction<IChangeStateResponse>) => {
+        state.players = payload.players;
+      });
+    builder.addCase(roomThunks.changeUserState.rejected, () => { });
   },
 });
 

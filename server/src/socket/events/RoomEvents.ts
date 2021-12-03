@@ -202,7 +202,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
         callback({ error: 'Game has already started' });
         return;
       }
-      if ((room.owner !== socket.id || room.admin !== socket.id)) {
+      if ((room.owner !== socket.deckitUser.id || room.admin !== socket.deckitUser.id)) {
         callback({ error: 'You are not the owner or admin of the room' });
       }
 
@@ -228,9 +228,9 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       io.to(disconnectedPlayer.socketId).emit(roomTopics.KICKED_PLAYER, { roomId });
 
       // socket leave from this room
-      const disconnectedSocket = io.sockets.connected[disconnectedPlayer.socketId];
+      const disconnectedSocket: any = io.sockets.connected[disconnectedPlayer.socketId];
       disconnectedSocket.leave(roomId);
-      socket.deckitUser.activeRoomId = undefined;
+      disconnectedSocket.deckitUser.activeRoomId = undefined;
 
       // if room is public, push update of the room info to Browse route
       if (room.mode === 'public') {
@@ -325,6 +325,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
 
       if (!socket.deckitUser) {
         callback({ error: 'Something went wrong, sorry!' });
+        return;
       }
       const { deckitUser: { activeRoomId = '', id: playerId } } = socket;
       if (!activeRoomId) {
@@ -337,7 +338,6 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
         callback({ error: 'Room does not exist' });
         return;
       }
-
       const updatedPlayers = await room.MOONLIGHTupdatePlayer({
         playerId, playerData: { state },
       });

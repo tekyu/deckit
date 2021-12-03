@@ -72,19 +72,25 @@ const kickPlayer = createAsyncThunk(
 
 const changeUserState = createAsyncThunk(
   'room/changeUserState',
-  async ({ state }: IChangeState, { dispatch }) => {
-    dispatch(socketActions.emit(
-      socketTopics.player.changeState,
-      { state },
-      ({ players, error }: IChangeStateResponse) => {
-        if (error) {
-          dispatch(roomActions.resetRoom());
-        }
-        dispatch(roomActions.updateRoom({ players }));
-        dispatch(userActions.setState(state));
-      },
-    ));
-  },
+  async ({
+    state,
+  }: IChangeState, { dispatch }): Promise<IChangeStateResponse> => new Promise(
+    (resolve, reject) => {
+      dispatch(socketActions.emit(
+        socketTopics.player.changeState,
+        { state },
+        ({ players, error }: IChangeStateResponse) => {
+          if (error) {
+            reject(new Error(error));
+          }
+          if (players) {
+            dispatch(userActions.setState(state));
+            resolve({ players, error } as IChangeStateResponse);
+          }
+        },
+      ));
+    },
+  ),
 );
 export const roomThunks = {
   setInitialRoomDetails, createRoom, joinRoom, kickPlayer, changeUserState,

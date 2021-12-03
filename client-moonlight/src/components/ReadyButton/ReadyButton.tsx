@@ -1,16 +1,25 @@
 import { IReadyButton } from 'components/ReadyButton/IReadyButton';
-import { useDispatch } from 'react-redux';
 import { roomActions } from 'store/room/roomSlice';
+import { useAppThunkDispatch } from 'store/store';
+import { AnyAction } from 'redux';
+import { toast } from 'react-toastify';
 import * as Styled from './ReadyButton.styled';
 
 const ReadyButton = ({
-  id = '',
   isReady = false,
   state,
 }: IReadyButton): JSX.Element => {
-  const dispatch = useDispatch();
+  const dispatch = useAppThunkDispatch();
   const clickHandler = () => {
-    dispatch(roomActions.changeUserState({ state: isReady ? 0 : 1 }));
+    dispatch(roomActions.changeUserState({ state: state === 0 ? 1 : 0 }))
+      .then(({ type, error }: AnyAction) => {
+        if (type.includes('rejected')) {
+          toast.error(error, {
+            position: 'top-right',
+            toastId: 'something-went-wrong',
+          });
+        }
+      });
   };
   return (
     <Styled.ReadyButton
