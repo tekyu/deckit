@@ -1,11 +1,28 @@
 // @ts-nocheck
 import hri from 'human-readable-ids';
-import cloneDeep from 'clone-deep';
-// import { IPlayer } from '../../../client-moonlight/src/store/room/roomSlice';
 
-import { gameOptions, getGameOptions } from '../utils/gameMapping';
+import { getGameOptions } from '../utils/gameMapping';
 import IRoom from '../interfaces/IRoom';
 import Player, { IPlayerBasicInfo } from './Player';
+import { IExtendedSocketServer } from '../socket/events/interfaces/IExtendedSocketServer';
+
+interface IStateMap {
+  waiting: number;
+  ready: number;
+  started: number;
+  paused: number;
+  ended: number;
+}
+
+type stateUpdateType = keyof IStateMap;
+
+const stateMap: IStateMap = {
+  waiting: 0,
+  ready: 1,
+  started: 2,
+  paused: 3,
+  ended: 4,
+};
 
 interface CreateRoomOptions {
   mode: string;
@@ -14,6 +31,7 @@ interface CreateRoomOptions {
   name?: string;
   username?: string;
   gameOptions?: Object;
+  maxScore?: number;
 }
 
 interface IConnectPlayer {
@@ -27,6 +45,16 @@ interface IConnectPlayer {
 interface IConnectPlayerReturn {
   players: Player[];
   newPlayerData: IPlayerBasicInfo;
+}
+
+interface IDisconnectPlayerReturn {
+  players: Player[];
+  disconnectedPlayer: IPlayerBasicInfo;
+}
+
+interface MOONLIGHTIUpdatePlayer {
+  playerId: string;
+  playerData: Partial<Player>
 }
 /**
  * TODO:
@@ -53,7 +81,7 @@ export default class Room implements IRoom {
 
   state: number; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
 
-  players: Array<Object>;
+  players: Player[];
 
   winners: Array<String>;
 
@@ -67,6 +95,8 @@ export default class Room implements IRoom {
 
   pingInterval: Function;
 
+  io: IExtendedSocketServer;
+
   // MOONLIGHTconnectPlayer: (userDetails: IConnectPlayer) => IConnectPlayerReturn
 
   constructor(
@@ -74,7 +104,9 @@ export default class Room implements IRoom {
       mode, playersMax, gameCode, gameOptions, name = '',
     }: CreateRoomOptions,
     ownerId: string,
+    io,
   ) {
+    this.io = io;
     this.mode = mode;
     this.playersMax = playersMax || 10; // check for max players per game(adjustable in gameMapping)
     this.name = name;
@@ -87,7 +119,7 @@ export default class Room implements IRoom {
     this.winners = [];
     this.createdAt = Date.now();
     this.scoreboard = {};
-    this.gameOptions = getGameOptions(gameCode, gameOptions);
+    this.gameOptions = getGameOptions(gameCode, gameOptions); // TODO: remove
     this.chat = [];
   }
 
@@ -220,7 +252,6 @@ export default class Room implements IRoom {
   }
 
   async connectPlayer(playerData: Object) {
-    console.log('connectPlayer', playerData);
     const newPlayerData = { ...playerData };
     if (this.owner === playerData.id) {
       newPlayerData.state = 1;
@@ -258,13 +289,13 @@ export default class Room implements IRoom {
         socketId,
       });
       this.players.push(newPlayer);
-      return { newPlayerData: newPlayer.basicInfo, players: this.players };
+      return { newPlayerData: newPlayer, players: this.players };
     } catch (e) {
       throw Error(e);
     }
   }
 
-  async MOONLIGHTdisconnectPlayer(playerId: string) {
+  async MOONLIGHTdisconnectPlayer(playerId: string): IDisconnectPlayerReturn {
     const disconnectedPlayer = this.players.find(({ id }) => id === playerId);
     const newPlayers = this.players.filter(({ id }) => id !== playerId);
     this.players = newPlayers;
@@ -272,5 +303,37 @@ export default class Room implements IRoom {
       players: newPlayers,
       disconnectedPlayer,
     };
+  }
+
+  async MOONLIGHTupdatePlayer({ playerId, playerData }: MOONLIGHTIUpdatePlayer): Player[] {
+    const playerToUpdate = this.players.find(({ id }) => id === playerId);
+    const updatedPlayer = playerToUpdate.update(playerData);
+    this.players.map((player) => {
+      if (player.id === playerId) {
+        return updatedPlayer;
+      }
+      return player;
+    });
+    return this.players;
+  }
+
+  arePlayersReady(): boolean {
+    return !this.players.some(({ state }) => state !== 1);
+  }
+
+  updateRoomState(state?: stateUpdateType): number {
+    if (state) {
+      this.state = stateMap[state];
+      return this.state;
+    }
+    if (this.state <= 1) {
+      this.state = this.arePlayersReady() ? stateMap.ready : stateMap.waiting;
+      return this.state;
+    }
+    return this.state;
+  }
+
+  resetPlayersState() {
+    this.players = this.players.map((player) => ({ ...player, state: 0 }));
   }
 }

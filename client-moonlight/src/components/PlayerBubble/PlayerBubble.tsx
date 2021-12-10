@@ -26,8 +26,8 @@ const PlayerBubble = ({
       {username}
     </Styled.Name>
     <Styled.Info>
-      {isOwner ? <Styled.Owner>Owner</Styled.Owner> : null}
-      {you ? <Styled.You>You</Styled.You> : null}
+      {isOwner ? <Styled.Owner>{adminPower ? 'You are the host' : 'This is the host'}</Styled.Owner> : null}
+      {you && !isOwner ? <Styled.You>You are the player</Styled.You> : null}
     </Styled.Info>
   </Styled.PlayerBubble>
 );

@@ -10,4 +10,5 @@ export default interface IButton {
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset' | undefined;
   className?: string;
-}
+  disabled?: boolean;
+};

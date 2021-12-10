@@ -1,3 +1,3 @@
 export interface IWaitingScreen {
-  children?: React.ReactNode;
+  leaveHandler: () => void;
 }

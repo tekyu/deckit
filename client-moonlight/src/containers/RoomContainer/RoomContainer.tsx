@@ -1,6 +1,6 @@
 import GameContainer from 'containers/GameContainer/GameContainer';
 import WaitingScreen from 'containers/WaitingScreen/WaitingScreen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router';
 import { toast } from 'react-toastify';
@@ -17,6 +17,7 @@ interface IRoomRouteParams {
 }
 
 const RoomContainer = (): JSX.Element => {
+  const [hasLeft, setHasLeft] = useState<boolean>(false);
   const history = useHistory();
   const {
     params: { id: roomId },
@@ -47,6 +48,7 @@ const RoomContainer = (): JSX.Element => {
     return () => {
       dispatch(socketActions.removeListener(socketTopics.room.updateRoom, updateRoomHandler));
       dispatch(socketActions.removeListener(socketTopics.player.kicked, kickedHandler));
+      dispatch(socketActions.emit(socketTopics.room.leave));
     };
   }, []);
 
@@ -63,7 +65,9 @@ const RoomContainer = (): JSX.Element => {
 
   return (
     <Styled.RoomContainer>
-      {hasValidId && hasStarted ? <GameContainer /> : <WaitingScreen />}
+      {hasValidId && hasStarted
+        ? <GameContainer />
+        : <WaitingScreen />}
     </Styled.RoomContainer>
   );
 };

@@ -6,6 +6,8 @@ import {
   IJoinRoomResponse,
   IRoomCreateResponse,
   ISetInitialRoomDetailsProps,
+  IChangeState,
+  IChangeStateResponse,
 } from 'store/room/roomInterfaces';
 import { roomActions } from 'store/room/roomSlice';
 import { socketActions, socketTopics } from 'store/socket/socket';
@@ -21,7 +23,10 @@ const setInitialRoomDetails = createAsyncThunk(
 
 const createRoom = createAsyncThunk(
   'room/createRoom',
-  async (createParams: ICreateRoom, { dispatch }): Promise<any> => new Promise((resolve) => {
+  async (
+    createParams: ICreateRoom,
+    { dispatch },
+  ): Promise<any> => new Promise((resolve, reject) => {
     dispatch(socketActions.emit(
       socketTopics.room.createRoom,
       createParams,
@@ -30,7 +35,7 @@ const createRoom = createAsyncThunk(
           dispatch(roomActions.setInitialRoomDetails({ roomDetails, userState }));
           resolve({ roomDetails, userState } as any);
         }
-        return {};
+        reject(new Error(error));
       },
     ));
   }),
@@ -65,6 +70,28 @@ const kickPlayer = createAsyncThunk(
   },
 );
 
+const changeUserState = createAsyncThunk(
+  'room/changeUserState',
+  async ({
+    state,
+  }: IChangeState, { dispatch }): Promise<IChangeStateResponse> => new Promise(
+    (resolve, reject) => {
+      dispatch(socketActions.emit(
+        socketTopics.player.changeState,
+        { state },
+        ({ players, updatedState, error }: IChangeStateResponse) => {
+          if (error) {
+            reject(new Error(error));
+          }
+          if (players) {
+            dispatch(userActions.setState(state));
+            resolve({ players, updatedState, error } as IChangeStateResponse);
+          }
+        },
+      ));
+    },
+  ),
+);
 export const roomThunks = {
-  setInitialRoomDetails, createRoom, joinRoom, kickPlayer,
+  setInitialRoomDetails, createRoom, joinRoom, kickPlayer, changeUserState,
 };

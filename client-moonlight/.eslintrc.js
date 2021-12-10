@@ -58,6 +58,7 @@ module.exports = {
     'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['state'] }],
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',
+    'linebreak-style': 0,
   },
   settings: {
     'import/resolver': {

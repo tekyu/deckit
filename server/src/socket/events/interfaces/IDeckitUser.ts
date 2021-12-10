@@ -4,4 +4,5 @@ export interface IDeckitUser {
   anonymous: boolean;
   color?: string;
   socketId: string;
+  activeRoomId?: string;
 }

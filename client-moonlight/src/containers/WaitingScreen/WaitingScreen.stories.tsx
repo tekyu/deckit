@@ -1,5 +1,7 @@
 import { Story, Meta } from '@storybook/react';
 import { ARG_REDUX_PATH, PARAM_REDUX_MERGE_STATE } from 'addon-redux';
+import StoryRouter from 'storybook-react-router';
+
 import WaitingScreenComponent from './WaitingScreen';
 
 const mockStore = {
@@ -58,6 +60,7 @@ const mockStore = {
 export default {
   title: 'Pages/WaitingScreen',
   component: WaitingScreenComponent,
+  decorators: [StoryRouter()],
   parameters: {
     [PARAM_REDUX_MERGE_STATE]: JSON.stringify(mockStore),
   },

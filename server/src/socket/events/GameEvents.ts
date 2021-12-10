@@ -7,8 +7,74 @@ import prepareSocketForNextRound from '../../utils/cards/prepareSocketForNextRou
 import shuffle from '../../utils/cards/Shuffle';
 import axios from '../../../axios';
 import getRoomObjectForUpdate from '../../utils/getRoomObjectForUpdate';
+import { loggers } from '../../loaders/loggers';
 
-export const GameEvents = (socket: any, io: any) => {
+import getRoomUpdateState from '../../utils/getRoomUpdateState';
+import Room from '../../classes/Room';
+import { roomTopics, WAITING_ROOM } from './RoomEvents';
+import { ExtendedSocket } from './interfaces/IExtendedSocket';
+import { IExtendedSocketServer } from './interfaces/IExtendedSocketServer';
+import Deckit from '../../classes/Deckit';
+
+export const gameTopics = {
+  START_GAME: 'MOONLIGHT-START_GAME',
+  UPDATE_MY_CARDS: 'UPDATE_MY_CARDS',
+};
+
+export const GameEvents = (socket: ExtendedSocket, io: IExtendedSocketServer) => {
+  socket.on(
+    gameTopics.START_GAME,
+    async () => {
+      loggers.event.received.verbose(gameTopics.START_GAME, {});
+
+      if (!socket.deckitUser) {
+        return;
+      }
+      const { deckitUser: { activeRoomId } } = socket;
+      if (!activeRoomId) {
+        return;
+      }
+
+      const room: Deckit = getRoom(activeRoomId, io.gameRooms);
+      if (!room) {
+        return;
+      }
+
+      await room.startGame();
+
+      io.in(room.id).emit(roomTopics.UPDATE_ROOM, {
+        state: room.state,
+        scoreboard: room.scoreboard,
+      });
+
+      const updatedRoomObject = [getRoomObjectForUpdate(room, 'remove')];
+      // if room is public, push update of the room info to Browse route
+      if (room.mode === 'public') {
+        io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
+      }
+
+      // // get list of rooms needed to be updated in waiting room
+      // const updatedRoomObject = [
+      //   getRoomObjectForUpdate(
+      //     room,
+      //     getRoomUpdateState({
+      //       players: room.players.length,
+      //       playersMax: room.playersMax,
+      //       state: room.state,
+      //     }),
+      //   ),
+      // ];
+      // // if room is public, push update of the room info to Browse route
+      // if (room.mode === 'public') {
+      //   io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
+      // }
+      // // send updated room to all except sender
+      // io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
+    },
+  );
+
+  // 2.0 end
+
   socket.on('START_GAME', async ({ activeRoomId }: any) => {
     const room = getRoom(activeRoomId, io.gameRooms);
     if (!room) return null;

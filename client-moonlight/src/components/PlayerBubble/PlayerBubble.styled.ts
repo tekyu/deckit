@@ -13,10 +13,12 @@ export const PlayerBubble = styled.div<{ ready: boolean }>`
   padding: 10px 0;
   width: 100%;
   border-radius: 6px;
+  margin: 4px 0;
   ${mediaQuery.greaterThan('waitingScreen')`
     flex-direction: column;
     margin: 10px;
     width: auto;
+    max-width: 160px;
     padding: 0;
     border-radius: 0;
     color: ${({ theme: { palette } }) => palette.colors.primary};
@@ -48,9 +50,9 @@ export const Name = styled.div<{ hasFullInfoBox: boolean }>`
   overflow: hidden;
   white-space: nowrap;
   margin-right: ${({ hasFullInfoBox }) => (hasFullInfoBox ? '5px' : '40px')};
-
+  
   ${mediaQuery.greaterThan('waitingScreen')`
-    width: auto;
+    padding-bottom: 4px;
     margin-top: 10px;
     margin-right: 0px;
   `};
@@ -61,13 +63,23 @@ export const Owner = styled.div`
   font-size: 10px;
   margin: 0 4px;
   text-transform: uppercase;
-  `;
+  line-height: 1.2em;
+  text-align: center;
+  ${mediaQuery.greaterThan('waitingScreen')`
+    line-height: initial;
+  `};
+`;
 
 export const You = styled.div`
   font-size: 10px;
   margin: 0 4px;
   text-transform: uppercase;
-  `;
+  line-height: 1.2em;
+  text-align: center;
+  ${mediaQuery.greaterThan('waitingScreen')`
+    line-height: initial;
+  `};
+`;
 
 export const Info = styled.div`
   display: flex;
@@ -93,7 +105,7 @@ export const Kick = styled.div`
   justify-content: center;
   cursor: pointer;
   top: 50%;
-  right: 10px;
+  right: 20px;
   transform: translateY(-50%);
   ${mediaQuery.greaterThan('waitingScreen')`
     top: 4px;
