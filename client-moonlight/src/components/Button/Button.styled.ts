@@ -1,7 +1,13 @@
 /* eslint-disable indent */
 import styled from 'styled-components';
 
-export const Button = styled.button<{ palette?: string, variant: string; version?: string; }>`
+export const Button = styled.button<{
+  palette?: string;
+  variant: string;
+  version?: string;
+  disabled?: boolean;
+}>`
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
   display: inline-flex;
   align-items: center;
   transition: all 0.2s ease-in-out;
@@ -14,7 +20,7 @@ export const Button = styled.button<{ palette?: string, variant: string; version
   border-radius: 3px;
   padding: 12px 18px;
   font-family: ${({ theme }) => theme.typography.primary};
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   user-select: none;
   text-transform: uppercase;
   font-weight: 600;

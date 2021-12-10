@@ -2,24 +2,24 @@
 import CardService from './CardService/CardService';
 
 const controllers = {
-  getDecks: function(req, res) {
+  getDecks(req, res) {
     CardService.getDecks(req, res)
-      .then(cards => {
+      .then((cards) => {
         res.status(200).send(cards);
       })
-      .catch(err => {
+      .catch((err) => {
         res.json(err);
       });
   },
-  getSingleDeck: function(req, res) {
+  getSingleDeck(req, res) {
     CardService.getSingleDeck(req, res)
-      .then(cards => {
+      .then((cards) => {
         res.status(200).send(cards);
       })
-      .catch(err => {
+      .catch((err) => {
         res.json(err);
       });
-  }
+  },
 };
 
 export default controllers;

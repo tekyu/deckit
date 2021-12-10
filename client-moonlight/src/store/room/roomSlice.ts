@@ -61,6 +61,7 @@ const roomSlice = createSlice({
     builder.addCase(roomThunks.changeUserState.fulfilled,
       (state: IRoomState, { payload }: PayloadAction<IChangeStateResponse>) => {
         state.players = payload.players;
+        state.state = payload.updatedState;
       });
     builder.addCase(roomThunks.changeUserState.rejected, () => { });
   },

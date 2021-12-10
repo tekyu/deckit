@@ -11,6 +11,7 @@ const Button = ({
   version = 'contained',
   onClick = () => { },
   className = '',
+  disabled = false,
   ...rest
 }: IButton): JSX.Element => (
   <Styled.Button
@@ -20,6 +21,7 @@ const Button = ({
     variant={variant}
     version={version}
     onClick={onClick}
+    disabled={disabled}
     {...rest}
   >
     {children}

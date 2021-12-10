@@ -11,8 +11,8 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
 import { BiArrowBack } from 'react-icons/bi';
 import AddSeat from 'components/AddSeat/AddSeat';
-import { useState } from 'react';
 import ReadyButton from 'components/ReadyButton/ReadyButton';
+import StartGameButton from 'components/StartGameButton/StartGameButton';
 import * as Styled from './WaitingScreen.styled';
 
 const WaitingScreen = (): JSX.Element => {
@@ -89,7 +89,17 @@ const WaitingScreen = (): JSX.Element => {
         </Styled.PlayerList>
 
         <Styled.Footer>
-          <ReadyButton id={userId} isReady={!!userState} state={userState} />
+          {userId === owner
+            ? (
+              <StartGameButton
+                arePlayersReady={
+                  !players.some(({ state }) => state !== 1) && players.length >= 2
+                }
+                numberOfPlayers={players.length}
+              />
+            )
+            : <ReadyButton id={userId} isReady={!!userState} state={userState} />}
+
         </Styled.Footer>
       </Panel>
     </Styled.WaitingScreen>

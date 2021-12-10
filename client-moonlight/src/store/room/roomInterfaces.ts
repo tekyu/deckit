@@ -95,5 +95,6 @@ export interface IChangeState {
 
 export interface IChangeStateResponse {
   players: IPlayer[];
+  updatedState: number;
   error?: string;
 }

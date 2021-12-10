@@ -15,6 +15,7 @@ import IJoinRoomParams from './interfaces/IJoinRoom';
 import { ExtendedSocket } from './interfaces/IExtendedSocket';
 import { IExtendedSocketServer } from './interfaces/IExtendedSocketServer';
 import { loggers } from '../../loaders/loggers';
+import Deckit from '../../classes/Deckit';
 // TODO: Move interfaces to other file
 interface Iparams {
   id: string;
@@ -43,7 +44,7 @@ interface Iparams {
 
 const CREATE_ROOM = 'CREATE_ROOM';
 const JOIN_ROOM = 'JOIN_ROOM';
-const WAITING_ROOM = 'WAITING_ROOM';
+export const WAITING_ROOM = 'WAITING_ROOM';
 
 export const roomTopics = {
   CREATE_ROOM: 'MOONLIGHT-CREATE_ROOM',
@@ -90,7 +91,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       if (!socket.deckitUser.color) {
         socket.deckitUser.color = randomColor(0.3, 0.99).hexString();
       }
-      const room = new Room(roomOptions, socket.deckitUser.id);
+      const room = new Deckit(roomOptions, socket.deckitUser.id, io);
       const { id: roomId, mode } = room;
       loggers.event.received.verbose(roomTopics.CREATE_ROOM, params);
       io.gameRooms[mode][roomId] = room;
@@ -280,6 +281,9 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
   });
 
   socket.on(roomTopics.LEAVE_ROOM, async () => {
+    if (!socket.deckitUser) {
+      return;
+    }
     loggers.info.info(`Player ${socket.deckitUser.username} left the room ${socket.deckitUser.activeRoomId}`);
     const { deckitUser: { activeRoomId } = {} } = socket;
     socket.leave(WAITING_ROOM);
@@ -341,11 +345,13 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       const updatedPlayers = await room.MOONLIGHTupdatePlayer({
         playerId, playerData: { state },
       });
+      const updatedState = room.updateRoomState();
 
-      callback({ players: updatedPlayers });
+      callback({ players: updatedPlayers, updatedState });
 
-      // send updated room to all except sender
-      socket.to(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players: updatedPlayers });
+      // send updated room to all including sender
+      socket.to(room.id).emit(roomTopics.UPDATE_ROOM,
+        { players: updatedPlayers, state: updatedState });
     },
   );
 

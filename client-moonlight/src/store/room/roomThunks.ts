@@ -79,13 +79,13 @@ const changeUserState = createAsyncThunk(
       dispatch(socketActions.emit(
         socketTopics.player.changeState,
         { state },
-        ({ players, error }: IChangeStateResponse) => {
+        ({ players, updatedState, error }: IChangeStateResponse) => {
           if (error) {
             reject(new Error(error));
           }
           if (players) {
             dispatch(userActions.setState(state));
-            resolve({ players, error } as IChangeStateResponse);
+            resolve({ players, updatedState, error } as IChangeStateResponse);
           }
         },
       ));

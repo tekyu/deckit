@@ -9,7 +9,7 @@ export interface IPalette {
 
 export type themeType = 'light' | 'dark';
 
-export type paletteType = 'backgrounds' | 'colors' | 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success'
+export type paletteType = 'backgrounds' | 'colors' | 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success' | 'disabled';
 
 export type variantType = 'light' | 'main' | 'dark' | 'contrastType' | 'primary' | 'secondary';
 
@@ -69,6 +69,10 @@ export const palette = {
       dark: '#539134',
       contrastText: '#FAFBFF',
     },
+    disabled: {
+      main: '',
+      contastText: '',
+    },
   },
   dark: {
     backgrounds: {
@@ -114,6 +118,10 @@ export const palette = {
       main: '#2f7ccf',
       dark: '#084992',
       contrastText: '#e1e2e6',
+    },
+    disabled: {
+      main: '',
+      contastText: '',
     },
   },
 

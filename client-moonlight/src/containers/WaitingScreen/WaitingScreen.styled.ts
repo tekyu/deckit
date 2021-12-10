@@ -1,3 +1,4 @@
+import { Button } from 'components/Button/Button.styled';
 import { Panel } from 'components/Panel/Panel.styled';
 import { PlayerCounter } from 'components/PlayerCounter/PlayerCounter.styled';
 import { rgba } from 'polished';
