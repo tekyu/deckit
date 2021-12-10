@@ -13,5 +13,6 @@ const Template: Story<IAddSeat> = (args) => <AddSeatComponent {...args} />;
 export const AddSeat = Template.bind({});
 
 AddSeat.args = {
-  children: 'AddSeat',
+  current: 3,
+  max: 7,
 };

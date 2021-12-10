@@ -24,6 +24,7 @@ const WaitingScreen = (): JSX.Element => {
     players,
     owner,
     admin,
+    playerLimit,
   } = useSelector(roomSelectors.room);
   const userId = useSelector(userSelectors.id);
   const userState = useSelector(userSelectors.state);
@@ -84,7 +85,9 @@ const WaitingScreen = (): JSX.Element => {
               {...(adminPower && { adminPower: true, kickHandler })}
             />
           ))}
-          {adminPower ? <AddSeat /> : null}
+          {adminPower && playerLimit > playersMax
+            ? <AddSeat current={players.length} max={playersMax} />
+            : null}
 
         </Styled.PlayerList>
 

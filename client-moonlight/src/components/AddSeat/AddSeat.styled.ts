@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { mediaQuery } from 'theme/mediaQueries';
 
 export const AddSeat = styled.div`
+  user-select: none;
   position: relative;
   display: inline-flex;
   align-items: center;

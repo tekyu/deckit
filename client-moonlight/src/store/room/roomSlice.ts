@@ -14,6 +14,7 @@ const initialState: IRoomState = {
   admin: '',
   players: [],
   state: 0,
+  playerLimit: 0,
 };
 
 const roomSlice = createSlice({
@@ -49,6 +50,7 @@ const roomSlice = createSlice({
         state.admin = payload.admin;
         state.players = payload.players;
         state.state = payload.state;
+        state.playerLimit = payload.playerLimit;
       });
     builder.addCase(roomThunks.createRoom.fulfilled,
       (state, { payload }) => {

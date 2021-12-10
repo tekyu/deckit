@@ -97,6 +97,8 @@ export default class Room implements IRoom {
 
   io: IExtendedSocketServer;
 
+  playerLimit: number;
+
   // MOONLIGHTconnectPlayer: (userDetails: IConnectPlayer) => IConnectPlayerReturn
 
   constructor(
@@ -121,6 +123,7 @@ export default class Room implements IRoom {
     this.scoreboard = {};
     this.gameOptions = getGameOptions(gameCode, gameOptions); // TODO: remove
     this.chat = [];
+    this.playerLimit = 10;
   }
 
   get instance() {
@@ -138,6 +141,7 @@ export default class Room implements IRoom {
       admin,
       players,
       state,
+      playerLimit,
     } = this;
     return {
       mode,
@@ -149,6 +153,7 @@ export default class Room implements IRoom {
       admin,
       players,
       state,
+      playerLimit,
     };
   }
 
@@ -249,6 +254,15 @@ export default class Room implements IRoom {
 
   setCards(cards) {
     this.gameOptions.remainingCards = cards;
+  }
+
+  updateNumberOfSeats(action: 'add' | 'remove') {
+    if (action === 'add' && this.playersMax < this.playerLimit) {
+      this.playersMax += 1;
+    }
+    if (action === 'remove' && this.playersMax > 0) {
+      this.playersMax -= 1;
+    }
   }
 
   async connectPlayer(playerData: Object) {

@@ -15,6 +15,8 @@ export const socketTopics = {
     updateRoom: 'MOONLIGHT-UPDATE_ROOM',
     leave: 'MOONLIGHT-LEAVE_ROOM',
     start: 'MOONLIGHT-START_GAME',
+    updateNumberOfSeats: 'MOONLIGHT-UPDATE_NUMBER_OF_SEATS',
+
   },
   player: {
     kick: 'MOONLIGHT-KICK_PLAYER',

@@ -60,7 +60,7 @@ export interface IDeck {
 }
 
 export const deckitTopics = {
-  GAME_UPDATED: 'GAME_UPDATED',
+  GAME_UPDATED: 'MOONLIGHT-GAME_UPDATED',
 };
 
 export default class Deckit extends Room {

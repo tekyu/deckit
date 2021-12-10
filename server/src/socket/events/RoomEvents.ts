@@ -1,4 +1,3 @@
-import { activeRoomId } from 'store/room/roomSelectors';
 // @ts-ignore
 import randomColor from 'random-color';
 import chalk from 'chalk';
@@ -55,6 +54,7 @@ export const roomTopics = {
   KICK_PLAYER: 'MOONLIGHT-KICK_PLAYER',
   KICKED_PLAYER: 'MOONLIGHT-KICKED_PLAYER',
   UPDATE_USER_STATE: 'MOONLIGHT-CHANGE-USER-STATE',
+  UPDATE_NUMBER_OF_SEATS: 'MOONLIGHT-UPDATE_NUMBER_OF_SEATS',
 };
 
 // TODO: Change types
@@ -354,6 +354,33 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
         { players: updatedPlayers, state: updatedState });
     },
   );
+
+  socket.on(roomTopics.UPDATE_NUMBER_OF_SEATS, ({ action }: { action: 'add' | 'remove' }) => {
+    if (!socket.deckitUser?.activeRoomId) {
+      return null;
+    }
+
+    if (!action) {
+      return null;
+    }
+
+    const room: Room = getRoom(socket.deckitUser.activeRoomId, io.gameRooms);
+
+    if (!room) return null;
+
+    room.updateNumberOfSeats(action);
+
+    // if room is public, push update of the room info to Browse route
+    if (room.mode === 'public') {
+      io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, [
+        getRoomObjectForUpdate(room, 'update'),
+      ]);
+    }
+    // send updated room to all including sender
+    io.in(room.id).emit(roomTopics.UPDATE_ROOM, { playersMax: room.playersMax });
+
+    return null;
+  });
 
   // 2.0 end
   //
