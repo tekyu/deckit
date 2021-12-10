@@ -1,4 +1,5 @@
 import { IDeckitUser } from '../socket/events/interfaces/IDeckitUser';
+import { ICard } from './Deckit';
 
 interface ICreatePlayer extends IDeckitUser {
   state?: number;
@@ -28,6 +29,8 @@ export default class Player {
 
   socketId: string;
 
+  cards: ICard[];
+
   constructor({
     username,
     anonymous,
@@ -43,6 +46,7 @@ export default class Player {
     this.score = 0;
     this.state = state;
     this.socketId = socketId;
+    this.cards = [];
   }
 
   get basicInfo(): IPlayerBasicInfo {
@@ -54,6 +58,11 @@ export default class Player {
       state: this.state,
       socketId: this.socketId,
     };
+  }
+
+  updateCards(cards: ICard[]) {
+    this.cards = cards;
+    console.log('[Player][updateCards]', this.cards);
   }
 
   update(playerData: Partial<typeof Player>): IPlayerBasicInfo {

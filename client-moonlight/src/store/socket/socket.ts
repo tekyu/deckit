@@ -14,10 +14,12 @@ export const socketTopics = {
     joinRoom: 'MOONLIGHT-JOIN_ROOM',
     updateRoom: 'MOONLIGHT-UPDATE_ROOM',
     leave: 'MOONLIGHT-LEAVE_ROOM',
+    start: 'MOONLIGHT-START_GAME',
   },
   player: {
     kick: 'MOONLIGHT-KICK_PLAYER',
     kicked: 'MOONLIGHT-KICKED_PLAYER',
+    changeState: 'MOONLIGHT-CHANGE-USER-STATE',
   },
 };
 

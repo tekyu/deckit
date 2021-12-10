@@ -10,6 +10,9 @@ import { userSelectors } from 'store/user/userSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
 import { BiArrowBack } from 'react-icons/bi';
+import AddSeat from 'components/AddSeat/AddSeat';
+import ReadyButton from 'components/ReadyButton/ReadyButton';
+import StartGameButton from 'components/StartGameButton/StartGameButton';
 import * as Styled from './WaitingScreen.styled';
 
 const WaitingScreen = (): JSX.Element => {
@@ -20,9 +23,14 @@ const WaitingScreen = (): JSX.Element => {
     playersMax,
     players,
     owner,
+    admin,
   } = useSelector(roomSelectors.room);
   const userId = useSelector(userSelectors.id);
+  const userState = useSelector(userSelectors.state);
   const dispatch = useDispatch();
+
+  const adminPower = owner === userId || admin === userId;
+
   const kickHandler = (playerId: string) => {
     dispatch(socketActions.emit(socketTopics.player.kick,
       { playerId, roomId },
@@ -46,16 +54,20 @@ const WaitingScreen = (): JSX.Element => {
             {name}
             <Styled.Label>Waiting room</Styled.Label>
           </Styled.Name>
-          <PlayerCounter max={playersMax} current={players.length} />
+          <Styled.GoBack to="/"><BiArrowBack /></Styled.GoBack>
         </Styled.Header>
-        <Styled.RoomIdDisplay>
-          <Styled.IdDescription>
-            This is the ID you can share to your friends to connect
-          </Styled.IdDescription>
-          <CopyToClipboard text={roomId}>
-            <Button>{roomId}</Button>
-          </CopyToClipboard>
-        </Styled.RoomIdDisplay>
+        {adminPower ? (
+          <Styled.RoomIdDisplay>
+            <Styled.IdDescription>
+              This is the ID you can share to your friends to connect
+            </Styled.IdDescription>
+            <CopyToClipboard text={roomId}>
+              <Button>{roomId}</Button>
+            </CopyToClipboard>
+          </Styled.RoomIdDisplay>
+        )
+          : null}
+        <PlayerCounter max={playersMax} current={players.length} />
         <Styled.PlayerList>
           {players.map(({
             color, username, id, anonymous, state,
@@ -69,12 +81,25 @@ const WaitingScreen = (): JSX.Element => {
               ready={!!state}
               you={id === userId}
               isOwner={id === owner}
-              {...(owner === userId && { adminPower: true, kickHandler })}
+              {...(adminPower && { adminPower: true, kickHandler })}
             />
           ))}
+          {adminPower ? <AddSeat /> : null}
+
         </Styled.PlayerList>
+
         <Styled.Footer>
-          <Styled.GoBack to="/"><BiArrowBack /></Styled.GoBack>
+          {userId === owner
+            ? (
+              <StartGameButton
+                arePlayersReady={
+                  !players.some(({ state }) => state !== 1) && players.length >= 2
+                }
+                numberOfPlayers={players.length}
+              />
+            )
+            : <ReadyButton id={userId} isReady={!!userState} state={userState} />}
+
         </Styled.Footer>
       </Panel>
     </Styled.WaitingScreen>

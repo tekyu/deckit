@@ -1,9 +1,9 @@
 // @ts-nocheck
-import { gameOptions } from '../utils/gameMapping';
-import IRoom from '../interfaces/IRoom';
-import { getGameOptions } from '../utils/gameMapping';
 import hri from 'human-readable-ids';
 import cloneDeep from 'clone-deep';
+import { gameOptions, getGameOptions } from '../utils/gameMapping';
+import IRoom from '../interfaces/IRoom';
+
 import checkForDuplicate from '../utils/cards/checkForDuplicate';
 
 interface ICreateDeckitOptions {
@@ -20,20 +20,35 @@ interface ICreateDeckitOptions {
  */
 export default class DeckitOptions {
   decks: Array;
+
   stage: number;
+
   round: number;
+
   remainingCards: Array<Object>;
+
   initialCards: Array<Object>;
+
   hint: string;
+
   hinter: Object;
+
   hintCard: Object;
+
   maxScore: number;
+
   choosedCardsToMatchHint: Array<Object>;
+
   pickedCardsToHint: Array<Object>;
+
   playersPickedCard: Array<string>;
+
   playersChoosedCard: Array<string>;
+
   scoreboard: Object;
+
   cardTracker: Object<Array>;
+
   playerModel: Object;
 
   constructor(gameOptions: Object) {
@@ -132,7 +147,7 @@ export default class DeckitOptions {
 
   getRandomCard() {
     console.log('[DeckitOptions] getRandomCard');
-    let randomIndex = Math.floor(Math.random() * this.remainingCards.length);
+    const randomIndex = Math.floor(Math.random() * this.remainingCards.length);
     return { randomCard: this.remainingCards[randomIndex], randomIndex };
   }
 
@@ -141,7 +156,7 @@ export default class DeckitOptions {
     if (!this.remainingCards.length) {
       return null;
     }
-    let { randomCard, randomIndex } = this.getRandomCard();
+    const { randomCard, randomIndex } = this.getRandomCard();
     if (checkForDuplicate(randomCard.id, this.cardTracker[playerId])) {
       return null;
     }
@@ -166,7 +181,7 @@ export default class DeckitOptions {
       '[DeckitOptions] emitUpdatedCards',
       playerId,
       cards.length,
-      cards
+      cards,
     );
     io.to(playerId).emit('UPDATE_MY_CARDS', cards);
   }

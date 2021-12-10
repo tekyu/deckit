@@ -9,8 +9,8 @@ export const PlayerCounter = styled.div`
   font-family: ${({ theme: { typography } }) => typography.secondary};
   font-size: 14px;
   min-width: 40px;
+  font-size: 26px;
   ${mediaQuery.greaterThan('waitingScreen')`
-    font-size: 16px;
     order: 2;
   `};
 `;

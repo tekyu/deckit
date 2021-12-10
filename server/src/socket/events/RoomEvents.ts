@@ -15,6 +15,7 @@ import IJoinRoomParams from './interfaces/IJoinRoom';
 import { ExtendedSocket } from './interfaces/IExtendedSocket';
 import { IExtendedSocketServer } from './interfaces/IExtendedSocketServer';
 import { loggers } from '../../loaders/loggers';
+import Deckit from '../../classes/Deckit';
 // TODO: Move interfaces to other file
 interface Iparams {
   id: string;
@@ -43,7 +44,7 @@ interface Iparams {
 
 const CREATE_ROOM = 'CREATE_ROOM';
 const JOIN_ROOM = 'JOIN_ROOM';
-const WAITING_ROOM = 'WAITING_ROOM';
+export const WAITING_ROOM = 'WAITING_ROOM';
 
 export const roomTopics = {
   CREATE_ROOM: 'MOONLIGHT-CREATE_ROOM',
@@ -53,6 +54,7 @@ export const roomTopics = {
   UPDATE_LIST_OF_ROOMS: 'MOONLIGHT-UPDATE_LIST_OF_ROOMS',
   KICK_PLAYER: 'MOONLIGHT-KICK_PLAYER',
   KICKED_PLAYER: 'MOONLIGHT-KICKED_PLAYER',
+  UPDATE_USER_STATE: 'MOONLIGHT-CHANGE-USER-STATE',
 };
 
 // TODO: Change types
@@ -89,7 +91,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       if (!socket.deckitUser.color) {
         socket.deckitUser.color = randomColor(0.3, 0.99).hexString();
       }
-      const room = new Room(roomOptions, socket.deckitUser.id);
+      const room = new Deckit(roomOptions, socket.deckitUser.id, io);
       const { id: roomId, mode } = room;
       loggers.event.received.verbose(roomTopics.CREATE_ROOM, params);
       io.gameRooms[mode][roomId] = room;
@@ -201,7 +203,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
         callback({ error: 'Game has already started' });
         return;
       }
-      if ((room.owner !== socket.id || room.admin !== socket.id)) {
+      if ((room.owner !== socket.deckitUser.id || room.admin !== socket.deckitUser.id)) {
         callback({ error: 'You are not the owner or admin of the room' });
       }
 
@@ -227,9 +229,9 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       io.to(disconnectedPlayer.socketId).emit(roomTopics.KICKED_PLAYER, { roomId });
 
       // socket leave from this room
-      const disconnectedSocket = io.sockets.connected[disconnectedPlayer.socketId];
+      const disconnectedSocket: any = io.sockets.connected[disconnectedPlayer.socketId];
       disconnectedSocket.leave(roomId);
-      socket.deckitUser.activeRoomId = undefined;
+      disconnectedSocket.deckitUser.activeRoomId = undefined;
 
       // if room is public, push update of the room info to Browse route
       if (room.mode === 'public') {
@@ -279,6 +281,9 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
   });
 
   socket.on(roomTopics.LEAVE_ROOM, async () => {
+    if (!socket.deckitUser) {
+      return;
+    }
     loggers.info.info(`Player ${socket.deckitUser.username} left the room ${socket.deckitUser.activeRoomId}`);
     const { deckitUser: { activeRoomId } = {} } = socket;
     socket.leave(WAITING_ROOM);
@@ -313,6 +318,42 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     // send updated room to all except sender
     io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
   });
+
+  interface IChangeUserState {
+    state: number;
+  }
+  socket.on(
+    roomTopics.UPDATE_USER_STATE,
+    async ({ state }: IChangeUserState, callback: Function) => {
+      loggers.event.received.verbose(roomTopics.UPDATE_USER_STATE, state);
+
+      if (!socket.deckitUser) {
+        callback({ error: 'Something went wrong, sorry!' });
+        return;
+      }
+      const { deckitUser: { activeRoomId = '', id: playerId } } = socket;
+      if (!activeRoomId) {
+        callback({ error: 'You are not part of any room' });
+        return;
+      }
+
+      const room: Room = getRoom(activeRoomId, io.gameRooms);
+      if (!room) {
+        callback({ error: 'Room does not exist' });
+        return;
+      }
+      const updatedPlayers = await room.MOONLIGHTupdatePlayer({
+        playerId, playerData: { state },
+      });
+      const updatedState = room.updateRoomState();
+
+      callback({ players: updatedPlayers, updatedState });
+
+      // send updated room to all including sender
+      socket.to(room.id).emit(roomTopics.UPDATE_ROOM,
+        { players: updatedPlayers, state: updatedState });
+    },
+  );
 
   // 2.0 end
   //

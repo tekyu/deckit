@@ -27,6 +27,10 @@ export default {
   front: {
     domain: process.env.FRONT_DOMAIN,
   },
+
+  cards: {
+    server: process.env.CARDS_SERVER,
+  },
   /**
    * That long string from mlab
    */

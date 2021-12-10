@@ -15,7 +15,7 @@ const SliderWithTooltip = ({
   palette = 'primary',
   onChange = () => { },
   label,
-  height = 16,
+  height = 24,
   sliderProps = {
     min: 10,
     max: 120,
