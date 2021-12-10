@@ -20,6 +20,7 @@ export interface IRoomState {
   admin: string;
   players: IPlayer[];
   state: number;
+  playerLimit: number;
 }
 
 export interface IInitialRoomUpdate {
@@ -49,6 +50,7 @@ export interface IInitialRoomDetails {
   admin: string;
   players: IPlayer[];
   state: number;
+  playerLimit: number;
 }
 
 export interface IInitialUserDetails {

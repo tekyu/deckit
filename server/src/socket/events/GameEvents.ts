@@ -18,7 +18,7 @@ import Deckit from '../../classes/Deckit';
 
 export const gameTopics = {
   START_GAME: 'MOONLIGHT-START_GAME',
-  UPDATE_MY_CARDS: 'UPDATE_MY_CARDS',
+  UPDATE_MY_CARDS: 'MOONLIGHT-UPDATE_MY_CARDS',
 };
 
 export const GameEvents = (socket: ExtendedSocket, io: IExtendedSocketServer) => {
