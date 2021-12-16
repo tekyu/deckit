@@ -53,6 +53,15 @@ const RoomContainer = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
+    const pingInterval = setInterval(() => {
+      dispatch(socketActions.emit('PING_ROOM'));
+    }, 270000); // 4.5 minutes
+    return () => {
+      clearInterval(pingInterval);
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
     if (id && initialized && !roomIdFromStore) {
       dispatch(roomActions.joinRoom({ roomId, userData: { id, username, anonymous } }));
     }
