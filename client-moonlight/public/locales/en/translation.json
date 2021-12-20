@@ -1,3 +1,14 @@
 {
-  "hello": "Hello"
+  "hello": "Hello",
+  "errors": {
+    "room": {
+      "connect": {
+        "blacklisted": "You've been kicked from this room previously",
+        "started": "Game has already started",
+        "noroom": "Room doesn't exist",
+        "full": "Room is full, sorry!",
+        "undefined": "Sorry, something went wrong"
+      }
+    }
+  }
 }

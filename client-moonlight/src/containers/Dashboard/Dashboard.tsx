@@ -12,8 +12,9 @@ import { useSelector } from 'react-redux';
 import { userSelectors } from 'store/user/userSlice';
 import { roomActions, roomSelectors } from 'store/room/roomSlice';
 import { useAppThunkDispatch } from 'store/store';
-import { Action } from 'redux';
+import { AnyAction } from 'redux';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import * as Styled from './Dashboard.styled';
 
 interface IRoomIdForm {
@@ -23,10 +24,10 @@ interface IRoomIdForm {
 const noRoomToastId = 'noRoomToast';
 
 const Dashboard = (): JSX.Element => {
+  const { t } = useTranslation();
   const [redirectToGame, setRedirectToGame] = useState<boolean>(false);
   const dispatch = useAppThunkDispatch();
   const roomId = useSelector(roomSelectors.activeRoomId);
-  const { id, username, anonymous } = useSelector(userSelectors.user);
 
   useEffect(() => {
     if (roomId) {
@@ -38,11 +39,11 @@ const Dashboard = (): JSX.Element => {
     { roomId }: IRoomIdForm,
     { setFieldError }: FormikHelpers<IRoomIdForm>,
   ) => {
-    dispatch(roomActions.joinRoom({ roomId, userData: { id, username, anonymous } }))
-      .then(({ type }: Action) => {
+    dispatch(roomActions.joinRoom({ roomId }))
+      .then(({ type, error }: AnyAction) => {
         if (type.includes('rejected')) {
-          setFieldError('roomId', `Room of id ${roomId} doesn't exist`);
-          toast.error(`Room of id ${roomId} doesn't exist`, {
+          setFieldError('roomId', t(`errors.room.connect.${error.message}`));
+          toast.error(t(`errors.room.connect.${error.message}`), {
             position: 'top-right',
             toastId: `${noRoomToastId}-${roomId}`,
 
@@ -50,8 +51,8 @@ const Dashboard = (): JSX.Element => {
         } else {
           setRedirectToGame(true);
         }
-      }).catch((error: Action) => {
-        setFieldError('roomId', `Room of id ${roomId} doesn't exist`);
+      }).catch(() => {
+        setFieldError('roomId', t('errors.room.connect.undefined'));
       });
   };
 

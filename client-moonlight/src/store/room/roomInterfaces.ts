@@ -83,7 +83,6 @@ export interface ICreateRoom {
 
 export interface IJoinRoom {
   roomId: string;
-  userData: IUserData;
 }
 
 export interface IJoinRoomResponse {

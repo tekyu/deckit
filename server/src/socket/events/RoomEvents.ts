@@ -116,31 +116,24 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     },
   );
 
-  interface IUserData {
-    username: string;
-    id: string;
-    anonymous: boolean;
-  }
   interface MOONLIGHTIJoinRoomParams {
     roomId: string;
-    userData: IUserData;
   }
 
   socket.on(roomTopics.JOIN_ROOM, async ({
     roomId,
-    userData,
   }: MOONLIGHTIJoinRoomParams, callback: Function) => {
     const room = getRoom(roomId, io.gameRooms);
     if (!room) {
-      callback({ error: "Room doesn't exist" });
+      callback({ error: 'noroom' });
       return;
     }
     if (room.state > 1) {
-      callback({ error: 'Game has already started' });
+      callback({ error: 'started' });
       return;
     }
     if (room.players.length === room.playersMax) {
-      callback({ error: `Sorry, room ${room.name} is full` });
+      callback({ error: 'full' });
       return;
     }
 
@@ -149,14 +142,11 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     }
 
     try {
-      // leave waiting room to not receive info about newly created rooms
-      socket.leave(WAITING_ROOM);
-
-      socket.join(roomId);
-      socket.deckitUser.activeRoomId = roomId;
-
-      const { players } = await room.MOONLIGHTconnectPlayer(socket.deckitUser);
-
+      const { players, error } = await room.MOONLIGHTconnectPlayer(socket.deckitUser);
+      if (error) {
+        callback({ error: 'blacklisted' });
+        return;
+      }
       // get list of rooms needed to be updated in waiting room
       const updatedRoomObject = [
         getRoomObjectForUpdate(
@@ -168,6 +158,12 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
           }),
         ),
       ];
+
+      // leave waiting room to not receive info about newly created rooms
+      socket.leave(WAITING_ROOM);
+
+      socket.join(roomId);
+      socket.deckitUser.activeRoomId = roomId;
 
       // if room is public, push update of the room info to Browse route
       if (room.mode === 'public') {
@@ -181,9 +177,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       // send updated room to all except sender
       socket.to(roomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
     } catch (error) {
-      Error(
-        `Cannot connect player ${userData.username} of id: ${userData.id} to room ${roomId} with error: ${error}`,
-      );
+      callback({ error: 'undefined' });
     }
   });
 
@@ -211,7 +205,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
         return;
       }
 
-      const { players, disconnectedPlayer } = await room.MOONLIGHTdisconnectPlayer(playerId);
+      const { players, disconnectedPlayer } = await room.MOONLIGHTkickPlayer(playerId);
 
       // get list of rooms needed to be updated in waiting room
       const updatedRoomObject = [

@@ -99,6 +99,8 @@ export default class Room implements IRoom {
 
   playerLimit: number;
 
+  blacklistedPlayers: string[];
+
   // MOONLIGHTconnectPlayer: (userDetails: IConnectPlayer) => IConnectPlayerReturn
 
   constructor(
@@ -124,6 +126,7 @@ export default class Room implements IRoom {
     this.gameOptions = getGameOptions(gameCode, gameOptions); // TODO: remove
     this.chat = [];
     this.playerLimit = 10;
+    this.blacklistedPlayers = [];
   }
 
   get instance() {
@@ -293,6 +296,9 @@ export default class Room implements IRoom {
     color,
     socketId,
   }: IConnectPlayer): IConnectPlayerReturn {
+    if (this.blacklistedPlayers.some((playerId) => playerId === id)) {
+      return { error: 'blacklisted' };
+    }
     try {
       const newPlayer = new Player({
         username,
@@ -309,7 +315,9 @@ export default class Room implements IRoom {
     }
   }
 
-  async MOONLIGHTdisconnectPlayer(playerId: string): IDisconnectPlayerReturn {
+  async MOONLIGHTdisconnectPlayer(
+    playerId: string,
+  ): IDisconnectPlayerReturn {
     const disconnectedPlayer = this.players.find(({ id }) => id === playerId);
     const newPlayers = this.players.filter(({ id }) => id !== playerId);
     this.players = newPlayers;
@@ -317,6 +325,11 @@ export default class Room implements IRoom {
       players: newPlayers,
       disconnectedPlayer,
     };
+  }
+
+  async MOONLIGHTkickPlayer(playerId: string) {
+    this.blacklistedPlayers.push(playerId);
+    return this.MOONLIGHTdisconnectPlayer(playerId);
   }
 
   async MOONLIGHTupdatePlayer({ playerId, playerData }: MOONLIGHTIUpdatePlayer): Player[] {
