@@ -63,7 +63,7 @@ const RoomContainer = (): JSX.Element => {
 
   useEffect(() => {
     if (id && initialized && !roomIdFromStore) {
-      dispatch(roomActions.joinRoom({ roomId, userData: { id, username, anonymous } }));
+      dispatch(roomActions.joinRoom({ roomId }));
     }
   }, [id, initialized, roomIdFromStore]);
 

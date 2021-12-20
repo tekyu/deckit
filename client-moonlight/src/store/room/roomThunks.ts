@@ -45,11 +45,10 @@ const joinRoom = createAsyncThunk(
   'room/joinRoom',
   async ({
     roomId,
-    userData,
   }: IJoinRoom, { dispatch }): Promise<IJoinRoomResponse> => new Promise((resolve, reject) => {
     dispatch(socketActions.emit(
       socketTopics.room.joinRoom,
-      { roomId, userData },
+      { roomId },
       ({ roomDetails, error }: IJoinRoomResponse) => {
         if (roomDetails) {
           dispatch(roomActions.setInitialRoomDetails({ roomDetails, userState: 0 }));
