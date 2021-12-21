@@ -9,10 +9,11 @@ import getRoom from '../utils/getRoom';
 import logger from '../loaders/logger';
 import { IExtendedSocketServer } from './events/interfaces/IExtendedSocketServer';
 
-const WAITING_ROOM = 'WAITING_ROOM';
+export const WAITING_ROOM = 'WAITING_ROOM';
 // TODO: Change types
 const ioEvents = (io: IExtendedSocketServer) => {
   io.on('connection', (socket: any) => {
+    socket.join(WAITING_ROOM);
     logger.info(`Connection with socket established for ${socket.id}`);
     socket.pswOptions = {
       rooms: [],

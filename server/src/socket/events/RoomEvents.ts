@@ -113,6 +113,10 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       callback({
         roomDetails: room.basicInfo, userDetails,
       });
+
+      if (room.mode === 'public') {
+        io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, [getRoomObjectForUpdate(room, 'add')]);
+      }
     },
   );
 
