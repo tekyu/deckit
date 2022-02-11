@@ -14,6 +14,7 @@ export const CreateGame = styled.div`
   ${Panel} {
     width: 500px;
     max-width: 500px;
+    align-self: flex-start;
     ${({ theme: { palette } }) => `
       box-shadow: -7px 7px 40px ${rgba(palette.primary.light, 0.1)},
         10px 10px 40px ${rgba(palette.primary.main, 0.1)},

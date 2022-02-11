@@ -28,6 +28,7 @@ const ReadyButton = ({
       type="button"
       variant="main"
       onClick={clickHandler}
+      isReady={isReady}
     >
       {isReady ? 'Change to waiting' : 'Change to ready'}
     </Styled.ReadyButton>

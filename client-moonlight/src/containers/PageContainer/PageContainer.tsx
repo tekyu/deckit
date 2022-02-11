@@ -20,6 +20,20 @@ const PageContainer = (): JSX.Element => {
     }, onUpdateAnonUser));
   }, [username, anonymous]);
 
+  const syncHandler = () => {
+    dispatch(socketActions.emit(socketTopics.user.updateAnonUser, {
+      username, anonymous, id,
+    }, onUpdateAnonUser));
+  };
+
+  useEffect(() => {
+    dispatch(socketActions.listener(socketTopics.user.syncBasicInfo, syncHandler));
+
+    return () => {
+      dispatch(socketActions.removeListener(socketTopics.user.syncBasicInfo, syncHandler));
+    };
+  }, []);
+
   return (
     <Styled.PageContainer>
       <Header />

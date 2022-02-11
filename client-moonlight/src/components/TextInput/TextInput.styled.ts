@@ -29,6 +29,7 @@ export const Input = styled(Field) <{ $alignCenter?: boolean }>`
   padding: 12px 18px;
   font-family: ${({ theme: { typography } }) => typography.primary};
   color: ${({ theme: { palette } }) => palette.colors.primary};
+  background: ${({ theme: { palette } }) => palette.backgrounds.primary};
   ${({ $alignCenter }) => $alignCenter && `
     text-align: center;
   `}

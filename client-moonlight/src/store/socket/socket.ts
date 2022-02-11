@@ -8,20 +8,32 @@ export const socketTypes = {
 export const socketTopics = {
   user: {
     updateAnonUser: 'MOONLIGHT-UPDATE_ANON_USER',
+    syncBasicInfo: 'SYNC_BASIC_INFO',
   },
   room: {
+    getFullListOfRooms: 'MOONLIGHT-GET_FULL_LIST_OF_ROOMS',
     createRoom: 'MOONLIGHT-CREATE_ROOM',
     joinRoom: 'MOONLIGHT-JOIN_ROOM',
     updateRoom: 'MOONLIGHT-UPDATE_ROOM',
     leave: 'MOONLIGHT-LEAVE_ROOM',
     start: 'MOONLIGHT-START_GAME',
     updateNumberOfSeats: 'MOONLIGHT-UPDATE_NUMBER_OF_SEATS',
+    playAgain: 'MOONLIGHT-PLAY_AGAIN',
 
   },
   player: {
     kick: 'MOONLIGHT-KICK_PLAYER',
     kicked: 'MOONLIGHT-KICKED_PLAYER',
     changeState: 'MOONLIGHT-CHANGE-USER-STATE',
+  },
+  game: {
+    updateMyCards: 'MOONLIGHT-UPDATE_MY_CARDS',
+    update: 'MOONLIGHT-UPDATE_GAME',
+    sendHint: 'MOONLIGHT-SEND_HINT',
+    started: 'MOONLIGHT-GAME_STARTED',
+    sendCardFromDeck: 'MOONLIGHT-CARD_FROM_DECK',
+    sendCardFromBoard: 'MOONLIGHT-CARD_FROM_BOARD',
+    nextRound: 'MOONLIGHT-NEXT_ROUND',
   },
 };
 

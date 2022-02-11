@@ -116,7 +116,7 @@ const CreateGame = (): JSX.Element => {
                   name="maxScore"
                   label="Maximum points in game"
                   sliderProps={{
-                    min: 10,
+                    min: 2,
                     max: 120,
                     defaultValue: maxScore,
                     step: 5,

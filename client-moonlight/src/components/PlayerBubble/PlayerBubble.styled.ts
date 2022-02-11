@@ -44,6 +44,7 @@ export const Bubble = styled.div<{ ready: boolean }>`
 `;
 
 export const Name = styled.div<{ hasFullInfoBox: boolean }>`
+  text-align: center;
   font-size: 16px;
   width: 100%;
   text-overflow: ellipsis;

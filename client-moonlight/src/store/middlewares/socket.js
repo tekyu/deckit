@@ -31,6 +31,7 @@ export default function socketMiddleware() {
         break;
       case socketTypes.listener:
         socket.on(event, (data) => {
+          console.log('listener', event, data);
           if (data.error) {
             dispatch({ type: 'ERROR', payload: data.error });
             return;

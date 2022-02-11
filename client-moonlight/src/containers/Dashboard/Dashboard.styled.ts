@@ -6,7 +6,7 @@ import { mediaQuery } from 'theme/mediaQueries';
 
 export const Dashboard = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 `;
 

@@ -19,12 +19,13 @@ import { roomReducer } from 'store/room/roomSlice';
 import { appReducer } from 'store/app/appSlice';
 import { enhancer as withReduxEnhancer } from 'addon-redux';
 import { useDispatch } from 'react-redux';
+import { gameReducer } from 'store/game/gameSlice';
 import { socketTypes } from './socket/socket';
 
 const userPersistConfig = {
   key: 'user',
   storage,
-  blacklist: ['initialized'],
+  blacklist: ['initialized', 'kickedFrom'],
 };
 
 const appPersistConfig = {
@@ -37,6 +38,7 @@ const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userReducer),
   room: roomReducer,
   app: persistReducer(appPersistConfig, appReducer),
+  game: gameReducer,
 });
 
 export const makeStore = (): EnhancedStore => configureStore({
@@ -56,7 +58,6 @@ export const makeStore = (): EnhancedStore => configureStore({
         socketTypes.removeListener,
       ],
     },
-    //  }).concat(socketMiddleware()),
   }).prepend(socketMiddleware() as Middleware<
     (action: Action<'specialAction'>) => number,
     RootState

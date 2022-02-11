@@ -9,16 +9,22 @@ import { Formik, FormikHelpers } from 'formik';
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage';
 import { useSelector } from 'react-redux';
 
-import { userSelectors } from 'store/user/userSlice';
+import { userActions, userSelectors } from 'store/user/userSlice';
 import { roomActions, roomSelectors } from 'store/room/roomSlice';
 import { useAppThunkDispatch } from 'store/store';
 import { AnyAction } from 'redux';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import { socketActions, socketTopics } from 'store/socket/socket';
 import * as Styled from './Dashboard.styled';
 
 interface IRoomIdForm {
   roomId: string;
+}
+
+interface IJoinRoomHandler {
+  roomId: string;
+  formikHelpers: FormikHelpers<IRoomIdForm>;
 }
 
 const noRoomToastId = 'noRoomToast';
@@ -28,6 +34,7 @@ const Dashboard = (): JSX.Element => {
   const [redirectToGame, setRedirectToGame] = useState<boolean>(false);
   const dispatch = useAppThunkDispatch();
   const roomId = useSelector(roomSelectors.activeRoomId);
+  const kickedFrom = useSelector(userSelectors.kickedFrom);
 
   useEffect(() => {
     if (roomId) {
@@ -35,10 +42,19 @@ const Dashboard = (): JSX.Element => {
     }
   }, []);
 
-  const submitRoomIdHandler = (
-    { roomId }: IRoomIdForm,
-    { setFieldError }: FormikHelpers<IRoomIdForm>,
-  ) => {
+  const getFullListOfRoomsHandler = (rooms: any) => {
+    console.log('getFullListOfRoomsHandler', rooms);
+  };
+
+  useEffect(() => {
+    dispatch(socketActions.emit(
+      socketTopics.room.getFullListOfRooms,
+      {},
+      getFullListOfRoomsHandler,
+    ));
+  }, []);
+
+  const joinRoomHandler = ({ roomId, formikHelpers: { setFieldError } }: IJoinRoomHandler) => {
     dispatch(roomActions.joinRoom({ roomId }))
       .then(({ type, error }: AnyAction) => {
         if (type.includes('rejected')) {
@@ -46,14 +62,31 @@ const Dashboard = (): JSX.Element => {
           toast.error(t(`errors.room.connect.${error.message}`), {
             position: 'top-right',
             toastId: `${noRoomToastId}-${roomId}`,
-
           });
+          if (error.message === 'blacklisted') {
+            dispatch(userActions.updateKickedFrom(roomId));
+          }
         } else {
           setRedirectToGame(true);
         }
       }).catch(() => {
         setFieldError('roomId', t('errors.room.connect.undefined'));
       });
+  };
+
+  const submitRoomIdHandler = (
+    { roomId }: IRoomIdForm,
+    formikHelpers: FormikHelpers<IRoomIdForm>,
+  ) => {
+    if (kickedFrom[roomId]) {
+      toast.error(t('errors.room.connect.blacklisted'), {
+        position: 'top-right',
+        toastId: `${noRoomToastId}-${roomId}`,
+      });
+      formikHelpers.setFieldError('roomId', t('errors.room.connect.blacklisted'));
+    } else {
+      joinRoomHandler({ roomId, formikHelpers });
+    }
   };
 
   const validateRoomIdHandler = ({ roomId }: IRoomIdForm) => {

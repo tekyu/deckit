@@ -1,5 +1,8 @@
 export type modeType = 'public' | 'private' | 'fast' | '';
 
+export interface IScoreboard {
+  [key: string]: number;
+}
 export interface IPlayer {
   color: string;
   username: string;
@@ -21,6 +24,9 @@ export interface IRoomState {
   players: IPlayer[];
   state: number;
   playerLimit: number;
+  scoreboard: IScoreboard;
+  winners: string[];
+  playAgain: string[];
 }
 
 export interface IInitialRoomUpdate {

@@ -64,8 +64,9 @@ const joinRoom = createAsyncThunk(
 
 const kickPlayer = createAsyncThunk(
   'room/kickPlayer',
-  async (_, { dispatch }) => {
+  async ({ roomId }: { roomId: string }, { dispatch }) => {
     dispatch(userActions.setState(0));
+    dispatch(userActions.updateKickedFrom(roomId));
   },
 );
 
