@@ -1,28 +1,22 @@
 // @ts-nocheck
 import hri from 'human-readable-ids';
 
-import { getGameOptions } from '../utils/gameMapping';
 import IRoom from '../interfaces/IRoom';
 import Player, { IPlayerBasicInfo } from './Player';
-import { IExtendedSocketServer } from '../socket/events/interfaces/IExtendedSocketServer';
+import { roomTopics } from '../socket/events/RoomEvents';
+import IO from './IO';
 
-interface IStateMap {
-  waiting: number;
-  ready: number;
-  started: number;
-  paused: number;
-  ended: number;
+interface IScoreboard {
+  [key: string]: number;
 }
 
-type stateUpdateType = keyof IStateMap;
-
-const stateMap: IStateMap = {
-  waiting: 0,
-  ready: 1,
-  started: 2,
-  paused: 3,
-  ended: 4,
-};
+export enum roomState {
+  waiting = 0,
+  ready = 1,
+  started = 2,
+  paused = 3,
+  ended = 4
+}
 
 interface CreateRoomOptions {
   mode: string;
@@ -30,7 +24,6 @@ interface CreateRoomOptions {
   gameCode: string;
   name?: string;
   username?: string;
-  gameOptions?: Object;
   maxScore?: number;
 }
 
@@ -45,6 +38,7 @@ interface IConnectPlayer {
 interface IConnectPlayerReturn {
   players: Player[];
   newPlayerData: IPlayerBasicInfo;
+  error?: 'blacklisted' | 'undefined' | 'noroom' | 'started' | 'full';
 }
 
 interface IDisconnectPlayerReturn {
@@ -56,6 +50,7 @@ interface MOONLIGHTIUpdatePlayer {
   playerId: string;
   playerData: Partial<Player>
 }
+
 /**
  * TODO:
  * DeckitRoom extends Room
@@ -79,7 +74,7 @@ export default class Room implements IRoom {
 
   gameCode: string;
 
-  state: number; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
+  state: roomState; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
 
   players: Player[];
 
@@ -87,30 +82,26 @@ export default class Room implements IRoom {
 
   createdAt: number;
 
-  gameOptions: any;
-
   chat: Array<Object>;
 
-  scoreboard: Object;
+  scoreboard: IScoreboard;
 
   pingInterval: Function;
-
-  io: IExtendedSocketServer;
 
   playerLimit: number;
 
   blacklistedPlayers: string[];
 
+  playAgain: string[];
+
   // MOONLIGHTconnectPlayer: (userDetails: IConnectPlayer) => IConnectPlayerReturn
 
   constructor(
     {
-      mode, playersMax, gameCode, gameOptions, name = '',
+      mode, playersMax, gameCode, name = '',
     }: CreateRoomOptions,
     ownerId: string,
-    io,
   ) {
-    this.io = io;
     this.mode = mode;
     this.playersMax = playersMax || 10; // check for max players per game(adjustable in gameMapping)
     this.name = name;
@@ -118,15 +109,15 @@ export default class Room implements IRoom {
     this.id = hri.hri.random().split('-').join('');
     this.owner = ownerId;
     this.admin = ownerId;
-    this.state = 0;
+    this.state = roomState.waiting;
     this.players = [];
     this.winners = [];
     this.createdAt = Date.now();
     this.scoreboard = {};
-    this.gameOptions = getGameOptions(gameCode, gameOptions); // TODO: remove
     this.chat = [];
     this.playerLimit = 10;
     this.blacklistedPlayers = [];
+    this.playAgain = [];
   }
 
   get instance() {
@@ -197,7 +188,6 @@ export default class Room implements IRoom {
       chat,
       createdAt,
       gameCode,
-      gameOptions,
       id,
       mode,
       name,
@@ -213,19 +203,6 @@ export default class Room implements IRoom {
       chat,
       createdAt,
       gameCode,
-      gameOptions: {
-        hinter: gameOptions.hinter,
-        hintCard: gameOptions.hintCard,
-        hint: gameOptions.hint,
-        initialCards: gameOptions.initialCards,
-        maxScore: gameOptions.maxScore,
-        pickedCardsToHint: gameOptions.pickedCardsToHint,
-        playersChoosedCard: gameOptions.playersChoosedCard,
-        playersPickedCard: gameOptions.playersPickedCard,
-        remainingCards: gameOptions.remainingCards,
-        round: gameOptions.round,
-        stage: gameOptions.stage,
-      },
       id,
       mode,
       name,
@@ -238,25 +215,16 @@ export default class Room implements IRoom {
     };
   }
 
+  emitUpdateRoom(data: { [key: string]: any }) {
+    IO.getInstance().io.in(this.id).emit(roomTopics.UPDATE_ROOM, data);
+  }
+
   setState(newState) {
     this.state = newState;
   }
 
-  setWinners() {
-    this.winners = Object.entries(this.scoreboard).reduce(
-      (winners, [id, score]) => {
-        if (score >= this.gameOptions.maxScore) {
-          winners.push(id);
-        }
-        return winners;
-      },
-      [],
-    );
-    return this.winners;
-  }
-
   setCards(cards) {
-    this.gameOptions.remainingCards = cards;
+    this.remainingCards = cards;
   }
 
   updateNumberOfSeats(action: 'add' | 'remove') {
@@ -266,19 +234,6 @@ export default class Room implements IRoom {
     if (action === 'remove' && this.playersMax > 0) {
       this.playersMax -= 1;
     }
-  }
-
-  async connectPlayer(playerData: Object) {
-    const newPlayerData = { ...playerData };
-    if (this.owner === playerData.id) {
-      newPlayerData.state = 1;
-    }
-    this.players.push(newPlayerData);
-    return this.players;
-  }
-
-  disconnectPlayer(id: string) {
-    return (this.players = this.players.filter((player: any) => player.id !== id));
   }
 
   // 2.0
@@ -348,13 +303,13 @@ export default class Room implements IRoom {
     return !this.players.some(({ state }) => state !== 1);
   }
 
-  updateRoomState(state?: stateUpdateType): number {
+  updateRoomState(state?: roomState): number {
     if (state) {
-      this.state = stateMap[state];
+      this.state = state;
       return this.state;
     }
     if (this.state <= 1) {
-      this.state = this.arePlayersReady() ? stateMap.ready : stateMap.waiting;
+      this.state = this.arePlayersReady() ? roomState.ready : roomState.waiting;
       return this.state;
     }
     return this.state;
@@ -362,5 +317,20 @@ export default class Room implements IRoom {
 
   resetPlayersState() {
     this.players = this.players.map((player) => ({ ...player, state: 0 }));
+  }
+
+  updatePlayAgain(playerId: string) {
+    const playerIndex = this.playAgain.indexOf(playerId);
+    if (playerIndex === -1) {
+      this.playAgain = [...this.playAgain, playerId];
+    } else {
+      this.playAgain = this.playAgain.filter((pid) => pid !== playerId);
+    }
+  }
+
+  resetRoom() {
+    this.state = roomState.waiting;
+    this.playAgain = [];
+    this.resetPlayersState();
   }
 }

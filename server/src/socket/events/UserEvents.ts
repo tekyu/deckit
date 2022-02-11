@@ -1,37 +1,35 @@
-import { activeRoomId } from 'store/room/roomSelectors';
-import chalk from 'chalk';
 import Room from '../../classes/Room';
 import { loggers } from '../../loaders/loggers';
 import getRoom from '../../utils/getRoom';
-import { ExtendedSocket } from './interfaces/IExtendedSocket';
 import { roomTopics } from './RoomEvents';
+import IO from '../../classes/IO';
+import { IExtendedSocket } from '../socket';
 
-// 2.0
-export const topics = {
+export const userTopics = {
   UPDATE_ANON_USER: 'MOONLIGHT-UPDATE_ANON_USER',
+  SYNC_BASIC_INFO: 'SYNC_BASIC_INFO',
+  SYNC_BASIC_INFO_RETURN: 'SYNC_BASIC_INFO_RETURN',
 };
 
-// 2.0 end
-
 // TODO: Change types
-export const UserEvents = (socket: ExtendedSocket, io: any) => {
-  socket.on('updateUser', (params: any) => {
-    console.log('updateUser', params);
-    socket.pswOptions = { ...socket.pswOptions, ...params };
-    console.log(chalk.bgYellow.black(`[User] User ${socket.id} updated with `));
-  });
-  socket.on('UPDATE_ANON_USER', (params: any, callback: Function) => {
-    // TODO: TEMPORARY SOLUTION UNTIL SOCKET WILL CLOSE ON ROOM EXIT
-    socket.pswOptions = { ...socket.pswOptions, ...params };
-    if (!socket.pswOptions.id) {
-      socket.pswOptions.id = socket.id;
-      socket.pswOptions.anon = true;
-    }
-    console.log(chalk.bgYellow.black(`[USer] User ${socket.id} updated with `));
-    callback(socket.pswOptions);
-    // emit to socket
-    socket.in(params.roomId).emit('userUpdated', socket.pswOptions);
-  });
+export const UserEvents = (socket: IExtendedSocket) => {
+  // socket.on('updateUser', (params: any) => {
+  //   console.log('updateUser', params);
+  //   socket.pswOptions = { ...socket.pswOptions, ...params };
+  //   console.log(chalk.bgYellow.black(`[User] User ${socket.id} updated with `));
+  // });
+  // socket.on('UPDATE_ANON_USER', (params: any, callback: Function) => {
+  //   // TODO: TEMPORARY SOLUTION UNTIL SOCKET WILL CLOSE ON ROOM EXIT
+  //   socket.pswOptions = { ...socket.pswOptions, ...params };
+  //   if (!socket.pswOptions.id) {
+  //     socket.pswOptions.id = socket.id;
+  //     socket.pswOptions.anon = true;
+  //   }
+  //   console.log(chalk.bgYellow.black(`[USer] User ${socket.id} updated with `));
+  //   callback(socket.pswOptions);
+  //   // emit to socket
+  //   socket.in(params.roomId).emit('userUpdated', socket.pswOptions);
+  // });
 
   // 2.0
   interface IUpdateAnonUser {
@@ -40,7 +38,11 @@ export const UserEvents = (socket: ExtendedSocket, io: any) => {
     id?: string
   }
 
-  socket.on(topics.UPDATE_ANON_USER, async (
+  setTimeout(() => {
+    socket.emit(userTopics.SYNC_BASIC_INFO, { ok: true });
+  }, 1000);
+
+  socket.on(userTopics.UPDATE_ANON_USER, async (
     { username, anonymous, id }: IUpdateAnonUser,
     callback: Function,
   ) => {
@@ -59,16 +61,16 @@ export const UserEvents = (socket: ExtendedSocket, io: any) => {
 
     if (hasNameChanged && socket.deckitUser?.activeRoomId) {
       const { deckitUser: { activeRoomId } } = socket;
-      const room: Room = getRoom(activeRoomId, io.gameRooms);
+      const room: Room = getRoom(activeRoomId);
       const players = await room.MOONLIGHTupdatePlayer({
         playerId: socket.deckitUser.id,
         playerData: { username, anonymous, id },
       });
       // send updated room to all including sender
-      io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players });
+      IO.getInstance().io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players });
     }
 
-    loggers.event.received.verbose(topics.UPDATE_ANON_USER, socket.deckitUser);
+    loggers.event.received.verbose(userTopics.UPDATE_ANON_USER, socket.deckitUser);
     callback({ id: socket.deckitUser.id });
   });
 };

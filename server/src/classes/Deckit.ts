@@ -1,11 +1,9 @@
-import { uniqBy } from 'lodash';
-import { gameTopics } from '../socket/events/GameEvents';
 import axios from '../../axios';
 import { loggers } from '../loaders/loggers';
-import { IExtendedSocketServer } from '../socket/events/interfaces/IExtendedSocketServer';
+import { gameTopics } from '../socket/events/GameEvents';
+import IO from './IO';
 import Player from './Player';
-import Room from './Room';
-import { roomTopics } from '../socket/events/RoomEvents';
+import Room, { roomState } from './Room';
 
 export interface ICard {
   id: string;
@@ -13,6 +11,10 @@ export interface ICard {
   url: string;
 }
 
+interface IHinter {
+  username: string;
+  id: string;
+}
 interface CreateRoomOptions {
   mode: string;
   playersMax: number;
@@ -23,31 +25,17 @@ interface CreateRoomOptions {
   maxScore?: number;
 }
 
-interface IstageMap {
-  idle: number;
-  initialGiveaway: number;
-  pickHint: number;
-  pickCard: number;
-  chooseCards: number;
-  awardPoints: number;
-  checkGame: number;
-  cardShuffle: number;
-  ended: number;
+export enum gameStage {
+  idle = 0,
+  initialGiveaway = 1,
+  pickHint = 2,
+  pickCardFromDeck = 3,
+  chooseCardsFromBoard = 4,
+  awardPoints = 5,
+  checkGame = 6,
+  cardShuffle = 7,
+  ended = 8,
 }
-
-const stageMap: IstageMap = {
-  idle: 0,
-  initialGiveaway: 1,
-  pickHint: 2,
-  pickCard: 3,
-  chooseCards: 4,
-  awardPoints: 5,
-  checkGame: 6,
-  cardShuffle: 7,
-  ended: 8,
-};
-
-type stageType = keyof IstageMap;
 
 export const initialDecks = [
   { name: 'default', userCreated: false },
@@ -61,6 +49,7 @@ export interface IDeck {
 
 export const deckitTopics = {
   GAME_UPDATED: 'MOONLIGHT-GAME_UPDATED',
+  GAME_STARTED: 'MOONLIGHT-GAME_STARTED',
 };
 
 export default class Deckit extends Room {
@@ -70,7 +59,7 @@ export default class Deckit extends Room {
 
   additionalDecks: IDeck[];
 
-  stage: number;
+  stage: gameStage;
 
   round: number;
 
@@ -82,23 +71,34 @@ export default class Deckit extends Room {
 
   hint: string;
 
-  hinter: Object;
+  hinter: IHinter;
 
-  hintCard: Object;
+  hintCard: string;
 
-  choosedCardsToMatchHint: Array<Object>;
+  // Cards picked by non-hinter player that match hint the best
+  cardsFromDeck: {
+    [id: string]: {
+      owner: string;
+      id: string;
+      pickedBy: string[]
+    }
+  };
 
-  pickedCardsToHint: Array<Object>;
+  // Cards picked by non-hinter from pool of cards from previous stage
+  // Points will be given based on this property
+  cardsFromBoard: {
+    [cardId: string]: string[]
+  };
 
-  playersPickedCard: Array<string>;
+  playersPickedCardFromDeck: string[];
 
-  playersChoosedCard: Array<string>;
+  playersPickedCardFromBoard: string[];
 
-  cardTracker: Object<Array>;
+  // cardTracker: Object<Array>;
 
-  constructor(props: CreateRoomOptions, ownerId: string, io: IExtendedSocketServer) {
-    super(props, ownerId, io);
-    this.stage = stageMap.idle;
+  constructor(props: CreateRoomOptions, ownerId: string) {
+    super(props, ownerId);
+    this.stage = gameStage.idle;
     this.round = 0;
     this.maxScore = props.maxScore || 60;
     this.initialDecks = initialDecks;
@@ -108,23 +108,27 @@ export default class Deckit extends Room {
     this.remainingCards = [];
     this.initialCards = [];
     this.hint = '';
-    this.hinter = {};
-    this.hintCard = {};
-    this.choosedCardsToMatchHint = [];
-    this.pickedCardsToHint = [];
-    this.playersPickedCard = [];
-    this.playersChoosedCard = [];
+    this.hinter = { username: '', id: '' };
+    this.hintCard = '';
+    this.cardsFromDeck = {};
+    this.cardsFromBoard = {};
+    this.playersPickedCardFromDeck = [];
+    this.playersPickedCardFromBoard = [];
     this.scoreboard = {};
-    this.cardTracker = {};
+    // this.cardTracker = {};
+  }
+
+  emitUpdateGame(data: { [key: string]: any }) {
+    IO.getInstance().io.in(this.id).emit(gameTopics.UPDATE_GAME, data);
   }
 
   updateDecks(decks: IDeck[]) {
     this.decks = decks;
   }
 
-  updateStage(stage: stageType) {
+  updateStage(stage: gameStage) {
     if (stage) {
-      this.stage = stageMap[stage];
+      this.stage = stage;
     }
   }
 
@@ -194,6 +198,7 @@ export default class Deckit extends Room {
         }
       }
       player.updateCards(cards);
+      IO.getInstance().io.to(player.socketId).emit(gameTopics.UPDATE_MY_CARDS, cards);
       return player;
     });
   }
@@ -214,24 +219,192 @@ export default class Deckit extends Room {
     // gameOptions.updateCardTracker(id, cards, 'add');
     // emit updated cards to each player
 
-    this.players.forEach(({ socketId, cards }) => {
-      this.io.to(socketId).emit(gameTopics.UPDATE_MY_CARDS, cards);
-    });
+    // this.players.forEach(({ socketId, cards }) => {
+    //   IO.getInstance().io.to(socketId).emit(gameTopics.UPDATE_MY_CARDS, cards);
+    // });
 
-    this.updateRoomState('started');
-    this.updateStage('pickHint');
+    this.updateRoomState(roomState.started);
+    this.updateStage(gameStage.pickHint);
     this.round = 1;
     this.hinter = {
       username: this.players[0].username,
       id: this.players[0].id,
     };
-
-    this.io.in(this.id).emit(deckitTopics.GAME_UPDATED, {
-      remainingCards: this.remainingCards,
+    IO.getInstance().io.in(this.id).emit(deckitTopics.GAME_STARTED, {
+      remainingCards: this.remainingCards.length,
       round: this.round,
       stage: this.stage,
       hinter: this.hinter,
       maxScore: this.maxScore,
     });
+  }
+
+  setHint({ hint, cardId, userId }: { hint: string, cardId: string, userId: string }) {
+    this.hint = hint;
+    this.hintCard = cardId;
+    this.cardsFromDeck[cardId] = {
+      id: cardId,
+      owner: userId,
+      pickedBy: [],
+    };
+
+    this.playersPickedCardFromDeck.push(userId);
+    this.playersPickedCardFromBoard.push(userId);
+  }
+
+  addCardsFromDeck({ cardId, userId }: { cardId: string; userId: string }) {
+    this.cardsFromDeck[cardId] = {
+      id: cardId,
+      owner: userId,
+      pickedBy: [],
+    };
+    if (!this.playersPickedCardFromDeck.some((pid) => pid === userId)) {
+      this.playersPickedCardFromDeck.push(userId);
+    }
+  }
+
+  addCardsFromBoard({ cardId, userId }: { cardId: string; userId: string }) {
+    if (this.cardsFromDeck[cardId].pickedBy.some((id) => id === userId)) {
+      return;
+    }
+    this.cardsFromDeck[cardId].pickedBy.push(userId);
+    if (!this.playersPickedCardFromBoard.some((pid) => pid === userId)) {
+      this.playersPickedCardFromBoard.push(userId);
+    }
+  }
+
+  getCardsForBoard() {
+    return Object.keys(this.cardsFromDeck);
+  }
+
+  calculateRoundPoints() {
+    /**
+   * RULES
+   * If all players found the hinter card
+   * * hinter: 0pts, others: 2pts
+   * If no players found the hinter card
+   * * hinter: 0pts, others: 2pts + bonus per vote
+   * If at least one player, but not all have found the hinter card
+   * * hinter: 3pts, players who found: 3pts, + bonus per vote
+   */
+
+    // If all players found the hinter card
+    const hintCardPickedBy = this.cardsFromDeck[this.hintCard].pickedBy;
+    if (hintCardPickedBy.length === this.players.length - 1) {
+      hintCardPickedBy.forEach((id) => {
+        this.scoreboard[id] += 2;
+      });
+
+      // If no players found the hinter card
+    } else if (hintCardPickedBy.length === 0) {
+      Object.values(this.cardsFromDeck).forEach(({ owner, pickedBy }) => {
+        if (owner !== this.hinter.id) {
+          // 2 base pts + 1 pts per guess
+          this.scoreboard[owner] += 2 + pickedBy.length;
+        }
+      });
+      // If at least one player, but not all have found the hinter card
+    } else {
+      Object.values(this.cardsFromDeck).forEach(({ owner, pickedBy }) => {
+        if (owner !== this.hinter.id) {
+          // 2 base pts + 1 pts per guess
+          this.scoreboard[owner] += 3;
+        } else {
+          this.scoreboard[owner] += 3 + pickedBy.length;
+        }
+      });
+    }
+  }
+
+  setWinners() {
+    this.winners = Object.entries(this.scoreboard).reduce(
+      (winners: string[], [id, score]) => {
+        if (score >= this.maxScore) {
+          return [...winners, id];
+        }
+        return winners;
+      },
+      [],
+    );
+  }
+
+  setNextHinter() {
+    const playerIndex = this.players.findIndex(({ id }) => id === this.hinter.id);
+    const nextHinterIndex = playerIndex + 1 >= this.players.length ? 0 : playerIndex + 1;
+    const { id, username } = this.players[nextHinterIndex];
+    this.hinter = {
+      username,
+      id,
+    };
+  }
+
+  nextRound() {
+    this.updateStage(gameStage.awardPoints);
+    this.emitUpdateGame({ stage: this.stage });
+
+    this.calculateRoundPoints();
+    this.emitUpdateRoom({ scoreboard: this.scoreboard });
+    this.setWinners();
+
+    if (this.winners.length > 0) {
+      this.endGame();
+    } else {
+      this.distributeCardsToPlayers();
+      this.round += 1;
+      this.cardsFromDeck = {};
+      this.cardsFromBoard = {};
+      this.playersPickedCardFromDeck = [];
+      this.playersPickedCardFromBoard = [];
+      this.hintCard = '';
+      this.hint = '';
+      this.setNextHinter();
+      this.updateStage(gameStage.pickHint);
+      this.emitUpdateGame({
+        round: this.round,
+        stage: this.stage,
+        remainingCards: this.remainingCards.length,
+        cardsFromDeck: this.cardsFromDeck,
+        cardsForBoard: this.cardsFromBoard,
+        playersPickedCardFromDeck: this.playersPickedCardFromDeck,
+        hintCard: this.hintCard,
+        hint: this.hint,
+        hinter: this.hinter,
+      });
+      IO.getInstance().io.in(this.id).emit(gameTopics.NEXT_ROUND, {});
+    }
+  }
+
+  endGame() {
+    this.updateRoomState(roomState.ended);
+    this.updateStage(gameStage.ended);
+    this.emitUpdateRoom({
+      winners: this.winners,
+      state: this.state,
+    });
+    this.emitUpdateGame({
+      stage: this.stage,
+    });
+    IO.getInstance().io.in(this.id).emit(gameTopics.END_GAME, {});
+  }
+
+  resetGame() {
+    this.stage = gameStage.idle;
+    this.round = 0;
+    this.decks = this.initialDecks;
+    this.additionalDecks = [];
+    this.remainingCards = [];
+    this.initialCards = [];
+    this.hint = '';
+    this.hinter = { username: '', id: '' };
+    this.hintCard = '';
+    this.cardsFromDeck = {};
+    this.cardsFromBoard = {};
+    this.playersPickedCardFromDeck = [];
+    this.playersPickedCardFromBoard = [];
+    this.scoreboard = {};
+    // this.cardTracker = {};
+    this.resetRoom();
+
+    // this.startGame();
   }
 }

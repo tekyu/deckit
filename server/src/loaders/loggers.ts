@@ -10,6 +10,12 @@ const myFormat = printf((info) => {
   return `${timestamp} ${level}: Event ${message.trim()} received with parameters of: \n ${JSON.stringify(args[0], null, 4)}`;
 });
 
+const myFormatSent = printf((info) => {
+  const { timestamp, message, level } = info;
+  const args = info[Symbol.for('splat') as any];
+  return `${timestamp} ${level}: Event ${message.trim()} sent with parameters of: \n ${JSON.stringify(args[0], null, 4)}`;
+});
+
 const infoFormat = printf((info) => {
   const { timestamp, message, level } = info;
   const args = info[Symbol.for('splat') as any];
@@ -44,7 +50,23 @@ const loggers = {
         ),
       })],
     }),
+    sent: createLogger({
+      level: 'verbose',
+      format: combine(
+        format.splat(),
+        timestamp({ format: 'HH:mm:ss' }),
+        myFormatSent,
+      ),
+      transports: [new transports.Console({
+        format: format.combine(
+          format.colorize({ all: true }),
+          timestamp({ format: 'HH:mm:ss' }),
+          myFormatSent,
+        ),
+      })],
+    }),
   },
+
 };
 
 export { loggers };
