@@ -2,7 +2,7 @@
 import hri from 'human-readable-ids';
 
 import IRoom from '../interfaces/IRoom';
-import Player, { IPlayerBasicInfo } from './Player';
+import Player, { IPlayerBasicInfo, PlayerState } from './Player';
 import { roomTopics } from '../socket/events/RoomEvents';
 import IO from './IO';
 
@@ -60,7 +60,7 @@ interface MOONLIGHTIUpdatePlayer {
  * easy scaling
  */
 export default class Room implements IRoom {
-  mode: string; // private | public | fast
+  mode: 'public' | 'private' | 'fast'; // private | public | fast
 
   playersMax: number;
 
@@ -136,6 +136,7 @@ export default class Room implements IRoom {
       players,
       state,
       playerLimit,
+      scoreboard,
     } = this;
     return {
       mode,
@@ -148,6 +149,7 @@ export default class Room implements IRoom {
       players,
       state,
       playerLimit,
+      scoreboard,
     };
   }
 
@@ -227,6 +229,24 @@ export default class Room implements IRoom {
     this.remainingCards = cards;
   }
 
+  isOwner(playerId: string) {
+    return this.owner === playerId;
+  }
+
+  changeOwnership(playerId?: string) {
+    if (playerId) {
+      this.owner = playerId;
+      this.admin = playerId;
+    }
+    const eligiblePlayers = this.players
+      .filter(({ state }) => state !== PlayerState.left);
+
+    if (eligiblePlayers.length > 0) {
+      this.owner = eligiblePlayers[0].id;
+      this.admin = eligiblePlayers[0].id;
+    }
+  }
+
   updateNumberOfSeats(action: 'add' | 'remove') {
     if (action === 'add' && this.playersMax < this.playerLimit) {
       this.playersMax += 1;
@@ -235,14 +255,6 @@ export default class Room implements IRoom {
       this.playersMax -= 1;
     }
   }
-
-  // 2.0
-  //
-  //
-  //
-  //
-  //
-  //
 
   async MOONLIGHTconnectPlayer({
     username,
@@ -260,7 +272,7 @@ export default class Room implements IRoom {
         id,
         anonymous,
         color,
-        state: this.owner === id ? 1 : 0,
+        state: this.owner === id ? PlayerState.ready : PlayerState.connected,
         socketId,
       });
       this.players.push(newPlayer);
@@ -272,19 +284,53 @@ export default class Room implements IRoom {
 
   async MOONLIGHTdisconnectPlayer(
     playerId: string,
+    forceKick?: boolean = false,
   ): IDisconnectPlayerReturn {
     const disconnectedPlayer = this.players.find(({ id }) => id === playerId);
-    const newPlayers = this.players.filter(({ id }) => id !== playerId);
-    this.players = newPlayers;
+    disconnectedPlayer?.updateState(PlayerState.left);
+
+    const kickImmediately = this.state === roomState.waiting
+      || this.state === roomState.ready;
+
+    if (this.isOwner(disconnectedPlayer.id)) {
+      this.changeOwnership();
+    }
+
+    // remove player from room
+    if (forceKick || kickImmediately) {
+      const newPlayers = this.players.filter(({ id }) => id !== playerId);
+      this.players = newPlayers;
+      return {
+        players: newPlayers,
+        disconnectedPlayer,
+      };
+    }
+
+    // change player state to left and wait for action
+    // actions:
+    // 1. player reconnects
+    // 2. owner is kicking the player
+    this.players = this.players.map(
+      (singlePlayer) => (singlePlayer.id === disconnectedPlayer.id
+        ? disconnectedPlayer
+        : singlePlayer),
+    );
+
+    if (this.state === roomState.started) {
+      this.updateRoomState(roomState.paused);
+    }
+
     return {
-      players: newPlayers,
+      players: this.players,
       disconnectedPlayer,
     };
   }
 
-  async MOONLIGHTkickPlayer(playerId: string) {
-    this.blacklistedPlayers.push(playerId);
-    return this.MOONLIGHTdisconnectPlayer(playerId);
+  async MOONLIGHTkickPlayer(playerId: string, blacklist?: boolean = true) {
+    if (blacklist) {
+      this.blacklistedPlayers.push(playerId);
+    }
+    return this.MOONLIGHTdisconnectPlayer(playerId, true);
   }
 
   async MOONLIGHTupdatePlayer({ playerId, playerData }: MOONLIGHTIUpdatePlayer): Player[] {
@@ -299,8 +345,42 @@ export default class Room implements IRoom {
     return this.players;
   }
 
+  getPlayer(playerId?: string): Player | undefined {
+    if (!playerId) {
+      return undefined;
+    }
+    return this.players.find(({ id }) => id === playerId);
+  }
+
+  updatePlayer(playerId: string, playerParamsToUpdate: Partial<Player>): Player[] | null {
+    const playerToUpdate = this.getPlayer(playerId);
+    if (!playerToUpdate) {
+      return null;
+    }
+    const updatedPlayer = playerToUpdate.update(playerParamsToUpdate);
+    this.players = this.players.map((player) => (
+      player.id === playerToUpdate.id
+        ? updatedPlayer
+        : player
+    ));
+    return this.players;
+  }
+
+  async getPublicPlayers() {
+    return this.players.map((player) => player.getPublicInfo());
+  }
+
   arePlayersReady(): boolean {
-    return !this.players.some(({ state }) => state !== 1);
+    return !this.players.some(
+      ({ state }) => state === PlayerState.connected || state === PlayerState.left,
+    );
+  }
+
+  getPlayersReady() {
+    this.players.map((player) => {
+      player.updateState(PlayerState.playing);
+      return player;
+    });
   }
 
   updateRoomState(state?: roomState): number {
@@ -322,9 +402,7 @@ export default class Room implements IRoom {
   updatePlayAgain(playerId: string) {
     const playerIndex = this.playAgain.indexOf(playerId);
     if (playerIndex === -1) {
-      this.playAgain = [...this.playAgain, playerId];
-    } else {
-      this.playAgain = this.playAgain.filter((pid) => pid !== playerId);
+      this.playAgain.push(playerId);
     }
   }
 
@@ -332,5 +410,10 @@ export default class Room implements IRoom {
     this.state = roomState.waiting;
     this.playAgain = [];
     this.resetPlayersState();
+    this.emitUpdateRoom(this.basicInfo);
   }
+
+  // async syncRoom() {
+
+  // }
 }

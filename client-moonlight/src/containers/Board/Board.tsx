@@ -1,9 +1,7 @@
 import Card from 'components/Card/Card';
-import HintInput from 'components/HintInput/HintInput';
 import Message from 'components/Message/Message';
-import { IBoard } from 'containers/Board/IBoard';
 import {
-  useCallback, useEffect, useMemo, useState,
+  useCallback, useEffect, useMemo,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { appSelectors } from 'store/app/appSlice';
@@ -30,9 +28,7 @@ const mockStatuses = {
   },
 };
 
-const Board = ({
-  children = 'Default',
-}: IBoard): JSX.Element => {
+const Board = (): JSX.Element => {
   const dispatch = useDispatch();
   const hinter = useSelector(gameSelectors.hinter);
   const hint = useSelector(gameSelectors.hint);
@@ -88,10 +84,10 @@ const Board = ({
     },
   });
 
-  const [images, setImages] = useState<any>([]);
+  // const [images, setImages] = useState<any>([]);
   useEffect(() => {
     setTimeout(() => {
-      setImages(cardsForBoard);
+      // setImages(cardsForBoard);
       if (slider?.current?.update) slider.current.update();
     }, 1000);
   }, [cardsForBoard, slider]);

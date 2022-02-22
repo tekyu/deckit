@@ -34,9 +34,15 @@ const appPersistConfig = {
   whitelist: ['activeTheme', 'theme'],
 };
 
+const roomPersistConfig = {
+  key: 'room',
+  storage,
+  whitelist: ['activeRoomId'],
+};
+
 const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userReducer),
-  room: roomReducer,
+  room: persistReducer(roomPersistConfig, roomReducer),
   app: persistReducer(appPersistConfig, appReducer),
   game: gameReducer,
 });

@@ -1,17 +1,13 @@
 import Button from 'components/Button/Button';
-import { IWinners } from 'components/Winners/IWinners';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { CSSTransition } from 'react-transition-group';
-import { roomActions, roomSelectors } from 'store/room/roomSlice';
+import { roomSelectors } from 'store/room/roomSlice';
 import { socketActions, socketTopics } from 'store/socket/socket';
 import { userSelectors } from 'store/user/userSlice';
 import * as Styled from './Winners.styled';
 
-const Winners = ({
-  children = 'Default',
-}: IWinners): JSX.Element => {
+const Winners = (): JSX.Element => {
   const playerId = useSelector(userSelectors.id);
   const scoreboard = useSelector(roomSelectors.scoreboard);
   const players = useSelector(roomSelectors.players);

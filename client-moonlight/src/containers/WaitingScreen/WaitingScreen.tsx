@@ -27,7 +27,9 @@ const WaitingScreen = (): JSX.Element => {
     playerLimit,
   } = useSelector(roomSelectors.room);
   const userId = useSelector(userSelectors.id);
-  const userState = useSelector(userSelectors.state);
+  // const userState = useSelector(userSelectors.state);
+  const me = players.find(({ id }) => id === userId);
+
   const dispatch = useDispatch();
 
   const adminPower = owner === userId || admin === userId;
@@ -101,7 +103,7 @@ const WaitingScreen = (): JSX.Element => {
                 numberOfPlayers={players.length}
               />
             )
-            : <ReadyButton id={userId} isReady={!!userState} state={userState} />}
+            : <ReadyButton id={userId} isReady={!!me?.state || false} state={me?.state || 0} />}
 
         </Styled.Footer>
       </Panel>

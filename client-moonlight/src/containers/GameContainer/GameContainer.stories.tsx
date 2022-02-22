@@ -1,7 +1,6 @@
 import { Story, Meta } from '@storybook/react';
 import { PARAM_REDUX_MERGE_STATE } from 'addon-redux';
 
-import IGameContainer from 'containers/GameContainer/IGameContainer';
 import { cloneDeep } from 'lodash';
 import { mockStore } from 'mocks/store';
 import StoryRouter from 'storybook-react-router';
@@ -29,7 +28,7 @@ const Container = styled.div`
   align-items: stretch;
 `;
 
-const Template: Story<IGameContainer> = (args) => (
+const Template: Story = (args) => (
   <Container><GameContainerComponent {...args} /></Container>);
 export const GameContainer = Template.bind({});
 

@@ -48,6 +48,21 @@ const RoomContainer = (): JSX.Element => {
     });
   };
 
+  // const joinHandler = () => {
+  //   if (id && initialized && !roomIdFromStore) {
+  //     console.log('JOIN', 'id', id, 'init', initialized, 'roomid', roomIdFromStore);
+  //     appThunkDispatch(roomActions.joinRoom({ roomId }))
+  //       .then(({ type, error }: AnyAction) => {
+  //         if (type.includes('rejected') && error) {
+  //           history.replace('/');
+  //           toast.error(t(`errors.room.connect.${error.message}`), {
+  //             position: toast.POSITION.BOTTOM_RIGHT,
+  //           });
+  //         }
+  //       });
+  //   }
+  // };
+
   const startGameHandler = (payload: IInitializeGame) => {
     dispatch(gameActions.initializeGame(payload));
   };
@@ -60,6 +75,12 @@ const RoomContainer = (): JSX.Element => {
     dispatch(gameActions.updateMyCards({ myCards }));
   };
 
+  useEffect(() => () => {
+    if (activeRoomId) {
+      dispatch(socketActions.emit(socketTopics.room.leave));
+    }
+  }, [activeRoomId]);
+
   useEffect(() => {
     dispatch(socketActions.listener(socketTopics.room.updateRoom, updateRoomHandler));
     dispatch(socketActions.listener(socketTopics.player.kicked, kickedHandler));
@@ -70,9 +91,7 @@ const RoomContainer = (): JSX.Element => {
     return () => {
       dispatch(socketActions.removeListener(socketTopics.room.updateRoom, updateRoomHandler));
       dispatch(socketActions.removeListener(socketTopics.player.kicked, kickedHandler));
-      if (activeRoomId) {
-        dispatch(socketActions.emit(socketTopics.room.leave));
-      }
+
       dispatch(socketActions.removeListener(socketTopics.game.started, startGameHandler));
       dispatch(socketActions.removeListener(socketTopics.game.update, updateGameHandler));
       dispatch(socketActions.removeListener(socketTopics.game.updateMyCards, updateMyCardsHandler));
@@ -89,6 +108,10 @@ const RoomContainer = (): JSX.Element => {
   }, [dispatch]);
 
   useEffect(() => {
+    // roomId = id from link
+    // roomIdFromStore = id of joined game
+    // activeRoomId = id of joined game or id from persisted state
+    // const roomIdFromLink = roomId && ()
     if (id && initialized && !roomIdFromStore) {
       appThunkDispatch(roomActions.joinRoom({ roomId }))
         .then(({ type, error }: AnyAction) => {
@@ -100,6 +123,11 @@ const RoomContainer = (): JSX.Element => {
           }
         });
     }
+
+    // return () => {
+    //   dispatch(roomActions.resetRoom());
+    //   dispatch(gameActions.resetGame());
+    // };
   }, [id, initialized, roomIdFromStore]);
 
   const roomState = useSelector(roomSelectors.state);

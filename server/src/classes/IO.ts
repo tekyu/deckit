@@ -1,14 +1,26 @@
 import http from 'http';
 import socketIo from 'socket.io';
+import Deckit from './Deckit';
+
+interface IGameRoom {
+  [key: string]: Deckit;
+}
 
 export interface IGameRooms {
-  public: any;
-  private: any;
-  fast: any;
+  public: IGameRoom;
+  private: IGameRoom;
+  fast: IGameRoom;
 }
 
 export interface IExtendedIo extends socketIo.Server {
   gameRooms: IGameRooms;
+}
+
+type modeType = 'public' | 'private' | 'fast';
+interface IAddRoom {
+  room: Deckit;
+  mode: modeType,
+  roomId: string;
 }
 
 class IO {
@@ -34,6 +46,7 @@ class IO {
       pingTimeout: this.pingTimeout,
       pingInterval: this.pingInterval,
     });
+
     this.io.gameRooms = {
       public: {},
       private: {},
@@ -46,6 +59,36 @@ class IO {
       IO.instance = new IO();
     }
     return IO.instance;
+  }
+
+  addRoom({ room, mode, roomId }: IAddRoom): boolean {
+    try {
+      this.io.gameRooms[mode][roomId] = room;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  removeRoom({
+    mode,
+    roomId,
+  }: {
+    mode: modeType;
+    roomId: string;
+  }): boolean {
+    try {
+      delete this.io.gameRooms[mode][roomId];
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  checkIfRoomExist(roomId: string): boolean {
+    return !!((this.io.gameRooms.fast[roomId]
+      || this.io.gameRooms.private[roomId]
+      || this.io.gameRooms.public[roomId]));
   }
 }
 

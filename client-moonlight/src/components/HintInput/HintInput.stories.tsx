@@ -1,6 +1,5 @@
 import { Story, Meta } from '@storybook/react';
 
-import { IHintInput } from 'components/HintInput/IHintInput';
 import HintInputComponent from './HintInput';
 
 export default {
@@ -8,7 +7,7 @@ export default {
   component: HintInputComponent,
 } as Meta;
 
-const Template: Story<IHintInput> = (args) => <HintInputComponent {...args} />;
+const Template: Story = (args) => <HintInputComponent {...args} />;
 
 export const HintInput = Template.bind({});
 

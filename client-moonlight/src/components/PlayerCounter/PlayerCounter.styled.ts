@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { mediaQuery } from 'theme/mediaQueries';
 
 export const PlayerCounter = styled.div`
   display: flex;

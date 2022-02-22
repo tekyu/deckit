@@ -1,3 +1,6 @@
+// styled need to be imported
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import styled from 'styled-components'; // You need this as well
 import { generateMedia } from 'styled-media-query';
 

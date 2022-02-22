@@ -10,18 +10,17 @@ import {
 } from 'react-icons/bi';
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage';
 import Label from 'components/Label/Label';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { roomActions, roomSelectors } from 'store/room/roomSlice';
 import { Redirect } from 'react-router';
 import { userSelectors } from 'store/user/userSlice';
 import { IFormValues } from 'containers/CreateGame/ICreateGame';
 import { ICreateRoom } from 'store/room/roomInterfaces';
-import { useAppDispatch, useAppThunkDispatch } from 'store/store';
+import { useAppDispatch } from 'store/store';
 import * as Styled from './CreateGame.styled';
 
 const CreateGame = (): JSX.Element => {
   const [redirectToGame, setRedirectToGame] = useState<boolean>(false);
-  console.log('CreateGame', redirectToGame);
   const dispatch = useAppDispatch();
   const roomId = useSelector(roomSelectors.id);
   const {

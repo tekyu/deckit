@@ -1,3 +1,3 @@
-export interface IWinners {
+export interface IBackdrop {
   children?: React.ReactNode;
 }

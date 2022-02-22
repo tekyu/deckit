@@ -1,9 +1,7 @@
-import Room from '../../classes/Room';
 import { loggers } from '../../loaders/loggers';
 import getRoom from '../../utils/getRoom';
-import { roomTopics } from './RoomEvents';
-import IO from '../../classes/IO';
 import { IExtendedSocket } from '../socket';
+import { PlayerState } from '../../classes/Player';
 
 export const userTopics = {
   UPDATE_ANON_USER: 'MOONLIGHT-UPDATE_ANON_USER',
@@ -36,6 +34,7 @@ export const UserEvents = (socket: IExtendedSocket) => {
     username: string;
     anonymous: boolean;
     id?: string
+    activeRoomId?: string
   }
 
   setTimeout(() => {
@@ -43,7 +42,9 @@ export const UserEvents = (socket: IExtendedSocket) => {
   }, 1000);
 
   socket.on(userTopics.UPDATE_ANON_USER, async (
-    { username, anonymous, id }: IUpdateAnonUser,
+    {
+      username, anonymous, id, activeRoomId,
+    }: IUpdateAnonUser,
     callback: Function,
   ) => {
     const hasNameChanged = !(socket.deckitUser?.username === username);
@@ -61,16 +62,34 @@ export const UserEvents = (socket: IExtendedSocket) => {
 
     if (hasNameChanged && socket.deckitUser?.activeRoomId) {
       const { deckitUser: { activeRoomId } } = socket;
-      const room: Room = getRoom(activeRoomId);
-      const players = await room.MOONLIGHTupdatePlayer({
+      const room = getRoom(activeRoomId);
+      await room?.MOONLIGHTupdatePlayer({
         playerId: socket.deckitUser.id,
         playerData: { username, anonymous, id },
       });
       // send updated room to all including sender
-      IO.getInstance().io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players });
+      if (room) {
+        room.emitUpdateRoom({
+          players: room.getPublicPlayers(),
+        });
+      }
     }
 
     loggers.event.received.verbose(userTopics.UPDATE_ANON_USER, socket.deckitUser);
+
+    if (activeRoomId) {
+      const room = getRoom(activeRoomId);
+      const player = room?.getPlayer(id);
+      if (player && player.state === PlayerState.left) {
+        callback({
+          id: socket.deckitUser.id,
+          reconnectable: true,
+        });
+        return null;
+      }
+    }
+
     callback({ id: socket.deckitUser.id });
+    return null;
   });
 };

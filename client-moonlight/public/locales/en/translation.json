@@ -1,5 +1,86 @@
 {
   "hello": "Hello",
+  "common": {
+    "commingSoon": "Coming soon",
+    "or": "or"
+  },
+  "menu": {
+    "fastGame": "Fast Game",
+    "browse": "Browse",
+    "createGame": "Create Game"
+  },
+  "dashboard": {
+    "createRoomButton": "Create your room",
+    "joinButton": "Join",
+    "joinInputPlaceholder": "Type room id here"
+  },
+  "accountBox": {
+    "nameHeader": "Your name is",
+    "randomName": "Give me random name",
+    "chooseName": "Choose your own name",
+    "chooseNamePlaceholder": "Type new name here",
+    "chooseNameButton": "Change"
+  },
+  "createGame": {
+    "header": "Create new game",
+    "generateName": "Generate name",
+    "roomNameHeader": "Room name",
+    "maxPlayersHeader": "Maximum players in room",
+    "maxPoints": "Maximum points in game",
+    "privateRoom": "Private room",
+    "createButton": "Create"
+  },
+  "waiting": {
+    "header": "Waiting room",
+    "roomTypePrivate": "Private",
+    "roomTypePublic": "Public",
+    "shareIdHeader": "This is the ID you can share to your friends to connect",
+    "youAreTheHost": "You are the host",
+    "thisisTheHost": "This is the host",
+    "you": "This is you",
+    "actionButton": {
+      "waiting": "Waiting for others",
+      "changeToReady": "Change to ready",
+      "changeToWaiting": "Change to waiting",
+      "start": "Start game"
+    }
+  },
+  "game": {
+    "board": {
+      "youAreStoryteller": "You are the storyteller now.",
+      "chooseYouCardHinter": "Choose your card",
+      "typeClueHinter": "Please type your clue for the card you have chosen",
+      "waitForClue": "Please wait for the clue",
+      "cardFromDeck": "Choose the card from your deck that fits the best",
+      "cardFromBoard": "Find the storyteller's card!",
+      "ready": "Other players are choosing, please wait",
+      "pickThisCard": "Pick this card"
+    },
+    "deck": {
+      "pickThisCard": "Pick this card"
+    },
+    "choosingHint": {
+      "header": "Enter your hint here",
+      "button": "Submit hint"
+    },
+    "owner": "Owner",
+    "scoreboard": {
+      "round": "Round",
+      "pointsToWin": "Points needed to win",
+      "remainingCards": "Remaining cards",
+      "choosingHint": "Player is choosing hint and card",
+      "waiting": "Player is waiting for others"
+    }
+  },
+  "endScreen": {
+    "header": "And the winner is",
+    "pointsSingular": "point",
+    "pointsPlural": "points",
+    "position": "Pos",
+    "points": "Pts",
+    "playAgainButton": "Play Again?",
+    "leaveButton": "Leave"
+  },
   "errors": {
     "room": {
       "connect": {
@@ -7,7 +88,8 @@
         "started": "Game has already started",
         "noroom": "Room doesn't exist",
         "full": "Room is full, sorry!",
-        "undefined": "Sorry, something went wrong"
+        "undefined": "Sorry, something went wrong",
+        "notAdmin": "You are not admin of this game"
       }
     }
   }

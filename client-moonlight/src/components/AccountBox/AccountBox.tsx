@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import sillyname from 'sillyname';

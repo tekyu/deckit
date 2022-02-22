@@ -1,15 +1,11 @@
 import Button from 'components/Button/Button';
-import { IHintInput } from 'components/HintInput/IHintInput';
-import Label from 'components/Label/Label';
 import TextInput from 'components/TextInput/TextInput';
 import { Formik } from 'formik';
 import { useDispatch } from 'react-redux';
 import { gameActions } from 'store/game/gameSlice';
 import * as Styled from './HintInput.styled';
 
-const HintInput = ({
-  children = 'Default',
-}: IHintInput): JSX.Element => {
+const HintInput = (): JSX.Element => {
   const dispatch = useDispatch();
   const validateHandler = ({ hint }: { hint: string }) => {
     const errors: { hint?: string } = {};

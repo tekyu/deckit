@@ -1,7 +1,6 @@
 import { Story, Meta } from '@storybook/react';
 import { PARAM_REDUX_MERGE_STATE } from 'addon-redux';
 
-import { IBoard } from 'containers/Board/IBoard';
 import StoryRouter from 'storybook-react-router';
 import BoardComponent from './Board';
 
@@ -81,7 +80,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story<IBoard> = (args) => <BoardComponent {...args} />;
+const Template: Story = (args) => <BoardComponent {...args} />;
 
 export const Board = Template.bind({});
 

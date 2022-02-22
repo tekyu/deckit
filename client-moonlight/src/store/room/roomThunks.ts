@@ -1,13 +1,14 @@
+import { gameActions, IGameState } from 'store/game/gameSlice';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
   ICreateRoom,
-  IInitialRoomDetails,
   IJoinRoom,
   IJoinRoomResponse,
   IRoomCreateResponse,
   ISetInitialRoomDetailsProps,
   IChangeState,
   IChangeStateResponse,
+  IRoomState,
 } from 'store/room/roomInterfaces';
 import { roomActions } from 'store/room/roomSlice';
 import { socketActions, socketTopics } from 'store/socket/socket';
@@ -92,6 +93,38 @@ const changeUserState = createAsyncThunk(
     },
   ),
 );
+
+interface IReconnect {
+  playerId: string;
+  roomId: string;
+}
+
+interface IReconnectCallback {
+  roomDetails: Partial<IRoomState>;
+  gameDetails: Partial<IGameState>;
+}
+
+const reconnect = createAsyncThunk(
+  'room/reconnect',
+  async ({ playerId, roomId }: IReconnect, { dispatch }): Promise<string> => new Promise(
+    (resolve, reject) => {
+      dispatch(socketActions.emit(
+        socketTopics.room.reconnect,
+        { playerId, roomId },
+        ({ roomDetails, gameDetails }: IReconnectCallback) => {
+          if (roomDetails && gameDetails) {
+            dispatch(gameActions.updateGame(gameDetails));
+            dispatch(roomActions.updateRoom(roomDetails));
+            resolve(roomId);
+          } else {
+            reject(new Error('noroom'));
+          }
+        },
+      ));
+    },
+  ),
+);
+
 export const roomThunks = {
-  setInitialRoomDetails, createRoom, joinRoom, kickPlayer, changeUserState,
+  setInitialRoomDetails, createRoom, joinRoom, kickPlayer, changeUserState, reconnect,
 };

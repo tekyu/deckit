@@ -61,20 +61,21 @@ const roomSlice = createSlice({
         state.playerLimit = payload.playerLimit;
       });
     builder.addCase(roomThunks.createRoom.fulfilled,
-      (state, { payload }) => {
+      () => {
       });
     builder.addCase(roomThunks.joinRoom.fulfilled,
-      (state, action): any => { });
+      () => { });
     builder.addCase(roomThunks.joinRoom.rejected,
-      (state, action): any => { });
+      () => { });
     builder.addCase(roomThunks.kickPlayer.fulfilled,
-      (state, action): any => initialState);
+      () => initialState);
     builder.addCase(roomThunks.changeUserState.fulfilled,
       (state: IRoomState, { payload }: PayloadAction<IChangeStateResponse>) => {
         state.players = payload.players;
         state.state = payload.updatedState;
       });
     builder.addCase(roomThunks.changeUserState.rejected, () => { });
+    builder.addCase(roomThunks.reconnect.fulfilled, (_, { payload }: PayloadAction<string>) => { });
   },
 });
 

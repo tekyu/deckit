@@ -16,6 +16,7 @@ export const gameTopics = {
   CARD_FROM_BOARD: 'MOONLIGHT-CARD_FROM_BOARD',
   NEXT_ROUND: 'MOONLIGHT-NEXT_ROUND',
   END_GAME: 'MOONLIGHT-END_GAME',
+  RESET_ROUND: 'MOONLIGHT-RESET_ROUND',
 };
 
 export const GameEvents = (socket: IExtendedSocket) => {
@@ -36,7 +37,6 @@ export const GameEvents = (socket: IExtendedSocket) => {
       if (!room) {
         return;
       }
-
       await room.startGame();
 
       IO.getInstance().io.in(room.id).emit(roomTopics.UPDATE_ROOM, {

@@ -5,10 +5,8 @@ import {
 import * as Styled from './PlayerBubble.styled';
 
 const PlayerBubble = ({
-  color,
   username,
   id,
-  anonymous,
   ready,
   you,
   isOwner,

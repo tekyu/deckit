@@ -6,4 +6,5 @@ export interface IScoreboardItem {
   position: number;
   score: number;
   picked?: boolean;
+  state: number;
 }

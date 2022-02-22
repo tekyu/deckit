@@ -33,7 +33,8 @@ const Dashboard = (): JSX.Element => {
   const { t } = useTranslation();
   const [redirectToGame, setRedirectToGame] = useState<boolean>(false);
   const dispatch = useAppThunkDispatch();
-  const roomId = useSelector(roomSelectors.activeRoomId);
+  const roomId = useSelector(roomSelectors.id);
+  // const activeRoomId = useSelector(roomSelectors.activeRoomId);
   const kickedFrom = useSelector(userSelectors.kickedFrom);
 
   useEffect(() => {
@@ -42,8 +43,23 @@ const Dashboard = (): JSX.Element => {
     }
   }, []);
 
+  // useEffect(() => {
+  //   if (activeRoomId && !roomId) {
+  // dispatch(socketActions.emit(
+  //   'CHECK_FOR_ROOM',
+  //   { roomId: activeRoomId }, (doesExist: boolean) => {
+  //       if (doesExist) {
+  //         console.log('showPopup');
+  //         // add reconnect event
+  //       } else {
+  //         dispatch(roomActions.resetRoom());
+  //       }
+  //     }));
+  //   }
+  // }, []);
+
   const getFullListOfRoomsHandler = (rooms: any) => {
-    console.log('getFullListOfRoomsHandler', rooms);
+    // console.log('getFullListOfRoomsHandler', rooms);
   };
 
   useEffect(() => {

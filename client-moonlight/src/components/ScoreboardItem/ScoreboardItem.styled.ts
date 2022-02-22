@@ -1,5 +1,5 @@
 import { rgba } from 'polished';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 interface IPosition {
   [key: number]: string;
@@ -23,7 +23,38 @@ const positionNameFontSize: IPosition = {
   3: '1.2em',
 };
 
-export const ScoreboardItem = styled.div`
+const offlineBeat = keyframes`
+  100% {
+    opacity: 0.2;
+  }
+  
+  40% {
+    opacity: 1;
+  }
+`;
+
+export const DisconnectedIcon = styled.div`
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: ${({ theme }) => theme.palette.error.main};
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+`;
+
+export const DisconnectedIconContainer = styled.div`
+  animation: ${offlineBeat} .6s infinite alternate;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const ScoreboardItem = styled.div<{ disabled: boolean }>`
 
   color: ${({ theme: { palette } }) => palette.colors.primary};
   display: flex;
@@ -31,6 +62,20 @@ export const ScoreboardItem = styled.div`
   margin: 1px 0;
   padding: 15px 10px;
   position: relative;
+  ${({ disabled, theme: { palette } }) => disabled && `
+   &:after {
+     content: "";
+     top:0; left: 0; bottom: 0; right: 0;
+     position: absolute;
+     background: ${rgba(palette.colors.secondary, 0.1)};
+   }
+   > * {
+     opacity: 0.5;
+   }
+   ${DisconnectedIcon} {
+    opacity: 1;
+  }
+  `}
   &:not(:last-of-type) {
   ${({ theme: { palette } }) => `
     border-bottom: 1px solid ${rgba(palette.colors.secondary, 0.2)};

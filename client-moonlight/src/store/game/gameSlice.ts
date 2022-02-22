@@ -103,6 +103,9 @@ const gameSlice = createSlice({
       state.playersPickedCardFromBoard = [];
       state.hint = '';
     },
+    resetGame() {
+      return initialState;
+    },
   },
 });
 

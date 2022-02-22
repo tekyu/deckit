@@ -1,7 +1,6 @@
 import { Story, Meta } from '@storybook/react';
 import { PARAM_REDUX_MERGE_STATE } from 'addon-redux';
 
-import { IDeck } from 'containers/Deck/IDeck';
 import StoryRouter from 'storybook-react-router';
 import DeckComponent from './Deck';
 
@@ -77,7 +76,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story<IDeck> = (args) => <DeckComponent {...args} />;
+const Template: Story = (args) => <DeckComponent {...args} />;
 
 export const Deck = Template.bind({});
 

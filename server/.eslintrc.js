@@ -21,7 +21,8 @@ module.exports = {
     'linebreak-style': 0,
     'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['socket', 'io'] }],
     'no-shadow': 'off',
-
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'error',
   },
   settings: {
     'import/resolver': {

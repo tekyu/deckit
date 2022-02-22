@@ -14,6 +14,10 @@ export const mockStore: Partial<RootState> = {
     },
   },
   room: {
+    _persist: {
+      version: -1,
+      rehydrated: true,
+    },
     activeRoomId: 'privateroom39',
     mode: 'private',
     playersMax: 8,
@@ -74,6 +78,7 @@ export const mockStore: Partial<RootState> = {
     state: 0,
     winners: [],
     playAgain: [],
+
   },
   game: {
     remainingCards: 240,

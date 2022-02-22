@@ -3,7 +3,7 @@ import { ICard } from 'components/Card/ICard';
 import * as Styled from './Card.styled';
 
 const Card = ({
-  id, title, url, showButton, showButtonHandler, className = '',
+  id, url, showButton, showButtonHandler, className = '',
 }: ICard): JSX.Element => (
   <Styled.Card url={url} className={className}>
     {showButton

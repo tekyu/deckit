@@ -2,7 +2,7 @@ import axios from '../../axios';
 import { loggers } from '../loaders/loggers';
 import { gameTopics } from '../socket/events/GameEvents';
 import IO from './IO';
-import Player from './Player';
+import Player, { PlayerState } from './Player';
 import Room, { roomState } from './Room';
 
 export interface ICard {
@@ -16,7 +16,7 @@ interface IHinter {
   id: string;
 }
 interface CreateRoomOptions {
-  mode: string;
+  mode: 'public' | 'private' | 'fast';
   playersMax: number;
   gameCode: string;
   name?: string;
@@ -114,8 +114,23 @@ export default class Deckit extends Room {
     this.cardsFromBoard = {};
     this.playersPickedCardFromDeck = [];
     this.playersPickedCardFromBoard = [];
-    this.scoreboard = {};
     // this.cardTracker = {};
+  }
+
+  get info() {
+    return {
+      stage: this.stage,
+      round: this.round,
+      maxScore: this.maxScore,
+      remainingCards: this.remainingCards.length,
+      hint: this.hint,
+      hinter: this.hinter,
+      hintCard: this.hintCard,
+      cardsFromDeck: this.cardsFromDeck,
+      cardsFromBoard: this.cardsFromBoard,
+      playersPickedCardFromDeck: this.playersPickedCardFromDeck,
+      playersPickedCardFromBoard: this.playersPickedCardFromBoard,
+    };
   }
 
   emitUpdateGame(data: { [key: string]: any }) {
@@ -212,8 +227,8 @@ export default class Deckit extends Room {
     await this.loadCards();
     // distribute cards to players
     this.distributeCardsToPlayers();
-
     this.initScoreboard();
+
     // update card tracker
     // ??
     // gameOptions.updateCardTracker(id, cards, 'add');
@@ -224,6 +239,10 @@ export default class Deckit extends Room {
     // });
 
     this.updateRoomState(roomState.started);
+    this.getPlayersReady();
+    this.emitUpdateRoom({
+      players: this.players,
+    });
     this.updateStage(gameStage.pickHint);
     this.round = 1;
     this.hinter = {
@@ -237,6 +256,7 @@ export default class Deckit extends Room {
       hinter: this.hinter,
       maxScore: this.maxScore,
     });
+    return true;
   }
 
   setHint({ hint, cardId, userId }: { hint: string, cardId: string, userId: string }) {
@@ -275,6 +295,14 @@ export default class Deckit extends Room {
 
   getCardsForBoard() {
     return Object.keys(this.cardsFromDeck);
+  }
+
+  getCardIdFromDeckByPlayerId(playerId: string): string {
+    return Object.values(this.cardsFromDeck).find(({ owner }) => owner === playerId)?.id || '';
+  }
+
+  getCardIdFromBoardByPlayerId(playerId: string): string {
+    return Object.values(this.cardsFromDeck).find(({ pickedBy }) => pickedBy.some((pid) => pid === playerId))?.id || '';
   }
 
   calculateRoundPoints() {
@@ -336,6 +364,15 @@ export default class Deckit extends Room {
       username,
       id,
     };
+    this.hint = '';
+    this.hintCard = '';
+  }
+
+  resetPickedCards() {
+    this.cardsFromDeck = {};
+    this.cardsFromBoard = {};
+    this.playersPickedCardFromDeck = [];
+    this.playersPickedCardFromBoard = [];
   }
 
   nextRound() {
@@ -351,12 +388,7 @@ export default class Deckit extends Room {
     } else {
       this.distributeCardsToPlayers();
       this.round += 1;
-      this.cardsFromDeck = {};
-      this.cardsFromBoard = {};
-      this.playersPickedCardFromDeck = [];
-      this.playersPickedCardFromBoard = [];
-      this.hintCard = '';
-      this.hint = '';
+      this.resetPickedCards();
       this.setNextHinter();
       this.updateStage(gameStage.pickHint);
       this.emitUpdateGame({
@@ -403,8 +435,37 @@ export default class Deckit extends Room {
     this.playersPickedCardFromBoard = [];
     this.scoreboard = {};
     // this.cardTracker = {};
+    this.loadCards();
+    this.initScoreboard();
     this.resetRoom();
+  }
 
-    // this.startGame();
+  async kickDisconnectedPlayers() {
+    const disconnectedPlayers = this.players
+      .filter(({ state }) => state === PlayerState.left);
+
+    await disconnectedPlayers.forEach(async ({ id: disconnectedId }) => {
+      if (disconnectedId === this.hinter.id) {
+        this.setNextHinter();
+      }
+      await this.MOONLIGHTkickPlayer(disconnectedId, false);
+    });
+    this.distributeCardsToPlayers();
+    this.resetPickedCards();
+    this.updateRoomState(roomState.started);
+    this.emitUpdateRoom({
+      players: this.players,
+      state: this.state,
+    });
+    this.emitUpdateGame({
+      hinter: this.hinter,
+      hint: this.hint,
+      hintCard: this.hintCard,
+      cardsFromDeck: this.cardsFromDeck,
+      cardsFromBoard: this.cardsFromBoard,
+      playersPickedCardFromDeck: this.playersPickedCardFromDeck,
+      playersPickedCardFromBoard: this.playersPickedCardFromBoard,
+    });
+    IO.getInstance().io.in(this.id).emit(gameTopics.RESET_ROUND, {});
   }
 }

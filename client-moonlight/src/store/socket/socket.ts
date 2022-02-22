@@ -19,6 +19,8 @@ export const socketTopics = {
     start: 'MOONLIGHT-START_GAME',
     updateNumberOfSeats: 'MOONLIGHT-UPDATE_NUMBER_OF_SEATS',
     playAgain: 'MOONLIGHT-PLAY_AGAIN',
+    reconnect: 'MOONLIGHT-RECONNECT',
+    denyReconnecting: 'MOOLIGHT-DENY_RECONNECTING',
 
   },
   player: {
@@ -34,6 +36,8 @@ export const socketTopics = {
     sendCardFromDeck: 'MOONLIGHT-CARD_FROM_DECK',
     sendCardFromBoard: 'MOONLIGHT-CARD_FROM_BOARD',
     nextRound: 'MOONLIGHT-NEXT_ROUND',
+    kickDisconnectedPlayers: 'MOOLIGHT-KICK_DISCONNECTED_PLAYERS',
+    resetRound: 'MOONLIGHT-RESET_ROUND',
   },
 };
 

@@ -1,7 +1,6 @@
 import { Story, Meta } from '@storybook/react';
 import { PARAM_REDUX_MERGE_STATE } from 'addon-redux';
 
-import { IWinners } from 'components/Winners/IWinners';
 import { cloneDeep } from 'lodash';
 import { mockStore } from 'mocks/store';
 import StoryRouter from 'storybook-react-router';
@@ -20,7 +19,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story<IWinners> = (args) => <WinnersComponent {...args} />;
+const Template: Story = (args) => <WinnersComponent {...args} />;
 
 export const Winners = Template.bind({});
 

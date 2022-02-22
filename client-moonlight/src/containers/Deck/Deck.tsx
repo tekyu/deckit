@@ -1,5 +1,4 @@
 import Card from 'components/Card/Card';
-import { IDeck } from 'containers/Deck/IDeck';
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { gameActions, gameSelectors } from 'store/game/gameSlice';
@@ -7,9 +6,7 @@ import { socketActions, socketTopics } from 'store/socket/socket';
 import { userSelectors } from 'store/user/userSlice';
 import * as Styled from './Deck.styled';
 
-const Deck = ({
-  children = 'Default',
-}: IDeck): JSX.Element => {
+const Deck = (): JSX.Element => {
   const dispatch = useDispatch();
   const myCards = useSelector(gameSelectors.myCards);
   const hinter = useSelector(gameSelectors.hinter);

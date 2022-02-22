@@ -2,14 +2,6 @@ import React from 'react';
 
 import './page.css';
 
-interface PageProps {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  user?: {};
-  onLogin: () => void;
-  onLogout: () => void;
-  onCreateAccount: () => void;
-}
-
 export const Page = (): JSX.Element => (
   <article>
 
