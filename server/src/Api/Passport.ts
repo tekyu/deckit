@@ -1,12 +1,12 @@
-// @ts-nocheck
-const LocalStrategy = require('passport-local').Strategy;
 import LocalStrategy from 'passport-local';
 import passport from 'passport';
 import { User } from '../schemas/User';
 
+// const LocalStrategy = require('passport-local').Strategy;
+
 const Passport = () => {
   const LS = LocalStrategy.Strategy;
-  const local = new LS((username, password, done) => {
+  const local = new LS((username: any, password: any, done: any) => {
     User.findOne({ username })
       .then((user) => {
         if (!user || !user.validPassword(password)) {
@@ -19,11 +19,12 @@ const Passport = () => {
   });
   passport.use('local', local);
 
-  passport.serializeUser(function (user, done) {
+  passport.serializeUser((user: any, done) => {
+    // eslint-disable-next-line no-underscore-dangle
     done(null, user._id);
   });
 
-  passport.deserializeUser(function (userId, done) {
+  passport.deserializeUser((userId, done) => {
     User.findById(userId, (err, user) => done(err, user));
   });
   return passport;

@@ -73,10 +73,9 @@ export default class Player {
 
   updateCards(cards: ICard[]) {
     this.cards = cards;
-    console.log('[Player][updateCards]', this.cards);
   }
 
-  update(playerData: Partial<typeof Player>): Player {
+  update(playerData: Partial<Player>): Player {
     Object.entries(playerData).forEach(([key, value]) => {
       if (key !== 'socketId') {
         this[key] = value;

@@ -1,5 +1,6 @@
 import Button from 'components/Button/Button';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { roomSelectors } from 'store/room/roomSlice';
@@ -8,6 +9,7 @@ import { userSelectors } from 'store/user/userSlice';
 import * as Styled from './Winners.styled';
 
 const Winners = (): JSX.Element => {
+  const { t } = useTranslation();
   const playerId = useSelector(userSelectors.id);
   const scoreboard = useSelector(roomSelectors.scoreboard);
   const players = useSelector(roomSelectors.players);
@@ -27,18 +29,16 @@ const Winners = (): JSX.Element => {
     <Styled.Backdrop>
       <Styled.Winners>
         <Styled.Header>
-          <Styled.Announcement>And the winner is</Styled.Announcement>
+          <Styled.Announcement>{t('endScreen.header')}</Styled.Announcement>
           <Styled.Crown />
           <Styled.Winner>{winner?.username}</Styled.Winner>
           <Styled.WinnerScore>{scoreboard[winner?.id || 't'] || 0}</Styled.WinnerScore>
-          points
+          {t('endScreen.pointsPlural')}
         </Styled.Header>
         <Styled.Headers>
-          <Styled.Place>
-            Pos
-          </Styled.Place>
+          <Styled.Place>{t('endScreen.position')}</Styled.Place>
           <Styled.Name />
-          <Styled.Points>Pts</Styled.Points>
+          <Styled.Points>{t('endScreen.points')}</Styled.Points>
         </Styled.Headers>
         <Styled.List>
           {sortedPlayers.map(({ id, username }, index) => (index > 0 && (
@@ -60,7 +60,7 @@ const Winners = (): JSX.Element => {
               version="contained"
               onClick={playAgainHandler}
             >
-              Play Again?
+              {t('endScreen.playAgainButton')}
               <Styled.PlayAgainCounter>{`${playAgain.length}/${players.length}`}</Styled.PlayAgainCounter>
             </Button>
           </Styled.PlayAgain>
@@ -71,7 +71,7 @@ const Winners = (): JSX.Element => {
               variant="light"
               version="text"
             >
-              Leave
+              {t('endScreen.leaveButton')}
             </Button>
           </Link>
         </Styled.Controls>

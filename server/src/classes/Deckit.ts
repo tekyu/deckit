@@ -15,7 +15,7 @@ interface IHinter {
   username: string;
   id: string;
 }
-interface CreateRoomOptions {
+export interface CreateRoomOptions {
   mode: 'public' | 'private' | 'fast';
   playersMax: number;
   gameCode: string;

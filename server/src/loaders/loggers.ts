@@ -34,6 +34,17 @@ const loggers = {
         ),
       })],
     }),
+  warn:
+    createLogger({
+      level: 'warn',
+      transports: [new transports.Console({
+        format: format.combine(
+          format.colorize(),
+          timestamp({ format: 'HH:mm:ss' }),
+          infoFormat,
+        ),
+      })],
+    }),
   event: {
     received: createLogger({
       level: 'verbose',

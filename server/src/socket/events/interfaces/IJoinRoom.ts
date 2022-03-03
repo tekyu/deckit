@@ -8,4 +8,4 @@ export default interface IJoinRoomParams {
     id: string;
     anon: boolean;
   }
-};
+}

@@ -1,3 +1,4 @@
+import { LanguageSwitch } from 'components/LanguageSwitch/LanguageSwitch.styled';
 import { Logo } from 'components/Logo/Logo.styled';
 import { ThemeChanger } from 'components/ThemeChanger/ThemeChanger.styled';
 import { rgba } from 'polished';
@@ -30,6 +31,13 @@ export const Header = styled.div`
   & > ${ThemeChanger} {
     margin-left: auto;
     margin-right: 20px;
+    ${mediaQuery.lessThan('menu')`
+      display: none;
+    `};  
+  }
+
+  
+  & > ${LanguageSwitch} {
     ${mediaQuery.lessThan('menu')`
       display: none;
     `};  

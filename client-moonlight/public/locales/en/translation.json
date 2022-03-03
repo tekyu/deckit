@@ -4,6 +4,18 @@
     "commingSoon": "Coming soon",
     "or": "or"
   },
+  "languages": {
+    "en": "English",
+    "us": "English",
+    "gb": "English",
+    "pl": "Polish",
+    "de": "German"
+  },
+  "gameMode": {
+    "private": "Private",
+    "public": "Public",
+    "fast": "Fast"
+  },
   "menu": {
     "fastGame": "Fast Game",
     "browse": "Browse",
@@ -38,12 +50,28 @@
     "youAreTheHost": "You are the host",
     "thisisTheHost": "This is the host",
     "you": "This is you",
+    "addSeat": "Add seat",
     "actionButton": {
       "waiting": "Waiting for others",
       "changeToReady": "Change to ready",
       "changeToWaiting": "Change to waiting",
-      "start": "Start game"
+      "start": "Start game",
+      "settingUp": "Setting up the game"
     }
+  },
+  "reconnectScreen": {
+    "header": "You have game in process in room",
+    "wantToReconnect": "Do you want to reconnect?",
+    "button": {
+      "yes": "Reconnect",
+      "no": "No"
+    }
+  },
+  "player": {
+    "you": "You",
+    "owner": "Owner",
+    "host": "Host",
+    "admin": "Admin"
   },
   "game": {
     "board": {
@@ -54,23 +82,36 @@
       "cardFromDeck": "Choose the card from your deck that fits the best",
       "cardFromBoard": "Find the storyteller's card!",
       "ready": "Other players are choosing, please wait",
-      "pickThisCard": "Pick this card"
+      "pickThisCard": "Pick this card",
+      "chosenClue": "Clue you entered is"
     },
     "deck": {
       "pickThisCard": "Pick this card"
     },
     "choosingHint": {
       "header": "Enter your hint here",
-      "button": "Submit hint"
+      "button": "Submit hint",
+      "notEmpty": "Hint cannot be empty"
     },
-    "owner": "Owner",
-    "scoreboard": {
-      "round": "Round",
-      "pointsToWin": "Points needed to win",
-      "remainingCards": "Remaining cards",
-      "choosingHint": "Player is choosing hint and card",
-      "waiting": "Player is waiting for others"
-    }
+    "owner": "Owner"
+  },
+  "scoreboard": {
+    "roundTooltip": "Round",
+    "pointsToWinTooltip": "Points needed to win",
+    "remainingCardsTooltip": "Remaining cards",
+    "choosingHintTooltip": "Player is choosing hint and card",
+    "waitingTooltip": "Player is waiting for others",
+    "disconnectedTooltip": "Player has disconnected"
+  },
+  "pauseScreen": {
+    "header": "Game paused",
+    "disconnectedPlayer": "Disconnected player",
+    "disconnectedPlayers": "Disconnected players",
+    "kickPlayer": "Kick player and resume",
+    "kickPlayers": "Kick players and resume",
+    "resume": "Resume",
+    "unpauseOne": "Room will unpause itself when player reconnects",
+    "unpauseMultiple": "Room will unpause itself when all of the players reconnect"
   },
   "endScreen": {
     "header": "And the winner is",
@@ -82,8 +123,16 @@
     "leaveButton": "Leave"
   },
   "errors": {
+    "user": {
+      "name": {
+        "empty": "Name cannot be empty",
+        "long": "Name cannot be longer than 25 characters"
+      }
+    },
     "room": {
       "connect": {
+        "idEmpty": "Id cannot be empty",
+        "nameEmpty": "Name of the room cannot be empty",
         "blacklisted": "You've been kicked from this room previously",
         "started": "Game has already started",
         "noroom": "Room doesn't exist",

@@ -11,7 +11,7 @@ export interface IExtendedSocket extends socketIo.Socket {
 }
 
 export const WAITING_ROOM = 'WAITING_ROOM';
-// TODO: Change types
+
 const ioEvents = () => {
   IO.getInstance().io.on('connection', (socket: IExtendedSocket) => {
     socket.join(WAITING_ROOM);
@@ -23,7 +23,6 @@ const ioEvents = () => {
     UserEvents(socket);
     RoomEvents(socket);
     GameEvents(socket);
-    // ChatEvents(socket, io);
   });
 };
 

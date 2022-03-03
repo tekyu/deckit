@@ -1,5 +1,5 @@
-import chalk from 'chalk';
 import IO from '../classes/IO';
+import { loggers } from '../loaders/loggers';
 
 export default function (id: string) {
   if (IO.getInstance().io.gameRooms.public[id]) {
@@ -9,6 +9,6 @@ export default function (id: string) {
   } if (IO.getInstance().io.gameRooms.fast[id]) {
     return 'fast';
   }
-  console.log(chalk.bgRedBright(`Room with id of ${id} doesn't exist`));
+  loggers.warn.warn(`Room with id of ${id} doesn't exist`);
   return '';
 }

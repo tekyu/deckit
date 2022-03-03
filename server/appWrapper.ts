@@ -5,11 +5,10 @@ import cors from 'cors';
 import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import expressSession from 'express-session';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import morgan from 'morgan';
 import path from 'path';
 import logger from './src/loaders/logger';
-import Passport from './src/api/Passport';
-import { User } from './src/schemas/User';
 
 const appWrapper = (IncomingPort = 3011) => {
   const app = express();
@@ -74,11 +73,11 @@ const appWrapper = (IncomingPort = 3011) => {
   app.get('/', (req, res) => {
     res.sendFile(`${__dirname}/index.html`);
   });
-  app.get('/showusers', (req, res) => {
-    User.find({}, (err, users) => {
-      res.render('ShowUsers.ejs', { users });
-    });
-  });
+  // app.get('/showusers', (req, res) => {
+  //   User.find({}, (err, users) => {
+  //     res.render('ShowUsers.ejs', { users });
+  //   });
+  // });
 
   return app;
 };

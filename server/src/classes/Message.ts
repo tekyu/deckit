@@ -11,9 +11,10 @@ import shortId from 'shortid';
  */
 export default class Message {
   message: string;
-  playerData: Object;
 
-  constructor(message, { id, username, color, avatar }) {
+  constructor(message, {
+    id, username, color, avatar,
+  }) {
     this.message = message;
     this.ownerId = id;
     this.id = shortId();

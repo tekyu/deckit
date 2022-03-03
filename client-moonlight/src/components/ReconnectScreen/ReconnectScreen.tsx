@@ -1,6 +1,7 @@
 import Backdrop from 'components/Backdrop/Backdrop';
 import Button from 'components/Button/Button';
 import { IReconnectScreen } from 'components/ReconnectScreen/IReconnectScreen';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { AnyAction } from 'redux';
@@ -11,10 +12,10 @@ import { userSelectors } from 'store/user/userSlice';
 import * as Styled from './ReconnectScreen.styled';
 
 const ReconnectScreen = ({
-  children = 'Default',
   roomId,
   closeHandler = () => { },
 }: IReconnectScreen): JSX.Element => {
+  const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useAppThunkDispatch();
   const playerId = useSelector(userSelectors.id);
@@ -38,13 +39,13 @@ const ReconnectScreen = ({
     <Backdrop>
       <Styled.ReconnectScreen>
         <Styled.Header>
-          You have game in process in room
+          {t('reconnectScreen.header')}
           <Styled.Id>
             {roomId}
           </Styled.Id>
         </Styled.Header>
         <Styled.Message>
-          Do you want to reconnect?
+          {t('reconnectScreen.wantToReconnect')}
         </Styled.Message>
         <Styled.Controls>
           <Button
@@ -54,7 +55,7 @@ const ReconnectScreen = ({
             version="contained"
             onClick={reconnectHandler}
           >
-            Reconnect
+            {t('reconnectScreen.button.yes')}
           </Button>
           <Button
             type="button"
@@ -63,7 +64,8 @@ const ReconnectScreen = ({
             version="text"
             onClick={cancelHandler}
           >
-            No
+            {t('reconnectScreen.button.no')}
+
           </Button>
 
         </Styled.Controls>

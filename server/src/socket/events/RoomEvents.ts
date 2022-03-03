@@ -153,7 +153,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
     }
 
     try {
-      const { players, error } = await room.MOONLIGHTconnectPlayer(socket.deckitUser);
+      const { error } = await room.MOONLIGHTconnectPlayer(socket.deckitUser);
       if (error) {
         callback({ error: 'blacklisted' });
         return;
@@ -163,7 +163,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
         getRoomObjectForUpdate(
           room,
           getRoomUpdateState({
-            players: players.length,
+            players: room.players.length,
             playersMax: room.playersMax,
             state: room.state,
           }),
@@ -220,6 +220,11 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       }
 
       const { players, disconnectedPlayer } = await room.MOONLIGHTkickPlayer(playerId);
+
+      if (!disconnectedPlayer) {
+        callback({ error: 'Something went wrong' });
+        return;
+      }
 
       // get list of rooms needed to be updated in waiting room
       const updatedRoomObject = [
@@ -363,7 +368,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
         return null;
       }
 
-      room.updatePlayer(playerId, { state: PlayerState.playing });
+      room.MOONLIGHTupdatePlayer({ playerId, playerData: { state: PlayerState.playing } });
 
       if (room.arePlayersReady()) {
         room.updateRoomState(roomState.started);

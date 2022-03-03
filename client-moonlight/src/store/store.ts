@@ -31,7 +31,7 @@ const userPersistConfig = {
 const appPersistConfig = {
   key: 'app',
   storage,
-  whitelist: ['activeTheme', 'theme'],
+  whitelist: ['activeTheme', 'theme', 'language'],
 };
 
 const roomPersistConfig = {

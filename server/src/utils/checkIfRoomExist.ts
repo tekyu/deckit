@@ -1,6 +1,7 @@
-import chalk from 'chalk';
 import IGameRooms from '../interfaces/IGameRooms';
+import { loggers } from '../loaders/loggers';
 
+// eslint-disable-next-line func-names
 export default function (id: string, gameRooms: IGameRooms) {
   if (gameRooms.public[id]) {
     return 'public';
@@ -9,6 +10,6 @@ export default function (id: string, gameRooms: IGameRooms) {
   } if (gameRooms.fast[id]) {
     return 'fast';
   }
-  console.log(chalk.bgRedBright(`Room with id of ${id} doesn't exist`));
+  loggers.warn.warn(`Room with id of ${id} doesn't exist`);
   return '';
 }

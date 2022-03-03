@@ -1,3 +1,6 @@
+/* eslint-disable consistent-return */
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // @ts-nocheck
 import fse from 'fs-extra';
 import { flatten } from 'lodash';
@@ -10,17 +13,14 @@ const readFile = async (deck) => {
   }
 };
 
-const getDecksObject = (decks) => {
-  console.log('[getDecksObject]', decks);
-  return decks.reduce((acc, { name, userCreated, userId }) => {
-    if (userCreated) {
-      acc.userCreatedDecks.push({ name, userId });
-    } else {
-      acc.defaultDecks.push(name);
-    }
-    return acc;
-  }, { defaultDecks: [], userCreatedDecks: [] });
-};
+const getDecksObject = (decks) => decks.reduce((acc, { name, userCreated, userId }) => {
+  if (userCreated) {
+    acc.userCreatedDecks.push({ name, userId });
+  } else {
+    acc.defaultDecks.push(name);
+  }
+  return acc;
+}, { defaultDecks: [], userCreatedDecks: [] });
 
 const CardService = {
   getDecks: async (req, res) => {

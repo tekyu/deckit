@@ -13,6 +13,5 @@ const Template: Story<IReconnectScreen> = (args) => <ReconnectScreenComponent {.
 export const ReconnectScreen = Template.bind({});
 
 ReconnectScreen.args = {
-  children: 'ReconnectScreen',
   roomId: 'chattyfish96',
 };

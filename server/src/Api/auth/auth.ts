@@ -3,7 +3,7 @@ import { User } from '../../schemas/User';
 import { getUserData } from '../../utils/getUserData';
 
 const AuthApi = (app: any, passport: any) => {
-  app.post('/api/check', (req, res, next) => {
+  app.post('/api/check', (req, res) => {
     if (req.isAuthenticated()) {
       res.status(200).send(getUserData(req.user));
     } else {
@@ -11,8 +11,9 @@ const AuthApi = (app: any, passport: any) => {
     }
   });
 
-  app.post('/api/logout', (req, res) => {
-    req.session.destroy(err => {
+  app.post('/api/logout', (req, res, next) => {
+    // eslint-disable-next-line consistent-return
+    req.session.destroy((err) => {
       if (err) return next(err);
 
       req.logout();
@@ -22,7 +23,7 @@ const AuthApi = (app: any, passport: any) => {
   });
 
   app.post('/api/login', (req, res, next) => {
-    passport.authenticate('local', function(err, user, info) {
+    passport.authenticate('local', (err, user, info) => {
       if (err) {
         return;
       }
@@ -30,7 +31,7 @@ const AuthApi = (app: any, passport: any) => {
         res.status(401).send(info.message);
         return;
       }
-      req.login(user, function(err) {
+      req.login(user, (err) => {
         if (err) {
           return next(err);
         }
@@ -39,13 +40,13 @@ const AuthApi = (app: any, passport: any) => {
     })(req, res, next);
   });
 
-  app.post('/api/register', (req, res, next) => {
+  app.post('/api/register', (req, res) => {
     const { username, password } = req.body;
     User.create({ username, password })
-      .then(user => {
+      .then((user) => {
         res.status(200).send(getUserData(user));
       })
-      .catch(err => {
+      .catch((err) => {
         if (err.name === 'ValidationError') {
           res.status(400).send('Username is already taken');
         }

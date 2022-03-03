@@ -40,6 +40,7 @@ export const Label = styled.label`
   font-family: ${({ theme: { typography } }) => typography.primary};
   color: ${({ theme: { palette } }) => palette.primary.main};
   font-size: 1.4em;
+  text-align: center;
 `;
 
 export const HintForm = styled(Form)`

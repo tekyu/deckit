@@ -33,7 +33,7 @@ export const GameEvents = (socket: IExtendedSocket) => {
         return;
       }
 
-      const room: Deckit = getRoom(activeRoomId);
+      const room: Deckit | null = getRoom(activeRoomId);
       if (!room) {
         return;
       }
@@ -86,7 +86,11 @@ export const GameEvents = (socket: IExtendedSocket) => {
       return;
     }
 
-    const room: Deckit = getRoom(activeRoomId);
+    const room: Deckit | null = getRoom(activeRoomId);
+
+    if (!room) {
+      return;
+    }
 
     room.setHint({ hint, cardId, userId: id });
     room.updateStage(gameStage.pickCardFromDeck);
@@ -110,7 +114,12 @@ export const GameEvents = (socket: IExtendedSocket) => {
       return;
     }
 
-    const room: Deckit = getRoom(activeRoomId);
+    const room: Deckit | null = getRoom(activeRoomId);
+
+    if (!room) {
+      return;
+    }
+
     room.addCardsFromDeck({ cardId, userId: id });
 
     const gameUpdateObject = {
@@ -138,7 +147,12 @@ export const GameEvents = (socket: IExtendedSocket) => {
       return;
     }
 
-    const room: Deckit = getRoom(activeRoomId);
+    const room: Deckit | null = getRoom(activeRoomId);
+
+    if (!room) {
+      return;
+    }
+
     room.addCardsFromBoard({ cardId, userId: id });
 
     const gameUpdateObject = {

@@ -16,6 +16,7 @@ module.exports = {
     '@typescript-eslint',
   ],
   rules: {
+    semi: 0,
     'import/extensions': 0,
     'import/prefer-default-export': 0,
     'linebreak-style': 0,

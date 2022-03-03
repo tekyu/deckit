@@ -1,6 +1,7 @@
 import { IScoreboardItem } from 'components/ScoreboardItem/IScoreboardItem';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GiCardPick, GiCardPlay } from 'react-icons/gi';
 import { RiWifiOffLine } from 'react-icons/ri';
 import * as Styled from './ScoreboardItem.styled';
@@ -15,6 +16,7 @@ const ScoreboardItem = ({
   state,
   picked = false,
 }: IScoreboardItem): JSX.Element => {
+  const { t } = useTranslation();
   const disconnected = useMemo(() => state === 3, [state]);
   const getIcon = () => {
     if (isHinter) {
@@ -22,7 +24,7 @@ const ScoreboardItem = ({
         <Styled.StateIcon picked={picked} data-tip data-for="scoreboard-hinter">
           <GiCardPick />
           <Tooltip id="scoreboard-hinter" tooltipProps={{ place: 'right' }}>
-            Player is choosing hint and card
+            {t('scoreboard.choosingHintTooltip')}
           </Tooltip>
         </Styled.StateIcon>
       );
@@ -32,7 +34,7 @@ const ScoreboardItem = ({
         <Styled.StateIcon picked={picked} data-tip data-for={`scoreboard-picker-${id}`}>
           <GiCardPlay />
           <Tooltip id={`scoreboard-picker-${id}`} tooltipProps={{ place: 'right' }}>
-            Player is waiting for others
+            {t('scoreboard.waitingTooltip')}
           </Tooltip>
         </Styled.StateIcon>
       );
@@ -61,7 +63,7 @@ const ScoreboardItem = ({
             <RiWifiOffLine />
           </Styled.DisconnectedIconContainer>
           <Tooltip id={`scoreboard-disconnected-${id}`} tooltipProps={{ place: 'left' }}>
-            Player has disconnected
+            {t('scoreboard.disconnectedTooltip')}
           </Tooltip>
 
         </Styled.DisconnectedIcon>

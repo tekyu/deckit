@@ -2,12 +2,15 @@ import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from 'store/store';
 import { getTheme, ITheme, themeType } from 'theme/themes';
 
+export type LanguageType = 'en' | 'pl' | 'de';
+
 export interface IAppState {
   activeTheme: themeType;
   themeLoaded: boolean;
   theme: ITheme;
   miniSidebar: boolean;
   host: string;
+  language: LanguageType
 }
 
 const initialState: IAppState = {
@@ -16,6 +19,7 @@ const initialState: IAppState = {
   theme: getTheme('light'),
   miniSidebar: false,
   host: 'http://localhost:3011',
+  language: 'en',
 };
 
 const appSlice = createSlice({
@@ -29,6 +33,9 @@ const appSlice = createSlice({
     changeMiniSidebar(state) {
       state.miniSidebar = !state.miniSidebar;
     },
+    setLanguage(state, { payload }) {
+      state.language = payload;
+    },
   },
 
 });
@@ -41,6 +48,7 @@ const appSelectors = {
   theme: (state: RootState): ITheme => state.app.theme,
   miniSidebar: (state: RootState): boolean => state.app.miniSidebar,
   host: (state: RootState): string => state.app.host,
+  language: (state: RootState): LanguageType => state.app.language,
 
 };
 

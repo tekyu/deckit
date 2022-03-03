@@ -34,7 +34,6 @@ const Dashboard = (): JSX.Element => {
   const [redirectToGame, setRedirectToGame] = useState<boolean>(false);
   const dispatch = useAppThunkDispatch();
   const roomId = useSelector(roomSelectors.id);
-  // const activeRoomId = useSelector(roomSelectors.activeRoomId);
   const kickedFrom = useSelector(userSelectors.kickedFrom);
 
   useEffect(() => {
@@ -42,21 +41,6 @@ const Dashboard = (): JSX.Element => {
       dispatch(roomActions.resetRoom());
     }
   }, []);
-
-  // useEffect(() => {
-  //   if (activeRoomId && !roomId) {
-  // dispatch(socketActions.emit(
-  //   'CHECK_FOR_ROOM',
-  //   { roomId: activeRoomId }, (doesExist: boolean) => {
-  //       if (doesExist) {
-  //         console.log('showPopup');
-  //         // add reconnect event
-  //       } else {
-  //         dispatch(roomActions.resetRoom());
-  //       }
-  //     }));
-  //   }
-  // }, []);
 
   const getFullListOfRoomsHandler = (rooms: any) => {
     // console.log('getFullListOfRoomsHandler', rooms);
@@ -109,7 +93,7 @@ const Dashboard = (): JSX.Element => {
     const errors: Partial<IRoomIdForm> = {};
 
     if (!roomId) {
-      errors.roomId = 'Id cannot be empty';
+      errors.roomId = t('errors.room.connect.idEmpty');
     }
 
     return errors;
@@ -120,9 +104,9 @@ const Dashboard = (): JSX.Element => {
       {roomId && redirectToGame ? <Redirect push to={`/game/${roomId}`} /> : null}
       <Styled.Controls>
         <Link to="/create">
-          <Button>Create your room</Button>
+          <Button>{t('dashboard.createRoomButton')}</Button>
         </Link>
-        <Styled.Separator>or</Styled.Separator>
+        <Styled.Separator>{t('common.or')}</Styled.Separator>
         <Formik
           initialValues={{ roomId: '' }}
           onSubmit={submitRoomIdHandler}
@@ -131,8 +115,15 @@ const Dashboard = (): JSX.Element => {
           {({ values: { roomId }, handleSubmit }) => (
             <>
               <Styled.RoomIdInputContainer onSubmit={handleSubmit}>
-                <TextInput value={roomId} name="roomId" id="roomId" placeholder="Type room id here" alignCenter showBorder />
-                <Button type="submit">Join</Button>
+                <TextInput
+                  value={roomId}
+                  name="roomId"
+                  id="roomId"
+                  placeholder={t('dashboard.joinInputPlaceholder')}
+                  alignCenter
+                  showBorder
+                />
+                <Button type="submit">{t('dashboard.joinButton')}</Button>
               </Styled.RoomIdInputContainer>
               <ErrorMessage name="roomId" />
             </>

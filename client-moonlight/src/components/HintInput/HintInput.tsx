@@ -1,16 +1,18 @@
 import Button from 'components/Button/Button';
 import TextInput from 'components/TextInput/TextInput';
 import { Formik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { gameActions } from 'store/game/gameSlice';
 import * as Styled from './HintInput.styled';
 
 const HintInput = (): JSX.Element => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const validateHandler = ({ hint }: { hint: string }) => {
     const errors: { hint?: string } = {};
     if (!hint) {
-      errors.hint = 'Hint cannot be empty';
+      errors.hint = t('game.choosingHint.notEmpty');
     }
     return errors;
   };
@@ -38,9 +40,9 @@ const HintInput = (): JSX.Element => {
           handleSubmit,
         }) => (
           <Styled.HintForm onSubmit={handleSubmit}>
-            <Styled.Label>Enter your hint here</Styled.Label>
+            <Styled.Label>{t('game.choosingHint.header')}</Styled.Label>
             <TextInput name="hint" id="hint" value={hint} alignCenter showBorder />
-            <Button type="submit">Submit hint</Button>
+            <Button type="submit">{t('game.choosingHint.button')}</Button>
           </Styled.HintForm>
         )}
       </Formik>

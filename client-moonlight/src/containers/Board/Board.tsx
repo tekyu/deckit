@@ -9,26 +9,12 @@ import { gameActions, gameSelectors } from 'store/game/gameSlice';
 import { socketActions, socketTopics } from 'store/socket/socket';
 import { userSelectors } from 'store/user/userSlice';
 import { useKeenSlider } from 'keen-slider/react'; // import from 'keen-slider/react.es' for to get an ES module
+import { useTranslation } from 'react-i18next';
 import * as Styled from './Board.styled';
 import 'keen-slider/keen-slider.min.css';
 
-const mockStatuses = {
-  hinter: {
-    main: 'You are the storyteller now.',
-    card: 'Choose your card',
-    hint: 'Please type your clue for the card you have chosen',
-    ready: 'Please wait for others',
-
-  },
-  chooser: {
-    wait: 'Please wait for the clue',
-    fromDeck: 'Choose the card from your deck that fits the best',
-    fromBoard: 'Find the storyteller\'s card!',
-    ready: 'Other players are voting, please wait',
-  },
-};
-
 const Board = (): JSX.Element => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const hinter = useSelector(gameSelectors.hinter);
   const hint = useSelector(gameSelectors.hint);
@@ -96,25 +82,25 @@ const Board = (): JSX.Element => {
     if (isHinter) {
       // hinter
       if (hintPickedByMe && hintCardPickedByMe) {
-        return mockStatuses.hinter.ready;
+        return t('game.board.ready');
       }
       if (!hintCardPickedByMe) {
-        return mockStatuses.hinter.card;
+        return t('game.board.chooseYouCardHinter');
       }
       if (!hintPickedByMe) {
-        return mockStatuses.hinter.hint;
+        return t('game.board.typeClueHinter');
       }
       return '';
     }
     // chooser
     if (stage === 2) {
-      return mockStatuses.chooser.wait;
+      return t('game.board.waitForClue');
     }
     if (stage === 3) {
-      return pickedCardFromMyDeck ? mockStatuses.chooser.ready : mockStatuses.chooser.fromDeck;
+      return pickedCardFromMyDeck ? t('game.board.ready') : t('game.board.cardFromDeck');
     }
     if (stage === 4) {
-      return pickedCardFromBoard ? mockStatuses.chooser.ready : mockStatuses.chooser.fromBoard;
+      return pickedCardFromBoard ? t('game.board.ready') : t('game.board.cardFromBoard');
     }
     return '';
   }, [
@@ -146,10 +132,10 @@ const Board = (): JSX.Element => {
       <Styled.MessagesContainer>
         {isHinter ? (
           <>
-            <Message special>{mockStatuses.hinter.main}</Message>
+            <Message special>{t('game.board.youAreStoryteller')}</Message>
             {hint && (
               <Message>
-                Clue you entered is
+                {t('game.board.chosenClue')}
                 {' '}
                 {hint}
               </Message>

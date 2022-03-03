@@ -1,6 +1,7 @@
 import Button from 'components/Button/Button';
 import { IPausedScreen } from 'components/PausedScreen/IPausedScreen';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { roomSelectors } from 'store/room/roomSlice';
 import { socketActions, socketTopics } from 'store/socket/socket';
@@ -9,6 +10,7 @@ import * as Styled from './PausedScreen.styled';
 const PausedScreen = ({
   isOwner = false,
 }: IPausedScreen): JSX.Element => {
+  const { t } = useTranslation();
   const [kickError, setKickError] = useState<string>('');
   const players = useSelector(roomSelectors.players);
   const disconnectedPlayers = players.filter(({ state }) => state === 3);
@@ -26,12 +28,19 @@ const PausedScreen = ({
     ));
   }, []);
 
+  const buttonText = useMemo(() => {
+    if (disconnectedPlayers.length > 0) {
+      return disconnectedPlayers.length > 1 ? t('pauseScreen.kickPlayers') : t('pauseScreen.kickPlayer');
+    }
+    return t('pauseScreen.resume');
+  }, [disconnectedPlayers]);
+
   return (
     <Styled.Backdrop>
 
       <Styled.PausedScreen>
         <Styled.Header>
-          Game paused
+          {t('pauseScreen.header')}
         </Styled.Header>
         {isOwner
           && (
@@ -40,7 +49,7 @@ const PausedScreen = ({
                 && (
                   <>
                     <Styled.DisconnectedPlayersHeader>
-                      {`Disconnected player${disconnectedPlayers.length > 1 ? 's' : ''}`}
+                      {disconnectedPlayers.length > 1 ? t('pauseScreen.disconnectedPlayers') : t('pauseScreen.disconnectedPlayers')}
                     </Styled.DisconnectedPlayersHeader>
                     <Styled.DisconnectedPlayers>
                       {(disconnectedPlayers).map((player) => (
@@ -57,11 +66,7 @@ const PausedScreen = ({
                   version="contained"
                   onClick={kickPlayersHandler}
                 >
-                  {
-                    disconnectedPlayers.length > 0
-                      ? `Kick player${disconnectedPlayers.length > 1 ? 's' : ''} and resume`
-                      : 'Resume'
-                  }
+                  {buttonText}
                 </Button>
                 {kickError && (
                   <Styled.Message>
@@ -70,7 +75,7 @@ const PausedScreen = ({
                 )}
                 {disconnectedPlayers.length > 0 ? (
                   <Styled.Message>
-                    {`Room will unpause itself when ${disconnectedPlayers.length > 1 ? 'all of the players' : 'player'} reconnects`}
+                    {disconnectedPlayers.length > 1 ? t('pauseScreen.unpauseMultiple') : t('pauseScreen.unpauseOne')}
                   </Styled.Message>
                 ) : null}
               </Styled.Controls>
