@@ -4,6 +4,7 @@ export interface ITypography {
 }
 
 export interface IPalette {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 

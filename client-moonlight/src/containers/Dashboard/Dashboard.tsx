@@ -15,7 +15,7 @@ import { useAppThunkDispatch } from 'store/store';
 import { AnyAction } from 'redux';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
-import { socketActions, socketTopics } from 'store/socket/socket';
+import PublicRoomList from 'components/PublicRoomList/PublicRoomList';
 import * as Styled from './Dashboard.styled';
 
 interface IRoomIdForm {
@@ -40,18 +40,6 @@ const Dashboard = (): JSX.Element => {
     if (roomId) {
       dispatch(roomActions.resetRoom());
     }
-  }, []);
-
-  const getFullListOfRoomsHandler = (rooms: any) => {
-    // console.log('getFullListOfRoomsHandler', rooms);
-  };
-
-  useEffect(() => {
-    dispatch(socketActions.emit(
-      socketTopics.room.getFullListOfRooms,
-      {},
-      getFullListOfRoomsHandler,
-    ));
   }, []);
 
   const joinRoomHandler = ({ roomId, formikHelpers: { setFieldError } }: IJoinRoomHandler) => {
@@ -130,6 +118,7 @@ const Dashboard = (): JSX.Element => {
           )}
         </Formik>
       </Styled.Controls>
+      <PublicRoomList />
     </Styled.Dashboard>
   );
 };

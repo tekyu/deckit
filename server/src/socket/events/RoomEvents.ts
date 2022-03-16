@@ -10,6 +10,7 @@ import Deckit from '../../classes/Deckit';
 import IO from '../../classes/IO';
 import { IExtendedSocket } from '../socket';
 import { PlayerState } from '../../classes/Player';
+import updateListOfRooms from '../../utils/updateListOfRooms';
 // TODO: Move interfaces to other file
 // interface Iparams {
 //   id: string;
@@ -61,14 +62,13 @@ export const RoomEvents = function (socket: IExtendedSocket) {
   this.socket = socket;
 
   socket.on(roomTopics.GET_FULL_LIST_OF_ROOMS, (params: any, callback: Function) => {
-    const basicInfoList = Object.values(IO.getInstance().io.gameRooms.public).map((room: any) => {
-      const { basicInfo } = room;
-      return {
-        ...basicInfo,
-        players: basicInfo.players.length || 0,
-      };
-    });
-    callback(basicInfoList);
+    const minimalInfoList = Object.values(IO.getInstance().io.gameRooms.public).map((room: any) => {
+      const { minimalInfo, state } = room;
+      if (state < roomState.started) {
+        return minimalInfo;
+      }
+    }).filter((room) => room);
+    callback(minimalInfoList);
   });
 
   // 2.0 start
@@ -121,9 +121,11 @@ export const RoomEvents = function (socket: IExtendedSocket) {
         roomDetails: room.basicInfo, userDetails,
       });
 
-      if (room.mode === 'public') {
-        IO.getInstance().io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, [getRoomObjectForUpdate(room, 'add')]);
-      }
+      updateListOfRooms(room, 'add');
+
+      // if (room.mode === 'public') {
+      //   IO.getInstance().io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, getRoomObjectForUpdate(room, 'add'));
+      // }
     },
   );
 
@@ -158,17 +160,6 @@ export const RoomEvents = function (socket: IExtendedSocket) {
         callback({ error: 'blacklisted' });
         return;
       }
-      // get list of rooms needed to be updated in waiting room
-      const updatedRoomObject = [
-        getRoomObjectForUpdate(
-          room,
-          getRoomUpdateState({
-            players: room.players.length,
-            playersMax: room.playersMax,
-            state: room.state,
-          }),
-        ),
-      ];
 
       // leave waiting room to not receive info about newly created rooms
       socket.leave(WAITING_ROOM);
@@ -177,10 +168,8 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       socket.deckitUser.activeRoomId = roomId;
 
       // if room is public, push update of the room info to Browse route
-      if (room.mode === 'public') {
-        IO.getInstance().io.in(WAITING_ROOM)
-          .emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
-      }
+      updateListOfRooms(room);
+
       loggers.event.received.verbose(roomTopics.JOIN_ROOM, room.basicInfo);
 
       // send basicView of room to sender
@@ -226,18 +215,6 @@ export const RoomEvents = function (socket: IExtendedSocket) {
         return;
       }
 
-      // get list of rooms needed to be updated in waiting room
-      const updatedRoomObject = [
-        getRoomObjectForUpdate(
-          room,
-          getRoomUpdateState({
-            players: players.length,
-            playersMax: room.playersMax,
-            state: room.state,
-          }),
-        ),
-      ];
-
       // send info to kicked player
       IO.getInstance().io.to(disconnectedPlayer.socketId)
         .emit(roomTopics.KICKED_PLAYER, { roomId });
@@ -250,10 +227,8 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       disconnectedSocket.deckitUser.activeRoomId = undefined;
 
       // if room is public, push update of the room info to Browse route
-      if (room.mode === 'public') {
-        IO.getInstance().io.in(WAITING_ROOM)
-          .emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
-      }
+      updateListOfRooms(room);
+
       loggers.info.info(`Player ${disconnectedPlayer.username} with socketId of ${disconnectedPlayer.socketId} kicked from room ${roomId}`);
 
       const publicPlayers = await room.getPublicPlayers();
@@ -283,21 +258,8 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       players,
     } = await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
 
-    // get list of rooms needed to be updated in waiting room
-    const updatedRoomObject = [
-      getRoomObjectForUpdate(
-        room,
-        getRoomUpdateState({
-          players: players.length,
-          playersMax: room.playersMax,
-          state: room.state,
-        }),
-      ),
-    ];
     // if room is public, push update of the room info to Browse route
-    if (room.mode === 'public') {
-      IO.getInstance().io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
-    }
+    updateListOfRooms(room);
 
     const publicPlayers = await room.getPublicPlayers();
 
@@ -443,21 +405,8 @@ export const RoomEvents = function (socket: IExtendedSocket) {
 
     socket.deckitUser.activeRoomId = undefined;
 
-    // get list of rooms needed to be updated in waiting room
-    const updatedRoomObject = [
-      getRoomObjectForUpdate(
-        room,
-        IO.getInstance().checkIfRoomExist(activeRoomId) ? getRoomUpdateState({
-          players: players.length,
-          playersMax: room.playersMax,
-          state: room.state,
-        }) : 'remove',
-      ),
-    ];
     // if room is public, push update of the room info to Browse route
-    if (room.mode === 'public') {
-      IO.getInstance().io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
-    }
+    updateListOfRooms(room);
 
     const publicPlayers = await room.getPublicPlayers();
 

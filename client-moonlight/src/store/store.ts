@@ -79,9 +79,10 @@ export type RootState = ReturnType<typeof rootReducer>
 
 export type AppDispatch = typeof store.dispatch
 
-// Export a hook that can be reused to resolve types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useAppDispatch = (): any => useDispatch<AppDispatch>();
 
 export type ThunkAppDispatch = ThunkDispatch<RootState, void, Action>;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useAppThunkDispatch = (): any => useDispatch<ThunkAppDispatch>();

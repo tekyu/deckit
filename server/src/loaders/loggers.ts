@@ -1,4 +1,5 @@
 import { createLogger, format, transports } from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
 const {
   combine, timestamp, printf,
@@ -22,6 +23,15 @@ const infoFormat = printf((info) => {
   return `${timestamp} ${level}: ${message.trim()} \n ${args?.length > 0 ? JSON.stringify(args[0], null, 4) : ''}`;
 });
 
+const dailyRotateTransport: DailyRotateFile = new DailyRotateFile({
+  filename: 'application-%DATE%.log',
+  datePattern: 'YYYY-MM-DD',
+  zippedArchive: true,
+  maxSize: '20m',
+  maxFiles: '14d',
+  dirname: './logs',
+});
+
 const loggers = {
   info:
     createLogger({
@@ -32,7 +42,9 @@ const loggers = {
           timestamp({ format: 'HH:mm:ss' }),
           infoFormat,
         ),
-      })],
+      }),
+        dailyRotateTransport,
+      ],
     }),
   warn:
     createLogger({
@@ -43,7 +55,9 @@ const loggers = {
           timestamp({ format: 'HH:mm:ss' }),
           infoFormat,
         ),
-      })],
+      }),
+        dailyRotateTransport,
+      ],
     }),
   event: {
     received: createLogger({
@@ -59,7 +73,9 @@ const loggers = {
           timestamp({ format: 'HH:mm:ss' }),
           myFormat,
         ),
-      })],
+      }),
+        dailyRotateTransport,
+      ],
     }),
     sent: createLogger({
       level: 'verbose',
@@ -74,7 +90,9 @@ const loggers = {
           timestamp({ format: 'HH:mm:ss' }),
           myFormatSent,
         ),
-      })],
+      }),
+        dailyRotateTransport,
+      ],
     }),
   },
 

@@ -6,6 +6,7 @@ import { roomTopics, WAITING_ROOM } from './RoomEvents';
 import Deckit, { gameStage } from '../../classes/Deckit';
 import IO from '../../classes/IO';
 import { IExtendedSocket } from '../socket';
+import updateListOfRooms from '../../utils/updateListOfRooms';
 
 export const gameTopics = {
   START_GAME: 'MOONLIGHT-START_GAME',
@@ -44,12 +45,7 @@ export const GameEvents = (socket: IExtendedSocket) => {
         scoreboard: room.scoreboard,
       });
 
-      const updatedRoomObject = [getRoomObjectForUpdate(room, 'remove')];
-      // if room is public, push update of the room info to Browse route
-      if (room.mode === 'public') {
-        IO.getInstance().io.in(WAITING_ROOM)
-          .emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
-      }
+      updateListOfRooms(room);
 
       // // get list of rooms needed to be updated in waiting room
       // const updatedRoomObject = [

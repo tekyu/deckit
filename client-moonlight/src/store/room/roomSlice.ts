@@ -41,9 +41,6 @@ const roomSlice = createSlice({
         ...payload,
       };
     },
-    // updateListOfRooms(state, { payload } : { payload: any }) {
-    //   state.rooms
-    // }
   },
   extraReducers: (builder) => {
     builder.addCase(roomThunks.setInitialRoomDetails.fulfilled,
@@ -75,7 +72,8 @@ const roomSlice = createSlice({
         state.state = payload.updatedState;
       });
     builder.addCase(roomThunks.changeUserState.rejected, () => { });
-    builder.addCase(roomThunks.reconnect.fulfilled, (_, { payload }: PayloadAction<string>) => { });
+
+    builder.addCase(roomThunks.reconnect.fulfilled, () => { });
   },
 });
 

@@ -24,7 +24,10 @@
   "dashboard": {
     "createRoomButton": "Create your room",
     "joinButton": "Join",
-    "joinInputPlaceholder": "Type room id here"
+    "joinInputPlaceholder": "Type room id here",
+    "listOfPublicRoomsHeader": "Public rooms",
+    "noPublicRoomsAvailableHeader": "There are no public rooms available",
+    "noPublicRoomsAvailableSubHeader": "But you can create one!"
   },
   "accountBox": {
     "nameHeader": "Your name is",
@@ -110,6 +113,7 @@
     "kickPlayer": "Kick player and resume",
     "kickPlayers": "Kick players and resume",
     "resume": "Resume",
+    "leave": "Leave",
     "unpauseOne": "Room will unpause itself when player reconnects",
     "unpauseMultiple": "Room will unpause itself when all of the players reconnect"
   },

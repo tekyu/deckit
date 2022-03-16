@@ -27,6 +27,7 @@ const createRoom = createAsyncThunk(
   async (
     createParams: ICreateRoom,
     { dispatch },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> => new Promise((resolve, reject) => {
     dispatch(socketActions.emit(
       socketTopics.room.createRoom,
@@ -34,6 +35,7 @@ const createRoom = createAsyncThunk(
       ({ roomDetails, userDetails: { state: userState }, error }: IRoomCreateResponse) => {
         if (!error) {
           dispatch(roomActions.setInitialRoomDetails({ roomDetails, userState }));
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           resolve({ roomDetails, userState } as any);
         }
         reject(new Error(error));

@@ -44,7 +44,6 @@ const userSlice = createSlice({
       state.initialized = true;
     },
     updateKickedFrom(state, action) {
-      console.log('updateKickedFrom', action);
       state.kickedFrom[action.payload] = true;
     },
   },

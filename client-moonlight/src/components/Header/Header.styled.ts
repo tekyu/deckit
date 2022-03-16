@@ -9,8 +9,10 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   height: 70px;
+  top: 0;
   z-index: 100;
   background: ${({ theme }) => theme.palette.backgrounds.secondary};
+  position: sticky;
   ${({ theme }) => !theme.isDarkMode && `
     border-bottom: 1px solid ${rgba(theme.palette.primary.light, 0.1)};
   `}

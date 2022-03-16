@@ -16,7 +16,7 @@ export enum roomState {
   ended = 4
 }
 
-type ModeType = 'public' | 'private' | 'fast';
+export type ModeType = 'public' | 'private' | 'fast';
 
 interface CreateRoomOptions {
   mode: ModeType;
@@ -120,6 +120,23 @@ export default class Room {
 
   get instance() {
     return this;
+  }
+
+  get minimalInfo() {
+    const {
+      playersMax,
+      name,
+      id,
+      owner,
+      players,
+    } = this;
+    return {
+      playersMax,
+      name,
+      id,
+      owner: players.find(({ id }) => id === owner)?.username || owner,
+      players: players.length,
+    };
   }
 
   get basicInfo() {

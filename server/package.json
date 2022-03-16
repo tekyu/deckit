@@ -44,7 +44,8 @@
     "socket.io": "^2.1.1",
     "tsc-silent": "^1.2.1",
     "typescript": "^3.7.0",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.6.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",

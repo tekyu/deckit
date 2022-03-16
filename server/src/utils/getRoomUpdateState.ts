@@ -1,10 +1,10 @@
 type updateStateType = 'add' | 'remove' | 'update';
 
-export default function ({
+export default ({
   players,
   playersMax,
   state,
-}: { players: number, playersMax: number, state: number, force?: string }): updateStateType {
+}: { players: number, playersMax: number, state: number, force?: string }): updateStateType => {
   if (state >= 2) {
     return 'remove';
   }

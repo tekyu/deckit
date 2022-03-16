@@ -24,7 +24,10 @@
   "dashboard": {
     "createRoomButton": "Stwórz swój pokój",
     "joinButton": "Dołącz",
-    "joinInputPlaceholder": "Wpisz tutaj id pokoju"
+    "joinInputPlaceholder": "Wpisz tutaj id pokoju",
+    "listOfPublicRoomsHeader": "Lista publicznych pokoi",
+    "noPublicRoomsAvailableHeader": "W tym momencie nie ma dostępnych pokoi publicznych",
+    "noPublicRoomsAvailableSubHeader": "Ale możesz stworzyć swój!"
   },
   "accountBox": {
     "nameHeader": "Twoje imię to",
@@ -110,6 +113,7 @@
     "kickPlayer": "Wyrzuć gracza i wznów grę",
     "kickPlayers": "Wyrzuć graczy i wznów grę",
     "resume": "Wznów grę",
+    "leave": "Leave",
     "unpauseOne": "Gra zostanie wznowiona automatycznie gdy gracz się połączy",
     "unpauseMultiple": "Gra zostanie wznowiona automatycznie gdy wszyscy gracze się połączą"
   },

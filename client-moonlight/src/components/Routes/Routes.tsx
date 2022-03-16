@@ -1,4 +1,5 @@
 import CreateGame from 'containers/CreateGame/CreateGame';
+import Credits from 'containers/Credits/Credits';
 import Dashboard from 'containers/Dashboard/Dashboard';
 import RoomContainer from 'containers/RoomContainer/RoomContainer';
 import React from 'react';
@@ -9,6 +10,7 @@ const Routes = (): JSX.Element => (
     <Route path="/" exact render={() => <Dashboard />} />
     <Route path="/create" exact render={() => <CreateGame />} />
     <Route path="/game/:id" render={() => <RoomContainer />} />
+    <Route path="/credits" render={() => <Credits />} />
   </Switch>
 );
 
