@@ -24,7 +24,7 @@ const Logout = Loadable({
 });
 
 const Browse = Loadable({
-  loader: () => import('components/App/Content/Browse/Browse'),
+  loader: () => import('containers/Deckit/components/Winners/Winners'),
   loading() {
     return <FullScreenLoader />;
   },

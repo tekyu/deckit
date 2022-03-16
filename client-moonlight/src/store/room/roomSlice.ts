@@ -1,5 +1,7 @@
-import { createSlice, Action, PayloadAction } from '@reduxjs/toolkit';
-import { IChangeStateResponse, IRoomState } from 'store/room/roomInterfaces';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  IChangeStateResponse, IPlayer, IRoomState, IScoreboard,
+} from 'store/room/roomInterfaces';
 import { roomThunks } from 'store/room/roomThunks';
 import { RootState } from 'store/store';
 
@@ -14,6 +16,10 @@ const initialState: IRoomState = {
   admin: '',
   players: [],
   state: 0,
+  playerLimit: 0,
+  scoreboard: {},
+  winners: [],
+  playAgain: [],
 };
 
 const roomSlice = createSlice({
@@ -49,21 +55,25 @@ const roomSlice = createSlice({
         state.admin = payload.admin;
         state.players = payload.players;
         state.state = payload.state;
+        state.playerLimit = payload.playerLimit;
       });
     builder.addCase(roomThunks.createRoom.fulfilled,
-      (state, { payload }) => {
+      () => {
       });
     builder.addCase(roomThunks.joinRoom.fulfilled,
-      (state, action): any => { });
+      () => { });
     builder.addCase(roomThunks.joinRoom.rejected,
-      (state, action): any => { });
-    builder.addCase(roomThunks.kickPlayer.fulfilled, () => initialState);
+      () => { });
+    builder.addCase(roomThunks.kickPlayer.fulfilled,
+      () => initialState);
     builder.addCase(roomThunks.changeUserState.fulfilled,
       (state: IRoomState, { payload }: PayloadAction<IChangeStateResponse>) => {
         state.players = payload.players;
         state.state = payload.updatedState;
       });
     builder.addCase(roomThunks.changeUserState.rejected, () => { });
+
+    builder.addCase(roomThunks.reconnect.fulfilled, () => { });
   },
 });
 
@@ -79,6 +89,11 @@ const roomSelectors = {
   activeRoomId: (state: RootState): string => state.room.activeRoomId,
   state: (state: RootState): number => state.room.state,
   id: (state: RootState): string => state.room.id,
+  scoreboard: (state: RootState): IScoreboard => state.room.scoreboard,
+  players: (state: RootState): IPlayer[] => state.room.players,
+  owner: (state: RootState): string => state.room.owner,
+  playAgain: (state: RootState): string[] => state.room.playAgain,
+
 };
 
 export { roomActions, roomReducer, roomSelectors };

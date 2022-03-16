@@ -1,3 +1,149 @@
 {
-  "hello": "Hello"
+  "hello": "Hello",
+  "common": {
+    "commingSoon": "Coming soon",
+    "or": "or"
+  },
+  "languages": {
+    "en": "English",
+    "us": "English",
+    "gb": "English",
+    "pl": "Polish",
+    "de": "German"
+  },
+  "gameMode": {
+    "private": "Private",
+    "public": "Public",
+    "fast": "Fast"
+  },
+  "menu": {
+    "fastGame": "Fast Game",
+    "browse": "Browse",
+    "createGame": "Create Game"
+  },
+  "dashboard": {
+    "createRoomButton": "Create your room",
+    "joinButton": "Join",
+    "joinInputPlaceholder": "Type room id here",
+    "listOfPublicRoomsHeader": "Public rooms",
+    "noPublicRoomsAvailableHeader": "There are no public rooms available",
+    "noPublicRoomsAvailableSubHeader": "But you can create one!"
+  },
+  "accountBox": {
+    "nameHeader": "Your name is",
+    "randomName": "Give me random name",
+    "chooseName": "Choose your own name",
+    "chooseNamePlaceholder": "Type new name here",
+    "chooseNameButton": "Change"
+  },
+  "createGame": {
+    "header": "Create new game",
+    "generateName": "Generate name",
+    "roomNameHeader": "Room name",
+    "maxPlayersHeader": "Maximum players in room",
+    "maxPoints": "Maximum points in game",
+    "privateRoom": "Private room",
+    "createButton": "Create"
+  },
+  "waiting": {
+    "header": "Waiting room",
+    "roomTypePrivate": "Private",
+    "roomTypePublic": "Public",
+    "shareIdHeader": "This is the ID you can share to your friends to connect",
+    "youAreTheHost": "You are the host",
+    "thisisTheHost": "This is the host",
+    "you": "This is you",
+    "addSeat": "Add seat",
+    "actionButton": {
+      "waiting": "Waiting for others",
+      "changeToReady": "Change to ready",
+      "changeToWaiting": "Change to waiting",
+      "start": "Start game",
+      "settingUp": "Setting up the game"
+    }
+  },
+  "reconnectScreen": {
+    "header": "You have game in process in room",
+    "wantToReconnect": "Do you want to reconnect?",
+    "button": {
+      "yes": "Reconnect",
+      "no": "No"
+    }
+  },
+  "player": {
+    "you": "You",
+    "owner": "Owner",
+    "host": "Host",
+    "admin": "Admin"
+  },
+  "game": {
+    "board": {
+      "youAreStoryteller": "You are the storyteller now.",
+      "chooseYouCardHinter": "Choose your card",
+      "typeClueHinter": "Please type your clue for the card you have chosen",
+      "waitForClue": "Please wait for the clue",
+      "cardFromDeck": "Choose the card from your deck that fits the best",
+      "cardFromBoard": "Find the storyteller's card!",
+      "ready": "Other players are choosing, please wait",
+      "pickThisCard": "Pick this card",
+      "chosenClue": "Clue you entered is"
+    },
+    "deck": {
+      "pickThisCard": "Pick this card"
+    },
+    "choosingHint": {
+      "header": "Enter your hint here",
+      "button": "Submit hint",
+      "notEmpty": "Hint cannot be empty"
+    },
+    "owner": "Owner"
+  },
+  "scoreboard": {
+    "roundTooltip": "Round",
+    "pointsToWinTooltip": "Points needed to win",
+    "remainingCardsTooltip": "Remaining cards",
+    "choosingHintTooltip": "Player is choosing hint and card",
+    "waitingTooltip": "Player is waiting for others",
+    "disconnectedTooltip": "Player has disconnected"
+  },
+  "pauseScreen": {
+    "header": "Game paused",
+    "disconnectedPlayer": "Disconnected player",
+    "disconnectedPlayers": "Disconnected players",
+    "kickPlayer": "Kick player and resume",
+    "kickPlayers": "Kick players and resume",
+    "resume": "Resume",
+    "leave": "Leave",
+    "unpauseOne": "Room will unpause itself when player reconnects",
+    "unpauseMultiple": "Room will unpause itself when all of the players reconnect"
+  },
+  "endScreen": {
+    "header": "And the winner is",
+    "pointsSingular": "point",
+    "pointsPlural": "points",
+    "position": "Pos",
+    "points": "Pts",
+    "playAgainButton": "Play Again?",
+    "leaveButton": "Leave"
+  },
+  "errors": {
+    "user": {
+      "name": {
+        "empty": "Name cannot be empty",
+        "long": "Name cannot be longer than 25 characters"
+      }
+    },
+    "room": {
+      "connect": {
+        "idEmpty": "Id cannot be empty",
+        "nameEmpty": "Name of the room cannot be empty",
+        "blacklisted": "You've been kicked from this room previously",
+        "started": "Game has already started",
+        "noroom": "Room doesn't exist",
+        "full": "Room is full, sorry!",
+        "undefined": "Sorry, something went wrong",
+        "notAdmin": "You are not admin of this game"
+      }
+    }
+  }
 }

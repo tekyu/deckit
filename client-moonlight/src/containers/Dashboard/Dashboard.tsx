@@ -9,24 +9,32 @@ import { Formik, FormikHelpers } from 'formik';
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage';
 import { useSelector } from 'react-redux';
 
-import { userSelectors } from 'store/user/userSlice';
+import { userActions, userSelectors } from 'store/user/userSlice';
 import { roomActions, roomSelectors } from 'store/room/roomSlice';
 import { useAppThunkDispatch } from 'store/store';
-import { Action } from 'redux';
+import { AnyAction } from 'redux';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
+import PublicRoomList from 'components/PublicRoomList/PublicRoomList';
 import * as Styled from './Dashboard.styled';
 
 interface IRoomIdForm {
   roomId: string;
 }
 
+interface IJoinRoomHandler {
+  roomId: string;
+  formikHelpers: FormikHelpers<IRoomIdForm>;
+}
+
 const noRoomToastId = 'noRoomToast';
 
 const Dashboard = (): JSX.Element => {
+  const { t } = useTranslation();
   const [redirectToGame, setRedirectToGame] = useState<boolean>(false);
   const dispatch = useAppThunkDispatch();
-  const roomId = useSelector(roomSelectors.activeRoomId);
-  const { id, username, anonymous } = useSelector(userSelectors.user);
+  const roomId = useSelector(roomSelectors.id);
+  const kickedFrom = useSelector(userSelectors.kickedFrom);
 
   useEffect(() => {
     if (roomId) {
@@ -34,32 +42,46 @@ const Dashboard = (): JSX.Element => {
     }
   }, []);
 
-  const submitRoomIdHandler = (
-    { roomId }: IRoomIdForm,
-    { setFieldError }: FormikHelpers<IRoomIdForm>,
-  ) => {
-    dispatch(roomActions.joinRoom({ roomId, userData: { id, username, anonymous } }))
-      .then(({ type }: Action) => {
+  const joinRoomHandler = ({ roomId, formikHelpers: { setFieldError } }: IJoinRoomHandler) => {
+    dispatch(roomActions.joinRoom({ roomId }))
+      .then(({ type, error }: AnyAction) => {
         if (type.includes('rejected')) {
-          setFieldError('roomId', `Room of id ${roomId} doesn't exist`);
-          toast.error(`Room of id ${roomId} doesn't exist`, {
+          setFieldError('roomId', t(`errors.room.connect.${error.message}`));
+          toast.error(t(`errors.room.connect.${error.message}`), {
             position: 'top-right',
             toastId: `${noRoomToastId}-${roomId}`,
-
           });
+          if (error.message === 'blacklisted') {
+            dispatch(userActions.updateKickedFrom(roomId));
+          }
         } else {
           setRedirectToGame(true);
         }
-      }).catch((error: Action) => {
-        setFieldError('roomId', `Room of id ${roomId} doesn't exist`);
+      }).catch(() => {
+        setFieldError('roomId', t('errors.room.connect.undefined'));
       });
+  };
+
+  const submitRoomIdHandler = (
+    { roomId }: IRoomIdForm,
+    formikHelpers: FormikHelpers<IRoomIdForm>,
+  ) => {
+    if (kickedFrom[roomId]) {
+      toast.error(t('errors.room.connect.blacklisted'), {
+        position: 'top-right',
+        toastId: `${noRoomToastId}-${roomId}`,
+      });
+      formikHelpers.setFieldError('roomId', t('errors.room.connect.blacklisted'));
+    } else {
+      joinRoomHandler({ roomId, formikHelpers });
+    }
   };
 
   const validateRoomIdHandler = ({ roomId }: IRoomIdForm) => {
     const errors: Partial<IRoomIdForm> = {};
 
     if (!roomId) {
-      errors.roomId = 'Id cannot be empty';
+      errors.roomId = t('errors.room.connect.idEmpty');
     }
 
     return errors;
@@ -70,9 +92,9 @@ const Dashboard = (): JSX.Element => {
       {roomId && redirectToGame ? <Redirect push to={`/game/${roomId}`} /> : null}
       <Styled.Controls>
         <Link to="/create">
-          <Button>Create your room</Button>
+          <Button>{t('dashboard.createRoomButton')}</Button>
         </Link>
-        <Styled.Separator>or</Styled.Separator>
+        <Styled.Separator>{t('common.or')}</Styled.Separator>
         <Formik
           initialValues={{ roomId: '' }}
           onSubmit={submitRoomIdHandler}
@@ -81,14 +103,22 @@ const Dashboard = (): JSX.Element => {
           {({ values: { roomId }, handleSubmit }) => (
             <>
               <Styled.RoomIdInputContainer onSubmit={handleSubmit}>
-                <TextInput value={roomId} name="roomId" id="roomId" placeholder="Type room id here" alignCenter showBorder />
-                <Button type="submit">Join</Button>
+                <TextInput
+                  value={roomId}
+                  name="roomId"
+                  id="roomId"
+                  placeholder={t('dashboard.joinInputPlaceholder')}
+                  alignCenter
+                  showBorder
+                />
+                <Button type="submit">{t('dashboard.joinButton')}</Button>
               </Styled.RoomIdInputContainer>
               <ErrorMessage name="roomId" />
             </>
           )}
         </Formik>
       </Styled.Controls>
+      <PublicRoomList />
     </Styled.Dashboard>
   );
 };

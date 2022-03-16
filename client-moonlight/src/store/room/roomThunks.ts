@@ -1,13 +1,14 @@
+import { gameActions, IGameState } from 'store/game/gameSlice';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
   ICreateRoom,
-  IInitialRoomDetails,
   IJoinRoom,
   IJoinRoomResponse,
   IRoomCreateResponse,
   ISetInitialRoomDetailsProps,
   IChangeState,
   IChangeStateResponse,
+  IRoomState,
 } from 'store/room/roomInterfaces';
 import { roomActions } from 'store/room/roomSlice';
 import { socketActions, socketTopics } from 'store/socket/socket';
@@ -26,6 +27,7 @@ const createRoom = createAsyncThunk(
   async (
     createParams: ICreateRoom,
     { dispatch },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> => new Promise((resolve, reject) => {
     dispatch(socketActions.emit(
       socketTopics.room.createRoom,
@@ -33,6 +35,7 @@ const createRoom = createAsyncThunk(
       ({ roomDetails, userDetails: { state: userState }, error }: IRoomCreateResponse) => {
         if (!error) {
           dispatch(roomActions.setInitialRoomDetails({ roomDetails, userState }));
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           resolve({ roomDetails, userState } as any);
         }
         reject(new Error(error));
@@ -45,11 +48,10 @@ const joinRoom = createAsyncThunk(
   'room/joinRoom',
   async ({
     roomId,
-    userData,
   }: IJoinRoom, { dispatch }): Promise<IJoinRoomResponse> => new Promise((resolve, reject) => {
     dispatch(socketActions.emit(
       socketTopics.room.joinRoom,
-      { roomId, userData },
+      { roomId },
       ({ roomDetails, error }: IJoinRoomResponse) => {
         if (roomDetails) {
           dispatch(roomActions.setInitialRoomDetails({ roomDetails, userState: 0 }));
@@ -65,8 +67,9 @@ const joinRoom = createAsyncThunk(
 
 const kickPlayer = createAsyncThunk(
   'room/kickPlayer',
-  async (_, { dispatch }) => {
+  async ({ roomId }: { roomId: string }, { dispatch }) => {
     dispatch(userActions.setState(0));
+    dispatch(userActions.updateKickedFrom(roomId));
   },
 );
 
@@ -92,6 +95,38 @@ const changeUserState = createAsyncThunk(
     },
   ),
 );
+
+interface IReconnect {
+  playerId: string;
+  roomId: string;
+}
+
+interface IReconnectCallback {
+  roomDetails: Partial<IRoomState>;
+  gameDetails: Partial<IGameState>;
+}
+
+const reconnect = createAsyncThunk(
+  'room/reconnect',
+  async ({ playerId, roomId }: IReconnect, { dispatch }): Promise<string> => new Promise(
+    (resolve, reject) => {
+      dispatch(socketActions.emit(
+        socketTopics.room.reconnect,
+        { playerId, roomId },
+        ({ roomDetails, gameDetails }: IReconnectCallback) => {
+          if (roomDetails && gameDetails) {
+            dispatch(gameActions.updateGame(gameDetails));
+            dispatch(roomActions.updateRoom(roomDetails));
+            resolve(roomId);
+          } else {
+            reject(new Error('noroom'));
+          }
+        },
+      ));
+    },
+  ),
+);
+
 export const roomThunks = {
-  setInitialRoomDetails, createRoom, joinRoom, kickPlayer, changeUserState,
+  setInitialRoomDetails, createRoom, joinRoom, kickPlayer, changeUserState, reconnect,
 };

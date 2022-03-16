@@ -1,4 +1,5 @@
 import { IRoomMode } from 'components/RoomMode/IRoomMode';
+import { useTranslation } from 'react-i18next';
 import {
   BiGlobe,
   BiJoystickAlt,
@@ -9,6 +10,7 @@ import * as Styled from './RoomMode.styled';
 const RoomMode = ({
   mode = 'private',
 }: IRoomMode): JSX.Element => {
+  const { t } = useTranslation();
   const renderIcon = () => {
     if (mode === 'private') {
       return <BiKey />;
@@ -24,7 +26,7 @@ const RoomMode = ({
         {renderIcon()}
       </Styled.IconContainer>
       <Styled.Mode>
-        {mode}
+        {t(`gameMode.${mode}`)}
       </Styled.Mode>
     </Styled.RoomMode>
   );

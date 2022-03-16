@@ -1,28 +1,21 @@
-import { activeRoomId } from 'store/room/roomSelectors';
-// @ts-ignore
 import randomColor from 'random-color';
-import chalk from 'chalk';
-import logger from '../../loaders/logger';
-import Room from '../../classes/Room';
-import { User } from '../../schemas/User';
+import SocketIO from 'socket.io';
+import { roomState } from '../../classes/Room';
 import getRoomObjectForUpdate from '../../utils/getRoomObjectForUpdate';
-import getRoomNamespaceFromList from '../../utils/getRoomNamespaceFromList';
 import getRoom from '../../utils/getRoom';
-import { getGameOptions } from '../../utils/gameMapping';
-import getRoomUpdateState from '../../utils/getRoomUpdateState';
-import ICreateRoomParams from './interfaces/ICreateRoom';
-import IJoinRoomParams from './interfaces/IJoinRoom';
-import { ExtendedSocket } from './interfaces/IExtendedSocket';
-import { IExtendedSocketServer } from './interfaces/IExtendedSocketServer';
 import { loggers } from '../../loaders/loggers';
 import Deckit from '../../classes/Deckit';
+import IO from '../../classes/IO';
+import { IExtendedSocket } from '../socket';
+import { PlayerState } from '../../classes/Player';
+import updateListOfRooms from '../../utils/updateListOfRooms';
 // TODO: Move interfaces to other file
-interface Iparams {
-  id: string;
-  username?: string;
-  avatar?: string;
-  ranking?: number;
-}
+// interface Iparams {
+//   id: string;
+//   username?: string;
+//   avatar?: string;
+//   ranking?: number;
+// }
 
 // const gameShapedUser = getGameShapedUser(gameCode, userData)
 // userModel = {
@@ -42,11 +35,10 @@ interface Iparams {
 //   }
 // }
 
-const CREATE_ROOM = 'CREATE_ROOM';
-const JOIN_ROOM = 'JOIN_ROOM';
 export const WAITING_ROOM = 'WAITING_ROOM';
 
 export const roomTopics = {
+  GET_FULL_LIST_OF_ROOMS: 'MOONLIGHT-GET_FULL_LIST_OF_ROOMS',
   CREATE_ROOM: 'MOONLIGHT-CREATE_ROOM',
   JOIN_ROOM: 'MOONLIGHT-JOIN_ROOM',
   LEAVE_ROOM: 'MOONLIGHT-LEAVE_ROOM',
@@ -55,12 +47,28 @@ export const roomTopics = {
   KICK_PLAYER: 'MOONLIGHT-KICK_PLAYER',
   KICKED_PLAYER: 'MOONLIGHT-KICKED_PLAYER',
   UPDATE_USER_STATE: 'MOONLIGHT-CHANGE-USER-STATE',
+  UPDATE_NUMBER_OF_SEATS: 'MOONLIGHT-UPDATE_NUMBER_OF_SEATS',
+  PLAY_AGAIN: 'MOONLIGHT-PLAY_AGAIN',
+  KICK_DISCONNECTED_PLAYERS: 'MOOLIGHT-KICK_DISCONNECTED_PLAYERS',
+  RECONNECT: 'MOONLIGHT-RECONNECT',
+  DENY_RECONNECTING: 'MOOLIGHT-DENY_RECONNECTING',
 };
 
 // TODO: Change types
-export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketServer) {
+// eslint-disable-next-line func-names
+export const RoomEvents = function (socket: IExtendedSocket) {
   this.socket = socket;
-  this.io = io;
+
+  socket.on(roomTopics.GET_FULL_LIST_OF_ROOMS, (params: any, callback: Function) => {
+    const minimalInfoList = Object.values(IO.getInstance().io.gameRooms.public).map((room: any) => {
+      const { minimalInfo, state } = room;
+      if (state < roomState.started) {
+        return minimalInfo;
+      }
+      return undefined;
+    }).filter((room) => room);
+    callback(minimalInfoList);
+  });
 
   // 2.0 start
   interface MOONLIGHTICreateRoomParams {
@@ -69,7 +77,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       id: string;
       anonymous: boolean;
     }
-    mode: string;
+    mode: 'public' | 'private' | 'fast';
     playersMax: number;
     name: string;
     gameCode: string;
@@ -80,21 +88,19 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     roomTopics.CREATE_ROOM,
     async (params: MOONLIGHTICreateRoomParams, callback: Function) => {
       const {
-        maxScore, userData: { username, anonymous, id: userId }, ...rest
+        userData: { username, anonymous, id: userId }, ...roomOptions
       } = params;
-      const roomOptions = {
-        ...rest,
-        gameOptions: {
-          maxScore,
-        },
-      };
-      if (!socket.deckitUser.color) {
+      if (!socket?.deckitUser?.color) {
         socket.deckitUser.color = randomColor(0.3, 0.99).hexString();
       }
-      const room = new Deckit(roomOptions, socket.deckitUser.id, io);
+      const room = new Deckit(roomOptions, socket.deckitUser.id);
       const { id: roomId, mode } = room;
       loggers.event.received.verbose(roomTopics.CREATE_ROOM, params);
-      io.gameRooms[mode][roomId] = room;
+      IO.getInstance().addRoom({
+        room,
+        roomId,
+        mode,
+      });
 
       // leave waiting room to not receive info about newly created rooms
       socket.leave(WAITING_ROOM);
@@ -113,34 +119,29 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
       callback({
         roomDetails: room.basicInfo, userDetails,
       });
+
+      updateListOfRooms(room, 'add');
     },
   );
 
-  interface IUserData {
-    username: string;
-    id: string;
-    anonymous: boolean;
-  }
   interface MOONLIGHTIJoinRoomParams {
     roomId: string;
-    userData: IUserData;
   }
 
   socket.on(roomTopics.JOIN_ROOM, async ({
     roomId,
-    userData,
   }: MOONLIGHTIJoinRoomParams, callback: Function) => {
-    const room = getRoom(roomId, io.gameRooms);
+    const room = getRoom(roomId);
     if (!room) {
-      callback({ error: "Room doesn't exist" });
+      callback({ error: 'noroom' });
       return;
     }
     if (room.state > 1) {
-      callback({ error: 'Game has already started' });
+      callback({ error: 'started' });
       return;
     }
     if (room.players.length === room.playersMax) {
-      callback({ error: `Sorry, room ${room.name} is full` });
+      callback({ error: 'full' });
       return;
     }
 
@@ -149,41 +150,32 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     }
 
     try {
+      const { error } = await room.MOONLIGHTconnectPlayer(socket.deckitUser);
+      if (error) {
+        callback({ error: 'blacklisted' });
+        return;
+      }
+
       // leave waiting room to not receive info about newly created rooms
       socket.leave(WAITING_ROOM);
 
       socket.join(roomId);
       socket.deckitUser.activeRoomId = roomId;
 
-      const { players } = await room.MOONLIGHTconnectPlayer(socket.deckitUser);
-
-      // get list of rooms needed to be updated in waiting room
-      const updatedRoomObject = [
-        getRoomObjectForUpdate(
-          room,
-          getRoomUpdateState({
-            players: players.length,
-            playersMax: room.playersMax,
-            state: room.state,
-          }),
-        ),
-      ];
-
       // if room is public, push update of the room info to Browse route
-      if (room.mode === 'public') {
-        io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
-      }
+      updateListOfRooms(room);
+
       loggers.event.received.verbose(roomTopics.JOIN_ROOM, room.basicInfo);
 
       // send basicView of room to sender
       callback({ roomDetails: room.basicInfo });
 
+      const publicPlayers = await room.getPublicPlayers();
+
       // send updated room to all except sender
-      socket.to(roomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
+      socket.to(roomId).emit(roomTopics.UPDATE_ROOM, { players: publicPlayers });
     } catch (error) {
-      Error(
-        `Cannot connect player ${userData.username} of id: ${userData.id} to room ${roomId} with error: ${error}`,
-      );
+      callback({ error: 'undefined' });
     }
   });
 
@@ -194,7 +186,7 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
 
   socket.on(roomTopics.KICK_PLAYER,
     async ({ roomId, playerId }: MOONLIGHTIKickPlayerParams, callback: Function) => {
-      const room = getRoom(roomId, io.gameRooms);
+      const room = getRoom(roomId);
       if (!room) {
         callback({ error: "Room doesn't exist" });
         return;
@@ -211,36 +203,33 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
         return;
       }
 
-      const { players, disconnectedPlayer } = await room.MOONLIGHTdisconnectPlayer(playerId);
+      const { disconnectedPlayer } = await room.MOONLIGHTkickPlayer(playerId);
 
-      // get list of rooms needed to be updated in waiting room
-      const updatedRoomObject = [
-        getRoomObjectForUpdate(
-          room,
-          getRoomUpdateState({
-            players: players.length,
-            playersMax: room.playersMax,
-            state: room.state,
-          }),
-        ),
-      ];
+      if (!disconnectedPlayer) {
+        callback({ error: 'Something went wrong' });
+        return;
+      }
 
       // send info to kicked player
-      io.to(disconnectedPlayer.socketId).emit(roomTopics.KICKED_PLAYER, { roomId });
+      IO.getInstance().io.to(disconnectedPlayer.socketId)
+        .emit(roomTopics.KICKED_PLAYER, { roomId });
 
       // socket leave from this room
-      const disconnectedSocket: any = io.sockets.connected[disconnectedPlayer.socketId];
+      const disconnectedSocket: SocketIO.Socket = IO.getInstance().io
+        .sockets.connected[disconnectedPlayer.socketId];
       disconnectedSocket.leave(roomId);
+      // @ts-ignore
       disconnectedSocket.deckitUser.activeRoomId = undefined;
 
       // if room is public, push update of the room info to Browse route
-      if (room.mode === 'public') {
-        io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
-      }
+      updateListOfRooms(room);
+
       loggers.info.info(`Player ${disconnectedPlayer.username} with socketId of ${disconnectedPlayer.socketId} kicked from room ${roomId}`);
 
+      const publicPlayers = await room.getPublicPlayers();
+
       // send updated room to all except sender
-      io.in(roomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
+      IO.getInstance().io.in(roomId).emit(roomTopics.UPDATE_ROOM, { players: publicPlayers });
       callback({});
     });
 
@@ -256,28 +245,116 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     socket.leave(activeRoomId);
     socket.deckitUser.activeRoomId = undefined;
 
-    const room: Room = getRoom(activeRoomId, io.gameRooms);
-    const {
-      players,
-    } = await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
-
-    // get list of rooms needed to be updated in waiting room
-    const updatedRoomObject = [
-      getRoomObjectForUpdate(
-        room,
-        getRoomUpdateState({
-          players: players.length,
-          playersMax: room.playersMax,
-          state: room.state,
-        }),
-      ),
-    ];
-    // if room is public, push update of the room info to Browse route
-    if (room.mode === 'public') {
-      io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
+    const room = getRoom(activeRoomId);
+    if (!room) {
+      return;
     }
+
+    await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
+
+    // if room is public, push update of the room info to Browse route
+    updateListOfRooms(room);
+
+    const publicPlayers = await room.getPublicPlayers();
+
     // send updated room to all including sender
-    io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
+    IO.getInstance().io.in(activeRoomId).emit(
+      roomTopics.UPDATE_ROOM,
+      {
+        players: publicPlayers,
+        state: room.state,
+      },
+    );
+  });
+
+  socket.on('MOONLIGHT-FORCE_RESTART', () => {
+    const { deckitUser: { activeRoomId } = {} } = socket;
+    if (!activeRoomId) {
+      return null;
+    }
+    const room = getRoom(activeRoomId);
+    if (!room || room.state !== roomState.paused) {
+      return null;
+    }
+
+    const disconnectedPlayers = room.players.filter((player) => player.state === PlayerState.left);
+
+    disconnectedPlayers.forEach(({ id }) => {
+      room.MOONLIGHTdisconnectPlayer(id, true);
+    });
+
+    room.updateRoomState(roomState.started);
+    room.emitUpdateRoom({
+      players: room.players,
+      state: room.state,
+    });
+    return null;
+  });
+
+  interface IReconnect {
+    playerId: string;
+    roomId: string;
+  }
+
+  socket.on(roomTopics.RECONNECT,
+    ({
+      playerId,
+      roomId,
+    }: IReconnect, callback: Function) => {
+      const room = getRoom(roomId);
+      if (!room || room.state === roomState.ended) {
+        callback({ error: 'noroom' });
+        return null;
+      }
+      const player = room.getPlayer(playerId);
+      if (!player) {
+        callback({ error: 'noroom' });
+        return null;
+      }
+
+      room.MOONLIGHTupdatePlayer({ playerId, playerData: { state: PlayerState.playing } });
+
+      if (room.arePlayersReady()) {
+        room.updateRoomState(roomState.started);
+      }
+
+      if (socket.deckitUser) {
+        socket.deckitUser.activeRoomId = roomId;
+      }
+
+      callback({
+        roomDetails: room.basicInfo,
+        gameDetails: {
+          ...room.info,
+          myCards: player.cards,
+          pickedCardFromMyDeck: room.getCardIdFromDeckByPlayerId(playerId),
+          pickedCardFromMyBoard: room.getCardIdFromBoardByPlayerId(playerId),
+        },
+      });
+
+      room.emitUpdateRoom({
+        state: room.state,
+        players: room.players,
+      });
+      return null;
+    });
+
+  socket.on(roomTopics.DENY_RECONNECTING, async ({ roomId }: { roomId: string }) => {
+    const room = getRoom(roomId);
+    if (!room) {
+      return;
+    }
+
+    if (!socket.deckitUser?.id) {
+      return;
+    }
+
+    room.MOONLIGHTdisconnectPlayer(socket.deckitUser?.id, true);
+    room.updateRoomState(roomState.started);
+    room.emitUpdateRoom({
+      players: room.players,
+      state: room.state,
+    });
   });
 
   socket.on(roomTopics.LEAVE_ROOM, async () => {
@@ -294,29 +371,31 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
     socket.leave(activeRoomId);
     socket.deckitUser.activeRoomId = undefined;
 
-    const room: Room = getRoom(activeRoomId, io.gameRooms);
-    const {
-      players,
-    } = await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
+    const room = getRoom(activeRoomId);
+    if (!room) {
+      return;
+    }
+
+    await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
+
+    if (room && room.players.length === 0) {
+      IO.getInstance().removeRoom({ mode: room.mode, roomId: room.id });
+      // TODO:
+      // if players === 1, get players and force them leave
+    }
+
     socket.deckitUser.activeRoomId = undefined;
 
-    // get list of rooms needed to be updated in waiting room
-    const updatedRoomObject = [
-      getRoomObjectForUpdate(
-        room,
-        getRoomUpdateState({
-          players: players.length,
-          playersMax: room.playersMax,
-          state: room.state,
-        }),
-      ),
-    ];
     // if room is public, push update of the room info to Browse route
-    if (room.mode === 'public') {
-      io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
-    }
+    updateListOfRooms(room);
+
+    const publicPlayers = await room.getPublicPlayers();
+
     // send updated room to all except sender
-    io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, { players: room.players });
+    IO.getInstance().io.in(activeRoomId).emit(roomTopics.UPDATE_ROOM, {
+      state: room.state,
+      players: publicPlayers,
+    });
   });
 
   interface IChangeUserState {
@@ -337,328 +416,90 @@ export const RoomEvents = function (socket: ExtendedSocket, io: IExtendedSocketS
         return;
       }
 
-      const room: Room = getRoom(activeRoomId, io.gameRooms);
+      const room = getRoom(activeRoomId);
       if (!room) {
         callback({ error: 'Room does not exist' });
         return;
       }
-      const updatedPlayers = await room.MOONLIGHTupdatePlayer({
+      await room.MOONLIGHTupdatePlayer({
         playerId, playerData: { state },
       });
       const updatedState = room.updateRoomState();
-
-      callback({ players: updatedPlayers, updatedState });
+      const publicPlayers = await room.getPublicPlayers();
+      callback({ players: publicPlayers, updatedState });
 
       // send updated room to all including sender
       socket.to(room.id).emit(roomTopics.UPDATE_ROOM,
-        { players: updatedPlayers, state: updatedState });
+        { players: publicPlayers, state: updatedState });
     },
   );
 
-  // 2.0 end
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-
-  socket.on(CREATE_ROOM, (params: ICreateRoomParams, callback: Function) => {
-    const { roomOptions, id } = params;
-    const room = new Room(roomOptions, id);
-    const { id: roomId, mode } = room;
-    logger.info(`Room ${room.id} created with options`, room);
-    io.gameRooms[mode][roomId] = room;
-    callback({ created: true, roomId });
-  });
-
-  socket.on(JOIN_ROOM, (params: IJoinRoomParams, callback: Function) => {
-    const { roomId, userData }: any = params;
-    const room = getRoom(roomId, io.gameRooms);
-
-    if (!room) {
-      callback({ error: "Room doesn't exist" });
-      return;
-    }
-    if (room.state >= 2) {
-      callback({ error: 'Game has already started' });
-      return;
-    }
-    if (room.players.length === room.playersMax) {
-      callback({ error: `Sorry, room ${room.name} is full` });
-      return;
-    }
-    // @ts-ignore
-    // const gameOptions = getGameOptions(room.gameCode).playerModel;
-    const panels = {
-      score: { listener: 'scoreUpdate' },
-      chat: { listener: 'incomingChatMessage' },
-      log: { listener: 'incomingLog' },
-      settings: { listener: 'roomSettings' },
-    };
-
-    socket.pswOptions.color = randomColor(0.3, 0.99).hexString();
-    socket.pswOptions = {
-      ...room.gameOptions.player,
-      ...socket.pswOptions,
-      ...userData,
-    };
-    socket.pswOptions.rooms = socket.pswOptions.rooms.filter(
-      (id: string) => id !== WAITING_ROOM,
-    );
-    socket.leave(WAITING_ROOM);
-    socket.pswOptions.rooms.push(roomId);
-    socket.join(roomId);
-    socket.emit('UPDATE_PLAYER', { rooms: socket.pswOptions.rooms });
-    // @ts-ignore
-    room
-      .connectPlayer(socket.pswOptions)
-      .then((players: any) => {
-        const updatedRoomObject = [
-          getRoomObjectForUpdate(
-            room,
-            getRoomUpdateState({ players: players.length, playersMax: room.playersMax, state: room.state }),
-          ),
-        ];
-        // @ts-ignore
-        callback(room.roomOptions);
-        socket
-          .to(roomId)
-          // @ts-ignore
-          .emit('ROOM_UPDATED', { players: room.roomOptions.players });
-        if (room.mode === 'public') {
-          io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
-        }
-      })
-      .catch((error: any) => {
-        callback({
-          error: `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`,
-        });
-        Error(
-          `Cannot connect player ${userData.nickname} of id: ${socket.id} to room ${roomId} with error: ${error}`,
-        );
-      });
-  });
-
-  socket.on('disconnect', () => {
-    socket.pswOptions.rooms.forEach((roomId: string) => {
-      const room = getRoom(roomId, io.gameRooms);
-      if (!room) {
-        console.log(chalk.bgRedBright(`Cannot fetch room of id ${roomId}`));
-        return;
-      }
-      const { players } = room;
-      room.disconnectPlayer(socket.pswOptions.id);
-      if (!players || !players.length) {
-        const namespace = getRoomNamespaceFromList(roomId, io.gameRooms);
-        // @ts-ignore
-        delete io.gameRooms[namespace][roomId];
-      }
-      if (room.state < 2 && room.mode === 'public') {
-        const updatedRoomObject = [
-          getRoomObjectForUpdate(
-            room,
-            getRoomUpdateState({
-              players: players.length, playersMax: room.playersMax, state: room.state, force: players.length === 0 ? 'remove' : '',
-            }),
-          ),
-        ];
-        io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
-      }
-
-      if (room.state >= 2) {
-        room.gameOptions.updateCards(io);
-        room.gameOptions.prepareRoomForNextRound(room.players);
-      }
-    });
-  });
-
-  socket.on('LEAVE_ROOM', ({ roomId }: { roomId: string }) => {
-    socket.pswOptions.rooms = socket.pswOptions.rooms.filter(
-      (id: String) => id !== roomId,
-    );
-    const room = getRoom(roomId, io.gameRooms);
-    if (!room) {
-      console.log(chalk.bgRedBright(`Cannot fetch room of id ${roomId}`));
-      return;
-    }
-    room.disconnectPlayer(socket.pswOptions.id);
-    const { players } = room;
-    if (!players || !players.length) {
-      const namespace = getRoomNamespaceFromList(roomId, io.gameRooms);
-      // @ts-ignore
-      delete io.gameRooms[namespace][roomId];
-    }
-    socket.pswOptions.rooms.push(WAITING_ROOM);
-    if (room.state < 2 && room.mode === 'public') {
-      const updatedRoomObject = [
-        getRoomObjectForUpdate(
-          room,
-          getRoomUpdateState({
-            players: players.length, playersMax: room.playersMax, state: room.state, force: players.length === 0 ? 'remove' : '',
-          }),
-        ),
-      ];
-      io.in(WAITING_ROOM).emit('updateListOfRooms', updatedRoomObject);
-    }
-
-    if (room.state >= 2) {
-      room.gameOptions.updateCards(io);
-      room.gameOptions.prepareRoomForNextRound(room.players);
-    }
-
-    if (room.owner === socket.pswOptions.id && room.players.length > 1) {
-      const newOwner = room.players[0];
-      // @ts-ignore
-      room.owner = newOwner.id;
-    }
-
-    if (room.admin === socket.pswOptions.id && room.players.length > 1) {
-      const newOwner = room.players[0];
-      // @ts-ignore
-      room.owner = newOwner.id;
-      // @ts-ignore
-      room.admin = newOwner.id;
-    }
-
-    io.in(roomId).emit('ROOM_UPDATED', {
-      players: room.players,
-      owner: room.owner,
-      admin: room.admin,
-    });
-
-    const {
-      hinter,
-      hint,
-      remainingCards,
-      playersPickedCard,
-      playersChoosedCard,
-      round,
-      stage,
-    } = room.gameOptions;
-    io.in(roomId).emit('GAME_UPDATED', {
-      hinter,
-      hint,
-      playersPickedCard,
-      playersChoosedCard,
-      round,
-      stage,
-      remainingCards: remainingCards.length,
-    });
-    // @ts-ignore
-    // io.in(roomId).emit('GAME_UPDATED', {
-    //   hinter: room.gameOptions.hinter,
-    //   stage: room.gameOptions.stage,
-    // });
-
-    socket.emit('UPDATE_PLAYER', { rooms: socket.pswOptions.rooms });
-    socket.join(WAITING_ROOM);
-  });
-
-  socket.on('CHECK_FOR_ROOM', ({ id }: { id: string }, callback: Function) => {
-    const room = getRoom(id, io.gameRooms);
-    callback(!!room);
-  });
-
-  // deprecated
-  socket.on('GET_ROOM_INFO', (params: any, callback: Function) => {
-    const room = getRoom(params.id, io.gameRooms);
-    if (!room) {
-      callback({});
-      return;
-    }
-    const roomInfo = room.roomOptions;
-    callback(roomInfo);
-  });
-
-  socket.on('getScoreData', ({ activeRoomId }: { activeRoomId: string }, callback: Function) => {
-    const room = getRoom(activeRoomId, io.gameRooms);
-    callback((room && room.scoreboard) || {});
-  });
-
-  socket.on('UPDATE_PLAYER', ({ data, activeRoomId, playerId }: { data: Object, activeRoomId: string, playerId: string }) => {
-    const room = getRoom(activeRoomId, io.gameRooms);
-    // @ts-ignore
-    room.players = room.players.map((player: any) => {
-      if (player.id === playerId) {
-        return { ...player, ...data };
-      }
-      return { ...player };
-    });
-
-    // @ts-ignore
-    const arePlayersReady = room.players.some(({ state }) => state === 1);
-    // @ts-ignore
-    room.setState(arePlayersReady ? 1 : 0);
-    io.in(activeRoomId).emit('ROOM_UPDATED', {
-      // @ts-ignore
-      players: room.players,
-      // @ts-ignore
-      state: room.state,
-    });
-  });
-
-  socket.on('KICK_PLAYER', ({ userId, activeRoomId }: { userId: string, activeRoomId: string }) => {
-    const room = getRoom(activeRoomId, io.gameRooms);
-    if (!room) return null;
-    const player = room.players.find(({ id }: any) => id === userId);
-    room.players = room.players.filter(({ id }: any) => id !== userId);
-    io.in(activeRoomId).emit('ROOM_UPDATED', { players: room.players });
-    // @ts-ignore
-    io.to(player.socketId).emit('KICKED', { activeRoomId });
-    io.in(WAITING_ROOM).emit('updateListOfRooms', [
-      getRoomObjectForUpdate(room, 'update'),
-    ]);
-  });
-
-  socket.on('CHANGE_ROOM_MODE', ({ activeRoomId }: { activeRoomId: string }) => {
-    const room = getRoom(activeRoomId, io.gameRooms);
-    if (!room) {
+  socket.on(roomTopics.UPDATE_NUMBER_OF_SEATS, ({ action }: { action: 'add' | 'remove' }) => {
+    if (!socket.deckitUser?.activeRoomId) {
       return null;
     }
-    if (room.mode === 'public') {
-      room.mode = 'private';
-    } else {
-      room.mode = 'public';
+
+    if (!action) {
+      return null;
     }
-    io.in(activeRoomId).emit('ROOM_UPDATED', { mode: room.mode });
-    io.in(WAITING_ROOM).emit('updateListOfRooms', [
-      getRoomObjectForUpdate(
-        room,
-        room.mode === 'public' ? 'update' : 'remove',
-      ),
-    ]);
+
+    const room = getRoom(socket.deckitUser.activeRoomId);
+
+    if (!room) return null;
+
+    room.updateNumberOfSeats(action);
+
+    // if room is public, push update of the room info to Browse route
+    if (room.mode === 'public') {
+      IO.getInstance().io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, [
+        getRoomObjectForUpdate(room, 'update'),
+      ]);
+    }
+    // send updated room to all including sender
+    IO.getInstance().io.in(room.id).emit(roomTopics.UPDATE_ROOM, { playersMax: room.playersMax });
+
+    return null;
   });
 
-  socket.on('ADD_SEAT', ({ activeRoomId }: { activeRoomId: string }) => {
-    const room = getRoom(activeRoomId, io.gameRooms);
-    if (!room) return null;
-    room.playersMax += 1;
-    io.in(activeRoomId).emit('ROOM_UPDATED', { playersMax: room.playersMax });
-    io.in(WAITING_ROOM).emit('updateListOfRooms', [
-      getRoomObjectForUpdate(room, 'update'),
-    ]);
+  socket.on(roomTopics.PLAY_AGAIN, async ({ playerId }: { playerId: string }) => {
+    if (!socket.deckitUser?.activeRoomId) {
+      return;
+    }
+    const room = getRoom(socket.deckitUser.activeRoomId);
+    if (!room) {
+      return;
+    }
+    room.updatePlayAgain(playerId);
+    IO.getInstance().io.in(socket.deckitUser.activeRoomId)
+      .emit(
+        roomTopics.UPDATE_ROOM,
+        { playAgain: room.playAgain },
+      );
+
+    if (room.playAgain.length / room.players.length > 0.5) {
+      room.resetRoom();
+    }
   });
 
-  socket.on('REMOVE_SEAT', ({ activeRoomId }: { activeRoomId: string }) => {
-    const room = getRoom(activeRoomId, io.gameRooms);
-    if (!room) return null;
-    room.playersMax -= 1;
-    io.in(activeRoomId).emit('ROOM_UPDATED', { playersMax: room.playersMax });
-    io.in(WAITING_ROOM).emit('updateListOfRooms', [
-      getRoomObjectForUpdate(room, 'update'),
-    ]);
-  });
+  socket.on(
+    roomTopics.KICK_DISCONNECTED_PLAYERS,
+    async ({ roomId }: { roomId: string },
+      callback: Function) => {
+      const room = getRoom(roomId);
+      if (!room) {
+        callback('noroom');
+        return;
+      }
+      if (!socket.deckitUser?.id) {
+        callback('undefined');
+        return;
+      }
+      if (socket.deckitUser.id !== room.admin) {
+        callback('notAdmin');
+        return;
+      }
+
+      room.kickDisconnectedPlayers();
+    },
+  );
 };

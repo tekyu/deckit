@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
+  display: flex;
+  height: 100%;
 
-.deckit-toastify-container {
-  top: 70px;
-}
+  .deckit-toastify-container {
+    top: 70px;
+  }
 `;

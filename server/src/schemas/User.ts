@@ -2,10 +2,13 @@
 // const uniqueValidator = require("mongoose-unique-validator");
 // const bcrypt = require("bcrypt");
 // import mongoose from 'mongoose';
-import { Document, Schema, Model, model } from 'mongoose';
+import {
+  Document, Schema, Model, model,
+} from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcrypt';
 import IUser from '../interfaces/IUser';
+
 export interface IUserModel extends IUser, Document {
   validPassword(password: string): any;
 }
@@ -30,10 +33,12 @@ export const UserSchema: Schema = new Schema({
 
 UserSchema.plugin(uniqueValidator);
 
+// eslint-disable-next-line func-names
 UserSchema.methods.validPassword = function (password: string) {
   return bcrypt.compareSync(password, this.hash);
 };
 
+// eslint-disable-next-line func-names
 UserSchema.virtual('password').set(function (value: any) {
   this.hash = bcrypt.hashSync(value, 12);
 });

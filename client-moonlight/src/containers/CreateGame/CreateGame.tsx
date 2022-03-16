@@ -10,18 +10,19 @@ import {
 } from 'react-icons/bi';
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage';
 import Label from 'components/Label/Label';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { roomActions, roomSelectors } from 'store/room/roomSlice';
 import { Redirect } from 'react-router';
 import { userSelectors } from 'store/user/userSlice';
 import { IFormValues } from 'containers/CreateGame/ICreateGame';
 import { ICreateRoom } from 'store/room/roomInterfaces';
-import { useAppDispatch, useAppThunkDispatch } from 'store/store';
+import { useAppDispatch } from 'store/store';
+import { useTranslation } from 'react-i18next';
 import * as Styled from './CreateGame.styled';
 
 const CreateGame = (): JSX.Element => {
+  const { t } = useTranslation();
   const [redirectToGame, setRedirectToGame] = useState<boolean>(false);
-  console.log('CreateGame', redirectToGame);
   const dispatch = useAppDispatch();
   const roomId = useSelector(roomSelectors.id);
   const {
@@ -43,6 +44,7 @@ const CreateGame = (): JSX.Element => {
       maxScore,
       mode: isPrivate ? 'private' : 'public',
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch(roomActions.createRoom(createParams)).then(({ payload }: any) => {
       if (payload?.roomDetails) {
         setRedirectToGame(true);
@@ -53,7 +55,7 @@ const CreateGame = (): JSX.Element => {
   const validateGameFormHandler = (values: IFormValues) => {
     const errors: { name?: string } = {};
     if (!values.name) {
-      errors.name = 'Name of the room cannot be empty';
+      errors.name = t('errors.room.connect.nameEmpty');
     }
     return errors;
   };
@@ -85,15 +87,15 @@ const CreateGame = (): JSX.Element => {
           }) => (
             <Styled.Form onSubmit={handleSubmit}>
               <Styled.GoBack to="/"><BiArrowBack /></Styled.GoBack>
-              <Styled.Header>Create new game</Styled.Header>
+              <Styled.Header>{t('createGame.header')}</Styled.Header>
               <Styled.Row>
                 <Styled.LabelContainer>
-                  <Label>Room name</Label>
+                  <Label>{t('createGame.roomNameHeader')}</Label>
                   <Styled.GenerateRandomName
                     onClick={() => setFieldValue('name', sillyname())}
                     version="text"
                   >
-                    Generate name
+                    {t('createGame.generateName')}
                   </Styled.GenerateRandomName>
                 </Styled.LabelContainer>
                 <TextInput value={name} showBorder name="name" id="name" />
@@ -102,7 +104,7 @@ const CreateGame = (): JSX.Element => {
               <Styled.Row>
                 <SliderWithTooltip
                   name="playersMax"
-                  label="Maximum players in room"
+                  label={t('createGame.maxPlayersHeader')}
                   sliderProps={{
                     min: 2,
                     max: 10,
@@ -114,9 +116,9 @@ const CreateGame = (): JSX.Element => {
               <Styled.Row>
                 <SliderWithTooltip
                   name="maxScore"
-                  label="Maximum points in game"
+                  label={t('createGame.maxPoints')}
                   sliderProps={{
-                    min: 10,
+                    min: 2,
                     max: 120,
                     defaultValue: maxScore,
                     step: 5,
@@ -125,13 +127,13 @@ const CreateGame = (): JSX.Element => {
               </Styled.Row>
               <Styled.Row>
                 <Switch
-                  label="Private room"
+                  label={t('createGame.privateRoom')}
                   name="isPrivate"
                   value={isPrivate}
                 />
               </Styled.Row>
               <Styled.ButtonContainer>
-                <Styled.SubmitButton type="submit">Create</Styled.SubmitButton>
+                <Styled.SubmitButton type="submit">{t('createGame.createButton')}</Styled.SubmitButton>
               </Styled.ButtonContainer>
             </Styled.Form>
           )}

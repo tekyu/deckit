@@ -9,6 +9,8 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { appSelectors } from 'store/app/appSlice';
 import ThemeChanger from 'components/ThemeChanger/ThemeChanger';
+import LanguageSwitch from 'components/LanguageSwitch/LanguageSwitch';
+import { useTranslation } from 'react-i18next';
 import * as Styled from './Menu.styled';
 
 const getStylesForHamburger = (theme: ITheme) => ({
@@ -59,6 +61,7 @@ const getStylesForHamburger = (theme: ITheme) => ({
 });
 
 const Menu = (): JSX.Element => {
+  const { t } = useTranslation();
   const theme = useSelector(appSelectors.theme);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const handleStateChange = ({ isOpen }: { isOpen: boolean }) => {
@@ -88,14 +91,15 @@ const Menu = (): JSX.Element => {
               Change theme
               <ThemeChanger />
             </Styled.ThemeChangerContainer>
+            <LanguageSwitch />
 
           </Styled.Nav>
         </ReactBurgerMenu>
       </Styled.BurgerMenuContainer>
       <Styled.HeaderMenu>
-        <NavItem comingSoon>Fast Game</NavItem>
-        <NavItem exact to="/">Browse</NavItem>
-        <NavItem to="/create">Create Game</NavItem>
+        <NavItem comingSoon>{t('menu.fastGame')}</NavItem>
+        <NavItem exact to="/">{t('menu.browse')}</NavItem>
+        <NavItem to="/create">{t('menu.createGame')}</NavItem>
 
       </Styled.HeaderMenu>
     </Styled.Menu>

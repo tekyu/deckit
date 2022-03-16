@@ -7,6 +7,7 @@ const ErrorMessage = ({
   ...rest
 }: IErrorMessage): JSX.Element => (
   <FormikErrorMessage name={name}>
+    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
     {(msg) => <Styled.ErrorMessage {...rest}>{msg}</Styled.ErrorMessage>}
   </FormikErrorMessage>
 );

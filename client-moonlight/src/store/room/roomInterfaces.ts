@@ -1,5 +1,8 @@
 export type modeType = 'public' | 'private' | 'fast' | '';
 
+export interface IScoreboard {
+  [key: string]: number;
+}
 export interface IPlayer {
   color: string;
   username: string;
@@ -20,6 +23,10 @@ export interface IRoomState {
   admin: string;
   players: IPlayer[];
   state: number;
+  playerLimit: number;
+  scoreboard: IScoreboard;
+  winners: string[];
+  playAgain: string[];
 }
 
 export interface IInitialRoomUpdate {
@@ -49,6 +56,7 @@ export interface IInitialRoomDetails {
   admin: string;
   players: IPlayer[];
   state: number;
+  playerLimit: number;
 }
 
 export interface IInitialUserDetails {
@@ -81,7 +89,6 @@ export interface ICreateRoom {
 
 export interface IJoinRoom {
   roomId: string;
-  userData: IUserData;
 }
 
 export interface IJoinRoomResponse {

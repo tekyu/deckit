@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { mediaQuery } from 'theme/mediaQueries';
 
 export const PlayerCounter = styled.div`
   display: flex;
@@ -10,9 +9,7 @@ export const PlayerCounter = styled.div`
   font-size: 14px;
   min-width: 40px;
   font-size: 26px;
-  ${mediaQuery.greaterThan('waitingScreen')`
-    order: 2;
-  `};
+  margin-top: 20px;
 `;
 
 export const CounterContainer = styled.div`

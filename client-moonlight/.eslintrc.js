@@ -29,6 +29,7 @@ module.exports = {
   ],
   rules: {
     'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
     'react/jsx-props-no-spreading': 'warn',
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': ['error'],
@@ -46,7 +47,7 @@ module.exports = {
     'import/named': 'warn',
     'import/prefer-default-export': 'off',
     'no-shadow': 'off',
-    '@typescript-eslint/no-shadow': ['warn'],
+    '@typescript-eslint/no-shadow': ['off'],
     // 'react-hooks/rules-of-hooks': 'error',
     // 'react-hooks/exhaustive-deps': 'warn',
     'react/prop-types': 'off',

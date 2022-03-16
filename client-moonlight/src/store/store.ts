@@ -19,24 +19,32 @@ import { roomReducer } from 'store/room/roomSlice';
 import { appReducer } from 'store/app/appSlice';
 import { enhancer as withReduxEnhancer } from 'addon-redux';
 import { useDispatch } from 'react-redux';
+import { gameReducer } from 'store/game/gameSlice';
 import { socketTypes } from './socket/socket';
 
 const userPersistConfig = {
   key: 'user',
   storage,
-  blacklist: ['initialized'],
+  blacklist: ['initialized', 'kickedFrom'],
 };
 
 const appPersistConfig = {
   key: 'app',
   storage,
-  whitelist: ['activeTheme', 'theme'],
+  whitelist: ['activeTheme', 'theme', 'language'],
+};
+
+const roomPersistConfig = {
+  key: 'room',
+  storage,
+  whitelist: ['activeRoomId'],
 };
 
 const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userReducer),
-  room: roomReducer,
+  room: persistReducer(roomPersistConfig, roomReducer),
   app: persistReducer(appPersistConfig, appReducer),
+  game: gameReducer,
 });
 
 export const makeStore = (): EnhancedStore => configureStore({
@@ -56,7 +64,6 @@ export const makeStore = (): EnhancedStore => configureStore({
         socketTypes.removeListener,
       ],
     },
-    //  }).concat(socketMiddleware()),
   }).prepend(socketMiddleware() as Middleware<
     (action: Action<'specialAction'>) => number,
     RootState
@@ -72,9 +79,10 @@ export type RootState = ReturnType<typeof rootReducer>
 
 export type AppDispatch = typeof store.dispatch
 
-// Export a hook that can be reused to resolve types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useAppDispatch = (): any => useDispatch<AppDispatch>();
 
 export type ThunkAppDispatch = ThunkDispatch<RootState, void, Action>;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useAppThunkDispatch = (): any => useDispatch<ThunkAppDispatch>();

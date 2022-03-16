@@ -1,24 +1,14 @@
-import chalk from 'chalk';
+import IO from '../classes/IO';
+import { loggers } from '../loaders/loggers';
 
-interface IRoomList {
-  id: string;
-}
-
-interface IGameRooms {
-  fast: Array<IRoomList>;
-  public: Array<IRoomList>;
-  private: Array<IRoomList>;
-}
-
-export default function(id: string, gameRooms: IGameRooms) {
-  if (gameRooms.public[id]) {
+export default function (id: string) {
+  if (IO.getInstance().io.gameRooms.public[id]) {
     return 'public';
-  } else if (gameRooms.private[id]) {
+  } if (IO.getInstance().io.gameRooms.private[id]) {
     return 'private';
-  } else if (gameRooms.fast[id]) {
+  } if (IO.getInstance().io.gameRooms.fast[id]) {
     return 'fast';
-  } else {
-    console.log(chalk.bgRedBright(`Room with id of ${id} doesn't exist`));
-    return '';
   }
+  loggers.warn.warn(`Room with id of ${id} doesn't exist`);
+  return '';
 }

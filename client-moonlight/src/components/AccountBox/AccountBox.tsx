@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import sillyname from 'sillyname';
@@ -10,6 +10,7 @@ import { Formik } from 'formik';
 import TextInput from 'components/TextInput/TextInput';
 import { CSSTransition } from 'react-transition-group';
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage';
+import { useTranslation } from 'react-i18next';
 import * as Styled from './AccountBox.styled';
 
 interface IChangeNameForm {
@@ -17,6 +18,7 @@ interface IChangeNameForm {
 }
 
 const AccountBox = (): JSX.Element => {
+  const { t } = useTranslation();
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [showDifferentNameInput, setShowDifferentNameInput] = useState<boolean>(false);
   const name = useSelector(userSelectors.name);
@@ -40,11 +42,11 @@ const AccountBox = (): JSX.Element => {
     const errors: Partial<IChangeNameForm> = {};
 
     if (!name) {
-      errors.name = 'Name cannot be empty';
+      errors.name = t('errors.user.name.empty');
     }
 
     if (name.length > 24) {
-      errors.name = 'Name cannot be longer than 25 characters';
+      errors.name = t('errors.user.name.long');
     }
 
     return errors;
@@ -58,7 +60,7 @@ const AccountBox = (): JSX.Element => {
     >
       <Styled.Display>
         <Styled.Info>
-          <Styled.Label>Your name is</Styled.Label>
+          <Styled.Label>{t('accountBox.nameHeader')}</Styled.Label>
           <Styled.Name data-testid="accountbox-name-display">{name}</Styled.Name>
         </Styled.Info>
         <BiChevronDown />
@@ -72,8 +74,7 @@ const AccountBox = (): JSX.Element => {
               onClick={generateNameHandler}
               data-testid="accountbox-random-button"
             >
-              Give me random name
-
+              {t('accountBox.randomName')}
             </Button>
           </Styled.Item>
           <Styled.Item
@@ -100,7 +101,7 @@ const AccountBox = (): JSX.Element => {
                           value={name}
                           name="name"
                           id="name"
-                          placeholder="Type new name here"
+                          placeholder={t('accountBox.chooseNamePlaceholder')}
                           data-testid="accountbox-name-input"
                         />
                         <Button
@@ -108,8 +109,7 @@ const AccountBox = (): JSX.Element => {
                           version="text"
                           data-testid="accountbox-name-submit"
                         >
-                          Change
-
+                          {t('accountBox.chooseNameButton')}
                         </Button>
                       </Styled.NameChangeContainer>
                       <ErrorMessage name="name" data-testid="accountbox-name-error" />
@@ -117,7 +117,7 @@ const AccountBox = (): JSX.Element => {
                   )}
                 </Formik>
               </>
-            ) : 'Choose your own name'}
+            ) : t('accountBox.chooseName')}
           </Styled.Item>
         </Styled.Dropdown>
       </CSSTransition>

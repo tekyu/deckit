@@ -16,12 +16,14 @@ module.exports = {
     '@typescript-eslint',
   ],
   rules: {
+    semi: 0,
     'import/extensions': 0,
     'import/prefer-default-export': 0,
     'linebreak-style': 0,
     'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['socket', 'io'] }],
     'no-shadow': 'off',
-
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'error',
   },
   settings: {
     'import/resolver': {

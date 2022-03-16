@@ -1,5 +1,6 @@
 import { IStartGameButton } from 'components/StartGameButton/IStartGameButton';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { socketActions, socketTopics } from 'store/socket/socket';
 import * as Styled from './StartGameButton.styled';
@@ -8,6 +9,7 @@ const StartGameButton = ({
   arePlayersReady,
   numberOfPlayers,
 }: IStartGameButton): JSX.Element => {
+  const { t } = useTranslation();
   const [started, setStarted] = useState<boolean>(false);
   const dispatch = useDispatch();
   const clickHandler = () => {
@@ -21,15 +23,15 @@ const StartGameButton = ({
 
   const getText = () => {
     if (numberOfPlayers <= 1) {
-      return 'Waiting for players';
+      return t('waiting.actionButton.waiting');
     }
     if (arePlayersReady) {
-      return 'Start Game';
+      return t('waiting.actionButton.start');
     }
     if (started) {
-      return 'Setting up the game';
+      return t('waiting.actionButton.settingUp');
     }
-    return 'Waiting for others';
+    return t('waiting.actionButton.waiting');
   };
 
   return (

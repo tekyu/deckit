@@ -4,6 +4,7 @@ export interface ITypography {
 }
 
 export interface IPalette {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
@@ -17,6 +18,9 @@ export interface ITheme {
   typography: ITypography;
   border: {
     radius: string;
+  },
+  constants: {
+    [key: string]: string;
   }
   palette: IPalette;
   currentTheme: themeType;
@@ -84,27 +88,27 @@ export const palette = {
       secondary: '#a7a7a8',
     },
     primary: {
-      light: '#7BADE5',
-      main: '#2f7ccf',
-      dark: '#084992',
+      light: '#ff6272',
+      main: '#fd4976',
+      dark: '#e44376',
       contrastText: '#e1e2e6',
     },
     secondary: {
-      light: '#F774A0',
-      main: '#f34d85',
-      dark: '#E8004E',
+      light: '#ac3c74',
+      main: '#953973',
+      dark: '#6a2952',
       contrastText: '#e1e2e6',
     },
     error: {
-      light: '#7BADE5',
-      main: '#2f7ccf',
-      dark: '#084992',
+      light: '#f3afaf',
+      main: '#E23636',
+      dark: '#9e2626',
       contrastText: '#e1e2e6',
     },
     warning: {
-      light: '#7BADE5',
-      main: '#2f7ccf',
-      dark: '#084992',
+      light: '#f8e3bf',
+      main: '#EDB95E',
+      dark: '#a68242',
       contrastText: '#e1e2e6',
     },
     info: {
@@ -114,9 +118,9 @@ export const palette = {
       contrastText: '#e1e2e6',
     },
     success: {
-      light: '#7BADE5',
-      main: '#2f7ccf',
-      dark: '#084992',
+      light: '#c8ecb7',
+      main: '#76CF4A',
+      dark: '#539134',
       contrastText: '#e1e2e6',
     },
     disabled: {
@@ -134,6 +138,9 @@ export const initialTheme = {
   },
   border: {
     radius: '6px',
+  },
+  constants: {
+    headerHeight: '70px',
   },
 };
 

@@ -3,11 +3,17 @@ import { TextInput } from 'components/TextInput/TextInput.styled';
 import styled from 'styled-components';
 import { rgba } from 'polished';
 import { mediaQuery } from 'theme/mediaQueries';
+import { PublicRoomList } from 'components/PublicRoomList/PublicRoomList.styled';
 
 export const Dashboard = styled.div`
   display: flex;
+  justify-content: flex-start;
   align-items: center;
-  justify-content: center;
+  flex-direction: column;
+
+  ${PublicRoomList} {
+    margin-top: 60px;
+  }
 `;
 
 export const Controls = styled.div`

@@ -1,11 +1,5 @@
-import { IPlayer } from '../classes/Player';
+import Player from '../classes/Player';
 import { IDeckitUser } from '../socket/events/interfaces/IDeckitUser';
-
-
-
-interface IConnectPlayerReturn {
-  players: 
-}
 
 export default interface IRoom {
   id: string;
@@ -21,11 +15,11 @@ export default interface IRoom {
   createdAt?: number;
   gameOptions: any;
   chat?: Array<Object>;
-  players: IPlayer[];
+  players: Player[];
   scoreboard: Object;
   roomOptions: Function;
   connectPlayer: Function;
   disconnectPlayer: Function;
   roomView: Function;
   MOONLIGHTconnectPlayer: (user: IDeckitUser) => void;
-};
+}

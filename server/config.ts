@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { config } from 'dotenv';
 // const dotenv = require('dotenv');
 // Set the NODE_ENV to 'development' by default

@@ -1,0 +1,149 @@
+{
+  "hello": "Cześć",
+  "common": {
+    "commingSoon": "Już wkrótce",
+    "or": "lub"
+  },
+  "languages": {
+    "en": "Angielski",
+    "us": "Angielski",
+    "gb": "Angielski",
+    "pl": "Polski",
+    "de": "Niemiecki"
+  },
+  "gameMode": {
+    "private": "Prywatny",
+    "public": "Publiczny",
+    "fast": "Szybki"
+  },
+  "menu": {
+    "fastGame": "Szybka gra",
+    "browse": "Szukaj",
+    "createGame": "Stwórz grę"
+  },
+  "dashboard": {
+    "createRoomButton": "Stwórz swój pokój",
+    "joinButton": "Dołącz",
+    "joinInputPlaceholder": "Wpisz tutaj id pokoju",
+    "listOfPublicRoomsHeader": "Lista publicznych pokoi",
+    "noPublicRoomsAvailableHeader": "W tym momencie nie ma dostępnych pokoi publicznych",
+    "noPublicRoomsAvailableSubHeader": "Ale możesz stworzyć swój!"
+  },
+  "accountBox": {
+    "nameHeader": "Twoje imię to",
+    "randomName": "Stwórz losowe imię",
+    "chooseName": "Wybierz własne imię",
+    "chooseNamePlaceholder": "Wpisz tutaj nowe imię",
+    "chooseNameButton": "Zmień"
+  },
+  "createGame": {
+    "header": "Stwórz nową grę",
+    "generateName": "Wygeneruj nazwę",
+    "roomNameHeader": "Nazwa pokoju",
+    "maxPlayersHeader": "Maksymalna liczba graczy",
+    "maxPoints": "Maksymalna liczba punktów",
+    "privateRoom": "Pokój prywatny",
+    "createButton": "Stwórz"
+  },
+  "waiting": {
+    "header": "Poczekalnia",
+    "roomTypePrivate": "Prywatny",
+    "roomTypePublic": "Publiczny",
+    "shareIdHeader": "Podziel się tym ID ze znajomymi",
+    "youAreTheHost": "Ty jesteś hostem",
+    "thisisTheHost": "To jest host",
+    "you": "To jesteś ty",
+    "addSeat": "Dodaj miejsce",
+    "actionButton": {
+      "waiting": "Poczekaj proszę na pozostałych graczy",
+      "changeToReady": "Zmień na gotowy",
+      "changeToWaiting": "Zmień na czekam",
+      "start": "Zacznij grę",
+      "settingUp": "Trwa tworzenie pokoju"
+    }
+  },
+  "reconnectScreen": {
+    "header": "Ostatnia gra się jeszcze nie skończyła. Pozostali gracze czekają w pokoju",
+    "wantToReconnect": "Czy chcesz do nich dołączyć?",
+    "button": {
+      "yes": "Dołącz",
+      "no": "Nie, Wyjdź"
+    }
+  },
+  "player": {
+    "you": "Ty",
+    "owner": "Właściciel",
+    "host": "Host",
+    "admin": "Admin"
+  },
+  "game": {
+    "board": {
+      "youAreStoryteller": "Teraz ty jesteś narratorem.",
+      "chooseYouCardHinter": "Wybierz swoją kartę",
+      "typeClueHinter": "Wpisz proszę podpowiedź pasującą do wybranej przez ciebie karty",
+      "waitForClue": "Poczekaj chwilę na podpowiedź",
+      "cardFromDeck": "Wybierz najbardziej pasującą kartę do podpowiedzi",
+      "cardFromBoard": "Find the storyteller's card!",
+      "ready": "Poczekaj chwilę, pozostali gracze wybierają swoje karty",
+      "pickThisCard": "Wybierz tę kartę",
+      "chosenClue": "Podpowiedź, którą wybrałeś jest"
+    },
+    "deck": {
+      "pickThisCard": "Wybierz tę kartę"
+    },
+    "choosingHint": {
+      "header": "Wpisz tutaj swoją podpowiedź",
+      "button": "Wyślij podpowiedź",
+      "notEmpty": "Podpowiedź nie może być pusta"
+    },
+    "owner": "Właściciel"
+  },
+  "scoreboard": {
+    "roundTooltip": "Runda",
+    "pointsToWinTooltip": "Punkty potrzebne do zwycięstwa",
+    "remainingCardsTooltip": "Pozostałe karty",
+    "choosingHintTooltip": "Wybiera podpowiedź i kartę",
+    "waitingTooltip": "Czeka na pozostałych graczy",
+    "disconnectedTooltip": "Gracz został rozłączony"
+  },
+  "pauseScreen": {
+    "header": "Gra wstrzymana",
+    "disconnectedPlayer": "Gracz, który opuścił pokój",
+    "disconnectedPlayers": "Lista graczy, którzy opuścili pokój",
+    "kickPlayer": "Wyrzuć gracza i wznów grę",
+    "kickPlayers": "Wyrzuć graczy i wznów grę",
+    "resume": "Wznów grę",
+    "leave": "Leave",
+    "unpauseOne": "Gra zostanie wznowiona automatycznie gdy gracz się połączy",
+    "unpauseMultiple": "Gra zostanie wznowiona automatycznie gdy wszyscy gracze się połączą"
+  },
+  "endScreen": {
+    "header": "Gratulacje, Zwycięzcą jest",
+    "pointsSingular": "punkt",
+    "pointsPlural": "punkty",
+    "position": "Poz",
+    "points": "Pkt",
+    "playAgainButton": "Chcesz zagrać ponownie?",
+    "leaveButton": "Wyjdź"
+  },
+  "errors": {
+    "user": {
+      "name": {
+        "empty": "Imię nie może być puste",
+        "long": "Imię nie może być dłuższe niż 25 znaków"
+      }
+    },
+    "room": {
+      "connect": {
+        "idEmpty": "ID pokoju nie może być puste",
+        "nameEmpty": "Nazwa pokoju nie może być pusta",
+        "blacklisted": "Przepraszamy, zostałeś już raz wyrzucony z tego pokoju",
+        "started": "Gra już się zaczęła",
+        "noroom": "Pokój nie istnieje",
+        "full": "Pokój jest już pełny",
+        "undefined": "Coś poszło nie tak, przepraszamy!",
+        "notAdmin": "Nie masz uprawnień administratora w tym pokoju"
+      }
+    }
+  }
+}

@@ -37,6 +37,7 @@ const SliderWithTooltip = ({
       {label && <Label>{label}</Label>}
       <Slider
         onChange={onChangeHandler}
+        // eslint-disable-next-line react/jsx-props-no-spreading
         {...sliderProps}
         trackStyle={{
           background: `${theme.palette[palette].main}`,

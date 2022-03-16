@@ -1,3 +1,4 @@
+import { LanguageSwitch } from 'components/LanguageSwitch/LanguageSwitch.styled';
 import { Logo } from 'components/Logo/Logo.styled';
 import { ThemeChanger } from 'components/ThemeChanger/ThemeChanger.styled';
 import { rgba } from 'polished';
@@ -8,8 +9,10 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   height: 70px;
+  top: 0;
   z-index: 100;
   background: ${({ theme }) => theme.palette.backgrounds.secondary};
+  position: sticky;
   ${({ theme }) => !theme.isDarkMode && `
     border-bottom: 1px solid ${rgba(theme.palette.primary.light, 0.1)};
   `}
@@ -30,6 +33,13 @@ export const Header = styled.div`
   & > ${ThemeChanger} {
     margin-left: auto;
     margin-right: 20px;
+    ${mediaQuery.lessThan('menu')`
+      display: none;
+    `};  
+  }
+
+  
+  & > ${LanguageSwitch} {
     ${mediaQuery.lessThan('menu')`
       display: none;
     `};  

@@ -2,14 +2,17 @@ import { createSlice } from '@reduxjs/toolkit';
 import sillyname from 'sillyname';
 import { RootState } from 'store/store';
 
+interface IKickedFrom {
+  [key: string]: boolean;
+}
 export interface IUserState {
   username: string;
   anonymous: boolean;
   id: string;
   state: number;
   initialized: boolean;
+  kickedFrom: IKickedFrom;
 }
-
 interface IInitializeUser {
   id: string;
 }
@@ -20,6 +23,7 @@ const initialState: IUserState = {
   id: '',
   state: 0,
   initialized: false,
+  kickedFrom: {},
 };
 
 const userSlice = createSlice({
@@ -39,6 +43,9 @@ const userSlice = createSlice({
       state.id = payload.id;
       state.initialized = true;
     },
+    updateKickedFrom(state, action) {
+      state.kickedFrom[action.payload] = true;
+    },
   },
 });
 
@@ -50,6 +57,7 @@ const userSelectors = {
   anonymous: (state: RootState): boolean => state.user.anonymous,
   state: (state: RootState): number => state.user.state,
   id: (state: RootState): string => state.user.id,
+  kickedFrom: (state: RootState): IKickedFrom => state.user.kickedFrom,
 };
 
 export { userActions, userReducer, userSelectors };

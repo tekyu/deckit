@@ -14,6 +14,13 @@ export interface IPlayerBasicInfo {
   socketId: string;
 }
 
+export enum PlayerState {
+  connected = 0,
+  ready = 1,
+  playing = 2,
+  left = 3
+}
+
 export default class Player {
   username: string;
 
@@ -23,7 +30,7 @@ export default class Player {
 
   color: string;
 
-  state: number;
+  state: PlayerState;
 
   score: number;
 
@@ -60,17 +67,24 @@ export default class Player {
     };
   }
 
-  updateCards(cards: ICard[]) {
-    this.cards = cards;
-    console.log('[Player][updateCards]', this.cards);
+  updateState(state: PlayerState) {
+    this.state = state;
   }
 
-  update(playerData: Partial<typeof Player>): IPlayerBasicInfo {
+  updateCards(cards: ICard[]) {
+    this.cards = cards;
+  }
+
+  update(playerData: Partial<Player>): Player {
     Object.entries(playerData).forEach(([key, value]) => {
       if (key !== 'socketId') {
         this[key] = value;
       }
     });
+    return this;
+  }
+
+  getPublicInfo() {
     return this.basicInfo;
   }
 }

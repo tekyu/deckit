@@ -21,6 +21,9 @@ export const GlobalStyles = createGlobalStyle<{ theme: ITheme }>`
 
   @import url('https://fonts.googleapis.com/css2?family=Akronim&display=swap');
   */
+  html, body, #root {
+    height: 100%;
+  }
 
   body {
     background: ${({ theme }) => theme.palette.backgrounds.primary};

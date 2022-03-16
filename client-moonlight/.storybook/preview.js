@@ -1,4 +1,7 @@
+
 import { store } from '../src/store/store';
+import { ThemeProvider } from 'styled-components';
+import { initialTheme, palette } from '../src/theme/themes'
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -7,7 +10,7 @@ export const parameters = {
       color: /(background|color)$/i,
       date: /Date$/,
     },
-  },
+  }
 }
 export const globalTypes = {
   theme: {
@@ -23,10 +26,6 @@ export const globalTypes = {
     },
   },
 };
-
-import { ThemeProvider } from 'styled-components';
-
-import { initialTheme, palette } from '../src/theme/themes'
 
 // Function to obtain the intended theme
 const getTheme = (themeName) => {

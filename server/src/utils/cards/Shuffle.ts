@@ -1,16 +1,17 @@
+/* eslint-disable no-param-reassign */
 /**
  * @description Shuffling function using Fisher-Yates Shuffle algorithm
  * @param {Array} array Unshuffled array
  * @returns {Array} Shuffled array
  */
 
-export default function(array: any) {
-  var currentIndex = array.length,
-    temporaryValue,
-    randomIndex;
+export default function (array: any) {
+  let currentIndex = array.length;
+  let temporaryValue;
+  let randomIndex;
 
   // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
+  while (currentIndex !== 0) {
     // Pick a remaining element...
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex -= 1;

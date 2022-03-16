@@ -1,36 +1,29 @@
-// @ts-nocheck
 import hri from 'human-readable-ids';
 
-import { getGameOptions } from '../utils/gameMapping';
-import IRoom from '../interfaces/IRoom';
-import Player, { IPlayerBasicInfo } from './Player';
-import { IExtendedSocketServer } from '../socket/events/interfaces/IExtendedSocketServer';
+import Player, { IPlayerBasicInfo, PlayerState } from './Player';
+import { roomTopics } from '../socket/events/RoomEvents';
+import IO from './IO';
 
-interface IStateMap {
-  waiting: number;
-  ready: number;
-  started: number;
-  paused: number;
-  ended: number;
+interface IScoreboard {
+  [key: string]: number;
 }
 
-type stateUpdateType = keyof IStateMap;
+export enum roomState {
+  waiting = 0,
+  ready = 1,
+  started = 2,
+  paused = 3,
+  ended = 4
+}
 
-const stateMap: IStateMap = {
-  waiting: 0,
-  ready: 1,
-  started: 2,
-  paused: 3,
-  ended: 4,
-};
+export type ModeType = 'public' | 'private' | 'fast';
 
 interface CreateRoomOptions {
-  mode: string;
+  mode: ModeType;
   playersMax: number;
   gameCode: string;
   name?: string;
   username?: string;
-  gameOptions?: Object;
   maxScore?: number;
 }
 
@@ -43,19 +36,21 @@ interface IConnectPlayer {
 }
 
 interface IConnectPlayerReturn {
-  players: Player[];
-  newPlayerData: IPlayerBasicInfo;
+  players?: Player[];
+  newPlayerData?: IPlayerBasicInfo;
+  error?: 'blacklisted' | 'undefined' | 'noroom' | 'started' | 'full';
 }
 
 interface IDisconnectPlayerReturn {
   players: Player[];
-  disconnectedPlayer: IPlayerBasicInfo;
+  disconnectedPlayer?: IPlayerBasicInfo;
 }
 
 interface MOONLIGHTIUpdatePlayer {
   playerId: string;
   playerData: Partial<Player>
 }
+
 /**
  * TODO:
  * DeckitRoom extends Room
@@ -64,8 +59,8 @@ interface MOONLIGHTIUpdatePlayer {
  * DeckitRoom could have methods only for particular game
  * easy scaling
  */
-export default class Room implements IRoom {
-  mode: string; // private | public | fast
+export default class Room {
+  mode: ModeType;
 
   playersMax: number;
 
@@ -79,7 +74,7 @@ export default class Room implements IRoom {
 
   gameCode: string;
 
-  state: number; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
+  state: roomState; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
 
   players: Player[];
 
@@ -87,26 +82,24 @@ export default class Room implements IRoom {
 
   createdAt: number;
 
-  gameOptions: any;
-
   chat: Array<Object>;
 
-  scoreboard: Object;
+  scoreboard: IScoreboard;
 
-  pingInterval: Function;
+  playerLimit: number;
 
-  io: IExtendedSocketServer;
+  blacklistedPlayers: string[];
+
+  playAgain: string[];
 
   // MOONLIGHTconnectPlayer: (userDetails: IConnectPlayer) => IConnectPlayerReturn
 
   constructor(
     {
-      mode, playersMax, gameCode, gameOptions, name = '',
+      mode, playersMax, gameCode, name = '',
     }: CreateRoomOptions,
     ownerId: string,
-    io,
   ) {
-    this.io = io;
     this.mode = mode;
     this.playersMax = playersMax || 10; // check for max players per game(adjustable in gameMapping)
     this.name = name;
@@ -114,17 +107,36 @@ export default class Room implements IRoom {
     this.id = hri.hri.random().split('-').join('');
     this.owner = ownerId;
     this.admin = ownerId;
-    this.state = 0;
+    this.state = roomState.waiting;
     this.players = [];
     this.winners = [];
     this.createdAt = Date.now();
     this.scoreboard = {};
-    this.gameOptions = getGameOptions(gameCode, gameOptions); // TODO: remove
     this.chat = [];
+    this.playerLimit = 10;
+    this.blacklistedPlayers = [];
+    this.playAgain = [];
   }
 
   get instance() {
     return this;
+  }
+
+  get minimalInfo() {
+    const {
+      playersMax,
+      name,
+      id,
+      owner,
+      players,
+    } = this;
+    return {
+      playersMax,
+      name,
+      id,
+      owner: players.find(({ id }) => id === owner)?.username || owner,
+      players: players.length,
+    };
   }
 
   get basicInfo() {
@@ -138,6 +150,8 @@ export default class Room implements IRoom {
       admin,
       players,
       state,
+      playerLimit,
+      scoreboard,
     } = this;
     return {
       mode,
@@ -149,6 +163,8 @@ export default class Room implements IRoom {
       admin,
       players,
       state,
+      playerLimit,
+      scoreboard,
     };
   }
 
@@ -189,7 +205,6 @@ export default class Room implements IRoom {
       chat,
       createdAt,
       gameCode,
-      gameOptions,
       id,
       mode,
       name,
@@ -205,19 +220,6 @@ export default class Room implements IRoom {
       chat,
       createdAt,
       gameCode,
-      gameOptions: {
-        hinter: gameOptions.hinter,
-        hintCard: gameOptions.hintCard,
-        hint: gameOptions.hint,
-        initialCards: gameOptions.initialCards,
-        maxScore: gameOptions.maxScore,
-        pickedCardsToHint: gameOptions.pickedCardsToHint,
-        playersChoosedCard: gameOptions.playersChoosedCard,
-        playersPickedCard: gameOptions.playersPickedCard,
-        remainingCards: gameOptions.remainingCards,
-        round: gameOptions.round,
-        stage: gameOptions.stage,
-      },
       id,
       mode,
       name,
@@ -230,47 +232,44 @@ export default class Room implements IRoom {
     };
   }
 
-  setState(newState) {
+  emitUpdateRoom(data: { [key: string]: any }) {
+    IO.getInstance().io.in(this.id).emit(roomTopics.UPDATE_ROOM, data);
+  }
+
+  setState(newState: roomState) {
     this.state = newState;
   }
 
-  setWinners() {
-    this.winners = Object.entries(this.scoreboard).reduce(
-      (winners, [id, score]) => {
-        if (score >= this.gameOptions.maxScore) {
-          winners.push(id);
-        }
-        return winners;
-      },
-      [],
-    );
-    return this.winners;
+  // setCards(cards: ) {
+  //   this.remainingCards = cards;
+  // }
+
+  isOwner(playerId: string) {
+    return this.owner === playerId;
   }
 
-  setCards(cards) {
-    this.gameOptions.remainingCards = cards;
-  }
-
-  async connectPlayer(playerData: Object) {
-    const newPlayerData = { ...playerData };
-    if (this.owner === playerData.id) {
-      newPlayerData.state = 1;
+  changeOwnership(playerId?: string) {
+    if (playerId) {
+      this.owner = playerId;
+      this.admin = playerId;
     }
-    this.players.push(newPlayerData);
-    return this.players;
+    const eligiblePlayers = this.players
+      .filter(({ state }) => state !== PlayerState.left);
+
+    if (eligiblePlayers.length > 0) {
+      this.owner = eligiblePlayers[0].id;
+      this.admin = eligiblePlayers[0].id;
+    }
   }
 
-  disconnectPlayer(id: string) {
-    return (this.players = this.players.filter((player: any) => player.id !== id));
+  updateNumberOfSeats(action: 'add' | 'remove') {
+    if (action === 'add' && this.playersMax < this.playerLimit) {
+      this.playersMax += 1;
+    }
+    if (action === 'remove' && this.playersMax > 0) {
+      this.playersMax -= 1;
+    }
   }
-
-  // 2.0
-  //
-  //
-  //
-  //
-  //
-  //
 
   async MOONLIGHTconnectPlayer({
     username,
@@ -278,35 +277,90 @@ export default class Room implements IRoom {
     anonymous,
     color,
     socketId,
-  }: IConnectPlayer): IConnectPlayerReturn {
+  }: IConnectPlayer): Promise<IConnectPlayerReturn> {
+    if (this.blacklistedPlayers.some((playerId) => playerId === id)) {
+      return { error: 'blacklisted' };
+    }
     try {
       const newPlayer = new Player({
         username,
         id,
         anonymous,
         color,
-        state: this.owner === id ? 1 : 0,
+        state: this.owner === id ? PlayerState.ready : PlayerState.connected,
         socketId,
       });
       this.players.push(newPlayer);
       return { newPlayerData: newPlayer, players: this.players };
-    } catch (e) {
-      throw Error(e);
+    } catch (error) {
+      // @ts-ignore
+      throw Error(error || 'Something went wrong');
     }
   }
 
-  async MOONLIGHTdisconnectPlayer(playerId: string): IDisconnectPlayerReturn {
+  async MOONLIGHTdisconnectPlayer(
+    playerId: string,
+    forceKick: boolean = false,
+  ): Promise<IDisconnectPlayerReturn> {
     const disconnectedPlayer = this.players.find(({ id }) => id === playerId);
-    const newPlayers = this.players.filter(({ id }) => id !== playerId);
-    this.players = newPlayers;
+
+    if (!disconnectedPlayer) {
+      return {
+        players: this.players,
+      };
+    }
+    disconnectedPlayer.updateState(PlayerState.left);
+
+    const kickImmediately = this.state === roomState.waiting
+      || this.state === roomState.ready;
+
+    if (this.isOwner(disconnectedPlayer.id)) {
+      this.changeOwnership();
+    }
+
+    // remove player from room
+    if (forceKick || kickImmediately) {
+      const newPlayers = this.players.filter(({ id }) => id !== playerId);
+      this.players = newPlayers;
+      return {
+        players: newPlayers,
+        disconnectedPlayer,
+      };
+    }
+
+    // change player state to left and wait for action
+    // actions:
+    // 1. player reconnects
+    // 2. owner is kicking the player
+    this.players = this.players.map(
+      (singlePlayer) => (singlePlayer.id === disconnectedPlayer.id
+        ? disconnectedPlayer
+        : singlePlayer),
+    );
+
+    if (this.state === roomState.started) {
+      this.updateRoomState(roomState.paused);
+    }
+
     return {
-      players: newPlayers,
+      players: this.players,
       disconnectedPlayer,
     };
   }
 
-  async MOONLIGHTupdatePlayer({ playerId, playerData }: MOONLIGHTIUpdatePlayer): Player[] {
+  async MOONLIGHTkickPlayer(playerId: string, blacklist: boolean = true) {
+    if (blacklist) {
+      this.blacklistedPlayers.push(playerId);
+    }
+    return this.MOONLIGHTdisconnectPlayer(playerId, true);
+  }
+
+  async MOONLIGHTupdatePlayer({ playerId, playerData }: MOONLIGHTIUpdatePlayer): Promise<Player[]> {
     const playerToUpdate = this.players.find(({ id }) => id === playerId);
+    if (!playerToUpdate) {
+      return this.players;
+    }
+
     const updatedPlayer = playerToUpdate.update(playerData);
     this.players.map((player) => {
       if (player.id === playerId) {
@@ -314,26 +368,63 @@ export default class Room implements IRoom {
       }
       return player;
     });
+
     return this.players;
   }
 
-  arePlayersReady(): boolean {
-    return !this.players.some(({ state }) => state !== 1);
+  getPlayer(playerId?: string): Player | undefined {
+    if (!playerId) {
+      return undefined;
+    }
+    return this.players.find(({ id }) => id === playerId);
   }
 
-  updateRoomState(state?: stateUpdateType): number {
+  async getPublicPlayers() {
+    return this.players.map((player) => player.getPublicInfo());
+  }
+
+  arePlayersReady(): boolean {
+    return !this.players.some(
+      ({ state }) => state === PlayerState.connected || state === PlayerState.left,
+    );
+  }
+
+  getPlayersReady() {
+    this.players.map((player) => {
+      player.updateState(PlayerState.playing);
+      return player;
+    });
+  }
+
+  updateRoomState(state?: roomState): number {
     if (state) {
-      this.state = stateMap[state];
+      this.state = state;
       return this.state;
     }
     if (this.state <= 1) {
-      this.state = this.arePlayersReady() ? stateMap.ready : stateMap.waiting;
+      this.state = this.arePlayersReady() ? roomState.ready : roomState.waiting;
       return this.state;
     }
     return this.state;
   }
 
   resetPlayersState() {
-    this.players = this.players.map((player) => ({ ...player, state: 0 }));
+    this.players.forEach((player) => {
+      player.updateState(PlayerState.connected);
+    });
+  }
+
+  updatePlayAgain(playerId: string) {
+    const playerIndex = this.playAgain.indexOf(playerId);
+    if (playerIndex === -1) {
+      this.playAgain.push(playerId);
+    }
+  }
+
+  resetRoom() {
+    this.state = roomState.waiting;
+    this.playAgain = [];
+    this.resetPlayersState();
+    this.emitUpdateRoom(this.basicInfo);
   }
 }

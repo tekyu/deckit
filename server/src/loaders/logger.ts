@@ -37,7 +37,7 @@ export default LoggerInstance;
 
 const {
   format: {
-    combine, timestamp, printf, splat, label,
+    combine, timestamp, printf, label,
   },
   transports,
 } = winston;

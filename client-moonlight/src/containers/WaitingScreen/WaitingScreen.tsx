@@ -24,9 +24,12 @@ const WaitingScreen = (): JSX.Element => {
     players,
     owner,
     admin,
+    playerLimit,
   } = useSelector(roomSelectors.room);
   const userId = useSelector(userSelectors.id);
-  const userState = useSelector(userSelectors.state);
+  // const userState = useSelector(userSelectors.state);
+  const me = players.find(({ id }) => id === userId);
+
   const dispatch = useDispatch();
 
   const adminPower = owner === userId || admin === userId;
@@ -81,10 +84,13 @@ const WaitingScreen = (): JSX.Element => {
               ready={!!state}
               you={id === userId}
               isOwner={id === owner}
+              // eslint-disable-next-line react/jsx-props-no-spreading
               {...(adminPower && { adminPower: true, kickHandler })}
             />
           ))}
-          {adminPower ? <AddSeat /> : null}
+          {adminPower && playerLimit > playersMax
+            ? <AddSeat current={players.length} max={playersMax} />
+            : null}
 
         </Styled.PlayerList>
 
@@ -98,7 +104,7 @@ const WaitingScreen = (): JSX.Element => {
                 numberOfPlayers={players.length}
               />
             )
-            : <ReadyButton id={userId} isReady={!!userState} state={userState} />}
+            : <ReadyButton id={userId} isReady={!!me?.state || false} state={me?.state || 0} />}
 
         </Styled.Footer>
       </Panel>
