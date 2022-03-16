@@ -1,7 +1,7 @@
 
 ![alt text](https://github.com/tekyu/deckit/blob/master/client/deckit.png "Deckit logo")
 # Web implementation of "dixit" game
-_Written using React & Socket.io, generated via create-react-app_
+_Written using React, Typescript & Socket.io, generated via create-react-app_
 
 ## Online version 
 Available at http://deckit-online.com
