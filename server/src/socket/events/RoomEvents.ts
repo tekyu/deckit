@@ -1,10 +1,8 @@
-// @ts-ignore
 import randomColor from 'random-color';
 import SocketIO from 'socket.io';
 import { roomState } from '../../classes/Room';
 import getRoomObjectForUpdate from '../../utils/getRoomObjectForUpdate';
 import getRoom from '../../utils/getRoom';
-import getRoomUpdateState from '../../utils/getRoomUpdateState';
 import { loggers } from '../../loaders/loggers';
 import Deckit from '../../classes/Deckit';
 import IO from '../../classes/IO';
@@ -67,6 +65,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       if (state < roomState.started) {
         return minimalInfo;
       }
+      return undefined;
     }).filter((room) => room);
     callback(minimalInfoList);
   });
@@ -122,10 +121,6 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       });
 
       updateListOfRooms(room, 'add');
-
-      // if (room.mode === 'public') {
-      //   IO.getInstance().io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, getRoomObjectForUpdate(room, 'add'));
-      // }
     },
   );
 
@@ -208,7 +203,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
         return;
       }
 
-      const { players, disconnectedPlayer } = await room.MOONLIGHTkickPlayer(playerId);
+      const { disconnectedPlayer } = await room.MOONLIGHTkickPlayer(playerId);
 
       if (!disconnectedPlayer) {
         callback({ error: 'Something went wrong' });
@@ -254,9 +249,8 @@ export const RoomEvents = function (socket: IExtendedSocket) {
     if (!room) {
       return;
     }
-    const {
-      players,
-    } = await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
+
+    await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
 
     // if room is public, push update of the room info to Browse route
     updateListOfRooms(room);
@@ -272,18 +266,6 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       },
     );
   });
-
-  // socket.on('CHECK_FOR_ROOM', (
-  //   { roomId, userId }: { roomId: string, userId?: string },
-  //   callback: Function) => {
-  //   console.log('CHECK_FOR_ROOM', socket.deckitUser);
-  //   const room = getRoom(roomId);
-  //   const player = room?.getPlayer(userId);
-  //   callback({
-  //     doesExist: !!room,
-  //     reconnecting: player && player.state === 3,
-  //   });
-  // });
 
   socket.on('MOONLIGHT-FORCE_RESTART', () => {
     const { deckitUser: { activeRoomId } = {} } = socket;
@@ -393,9 +375,8 @@ export const RoomEvents = function (socket: IExtendedSocket) {
     if (!room) {
       return;
     }
-    const {
-      players,
-    } = await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
+
+    await room.MOONLIGHTdisconnectPlayer(socket.deckitUser.id);
 
     if (room && room.players.length === 0) {
       IO.getInstance().removeRoom({ mode: room.mode, roomId: room.id });

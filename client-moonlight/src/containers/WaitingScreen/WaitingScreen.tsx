@@ -84,6 +84,7 @@ const WaitingScreen = (): JSX.Element => {
               ready={!!state}
               you={id === userId}
               isOwner={id === owner}
+              // eslint-disable-next-line react/jsx-props-no-spreading
               {...(adminPower && { adminPower: true, kickHandler })}
             />
           ))}

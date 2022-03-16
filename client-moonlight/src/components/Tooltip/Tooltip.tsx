@@ -11,6 +11,7 @@ const Tooltip = ({
     <ReactTooltip
       id={id}
       className="moonlight-tooltip-override"
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...tooltipProps}
     >
       {children}

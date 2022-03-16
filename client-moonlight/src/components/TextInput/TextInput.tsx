@@ -16,6 +16,7 @@ const TextInput = ({
 }: ITextInput): JSX.Element => (
   <Styled.TextInput showBorder={showBorder}>
     {label && <Label>{label}</Label>}
+    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
     <Styled.Input {...rest} value={value} type="text" placeholder={placeholder} name={name} id={id} $alignCenter={alignCenter} />
   </Styled.TextInput>
 );

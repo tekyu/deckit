@@ -44,6 +44,7 @@ const CreateGame = (): JSX.Element => {
       maxScore,
       mode: isPrivate ? 'private' : 'public',
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch(roomActions.createRoom(createParams)).then(({ payload }: any) => {
       if (payload?.roomDetails) {
         setRedirectToGame(true);

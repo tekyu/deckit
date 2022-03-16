@@ -1,8 +1,7 @@
 import getRoom from '../../utils/getRoom';
-import getRoomObjectForUpdate from '../../utils/getRoomObjectForUpdate';
 import { loggers } from '../../loaders/loggers';
 
-import { roomTopics, WAITING_ROOM } from './RoomEvents';
+import { roomTopics } from './RoomEvents';
 import Deckit, { gameStage } from '../../classes/Deckit';
 import IO from '../../classes/IO';
 import { IExtendedSocket } from '../socket';
@@ -46,26 +45,6 @@ export const GameEvents = (socket: IExtendedSocket) => {
       });
 
       updateListOfRooms(room);
-
-      // // get list of rooms needed to be updated in waiting room
-      // const updatedRoomObject = [
-      //   getRoomObjectForUpdate(
-      //     room,
-      //     getRoomUpdateState({
-      //       players: room.players.length,
-      //       playersMax: room.playersMax,
-      //       state: room.state,
-      //     }),
-      //   ),
-      // ];
-      // // if room is public, push update of the room info to Browse route
-      // if (room.mode === 'public') {
-      //   IO.getInstance().io.in(WAITING_ROOM)
-      //    .emit(roomTopics.UPDATE_LIST_OF_ROOMS, updatedRoomObject);
-      // }
-      // // send updated room to all except sender
-      // IO.getInstance().io.in(activeRoomId)
-      //    .emit(roomTopics.UPDATE_ROOM, { players: room.players });
     },
   );
 

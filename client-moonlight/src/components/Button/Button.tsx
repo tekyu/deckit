@@ -22,6 +22,7 @@ const Button = ({
     version={version}
     onClick={onClick}
     disabled={disabled}
+    // eslint-disable-next-line react/jsx-props-no-spreading
     {...rest}
   >
     {children}

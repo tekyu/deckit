@@ -7,6 +7,7 @@ export default {
   component: PublicRoomListComponent,
 } as Meta;
 
+// eslint-disable-next-line react/jsx-props-no-spreading
 const Template: Story = (args) => <PublicRoomListComponent {...args} />;
 
 export const PublicRoomList = Template.bind({});

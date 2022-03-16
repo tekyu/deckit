@@ -7,6 +7,7 @@ export default {
   component: CreditsComponent,
 } as Meta;
 
+// eslint-disable-next-line react/jsx-props-no-spreading
 const Template: Story = (args) => <CreditsComponent {...args} />;
 
 export const Credits = Template.bind({});

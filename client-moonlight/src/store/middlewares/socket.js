@@ -2,6 +2,7 @@ import io from 'socket.io-client';
 
 import { socketTypes } from 'store/socket/socket';
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function socketMiddleware() {
   const socket = io(process.env.REACT_APP_SOCKET_ADDRESS);
 
