@@ -16,7 +16,7 @@ export interface IAppState {
 const initialState: IAppState = {
   activeTheme: 'light',
   themeLoaded: true,
-  theme: getTheme('light'),
+  theme: getTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
   miniSidebar: false,
   host: process.env.REACT_APP_ADDRESS || '',
   language: 'en',
