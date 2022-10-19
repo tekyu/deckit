@@ -39,6 +39,7 @@ const LanguageSwitch = (): JSX.Element => {
         <Styled.Dropdown>
           {languageList.map((lang) => (
             <LanguageSwitchItem
+              key={lang}
               changeLanguageHandler={changeLanguage}
               language={lang}
             />

@@ -13,6 +13,7 @@ import { BiArrowBack } from 'react-icons/bi';
 import AddSeat from 'components/AddSeat/AddSeat';
 import ReadyButton from 'components/ReadyButton/ReadyButton';
 import StartGameButton from 'components/StartGameButton/StartGameButton';
+import { useMemo } from 'react';
 import * as Styled from './WaitingScreen.styled';
 
 const WaitingScreen = (): JSX.Element => {
@@ -27,8 +28,7 @@ const WaitingScreen = (): JSX.Element => {
     playerLimit,
   } = useSelector(roomSelectors.room);
   const userId = useSelector(userSelectors.id);
-  // const userState = useSelector(userSelectors.state);
-  const me = players.find(({ id }) => id === userId);
+  const me = useMemo(() => players.find(({ id }) => id === userId), [players]);
 
   const dispatch = useDispatch();
 

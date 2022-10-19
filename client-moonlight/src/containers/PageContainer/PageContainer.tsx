@@ -22,7 +22,7 @@ const PageContainer = (): JSX.Element => {
   const onUpdateAnonUser = ({
     id,
     reconnectable,
-  }: { id: string, reconnectable: string }) => {
+  }: { id: string, reconnectable: boolean }) => {
     dispatch(userActions.initializeUser({ id }));
     setShowReconnectPopup(!!reconnectable);
     if (!reconnectable) {

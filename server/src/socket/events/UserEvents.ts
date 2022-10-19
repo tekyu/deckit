@@ -49,27 +49,24 @@ export const UserEvents = (socket: IExtendedSocket) => {
       });
       // send updated room to all including sender
       if (room) {
+        const playersInfo = await room.getPublicPlayers()
         room.emitUpdateRoom({
-          players: room.getPublicPlayers(),
+          players: playersInfo,
         });
       }
     }
 
     loggers.event.received.verbose(userTopics.UPDATE_ANON_USER, socket.deckitUser);
 
-    if (activeRoomId) {
-      const room = getRoom(activeRoomId);
-      const player = room?.getPlayer(id);
-      if (player && player.state === PlayerState.left) {
-        callback({
-          id: socket.deckitUser.id,
-          reconnectable: true,
-        });
-        return null;
-      }
+    if (!activeRoomId) {
+      callback({ id: socket.deckitUser.id, reconnectable: false });
+      return null;
     }
 
-    callback({ id: socket.deckitUser.id });
-    return null;
+    const room = getRoom(activeRoomId);
+    const player = room?.getPlayer(id);
+    if (player && player.state === PlayerState.left) {
+      callback({ id: socket.deckitUser.id, reconnectable: true });
+    }
   });
 };

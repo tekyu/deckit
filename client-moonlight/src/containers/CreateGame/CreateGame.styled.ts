@@ -11,6 +11,28 @@ export const CreateGame = styled.div`
   justify-content: center;
   width: 100%;
   padding: 30px 0;
+
+  
+  &.create-game-enter {
+    opacity: 0;
+    margin-left: -40px;
+  }
+  &.create-game-enter-active {
+    opacity: 1;
+    transition: all 300ms;
+    margin-left: 0;
+  }
+  &.create-game-exit {
+    opacity: 1;
+    margin-left: 0;
+  }
+  &.create-game-exit-active {
+    opacity: 0;
+    margin-left: -40px;
+    transition: all 300ms;
+  }
+
+
   ${Panel} {
     width: 500px;
     max-width: 500px;
@@ -20,7 +42,7 @@ export const CreateGame = styled.div`
         10px 10px 40px ${rgba(palette.primary.main, 0.1)},
         7px -7px 40px ${rgba(palette.secondary.dark, 0.1)};  
     `}
-}
+  }
 `;
 
 export const Header = styled.div`

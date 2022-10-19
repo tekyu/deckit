@@ -18,7 +18,7 @@ const initialState: IAppState = {
   themeLoaded: true,
   theme: getTheme('light'),
   miniSidebar: false,
-  host: 'http://localhost:3011',
+  host: process.env.REACT_APP_ADDRESS || '',
   language: 'en',
 };
 
