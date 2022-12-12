@@ -7,4 +7,4 @@ export default interface INavLink {
   exact?: boolean;
   hamburger?: boolean;
   onClick?: () => void
-}
+};

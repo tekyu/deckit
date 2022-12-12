@@ -39,7 +39,7 @@ export const ComingSoon = styled.div<{ hamburger: boolean }>`
   align-items: center;
   padding: 6px 12px;
   color: ${({ theme: { palette }, hamburger }) => rgba(hamburger ? palette.backgrounds.primary : palette.colors.primary, 0.6)};
-  user-select: none;
+  /* user-select: none; */
 
   &:after {
     content: "Coming soon";

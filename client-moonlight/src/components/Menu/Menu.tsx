@@ -84,9 +84,9 @@ const Menu = (): JSX.Element => {
             <Logo />
           </Styled.LogoInBurger>
           <Styled.Nav>
-            <NavItem onClick={closeMenuHandler} hamburger comingSoon>Fast Game</NavItem>
-            <NavItem onClick={closeMenuHandler} hamburger exact to="/">Browse</NavItem>
-            <NavItem onClick={closeMenuHandler} hamburger to="/create">Create Game</NavItem>
+            <NavItem onClick={closeMenuHandler} hamburger comingSoon>{t('menu.fastGame')}</NavItem>
+            <NavItem onClick={closeMenuHandler} hamburger exact to="/">{t('menu.browse')}</NavItem>
+            <NavItem onClick={closeMenuHandler} hamburger to="/create">{t('menu.createGame')}</NavItem>
             <Styled.ThemeChangerContainer>
               Change theme
               <ThemeChanger />
