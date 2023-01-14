@@ -1,5 +1,5 @@
-import { modeType } from 'store/room/roomInterfaces';
+import { ROOM_MODE } from 'store/room/roomInterfaces';
 
 export interface IRoomMode {
-  mode: modeType
+  mode: ROOM_MODE
 }

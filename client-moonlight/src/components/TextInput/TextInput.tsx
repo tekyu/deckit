@@ -12,12 +12,41 @@ const TextInput = ({
   showBorder = false,
   alignCenter = false,
   value = '',
+  formik = true,
+  type = 'text',
+  onChange = () => { },
   ...rest
 }: ITextInput): JSX.Element => (
   <Styled.TextInput showBorder={showBorder}>
     {label && <Label>{label}</Label>}
-    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-    <Styled.Input {...rest} value={value} type="text" placeholder={placeholder} name={name} id={id} $alignCenter={alignCenter} />
+    {
+      formik
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        ? (
+          <Styled.Input
+            {...rest}
+            value={value}
+            type={type}
+            placeholder={placeholder}
+            name={name}
+            id={id}
+            $alignCenter={alignCenter}
+          />
+        )
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        : (
+          <Styled.SimpleInput
+            {...rest}
+            value={value}
+            type={type}
+            placeholder={placeholder}
+            name={name}
+            id={id}
+            $alignCenter={alignCenter}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        )
+    }
   </Styled.TextInput>
 );
 

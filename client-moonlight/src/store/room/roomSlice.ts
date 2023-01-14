@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-  IChangeStateResponse, IPlayer, IRoomState, IScoreboard,
+  IChangeStateResponse, IPlayer, IRoomState, IScoreboard, ROOM_MODE,
 } from 'store/room/roomInterfaces';
 import { roomThunks } from 'store/room/roomThunks';
 import { RootState } from 'store/store';
 
 const initialState: IRoomState = {
   activeRoomId: '',
-  mode: '',
+  mode: ROOM_MODE.private,
   playersMax: 0,
   gameCode: '',
   name: '',
@@ -36,6 +36,8 @@ const roomSlice = createSlice({
       // to not create multiple unnecessary listeners, this action will receive object
       // of { property: value } where property is one of the keys in the state object
       // eg. if there will be update of array of players, data will look like { players: array }
+
+      // TODO: DEC-22 sanitize payload
       return {
         ...state,
         ...payload,
@@ -71,9 +73,12 @@ const roomSlice = createSlice({
         state.players = payload.players;
         state.state = payload.updatedState;
       });
+    // TODO: DEC-24 Show flash errors on rejected actions
     builder.addCase(roomThunks.changeUserState.rejected, () => { });
 
     builder.addCase(roomThunks.reconnect.fulfilled, () => { });
+
+    builder.addCase(roomThunks.changeRoomMode.fulfilled, () => { });
   },
 });
 
@@ -93,7 +98,7 @@ const roomSelectors = {
   players: (state: RootState): IPlayer[] => state.room.players,
   owner: (state: RootState): string => state.room.owner,
   playAgain: (state: RootState): string[] => state.room.playAgain,
-
+  mode: (state: RootState): ROOM_MODE => state.room.mode,
 };
 
 export { roomActions, roomReducer, roomSelectors };

@@ -1,3 +1,4 @@
+import { ROOM_MODE } from 'store/room/roomInterfaces';
 import { RootState } from 'store/store';
 
 export const mockStore: Partial<RootState> = {
@@ -19,7 +20,7 @@ export const mockStore: Partial<RootState> = {
       rehydrated: true,
     },
     activeRoomId: 'privateroom39',
-    mode: 'private',
+    mode: ROOM_MODE.private,
     playersMax: 8,
     gameCode: 'd',
     name: 'Ripplehowler Lancer',

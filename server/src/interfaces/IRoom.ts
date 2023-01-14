@@ -1,9 +1,10 @@
 import Player from '../classes/Player';
+import { ROOM_MODE } from '../classes/Room';
 import { IDeckitUser } from '../socket/events/interfaces/IDeckitUser';
 
 export default interface IRoom {
   id: string;
-  mode?: string;
+  mode?: ROOM_MODE;
   playersMax: number;
   playersCurrent?: number;
   name?: string;

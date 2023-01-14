@@ -1,6 +1,7 @@
 import { Story, Meta } from '@storybook/react';
 
 import { IRoomMode } from 'components/RoomMode/IRoomMode';
+import { ROOM_MODE } from 'store/room/roomInterfaces';
 import RoomModeComponent from './RoomMode';
 
 export default {
@@ -19,5 +20,5 @@ const Template: Story<IRoomMode> = (args) => <RoomModeComponent {...args} />;
 export const RoomMode = Template.bind({});
 
 RoomMode.args = {
-  mode: 'private',
+  mode: ROOM_MODE.private,
 };

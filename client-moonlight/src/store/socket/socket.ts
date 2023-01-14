@@ -22,6 +22,7 @@ export const socketTopics = {
     reconnect: 'MOONLIGHT-RECONNECT',
     denyReconnecting: 'MOOLIGHT-DENY_RECONNECTING',
     updateListOfRooms: 'MOONLIGHT-UPDATE_LIST_OF_ROOMS',
+    updateRoomMode: 'MOOLIGHT-UPDATE_ROOM_MODE',
   },
   player: {
     kick: 'MOONLIGHT-KICK_PLAYER',
@@ -38,6 +39,7 @@ export const socketTopics = {
     nextRound: 'MOONLIGHT-NEXT_ROUND',
     kickDisconnectedPlayers: 'MOOLIGHT-KICK_DISCONNECTED_PLAYERS',
     resetRound: 'MOONLIGHT-RESET_ROUND',
+    updateMaxScore: 'MOONLIGHT-UPDATE_MAX_SCORE',
   },
 };
 

@@ -3,12 +3,13 @@ import { rgba } from 'polished';
 import styled from 'styled-components';
 
 export const ReadyButton = styled(Button) <{ isReady: boolean }>`
-  padding: 16px 32px;
-  font-size: 20px;
-  ${({ theme: { palette } }) => `
+  padding: 6px 10px;
+  font-size: 11px;
+  text-transform: initial;
+  /* ${({ theme: { palette } }) => `
     box-shadow: 0px 0px 20px 0px ${rgba(palette.primary.main, 0.5)}
-  `};
+  `}; */
   ${({ isReady, theme: { palette } }) => isReady && `
-    background: ${palette.success.main}
+    background: ${palette.primary.dark}
   `};
 `;

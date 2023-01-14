@@ -1,5 +1,5 @@
 import { Field } from 'formik';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const TextInput = styled.div<{ showBorder: boolean }>`
   display: flex;
@@ -24,7 +24,7 @@ export const TextInput = styled.div<{ showBorder: boolean }>`
   `}
 `;
 
-export const Input = styled(Field) <{ $alignCenter?: boolean }>`
+const baseInput = css<{ $alignCenter?: boolean }>`
   border: 0;
   padding: 12px 18px;
   font-family: ${({ theme: { typography } }) => typography.primary};
@@ -36,4 +36,12 @@ export const Input = styled(Field) <{ $alignCenter?: boolean }>`
   &:focus {
     outline: 2px solid ${({ theme: { palette } }) => palette.primary.main};
   }
+`;
+
+export const Input = styled(Field) <{ $alignCenter?: boolean }>`
+  ${baseInput}
+`;
+
+export const SimpleInput = styled.input<{ $alignCenter?: boolean }>`
+  ${baseInput}
 `;

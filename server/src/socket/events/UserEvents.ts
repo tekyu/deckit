@@ -49,10 +49,7 @@ export const UserEvents = (socket: IExtendedSocket) => {
       });
       // send updated room to all including sender
       if (room) {
-        const playersInfo = await room.getPublicPlayers()
-        room.emitUpdateRoom({
-          players: playersInfo,
-        });
+        room.emitPublicPlayers()
       }
     }
 
@@ -68,5 +65,6 @@ export const UserEvents = (socket: IExtendedSocket) => {
     if (player && player.state === PlayerState.left) {
       callback({ id: socket.deckitUser.id, reconnectable: true });
     }
+    return null
   });
 };

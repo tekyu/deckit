@@ -5,10 +5,11 @@ import {
   BiJoystickAlt,
   BiKey,
 } from 'react-icons/bi';
+import { ROOM_MODE } from 'store/room/roomInterfaces';
 import * as Styled from './RoomMode.styled';
 
 const RoomMode = ({
-  mode = 'private',
+  mode = ROOM_MODE.private,
 }: IRoomMode): JSX.Element => {
   const { t } = useTranslation();
   const renderIcon = () => {

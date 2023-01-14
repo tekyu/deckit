@@ -2,10 +2,11 @@ import getRoom from '../../utils/getRoom';
 import { loggers } from '../../loaders/loggers';
 
 import { roomTopics } from './RoomEvents';
-import Deckit, { gameStage } from '../../classes/Deckit';
+import Deckit, { GamePropsKeys, gameStage } from '../../classes/Deckit';
 import IO from '../../classes/IO';
 import { IExtendedSocket } from '../socket';
 import updateListOfRooms from '../../utils/updateListOfRooms';
+import SocketUtils from '../../classes/Utils';
 
 export const gameTopics = {
   START_GAME: 'MOONLIGHT-START_GAME',
@@ -17,9 +18,14 @@ export const gameTopics = {
   NEXT_ROUND: 'MOONLIGHT-NEXT_ROUND',
   END_GAME: 'MOONLIGHT-END_GAME',
   RESET_ROUND: 'MOONLIGHT-RESET_ROUND',
+  UPDATE_MAX_SCORE: 'MOONLIGHT-UPDATE_MAX_SCORE',
 };
 
-export const GameEvents = (socket: IExtendedSocket) => {
+// eslint-disable-next-line func-names
+export const GameEvents = function (socket: IExtendedSocket) {
+  this.socket = socket;
+  this.socketUtils = new SocketUtils(this.socket)
+
   socket.on(
     gameTopics.START_GAME,
     async () => {
@@ -53,31 +59,32 @@ export const GameEvents = (socket: IExtendedSocket) => {
     cardId: string;
   }
   socket.on(gameTopics.SEND_HINT, ({ hint, cardId }: ISendHint) => {
-    if (!socket.deckitUser) {
-      return;
-    }
-    const { deckitUser: { activeRoomId, id } } = socket;
-    if (!activeRoomId) {
-      return;
-    }
+    const deckitUserId = this.socketUtils.getDeckitUserId()
 
-    const room: Deckit | null = getRoom(activeRoomId);
+    const game: Deckit | null = getRoom(this.socketUtils.getActiveRoomId());
 
-    if (!room) {
+    if (!game || !deckitUserId) {
       return;
     }
 
-    room.setHint({ hint, cardId, userId: id });
-    room.updateStage(gameStage.pickCardFromDeck);
+    game.setHint({ hint, cardId, userId: deckitUserId });
+    game.updateStage(gameStage.pickCardFromDeck);
 
-    loggers.event.sent.verbose(gameTopics.UPDATE_GAME, { hint, cardId, stage: room.stage });
+    loggers.event.sent.verbose(gameTopics.UPDATE_GAME, { hint, cardId, stage: game.stage });
 
-    room.emitUpdateGame({
-      hint: room.hint,
-      stage: room.stage,
-      playersPickedCardFromDeck: room.playersPickedCardFromDeck,
-      playersPickedCardFromBoard: room.playersPickedCardFromBoard,
-    });
+    game.emitUpdateGame([
+      'hint',
+      'stage',
+      'playersPickedCardFromDeck',
+      'playersPickedCardFromBoard',
+    ]);
+
+    // room.emitUpdateGame({
+    //   hint: room.hint,
+    //   stage: room.stage,
+    //   playersPickedCardFromDeck: room.playersPickedCardFromDeck,
+    //   playersPickedCardFromBoard: room.playersPickedCardFromBoard,
+    // });
   });
 
   socket.on(gameTopics.CARD_FROM_DECK, async ({ cardId }: { cardId: string }) => {
@@ -97,20 +104,18 @@ export const GameEvents = (socket: IExtendedSocket) => {
 
     room.addCardsFromDeck({ cardId, userId: id });
 
-    const gameUpdateObject = {
-      playersPickedCardFromDeck: room.playersPickedCardFromDeck,
-    };
+    const gameUpdateKeys: GamePropsKeys[] = ['playersPickedCardFromDeck']
 
     if (room.players.length === room.playersPickedCardFromDeck.length) {
-      room.updateStage(gameStage.chooseCardsFromBoard);
+      room.updateStage(gameStage.chooseCardsForBoard);
 
       // @ts-ignore
-      gameUpdateObject.stage = room.stage;
+      gameUpdateKeys.push('stage')
       // @ts-ignore
-      gameUpdateObject.cardsForBoard = room.getCardsForBoard();
+      gameUpdateKeys.push('cardsForBoard')
     }
 
-    room.emitUpdateGame(gameUpdateObject);
+    room.emitUpdateGame(gameUpdateKeys);
   });
 
   socket.on(gameTopics.CARD_FROM_BOARD, ({ cardId }: { cardId: string }) => {
@@ -128,16 +133,24 @@ export const GameEvents = (socket: IExtendedSocket) => {
       return;
     }
 
-    room.addCardsFromBoard({ cardId, userId: id });
-
-    const gameUpdateObject = {
-      playersPickedCardFromBoard: room.playersPickedCardFromBoard,
-    };
+    room.addCardsForBoard({ cardId, userId: id });
 
     if (room.players.length === room.playersPickedCardFromBoard.length) {
       room.nextRound();
     } else {
-      room.emitUpdateGame(gameUpdateObject);
+      room.emitUpdateGame(['playersPickedCardFromBoard']);
     }
+  });
+
+  socket.on(gameTopics.UPDATE_MAX_SCORE, ({ maxScore }: { maxScore: number }) => {
+    const game: Deckit | null = getRoom(this.socketUtils.getActiveRoomId());
+
+    if (!game) {
+      loggers.warn.warn('Could not get room id when updating max score');
+    }
+
+    game?.updateMaxScore(maxScore)
+    game?.emitUpdateGame(['maxScore'])
+    loggers.info.info(`Max score in room ${game?.id} updated to ${game?.maxScore}`)
   });
 };

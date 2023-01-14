@@ -1,31 +1,31 @@
 import { CreateRoomOptions } from '../classes/Deckit';
-import Room from '../classes/Room';
+import Room, { ROOM_MODE } from '../classes/Room';
 
 const mocks: CreateRoomOptions[] = [
   {
     name: 'AAA Room created last',
     playersMax: 8,
-    mode: 'public',
+    mode: ROOM_MODE.public,
     gameCode: 'd',
 
   },
   {
     name: 'BBB Room created first',
     playersMax: 6,
-    mode: 'public',
+    mode: ROOM_MODE.public,
     gameCode: 'd',
 
   },
   {
     name: 'CCC Room created second',
     playersMax: 10,
-    mode: 'public',
+    mode: ROOM_MODE.public,
     gameCode: 'd',
   },
   {
     name: 'mock room from server',
     playersMax: 4,
-    mode: 'public',
+    mode: ROOM_MODE.public,
     gameCode: 'd',
 
   },

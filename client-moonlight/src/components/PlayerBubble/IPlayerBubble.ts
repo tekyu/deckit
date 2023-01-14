@@ -1,11 +1,14 @@
 export interface IPlayerBubble {
-  color: string;
-  username: string;
-  id: string;
-  anonymous: boolean;
-  ready: boolean;
-  you: boolean;
-  isOwner: boolean;
+  color?: string;
+  username?: string;
+  id?: string;
+  anonymous?: boolean;
+  ready?: boolean;
+  you?: boolean;
+  isOwner?: boolean;
   adminPower?: boolean;
-  kickHandler?: (id: string) => void
+  kickHandler?: (id: string) => void;
+  empty?: boolean;
+  number?: number;
+  state?: number;
 }

@@ -1,4 +1,8 @@
-export type modeType = 'public' | 'private' | 'fast' | '';
+export enum ROOM_MODE {
+  public = 'public',
+  private = 'private',
+  fast = 'fast'
+}
 
 export interface IScoreboard {
   [key: string]: number;
@@ -13,7 +17,7 @@ export interface IPlayer {
 }
 
 export interface IRoomState {
-  mode: modeType;
+  mode: ROOM_MODE;
   activeRoomId: string;
   playersMax: number;
   gameCode: string;
@@ -30,7 +34,7 @@ export interface IRoomState {
 }
 
 export interface IInitialRoomUpdate {
-  mode: modeType;
+  mode: ROOM_MODE;
   playersMax: number;
   gameCode: string;
   name: string;
@@ -47,7 +51,7 @@ export interface ISetInitialRoomDetailsProps {
 }
 
 export interface IInitialRoomDetails {
-  mode: modeType;
+  mode: ROOM_MODE;
   playersMax: number;
   gameCode: string;
   name: string;
@@ -84,7 +88,7 @@ export interface ICreateRoom {
   gameCode: string;
   playersMax: number;
   maxScore: number;
-  mode: modeType;
+  mode: ROOM_MODE;
 }
 
 export interface IJoinRoom {

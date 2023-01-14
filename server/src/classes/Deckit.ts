@@ -3,7 +3,7 @@ import { loggers } from '../loaders/loggers';
 import { gameTopics } from '../socket/events/GameEvents';
 import IO from './IO';
 import Player, { PlayerState } from './Player';
-import Room, { roomState } from './Room';
+import Room, { roomState, ROOM_MODE } from './Room';
 
 export interface ICard {
   id: string;
@@ -16,7 +16,7 @@ interface IHinter {
   id: string;
 }
 export interface CreateRoomOptions {
-  mode: 'public' | 'private' | 'fast';
+  mode: ROOM_MODE;
   playersMax: number;
   gameCode: string;
   name?: string;
@@ -30,7 +30,7 @@ export enum gameStage {
   initialGiveaway = 1,
   pickHint = 2,
   pickCardFromDeck = 3,
-  chooseCardsFromBoard = 4,
+  chooseCardsForBoard = 4,
   awardPoints = 5,
   checkGame = 6,
   cardShuffle = 7,
@@ -52,7 +52,7 @@ export const deckitTopics = {
   GAME_STARTED: 'MOONLIGHT-GAME_STARTED',
 };
 
-export default class Deckit extends Room {
+interface IDeckit {
   initialDecks: IDeck[];
 
   decks: IDeck[];
@@ -86,7 +86,52 @@ export default class Deckit extends Room {
 
   // Cards picked by non-hinter from pool of cards from previous stage
   // Points will be given based on this property
-  cardsFromBoard: {
+  cardsForBoard: {
+    [cardId: string]: string[]
+  };
+
+  playersPickedCardFromDeck: string[];
+
+  playersPickedCardFromBoard: string[];
+}
+
+export type GamePropsKeys = keyof IDeckit;
+
+export default class Deckit extends Room implements IDeckit {
+  initialDecks: IDeck[];
+
+  decks: IDeck[];
+
+  additionalDecks: IDeck[];
+
+  stage: gameStage;
+
+  round: number;
+
+  remainingCards: ICard[];
+
+  initialCards: ICard[];
+
+  maxScore: number;
+
+  hint: string;
+
+  hinter: IHinter;
+
+  hintCard: string;
+
+  // Cards picked by non-hinter player that match hint the best
+  cardsFromDeck: {
+    [id: string]: {
+      owner: string;
+      id: string;
+      pickedBy: string[]
+    }
+  };
+
+  // Cards picked by non-hinter from pool of cards from previous stage
+  // Points will be given based on this property
+  cardsForBoard: {
     [cardId: string]: string[]
   };
 
@@ -111,7 +156,7 @@ export default class Deckit extends Room {
     this.hinter = { username: '', id: '' };
     this.hintCard = '';
     this.cardsFromDeck = {};
-    this.cardsFromBoard = {};
+    this.cardsForBoard = {};
     this.playersPickedCardFromDeck = [];
     this.playersPickedCardFromBoard = [];
     // this.cardTracker = {};
@@ -127,14 +172,25 @@ export default class Deckit extends Room {
       hinter: this.hinter,
       hintCard: this.hintCard,
       cardsFromDeck: this.cardsFromDeck,
-      cardsFromBoard: this.cardsFromBoard,
+      cardsForBoard: this.cardsForBoard,
       playersPickedCardFromDeck: this.playersPickedCardFromDeck,
       playersPickedCardFromBoard: this.playersPickedCardFromBoard,
     };
   }
 
-  emitUpdateGame(data: { [key: string]: any }) {
-    IO.getInstance().io.in(this.id).emit(gameTopics.UPDATE_GAME, data);
+  // emitUpdateGame(data: { [key: string]: any }) {
+  //   IO.getInstance().io.in(this.id).emit(gameTopics.UPDATE_GAME, data);
+  // }
+
+  emitUpdateGame(propsToUpdate: GamePropsKeys[]) {
+    const dataToSend: Partial<Room> = propsToUpdate.reduce((newData = {}, key) => {
+      if (this[key] !== undefined) {
+        // eslint-disable-next-line no-param-reassign
+        newData[key] = this[key]
+      }
+      return newData
+    }, {})
+    IO.getInstance().io.in(this.id).emit(gameTopics.UPDATE_GAME, dataToSend);
   }
 
   updateDecks(decks: IDeck[]) {
@@ -145,6 +201,10 @@ export default class Deckit extends Room {
     if (stage) {
       this.stage = stage;
     }
+  }
+
+  updateMaxScore(maxScore: number) {
+    this.maxScore = maxScore;
   }
 
   async loadCards() {
@@ -240,9 +300,7 @@ export default class Deckit extends Room {
 
     this.updateRoomState(roomState.started);
     this.getPlayersReady();
-    this.emitUpdateRoom({
-      players: this.players,
-    });
+    this.emitUpdateRoom(['players']);
     this.updateStage(gameStage.pickHint);
     this.round = 1;
     this.hinter = {
@@ -283,7 +341,7 @@ export default class Deckit extends Room {
     }
   }
 
-  addCardsFromBoard({ cardId, userId }: { cardId: string; userId: string }) {
+  addCardsForBoard({ cardId, userId }: { cardId: string; userId: string }) {
     if (this.cardsFromDeck[cardId].pickedBy.some((id) => id === userId)) {
       return;
     }
@@ -370,17 +428,17 @@ export default class Deckit extends Room {
 
   resetPickedCards() {
     this.cardsFromDeck = {};
-    this.cardsFromBoard = {};
+    this.cardsForBoard = {};
     this.playersPickedCardFromDeck = [];
     this.playersPickedCardFromBoard = [];
   }
 
   nextRound() {
     this.updateStage(gameStage.awardPoints);
-    this.emitUpdateGame({ stage: this.stage });
+    this.emitUpdateGame(['stage']);
 
     this.calculateRoundPoints();
-    this.emitUpdateRoom({ scoreboard: this.scoreboard });
+    this.emitUpdateRoom(['scoreboard']);
     this.setWinners();
 
     if (this.winners.length > 0) {
@@ -391,17 +449,29 @@ export default class Deckit extends Room {
       this.resetPickedCards();
       this.setNextHinter();
       this.updateStage(gameStage.pickHint);
-      this.emitUpdateGame({
-        round: this.round,
-        stage: this.stage,
-        remainingCards: this.remainingCards.length,
-        cardsFromDeck: this.cardsFromDeck,
-        cardsForBoard: this.cardsFromBoard,
-        playersPickedCardFromDeck: this.playersPickedCardFromDeck,
-        hintCard: this.hintCard,
-        hint: this.hint,
-        hinter: this.hinter,
-      });
+      this.emitUpdateGame([
+        'round',
+        'stage',
+        'remainingCards',
+        'cardsFromDeck',
+        'cardsForBoard',
+        'playersPickedCardFromDeck',
+        'hintCard',
+        'hint',
+        'hinter',
+
+      ])
+      // this.emitUpdateGame({
+      //   round: this.round,
+      //   stage: this.stage,
+      //   remainingCards: this.remainingCards.length,
+      //   cardsFromDeck: this.cardsFromDeck,
+      //   cardsForBoard: this.cardsForBoard,
+      //   playersPickedCardFromDeck: this.playersPickedCardFromDeck,
+      //   hintCard: this.hintCard,
+      //   hint: this.hint,
+      //   hinter: this.hinter,
+      // });
       IO.getInstance().io.in(this.id).emit(gameTopics.NEXT_ROUND, {});
     }
   }
@@ -409,13 +479,8 @@ export default class Deckit extends Room {
   endGame() {
     this.updateRoomState(roomState.ended);
     this.updateStage(gameStage.ended);
-    this.emitUpdateRoom({
-      winners: this.winners,
-      state: this.state,
-    });
-    this.emitUpdateGame({
-      stage: this.stage,
-    });
+    this.emitUpdateRoom(['winners', 'state']);
+    this.emitUpdateGame(['stage']);
     IO.getInstance().io.in(this.id).emit(gameTopics.END_GAME, {});
   }
 
@@ -430,7 +495,7 @@ export default class Deckit extends Room {
     this.hinter = { username: '', id: '' };
     this.hintCard = '';
     this.cardsFromDeck = {};
-    this.cardsFromBoard = {};
+    this.cardsForBoard = {};
     this.playersPickedCardFromDeck = [];
     this.playersPickedCardFromBoard = [];
     this.scoreboard = {};
@@ -453,19 +518,25 @@ export default class Deckit extends Room {
     this.distributeCardsToPlayers();
     this.resetPickedCards();
     this.updateRoomState(roomState.started);
-    this.emitUpdateRoom({
-      players: this.players,
-      state: this.state,
-    });
-    this.emitUpdateGame({
-      hinter: this.hinter,
-      hint: this.hint,
-      hintCard: this.hintCard,
-      cardsFromDeck: this.cardsFromDeck,
-      cardsFromBoard: this.cardsFromBoard,
-      playersPickedCardFromDeck: this.playersPickedCardFromDeck,
-      playersPickedCardFromBoard: this.playersPickedCardFromBoard,
-    });
+    this.emitUpdateRoom(['players', 'state']);
+    this.emitUpdateGame([
+      'hinter',
+      'hint',
+      'cardsFromDeck',
+      'cardsForBoard',
+      'playersPickedCardFromDeck',
+      'playersPickedCardFromBoard',
+    ]);
+
+    // this.emitUpdateGame({
+    //   hinter: this.hinter,
+    //   hint: this.hint,
+    //   hintCard: this.hintCard,
+    //   cardsFromDeck: this.cardsFromDeck,
+    //   cardsForBoard: this.cardsForBoard,
+    //   playersPickedCardFromDeck: this.playersPickedCardFromDeck,
+    //   playersPickedCardFromBoard: this.playersPickedCardFromBoard,
+    // });
     IO.getInstance().io.in(this.id).emit(gameTopics.RESET_ROUND, {});
   }
 }

@@ -1,6 +1,7 @@
 import http from 'http';
 import socketIo from 'socket.io';
 import Deckit from './Deckit';
+import { ROOM_MODE } from './Room';
 
 interface IGameRoom {
   [key: string]: Deckit;
@@ -16,10 +17,9 @@ export interface IExtendedIo extends socketIo.Server {
   gameRooms: IGameRooms;
 }
 
-type modeType = 'public' | 'private' | 'fast';
 interface IAddRoom {
   room: Deckit;
-  mode: modeType,
+  mode: ROOM_MODE,
   roomId: string;
 }
 
@@ -74,7 +74,7 @@ class IO {
     mode,
     roomId,
   }: {
-    mode: modeType;
+    mode: ROOM_MODE;
     roomId: string;
   }): boolean {
     try {

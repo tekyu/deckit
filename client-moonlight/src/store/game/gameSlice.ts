@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { gameThunks } from 'store/game/gameThunks';
 import { RootState } from 'store/store';
 
 export interface ICard {
@@ -107,9 +108,17 @@ const gameSlice = createSlice({
       return initialState;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(gameThunks.changeMaxScore.fulfilled, () => { });
+  },
 });
 
-const { actions: gameActions, reducer: gameReducer } = gameSlice;
+const { actions, reducer: gameReducer } = gameSlice;
+
+const gameActions = {
+  ...actions,
+  ...gameThunks,
+};
 
 const gameSelectors = {
   game: (state: RootState): IGameState => state.game,

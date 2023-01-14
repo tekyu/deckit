@@ -15,7 +15,7 @@ import { roomActions, roomSelectors } from 'store/room/roomSlice';
 import { Redirect } from 'react-router';
 import { userSelectors } from 'store/user/userSlice';
 import { IFormValues } from 'containers/CreateGame/ICreateGame';
-import { ICreateRoom } from 'store/room/roomInterfaces';
+import { ICreateRoom, ROOM_MODE } from 'store/room/roomInterfaces';
 import { useAppDispatch } from 'store/store';
 import { useTranslation } from 'react-i18next';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -43,7 +43,7 @@ const CreateGame = (): JSX.Element => {
       gameCode,
       playersMax,
       maxScore,
-      mode: isPrivate ? 'private' : 'public',
+      mode: isPrivate ? ROOM_MODE.private : ROOM_MODE.public,
     };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch(roomActions.createRoom(createParams)).then(({ payload }: any) => {

@@ -9,6 +9,7 @@ import {
   IChangeState,
   IChangeStateResponse,
   IRoomState,
+  ROOM_MODE,
 } from 'store/room/roomInterfaces';
 import { roomActions } from 'store/room/roomSlice';
 import { socketActions, socketTopics } from 'store/socket/socket';
@@ -96,6 +97,13 @@ const changeUserState = createAsyncThunk(
   ),
 );
 
+const changeRoomMode = createAsyncThunk(
+  'room/changeRoomMode',
+  async ({ mode }: { mode: ROOM_MODE }, { dispatch }) => {
+    dispatch(socketActions.emit(socketTopics.room.updateRoomMode, { mode }));
+  },
+);
+
 interface IReconnect {
   playerId: string;
   roomId: string;
@@ -128,5 +136,11 @@ const reconnect = createAsyncThunk(
 );
 
 export const roomThunks = {
-  setInitialRoomDetails, createRoom, joinRoom, kickPlayer, changeUserState, reconnect,
+  setInitialRoomDetails,
+  createRoom,
+  joinRoom,
+  kickPlayer,
+  changeUserState,
+  reconnect,
+  changeRoomMode,
 };

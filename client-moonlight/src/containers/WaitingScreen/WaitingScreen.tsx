@@ -14,6 +14,9 @@ import AddSeat from 'components/AddSeat/AddSeat';
 import ReadyButton from 'components/ReadyButton/ReadyButton';
 import StartGameButton from 'components/StartGameButton/StartGameButton';
 import { useMemo } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
+import TextInput from 'components/TextInput/TextInput';
+import RoomSettings from 'components/RoomSettings/RoomSettings';
 import * as Styled from './WaitingScreen.styled';
 
 const WaitingScreen = (): JSX.Element => {
@@ -21,17 +24,14 @@ const WaitingScreen = (): JSX.Element => {
     name,
     id: roomId,
     mode,
-    playersMax,
     players,
     owner,
     admin,
-    playerLimit,
   } = useSelector(roomSelectors.room);
   const userId = useSelector(userSelectors.id);
   const me = useMemo(() => players.find(({ id }) => id === userId), [players]);
 
   const dispatch = useDispatch();
-
   const adminPower = owner === userId || admin === userId;
 
   const kickHandler = (playerId: string) => {
@@ -50,64 +50,85 @@ const WaitingScreen = (): JSX.Element => {
 
   return (
     <Styled.WaitingScreen>
-      <Panel>
-        <Styled.Header>
-          <RoomMode mode={mode} />
-          <Styled.Name>
-            {name}
-            <Styled.Label>Waiting room</Styled.Label>
-          </Styled.Name>
-          <Styled.GoBack to="/"><BiArrowBack /></Styled.GoBack>
-        </Styled.Header>
-        {adminPower ? (
-          <Styled.RoomIdDisplay>
-            <Styled.IdDescription>
-              This is the ID you can share to your friends to connect
-            </Styled.IdDescription>
-            <CopyToClipboard text={roomId}>
-              <Button>{roomId}</Button>
-            </CopyToClipboard>
-          </Styled.RoomIdDisplay>
-        )
-          : null}
-        <PlayerCounter max={playersMax} current={players.length} />
-        <Styled.PlayerList>
-          {players.map(({
-            color, username, id, anonymous, state,
-          }) => (
-            <PlayerBubble
-              key={`PlayerBubble-${id}`}
-              color={color}
-              username={username}
-              id={id}
-              anonymous={anonymous}
-              ready={!!state}
-              you={id === userId}
-              isOwner={id === owner}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...(adminPower && { adminPower: true, kickHandler })}
+      <Styled.Header>
+        <Styled.Name>
+          Waiting room
+          <Styled.Label>
+            hosted by
+            {' '}
+            {players?.find(({ id }) => id === owner)?.username}
+          </Styled.Label>
+        </Styled.Name>
+      </Styled.Header>
+      <Styled.PlayerList>
+        {players.map(({
+          color, username, id, anonymous, state,
+        }) => (
+          <PlayerBubble
+            key={`PlayerBubble-${id}`}
+            color={color}
+            username={username}
+            id={id}
+            anonymous={anonymous}
+            ready={!!state}
+            you={id === userId}
+            isOwner={id === owner}
+            state={me?.state || 0}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...(adminPower && { adminPower: true, kickHandler })}
+          />
+        ))}
+        {Array.from(Array(10 - players.length), (_, i) => (
+          <PlayerBubble
+            key={`PlayerBubble-${i + 1 + players.length}`}
+            empty
+            number={i + 1 + players.length}
+          />
+        ))}
+
+      </Styled.PlayerList>
+      <Styled.Settings>
+        <Styled.Label>Settings</Styled.Label>
+        <RoomSettings />
+      </Styled.Settings>
+      <Styled.RoomIdDisplay>
+        <Styled.Label>Invite friends</Styled.Label>
+        <Styled.IdDescription>
+          Share id of
+          {' '}
+          {roomId}
+          {' '}
+          or invite friends through link
+        </Styled.IdDescription>
+        <Styled.InputContainer>
+          <TextInput formik={false} showBorder name="copy-game" value={`${window.location.origin}/game/${roomId}`} />
+          <CopyToClipboard text={`${window.location.origin}/game/${roomId}`}>
+            <Button>Copy</Button>
+          </CopyToClipboard>
+        </Styled.InputContainer>
+      </Styled.RoomIdDisplay>
+      {/* <Styled.Header>
+        <RoomMode mode={mode} />
+        <Styled.Name>
+          {name}
+          <Styled.Label>Waiting room</Styled.Label>
+        </Styled.Name>
+        <Styled.GoBack to="/"><BiArrowBack /></Styled.GoBack>
+      </Styled.Header>
+
+      <Styled.Footer>
+        {userId === owner
+          ? (
+            <StartGameButton
+              arePlayersReady={
+                !players.some(({ state }) => state !== 1) && players.length >= 2
+              }
+              numberOfPlayers={players.length}
             />
-          ))}
-          {adminPower && playerLimit > playersMax
-            ? <AddSeat current={players.length} max={playersMax} />
-            : null}
+          )
+          : <ReadyButton id={userId} isReady={!!me?.state || false} state={me?.state || 0} />}
 
-        </Styled.PlayerList>
-
-        <Styled.Footer>
-          {userId === owner
-            ? (
-              <StartGameButton
-                arePlayersReady={
-                  !players.some(({ state }) => state !== 1) && players.length >= 2
-                }
-                numberOfPlayers={players.length}
-              />
-            )
-            : <ReadyButton id={userId} isReady={!!me?.state || false} state={me?.state || 0} />}
-
-        </Styled.Footer>
-      </Panel>
+      </Styled.Footer> */}
     </Styled.WaitingScreen>
   );
 };

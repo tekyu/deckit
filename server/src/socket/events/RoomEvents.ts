@@ -1,6 +1,6 @@
 import randomColor from 'random-color';
 import SocketIO from 'socket.io';
-import { roomState } from '../../classes/Room';
+import { roomState, ROOM_MODE } from '../../classes/Room';
 import getRoomObjectForUpdate from '../../utils/getRoomObjectForUpdate';
 import getRoom from '../../utils/getRoom';
 import { loggers } from '../../loaders/loggers';
@@ -8,32 +8,8 @@ import Deckit from '../../classes/Deckit';
 import IO from '../../classes/IO';
 import { IExtendedSocket } from '../socket';
 import { PlayerState } from '../../classes/Player';
-import updateListOfRooms from '../../utils/updateListOfRooms';
-// TODO: Move interfaces to other file
-// interface Iparams {
-//   id: string;
-//   username?: string;
-//   avatar?: string;
-//   ranking?: number;
-// }
-
-// const gameShapedUser = getGameShapedUser(gameCode, userData)
-// userModel = {
-//   color: #fff,
-//   progress: 0,
-//   score: 0,
-//   status: 'ready', // ready, not ready, disconnected
-//   state: 'waiting', // waiting, hinting, choosing, guessing,
-// }
-// getInitialGameProps = (gameCode) => {
-//   return gameMapping[gameCode].userModel;
-// }
-// getGameShapedUser = (gameCode, userData) => {
-//   return {
-//     ...getInitialGameProps(gameCode)
-//     ...userData
-//   }
-// }
+import updateListOfRooms, { ACTION_TYPE } from '../../utils/updateListOfRooms';
+import SocketUtils from '../../classes/Utils';
 
 export const WAITING_ROOM = 'WAITING_ROOM';
 
@@ -52,13 +28,14 @@ export const roomTopics = {
   KICK_DISCONNECTED_PLAYERS: 'MOOLIGHT-KICK_DISCONNECTED_PLAYERS',
   RECONNECT: 'MOONLIGHT-RECONNECT',
   DENY_RECONNECTING: 'MOOLIGHT-DENY_RECONNECTING',
+  UPDATE_ROOM_MODE: 'MOOLIGHT-UPDATE_ROOM_MODE',
 };
 
 // TODO: Change types
 // eslint-disable-next-line func-names
 export const RoomEvents = function (socket: IExtendedSocket) {
   this.socket = socket;
-
+  this.socketUtils = new SocketUtils(this.socket)
   socket.on(roomTopics.GET_FULL_LIST_OF_ROOMS, (params: any, callback: Function) => {
     const minimalInfoList = Object.values(IO.getInstance().io.gameRooms.public).map((room: any) => {
       const { minimalInfo, state } = room;
@@ -77,7 +54,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       id: string;
       anonymous: boolean;
     }
-    mode: 'public' | 'private' | 'fast';
+    mode: ROOM_MODE;
     playersMax: number;
     name: string;
     gameCode: string;
@@ -120,7 +97,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
         roomDetails: room.basicInfo, userDetails,
       });
 
-      updateListOfRooms(room, 'add');
+      updateListOfRooms(room, ACTION_TYPE.add);
     },
   );
 
@@ -401,8 +378,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
   interface IChangeUserState {
     state: number;
   }
-  socket.on(
-    roomTopics.UPDATE_USER_STATE,
+  socket.on(roomTopics.UPDATE_USER_STATE,
     async ({ state }: IChangeUserState, callback: Function) => {
       loggers.event.received.verbose(roomTopics.UPDATE_USER_STATE, state);
 
@@ -431,10 +407,9 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       // send updated room to all including sender
       socket.to(room.id).emit(roomTopics.UPDATE_ROOM,
         { players: publicPlayers, state: updatedState });
-    },
-  );
+    });
 
-  socket.on(roomTopics.UPDATE_NUMBER_OF_SEATS, ({ action }: { action: 'add' | 'remove' }) => {
+  socket.on(roomTopics.UPDATE_NUMBER_OF_SEATS, ({ action }: { action: ACTION_TYPE }) => {
     if (!socket.deckitUser?.activeRoomId) {
       return null;
     }
@@ -450,7 +425,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
     room.updateNumberOfSeats(action);
 
     // if room is public, push update of the room info to Browse route
-    if (room.mode === 'public') {
+    if (room.mode === ROOM_MODE.public) {
       IO.getInstance().io.in(WAITING_ROOM).emit(roomTopics.UPDATE_LIST_OF_ROOMS, [
         getRoomObjectForUpdate(room, 'update'),
       ]);
@@ -481,8 +456,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
     }
   });
 
-  socket.on(
-    roomTopics.KICK_DISCONNECTED_PLAYERS,
+  socket.on(roomTopics.KICK_DISCONNECTED_PLAYERS,
     async ({ roomId }: { roomId: string },
       callback: Function) => {
       const room = getRoom(roomId);
@@ -500,6 +474,17 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       }
 
       room.kickDisconnectedPlayers();
-    },
-  );
+    });
+
+  socket.on(roomTopics.UPDATE_ROOM_MODE,
+    ({ mode }: { mode: ROOM_MODE }) => {
+      const room = getRoom(this.socketUtils.getActiveRoomId());
+      if (!room || !mode) {
+        loggers.warn.warn('Could not get room id when updating room mode');
+        return;
+      }
+
+      room.updateMode(mode)
+      room.emitUpdateRoom(['mode'])
+    })
 };

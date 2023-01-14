@@ -3,6 +3,7 @@ import hri from 'human-readable-ids';
 import Player, { IPlayerBasicInfo, PlayerState } from './Player';
 import { roomTopics } from '../socket/events/RoomEvents';
 import IO from './IO';
+import { ACTION_TYPE } from '../utils/updateListOfRooms';
 
 interface IScoreboard {
   [key: string]: number;
@@ -16,10 +17,14 @@ export enum roomState {
   ended = 4
 }
 
-export type ModeType = 'public' | 'private' | 'fast';
+export enum ROOM_MODE {
+  public = 'public',
+  private = 'private',
+  fast = 'fast'
+}
 
 interface CreateRoomOptions {
-  mode: ModeType;
+  mode: ROOM_MODE;
   playersMax: number;
   gameCode: string;
   name?: string;
@@ -59,8 +64,29 @@ interface MOONLIGHTIUpdatePlayer {
  * DeckitRoom could have methods only for particular game
  * easy scaling
  */
-export default class Room {
-  mode: ModeType;
+
+interface IRoom {
+  mode: ROOM_MODE;
+  playersMax: number;
+  name: string;
+  id: string;
+  owner: string;
+  admin: string;
+  gameCode: string;
+  state: roomState; // 0 - waiting | 1 - ready | 2 - started | 3 - paused | 4 - ended
+  players: Player[];
+  winners: Array<String>;
+  createdAt: number;
+  chat: Array<Object>;
+  scoreboard: IScoreboard;
+  playerLimit: number;
+  blacklistedPlayers: string[];
+  playAgain: string[];
+}
+type RoomPropsKeys = keyof IRoom;
+
+export default class Room implements IRoom {
+  mode: ROOM_MODE;
 
   playersMax: number;
 
@@ -232,17 +258,32 @@ export default class Room {
     };
   }
 
-  emitUpdateRoom(data: { [key: string]: any }) {
+  emitBasicInfo(data: Partial<Room>) {
     IO.getInstance().io.in(this.id).emit(roomTopics.UPDATE_ROOM, data);
+  }
+
+  async emitPublicPlayers() {
+    const dataToSend = {
+      players: await this.getPublicPlayers(),
+    };
+
+    IO.getInstance().io.in(this.id).emit(roomTopics.UPDATE_ROOM, dataToSend);
+  }
+
+  emitUpdateRoom(propsToUpdate: RoomPropsKeys[]) {
+    const dataToSend: Partial<Room> = propsToUpdate.reduce((newData = {}, key) => {
+      if (this[key] !== undefined) {
+        // eslint-disable-next-line no-param-reassign
+        newData[key] = this[key]
+      }
+      return newData
+    }, {})
+    IO.getInstance().io.in(this.id).emit(roomTopics.UPDATE_ROOM, dataToSend);
   }
 
   setState(newState: roomState) {
     this.state = newState;
   }
-
-  // setCards(cards: ) {
-  //   this.remainingCards = cards;
-  // }
 
   isOwner(playerId: string) {
     return this.owner === playerId;
@@ -262,13 +303,17 @@ export default class Room {
     }
   }
 
-  updateNumberOfSeats(action: 'add' | 'remove') {
-    if (action === 'add' && this.playersMax < this.playerLimit) {
+  updateNumberOfSeats(action: ACTION_TYPE) {
+    if (action === ACTION_TYPE.add && this.playersMax < this.playerLimit) {
       this.playersMax += 1;
     }
-    if (action === 'remove' && this.playersMax > 0) {
+    if (action === ACTION_TYPE.remove && this.playersMax > 0) {
       this.playersMax -= 1;
     }
+  }
+
+  updateMode(mode: ROOM_MODE) {
+    this.mode = mode;
   }
 
   async MOONLIGHTconnectPlayer({
@@ -425,6 +470,6 @@ export default class Room {
     this.state = roomState.waiting;
     this.playAgain = [];
     this.resetPlayersState();
-    this.emitUpdateRoom(this.basicInfo);
+    this.emitBasicInfo(this.basicInfo);
   }
 }
