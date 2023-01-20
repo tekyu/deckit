@@ -34,7 +34,15 @@ export const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+`;
+
+export const Label = styled(BaseLabel)`
+  margin-top: 6px;
+  color: ${({ theme: { palette } }) => palette.colors.secondary};
+  text-align: center;
+  font-family: ${({ theme: { typography } }) => typography.primary};
+  font-size: 14px;
 `;
 
 export const Name = styled.div`
@@ -46,15 +54,6 @@ export const Name = styled.div`
   padding: 0 10px 0 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-`;
-
-export const Label = styled(BaseLabel)`
-  margin-top: 6px;
-  color: ${({ theme: { palette } }) => palette.colors.secondary};
-  text-align: center;
-  font-family: ${({ theme: { typography } }) => typography.primary};
-  font-size: 14px;
 `;
 
 export const RoomIdDisplay = styled.div`

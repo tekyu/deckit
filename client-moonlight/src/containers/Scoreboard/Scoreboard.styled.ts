@@ -26,8 +26,8 @@ export const Scoreboard = styled.div`
     min-width: 300px;
   `};
   ${mediaQuery.greaterThan('large')`
-    max-width: 360px;
-    min-width: 300px;
+    max-width: 270px;
+    min-width: 270px;
   `};
 `;
 

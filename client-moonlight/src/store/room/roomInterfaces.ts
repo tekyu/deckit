@@ -84,11 +84,6 @@ export interface IUserData {
 
 export interface ICreateRoom {
   userData: IUserData;
-  name: string;
-  gameCode: string;
-  playersMax: number;
-  maxScore: number;
-  mode: ROOM_MODE;
 }
 
 export interface IJoinRoom {

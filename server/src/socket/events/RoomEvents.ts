@@ -54,23 +54,18 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       id: string;
       anonymous: boolean;
     }
-    mode: ROOM_MODE;
-    playersMax: number;
-    name: string;
-    gameCode: string;
-    maxScore: number;
   }
 
   socket.on(
     roomTopics.CREATE_ROOM,
     async (params: MOONLIGHTICreateRoomParams, callback: Function) => {
       const {
-        userData: { username, anonymous, id: userId }, ...roomOptions
+        userData: { username, anonymous, id: userId },
       } = params;
       if (!socket?.deckitUser?.color) {
         socket.deckitUser.color = randomColor(0.3, 0.99).hexString();
       }
-      const room = new Deckit(roomOptions, socket.deckitUser.id);
+      const room = new Deckit(socket.deckitUser.id);
       const { id: roomId, mode } = room;
       loggers.event.received.verbose(roomTopics.CREATE_ROOM, params);
       IO.getInstance().addRoom({
@@ -83,8 +78,8 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       socket.leave(WAITING_ROOM);
 
       // join player to the room
-      socket.join(roomId);
       socket.deckitUser.activeRoomId = roomId;
+      socket.join(roomId);
 
       const {
         newPlayerData: userDetails,
@@ -261,10 +256,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
     });
 
     room.updateRoomState(roomState.started);
-    room.emitUpdateRoom({
-      players: room.players,
-      state: room.state,
-    });
+    room.emitUpdateRoom(['players', 'state']);
     return null;
   });
 
@@ -309,10 +301,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
         },
       });
 
-      room.emitUpdateRoom({
-        state: room.state,
-        players: room.players,
-      });
+      room.emitUpdateRoom(['players', 'state']);
       return null;
     });
 
@@ -328,10 +317,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
 
     room.MOONLIGHTdisconnectPlayer(socket.deckitUser?.id, true);
     room.updateRoomState(roomState.started);
-    room.emitUpdateRoom({
-      players: room.players,
-      state: room.state,
-    });
+    room.emitUpdateRoom(['players', 'state']);
   });
 
   socket.on(roomTopics.LEAVE_ROOM, async () => {
@@ -486,5 +472,6 @@ export const RoomEvents = function (socket: IExtendedSocket) {
 
       room.updateMode(mode)
       room.emitUpdateRoom(['mode'])
+      loggers.info.info(`Room mode in room ${room?.id} updated to ${room?.mode}`)
     })
 };

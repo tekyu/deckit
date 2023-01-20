@@ -2,7 +2,9 @@
   "hello": "Hello",
   "common": {
     "commingSoon": "Coming soon",
-    "or": "or"
+    "or": "or",
+    "yes": "yes",
+    "no": "no"
   },
   "languages": {
     "en": "English",

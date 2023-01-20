@@ -23,15 +23,6 @@ export enum ROOM_MODE {
   fast = 'fast'
 }
 
-interface CreateRoomOptions {
-  mode: ROOM_MODE;
-  playersMax: number;
-  gameCode: string;
-  name?: string;
-  username?: string;
-  maxScore?: number;
-}
-
 interface IConnectPlayer {
   username: string;
   id: string;
@@ -68,7 +59,7 @@ interface MOONLIGHTIUpdatePlayer {
 interface IRoom {
   mode: ROOM_MODE;
   playersMax: number;
-  name: string;
+  // name: string;
   id: string;
   owner: string;
   admin: string;
@@ -89,8 +80,6 @@ export default class Room implements IRoom {
   mode: ROOM_MODE;
 
   playersMax: number;
-
-  name: string;
 
   id: string;
 
@@ -120,16 +109,10 @@ export default class Room implements IRoom {
 
   // MOONLIGHTconnectPlayer: (userDetails: IConnectPlayer) => IConnectPlayerReturn
 
-  constructor(
-    {
-      mode, playersMax, gameCode, name = '',
-    }: CreateRoomOptions,
-    ownerId: string,
-  ) {
-    this.mode = mode;
-    this.playersMax = playersMax || 10; // check for max players per game(adjustable in gameMapping)
-    this.name = name;
-    this.gameCode = gameCode;
+  constructor(ownerId: string) {
+    this.mode = ROOM_MODE.private;
+    this.playersMax = 10; // check for max players per game(adjustable in gameMapping)
+    this.gameCode = 'd';
     this.id = hri.hri.random().split('-').join('');
     this.owner = ownerId;
     this.admin = ownerId;
@@ -151,14 +134,12 @@ export default class Room implements IRoom {
   get minimalInfo() {
     const {
       playersMax,
-      name,
       id,
       owner,
       players,
     } = this;
     return {
       playersMax,
-      name,
       id,
       owner: players.find(({ id }) => id === owner)?.username || owner,
       players: players.length,
@@ -170,7 +151,6 @@ export default class Room implements IRoom {
       mode,
       playersMax,
       gameCode,
-      name,
       id,
       owner,
       admin,
@@ -183,7 +163,6 @@ export default class Room implements IRoom {
       mode,
       playersMax,
       gameCode,
-      name,
       id,
       owner,
       admin,
@@ -199,7 +178,6 @@ export default class Room implements IRoom {
       mode,
       playersMax,
       gameCode,
-      name,
       id,
       owner,
       admin,
@@ -213,7 +191,6 @@ export default class Room implements IRoom {
       mode,
       playersMax,
       gameCode,
-      name,
       id,
       owner,
       admin,
@@ -233,7 +210,6 @@ export default class Room implements IRoom {
       gameCode,
       id,
       mode,
-      name,
       owner,
       players,
       playersMax,
@@ -248,7 +224,6 @@ export default class Room implements IRoom {
       gameCode,
       id,
       mode,
-      name,
       owner,
       players,
       playersMax,

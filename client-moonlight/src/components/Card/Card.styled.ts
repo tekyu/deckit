@@ -3,9 +3,9 @@ import { rgba } from 'polished';
 import styled from 'styled-components';
 
 export const Card = styled.div<{ url: string; }>`
-  min-width: 270px;
-  width: 270px;
-  height: 400px;
+  min-width: 200px;
+  width: 200px;
+  height: 296px;
   border: 2px solid rgba(0,0,0, 0.2);
   ${({ url }) => url && `background-image: url(${url}); background-size: cover;`}
   border-radius: 6px;

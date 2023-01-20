@@ -16,6 +16,7 @@ import { AnyAction } from 'redux';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import PublicRoomList from 'components/PublicRoomList/PublicRoomList';
+import { ICreateRoom } from 'store/room/roomInterfaces';
 import * as Styled from './Dashboard.styled';
 
 interface IRoomIdForm {
@@ -35,6 +36,11 @@ const Dashboard = (): JSX.Element => {
   const dispatch = useAppThunkDispatch();
   const roomId = useSelector(roomSelectors.id);
   const kickedFrom = useSelector(userSelectors.kickedFrom);
+
+  const [isCreatingRoom, setIsCreatingRoom] = useState<boolean>(false);
+  const {
+    username, id: userId, anonymous,
+  } = useSelector(userSelectors.user);
 
   useEffect(() => {
     if (roomId) {
@@ -87,13 +93,35 @@ const Dashboard = (): JSX.Element => {
     return errors;
   };
 
+  const createGameHandler = () => {
+    const createParams: ICreateRoom = {
+      userData: {
+        username,
+        id: userId,
+        anonymous,
+      },
+    };
+    dispatch(roomActions.createRoom(createParams)).then(({ payload }: any) => {
+      if (payload?.roomDetails) {
+        setRedirectToGame(true);
+      } else {
+        setIsCreatingRoom(false);
+      }
+    }).catch((error: any) => {
+      setIsCreatingRoom(false);
+      toast.error(t('errors.room.connect.undefined'), {
+        position: 'top-right',
+        toastId: `${noRoomToastId}`,
+      });
+      console.error(error);
+    });
+  };
+
   return (
     <Styled.Dashboard>
       {roomId && redirectToGame ? <Redirect push to={`/game/${roomId}`} /> : null}
       <Styled.Controls>
-        <Link to="/create">
-          <Button>{t('dashboard.createRoomButton')}</Button>
-        </Link>
+        <Button onClick={createGameHandler} disabled={isCreatingRoom}>{t('dashboard.createRoomButton')}</Button>
         <Styled.Separator>{t('common.or')}</Styled.Separator>
         <Formik
           initialValues={{ roomId: '' }}

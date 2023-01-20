@@ -33,24 +33,25 @@ const CreateGame = (): JSX.Element => {
   const submitGameFormHandler = ({
     name, gameCode, playersMax, maxScore, isPrivate,
   }: IFormValues) => {
-    const createParams: ICreateRoom = {
-      userData: {
-        username,
-        id: userId,
-        anonymous,
-      },
-      name,
-      gameCode,
-      playersMax,
-      maxScore,
-      mode: isPrivate ? ROOM_MODE.private : ROOM_MODE.public,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dispatch(roomActions.createRoom(createParams)).then(({ payload }: any) => {
-      if (payload?.roomDetails) {
-        setRedirectToGame(true);
-      }
-    });
+    // const createParams: ICreateRoom = {
+    //   userData: {
+    //     username,
+    //     id: userId,
+    //     anonymous,
+    //   },
+    //   name,
+    //   gameCode,
+    //   playersMax,
+    //   maxScore,
+    //   mode: isPrivate ? ROOM_MODE.private : ROOM_MODE.public,
+    // };
+    // console.log('createdata', createParams);
+    // // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // dispatch(roomActions.createRoom(createParams)).then(({ payload }: any) => {
+    //   if (payload?.roomDetails) {
+    //     setRedirectToGame(true);
+    //   }
+    // });
   };
 
   const validateGameFormHandler = (values: IFormValues) => {

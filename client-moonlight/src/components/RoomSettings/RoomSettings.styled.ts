@@ -26,3 +26,12 @@ export const Visibility = styled.div`
     margin-bottom: auto;
   }
 `;
+
+export const PointsReadOnly = styled.div`
+    font-size: 2rem;
+`;
+
+export const ModeReadOnly = styled.div`
+    font-size: 1rem;
+    text-transform: capitalize;
+`;

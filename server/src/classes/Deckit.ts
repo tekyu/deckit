@@ -141,11 +141,11 @@ export default class Deckit extends Room implements IDeckit {
 
   // cardTracker: Object<Array>;
 
-  constructor(props: CreateRoomOptions, ownerId: string) {
-    super(props, ownerId);
+  constructor(ownerId: string) {
+    super(ownerId);
     this.stage = gameStage.idle;
     this.round = 0;
-    this.maxScore = props.maxScore || 60;
+    this.maxScore = 60;
     this.initialDecks = initialDecks;
     // this.decks = uniqBy([...this.initialDecks, ...props.decks], 'name');
     this.decks = this.initialDecks;
@@ -177,10 +177,6 @@ export default class Deckit extends Room implements IDeckit {
       playersPickedCardFromBoard: this.playersPickedCardFromBoard,
     };
   }
-
-  // emitUpdateGame(data: { [key: string]: any }) {
-  //   IO.getInstance().io.in(this.id).emit(gameTopics.UPDATE_GAME, data);
-  // }
 
   emitUpdateGame(propsToUpdate: GamePropsKeys[]) {
     const dataToSend: Partial<Room> = propsToUpdate.reduce((newData = {}, key) => {
@@ -459,19 +455,7 @@ export default class Deckit extends Room implements IDeckit {
         'hintCard',
         'hint',
         'hinter',
-
       ])
-      // this.emitUpdateGame({
-      //   round: this.round,
-      //   stage: this.stage,
-      //   remainingCards: this.remainingCards.length,
-      //   cardsFromDeck: this.cardsFromDeck,
-      //   cardsForBoard: this.cardsForBoard,
-      //   playersPickedCardFromDeck: this.playersPickedCardFromDeck,
-      //   hintCard: this.hintCard,
-      //   hint: this.hint,
-      //   hinter: this.hinter,
-      // });
       IO.getInstance().io.in(this.id).emit(gameTopics.NEXT_ROUND, {});
     }
   }
@@ -528,15 +512,6 @@ export default class Deckit extends Room implements IDeckit {
       'playersPickedCardFromBoard',
     ]);
 
-    // this.emitUpdateGame({
-    //   hinter: this.hinter,
-    //   hint: this.hint,
-    //   hintCard: this.hintCard,
-    //   cardsFromDeck: this.cardsFromDeck,
-    //   cardsForBoard: this.cardsForBoard,
-    //   playersPickedCardFromDeck: this.playersPickedCardFromDeck,
-    //   playersPickedCardFromBoard: this.playersPickedCardFromBoard,
-    // });
     IO.getInstance().io.in(this.id).emit(gameTopics.RESET_ROUND, {});
   }
 }

@@ -59,6 +59,16 @@ const WaitingScreen = (): JSX.Element => {
             {players?.find(({ id }) => id === owner)?.username}
           </Styled.Label>
         </Styled.Name>
+        {userId === owner
+          && (
+            <StartGameButton
+              arePlayersReady={
+                !players.some(({ state }) => state !== 1) && players.length >= 2
+              }
+              numberOfPlayers={players.length}
+            />
+          )}
+
       </Styled.Header>
       <Styled.PlayerList>
         {players.map(({
