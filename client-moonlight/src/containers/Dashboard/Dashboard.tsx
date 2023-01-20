@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import Button from 'components/Button/Button';
-import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router';
 
 import TextInput from 'components/TextInput/TextInput';

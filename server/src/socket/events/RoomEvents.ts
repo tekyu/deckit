@@ -62,9 +62,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       const {
         userData: { username, anonymous, id: userId },
       } = params;
-      if (!socket?.deckitUser?.color) {
-        socket.deckitUser.color = randomColor(0.3, 0.99).hexString();
-      }
+      this.socketUtils.setDeckitUserColor();
       const room = new Deckit(socket.deckitUser.id);
       const { id: roomId, mode } = room;
       loggers.event.received.verbose(roomTopics.CREATE_ROOM, params);
@@ -78,7 +76,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       socket.leave(WAITING_ROOM);
 
       // join player to the room
-      socket.deckitUser.activeRoomId = roomId;
+      this.socketUtils.setActiveRoomId(roomId);
       socket.join(roomId);
 
       const {
@@ -132,7 +130,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       socket.leave(WAITING_ROOM);
 
       socket.join(roomId);
-      socket.deckitUser.activeRoomId = roomId;
+      this.socketUtils.setActiveRoomId(roomId);
 
       // if room is public, push update of the room info to Browse route
       updateListOfRooms(room);
@@ -190,8 +188,8 @@ export const RoomEvents = function (socket: IExtendedSocket) {
       const disconnectedSocket: SocketIO.Socket = IO.getInstance().io
         .sockets.connected[disconnectedPlayer.socketId];
       disconnectedSocket.leave(roomId);
-      // @ts-ignore
-      disconnectedSocket.deckitUser.activeRoomId = undefined;
+
+      this.socketUtils.setActiveRoomId(undefined)
 
       // if room is public, push update of the room info to Browse route
       updateListOfRooms(room);
@@ -240,11 +238,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
   });
 
   socket.on('MOONLIGHT-FORCE_RESTART', () => {
-    const { deckitUser: { activeRoomId } = {} } = socket;
-    if (!activeRoomId) {
-      return null;
-    }
-    const room = getRoom(activeRoomId);
+    const room = getRoom(this.socketUtils.getActiveRoomId());
     if (!room || room.state !== roomState.paused) {
       return null;
     }
@@ -287,9 +281,7 @@ export const RoomEvents = function (socket: IExtendedSocket) {
         room.updateRoomState(roomState.started);
       }
 
-      if (socket.deckitUser) {
-        socket.deckitUser.activeRoomId = roomId;
-      }
+      this.socketUtils.setActiveRoomId(roomId);
 
       callback({
         roomDetails: room.basicInfo,

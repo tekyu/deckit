@@ -12,7 +12,8 @@ export const WaitingScreen = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: 818px;
+  margin: 0 auto;
   padding: 20px 0;
   ${Panel} {
     width: 100%;
@@ -35,6 +36,7 @@ export const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  width: 100%;
 `;
 
 export const Label = styled(BaseLabel)`
@@ -47,13 +49,13 @@ export const Label = styled(BaseLabel)`
 
 export const Name = styled.div`
   color: ${({ theme: { palette } }) => palette.primary.main};
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
+  /* white-space: nowrap; */
+  /* text-overflow: ellipsis; */
+  /* overflow: hidden; */
   font-size: 2rem;
-  padding: 0 10px 0 0;
+  padding: 0 0 10px 0;
   display: flex;
-  flex-direction: column;
+  align-items: center;
 `;
 
 export const RoomIdDisplay = styled.div`
@@ -84,13 +86,14 @@ export const GoBack = styled(Link)`
   color: ${({ theme: { palette } }) => palette.primary.main};
   align-self: flex-end;
   font-size: 24px;
-  margin-right: 8px;
+  position: absolute;
+  left: -44px;
+  top: 6px;
 `;
 
 export const Settings = styled.div`
   margin-top: 20px;
   width: 100%;
-  /* width: 818px; */
   text-align: center;
   > ${Label} {
     margin-bottom: 2rem;
@@ -105,4 +108,10 @@ export const InputContainer = styled.div`
     width: 360px;
     margin-right: 10px;
   }
+`;
+
+export const Info = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
 `;

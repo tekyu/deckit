@@ -34,4 +34,5 @@ export const PointsReadOnly = styled.div`
 export const ModeReadOnly = styled.div`
     font-size: 1rem;
     text-transform: capitalize;
+    margin: auto 0;
 `;
