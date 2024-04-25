@@ -3,7 +3,7 @@
 _Written using React, Typescript & Socket.io, generated via create-react-app_
 
 ## Online version 
-Available at http://deckitgame.xyz/
+Not available for now
 
 ## Local version
 In order to play locally you need to start both server (you need to do enter server path with `cd server`) and client with `npm start`
